@@ -1,0 +1,277 @@
+[hud_design.font_name]
+mono
+
+[hud_design.area_textures]
+hud_mfd1 #hud_mfd1
+hud_mfd2 #hud_mfd2
+hud_radar #hud_radar
+hud_weapon #hud_weapon
+hud_heat #hud_heat
+hud_speed #hud_speed
+hud_status #hud_status
+hud_log #hud_log
+
+[hud_design.area_cover_textures]
+blank #hud_mfd1
+blank #hud_mfd2
+blank #hud_radar
+blank #hud_weapon
+hud_heat_glass #hud_heat
+hud_speed_glass #hud_speed
+blank #hud_status
+blank #hud_log
+
+[hud_design.positions]
+left;bottom #hud_mfd1
+right;bottom #hud_mfd2
+left;top #hud_radar
+right;top #hud_weapon
+left;centre #hud_heat
+right;centre #hud_speed
+centre;bottom #hud_status
+centre;top #hud_log
+
+[hud_design.sizes]
+256;256 #hud_mfd1
+256;256 #hud_mfd2
+256;256 #hud_radar
+256;256 #hud_weapon
+128;256 #hud_heat
+128;256 #hud_speed
+512;128 #hud_status
+512;128 #hud_log
+
+[hud_design.offsets]
+0;0 #hud_mfd1
+0;0 #hud_mfd2
+0;0 #hud_radar
+0;0 #hud_weapon
+0;150 #hud_heat
+0;150 #hud_speed
+0;0 #hud_status
+0;0 #hud_log
+
+[hud_design.offsets_alternative]
+0;0 #hud_mfd1
+0;0 #hud_mfd2
+0;0 #hud_radar
+0;0 #hud_weapon
+0;0 #hud_heat
+0;0 #hud_speed
+0;86 #hud_status
+0;-86 #hud_log
+
+[hud_design.status_colours]
+250;100;100 #regular
+100;250;100 #exclamation
+100;100;250 #alternative
+
+[hud_design.log_colours]
+5;10;50
+50;10;5
+10;50;15
+
+[hud_design.mfd_colours]
+100;250;100
+250;10;10
+
+[hud_design.display_colours]
+160;255;200
+180;40;20
+
+[hud_design.mfd_views]
+damage_diagram_self
+damage_diagram_target
+damage_view_target
+inspector
+minimap
+enemy_list
+systems_control
+squad_tactic
+
+#mfd and mfd aux need to be defined in order
+#mfd first mfd aux after that (before another mfd)
+#otherwise mfd aux won't know which mfd to connect to
+
+[hud_design.parts.0]
+hud_mfd1 #area
+hud_mfd1 #name
+mfd_military;(12) #type
+mfd #function
+0;75 #position
+140;180 #size
+[hud_design.parts.1]
+hud_mfd1 #area
+hud_mfd1_aux #name
+mfd_aux_military;(12) #type
+mfd_aux #function
+147;180 #position
+74;72 #size
+
+[hud_design.parts.2]
+hud_mfd2 #area
+hud_mfd2 #name
+mfd_military;(12) #type
+mfd #function
+115;75 #position
+140;180 #size
+[hud_design.parts.3]
+hud_mfd2 #area
+hud_mfd2_aux #name
+mfd_aux_military;(12) #type
+mfd_aux #function
+5;180 #position
+74;72 #size
+
+[hud_design.parts.4]
+hud_radar #area
+hud_radar #name
+radar_military;() #type
+radar #function
+0;0 #position
+180;180 #size
+[hud_design.parts.5]
+hud_radar #area
+hud_radar_power #name
+set;(2) #type
+radar_power #function
+6;-6 #position
+32;32 #size
+[hud_design.parts.6]
+hud_radar #area
+hud_radar_clock_light #name
+set;(2) #type
+clock_tick #function
+76;173 #position
+32;32 #size
+[hud_design.parts.7]
+hud_radar #area
+hud_radar_compass #name
+pointer;() #type
+compass #function
+212;32 #position
+128;128 #size
+[hud_design.parts.8]
+hud_radar #area
+hud_radar_dial_thick #name
+pointer;() #type
+direction #function
+212;32 #positionn
+128;128 #size
+[hud_design.parts.9]
+hud_radar #area
+hud_radar_dial_thin #name
+pointer;() #type
+torso_direction #function
+212;32 #position
+128;128 #size
+[hud_design.parts.10]
+hud_radar #area
+hud_clock #name
+text;(13) #type
+clock #function
+6;204 #position
+100;22 #size
+[hud_design.parts.11]
+hud_radar #area
+hud_radar_range #name
+text;(14) #type
+radar_range #function
+188;89 #position
+20;20 #size
+
+[hud_design.parts.12]
+hud_weapon #area
+hud_weapon_group #name
+set;(1) #type
+weapon_group #function
+74;2 #position
+64;64 #size
+[hud_design.parts.13]
+hud_weapon #area
+hud_weapon_target #name
+set;(3) #type
+weapon_target #function
+20;-6 #position
+64;128 #size
+[hud_design.parts.14]
+hud_weapon #area
+hud_weapon_auto #name
+set;(1) #type
+weapon_auto #function
+74;52 #position
+64;64 #size
+[hud_design.parts.15]
+hud_weapon #area
+hud_weapon_tab #name
+weapon_tab;(13) #type
+weapons #function
+128;0 #position
+128;16 #size (per tab, unlimited tabs)
+
+[hud_design.parts.16]
+hud_log #area
+hud_log #name
+log_printer;(12) #type
+log #function
+64;0 #position
+384;122 #size
+
+[hud_design.parts.17]
+hud_heat #area
+hud_heat_dial_temp #name
+dial;(0,1000,165,15) #type
+temperature #function
+-10;159 #position
+256;256 #size
+[hud_design.parts.18]
+hud_heat #area
+hud_heat_dial_temp_out #name
+dial;(0,1000,165,15) #type
+temperature_external #function
+-10;159 #position
+256;256 #size
+[hud_design.parts.19]
+hud_heat #area
+hud_heat_dial_coolant #name
+dial;(0,100,180,0) #type
+coolant #function
+27;38 #position
+64;64 #size
+
+[hud_design.parts.21]
+hud_speed #area
+hud_speed_dial_speed #name
+dial;(-30,80,-225,105) #type
+speed #function
+76;193 #position
+128;128 #size
+[hud_design.parts.20]
+hud_speed #area
+hud_speed_dial_throttle #name
+dial;(-30,80,-225,105) #type
+throttle #function
+76;193 #position
+128;128 #size
+[hud_design.parts.22]
+hud_speed #area
+hud_speed_dial_pressure #name
+dial;(0,100,105,-205) #type
+pressure #function
+98;49 #position
+64;64 #size
+[hud_design.parts.23]
+hud_speed #area
+hud_speed_dial_temp #name
+dial;(0,500,-90,0) #type
+temperature_engine #function
+120;132 #position
+128;128 #size
+
+[hud_design.parts.24]
+hud_status #area
+hud_status #name
+status_display;(12) #type
+status #function
+60;0 #position
+392;120 #size

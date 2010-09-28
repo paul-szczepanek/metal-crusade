@@ -1,0 +1,54 @@
+[weapon_spec.text_name]
+200mm_rfc_3_name
+[weapon_spec.text_description]
+200mm_rfc_3_description
+[weapon_spec.text_list_name]
+200mm_rfc_3_list_name
+[weapon_spec.model]
+C-RDM-RC083
+[weapon_spec.type]
+weapon_type_cannon
+[weapon_spec.multi_fire]
+3
+[weapon_spec.multi_fire_timout]
+0.15
+[weapon_spec.spread]
+0.01
+[weapon_spec.weight]
+2
+[weapon_spec.internal]
+2
+[weapon_spec.panels]
+1
+[weapon_spec.recharge_time]
+2
+[weapon_spec.heat_generated]
+20 #C
+[weapon_spec.muzzle_velocity]
+1800 #m/s
+[weapon_spec.heat_dmg]
+0
+[weapon_spec.ballistic_dmg]
+0.25
+[weapon_spec.penetration]
+0.1 #armour penetration multiplier
+[weapon_spec.energy_dmg]
+0
+[weapon_spec.splash_range]
+0
+[weapon_spec.splash_velocity]
+0 #m/s
+[weapon_spec.projectile]
+bullet
+[weapon_spec.projectile_weight]
+0.1
+[weapon_spec.fuel]
+0
+[weapon_spec.homing]
+0
+[weapon_spec.lock_on_time]
+0
+[weapon_spec.ammo_per_slot]
+30
+[weapon_spec.range]
+80

@@ -1,0 +1,66 @@
+#internal strings must be defined first and in order of the enum
+
+[missing_string]
+m!ss!ng string
+
+#mfd aux lines view names
+
+#this one needs to show page
+[select_view_type]
+ SELECT VIEW
+#max leng->| 1/2
+
+#all below
+#max length16->|
+
+[damage_diagram_self]
+damage report
+[damage_diagram_target]
+target report
+[damage_view_target]
+target view
+[inspector]
+target inspector
+[minimap]
+area map
+[enemy_list]
+enemy list
+[systems_control]
+systems control
+[squad_tactic]
+squad tactics
+
+#log messages
+
+[shock_damage_sustained]
+$rCore damaged from $eshock$r by
+
+#faction names
+
+[faction_mercenary]
+mercenary
+[faction_nomads]
+The Nomads
+[faction_imperium]
+Imperium
+[faction_un]
+United Nations
+
+
+#string indexed strings
+
+#weapons
+
+[200mm_rfc_3_name]
+200mm Rapid Chain-Fire Cannon
+[200mm_rfc_3_list_name]
+200 RFC-3
+[200mm_rfc_3_name_description]
+200mm RFC Fire Cannon description, description, description, description, description, description, description, description, description, description, description, description, description, description, description, description, description, description, description, description, description.
+
+[200mm_rfc_explosive_name]
+200mm Rapid Fire Explosive Shell Cannon
+[200mm_rfc_explosive_list_name]
+200 RFC-E
+[200mm_rfc_explosive_description]
+200mm Rapid Fire Explosive Shell Cannon description, description, description, description, description, description, description, description, description, description, description, description, description, description, description, description, description, description, description, description, description.

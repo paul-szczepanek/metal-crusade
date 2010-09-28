@@ -1,0 +1,7 @@
+mono
+{
+    type         truetype
+    source       mono.ttf
+    size         13
+    resolution   72
+}
