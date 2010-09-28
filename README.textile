@@ -3,24 +3,14 @@ h1. Metal Crusade
 *Paul Szczepanek*
 *2010.09.08*
 
+This is a computer game - a tactical military mecha simulator. The game uses *OGRE* for rendering graphics and *OIS* for handling low-level input. It is currently being developed by me but I welcome anyone who would like to join in.
 
-h3. Abstract
-
-This is a computer game - a tactical military mecha simulator. The game
-uses *OGRE* for rendering graphics and *OIS* for handling low-level
-input. It is currently being developed by me but I welcome anyone who
-would like to join in.
-
-The game lets you pilot giant military robots (eponymous *crusaders*)
-with a third-person overhead view with stress put on tactics, both
-individual and group, and designing or customising your crusaders.
+The game lets you pilot giant military robots (eponymous *crusaders*) with a third-person overhead view with stress put on tactics, both individual and group, and designing or customising your crusaders.
 
 
 h2. Project Status
 
-The project is in its extremely early stage. The ground level section of
-the game is being developed - the one where you actually pilot the
-crusader. The art assets are all placeholders.
+The project is in its extremely early stage. The ground level section of the game is being developed - the one where you actually pilot the crusader. The art assets are all placeholders.
 
 
 h2. Project Goals
@@ -33,3 +23,4 @@ The design doc is still being written but roughly:
 * design, build and customise crusaders for you and your quad to use
 * story mode
 * ...and lastly, networked co-op (ha, maybe in 2012)
+
