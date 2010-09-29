@@ -19,7 +19,7 @@ The design doc is still being written but roughly:
 
 * pilot the crusader and command your squad on the ground level map
 * travel on a planet map and capture structures - involving global strategy and diplomacy, managing your gear and personnel
-* design, build and customise crusaders for you and your quad to use
+* design, build and customise crusaders for you and your squad to use
 * story mode
 * ...and lastly, networked co-op (ha, maybe in 2012)
 

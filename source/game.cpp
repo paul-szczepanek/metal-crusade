@@ -59,7 +59,11 @@ void Game::init()
     FilesHandler::instantiate();
 
     //OGRE initialisation
-    ogre = new Ogre::Root();
+    ogre = new Ogre::Root("");
+    //PluginFolder=/usr/lib/OGRE
+
+
+    ogre->loadPlugin("/usr/lib/OGRE/RenderSystem_GL");
 
     if(ogre->restoreConfig() || ogre->showConfigDialog()) {
         //DO NOT change order of creation! you might upset the zen of the feng-shui layout
