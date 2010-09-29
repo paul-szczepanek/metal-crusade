@@ -32,7 +32,10 @@ InputHandler* Game::input_handler;
 TextStore* Game::text;
 CollisionHandler* Game::collider;
 
-const unsigned int fps_interval = 16; // 64fps limit for the game
+// 64fps limit for the game
+const unsigned int fps_interval = 16;
+//version number
+const string version_number = FilesHandler::getStringFromFile("version");
 
 /** singleton
   */
@@ -50,7 +53,6 @@ int Game::instantiate()
 }
 
 /** @brief starts the game loop
-  * @todo: read from a ini insdead of ogre.cfg
   * @todo: launch menu system instead of the game from the start
   */
 void Game::init()
@@ -59,16 +61,15 @@ void Game::init()
     FilesHandler::instantiate();
 
     //OGRE initialisation
-    ogre = new Ogre::Root("");
-    //PluginFolder=/usr/lib/OGRE
+    ogre = new Ogre::Root("", "grfx.cfg", "ogre.log");
 
-
+    //load the OpenGL render system
     ogre->loadPlugin("/usr/lib/OGRE/RenderSystem_GL");
 
     if(ogre->restoreConfig() || ogre->showConfigDialog()) {
         //DO NOT change order of creation! you might upset the zen of the feng-shui layout
         //create window
-        render_window = ogre->initialise(true, "Metal Crusade 0.29", "");
+        render_window = ogre->initialise(true, string("Metal Crusade")+" "+version_number, "");
 
         //create scene manager
         scene = ogre->createSceneManager(Ogre::ST_GENERIC);

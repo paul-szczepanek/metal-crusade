@@ -1,3 +1,7 @@
+#if you need the hash char used for comments
+#then use it normally in the string and then put one at the end of the line
+#only the last hash character in the line is considered a comment
+
 #internal strings must be defined first and in order of the enum
 
 [missing_string]
@@ -45,6 +49,8 @@ The Nomads
 Imperium
 [faction_un]
 United Nations
+
+#end of onternal strings
 
 
 #string indexed strings

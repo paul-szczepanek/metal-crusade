@@ -1,7 +1,7 @@
 h1. Metal Crusade
 
-*Paul Szczepanek*
-*2010.09.08*
+_Paul Szczepanek_
+_2010.09.28_
 
 This is a computer game - a tactical military mecha simulator. The game uses *OGRE* for rendering graphics and *OIS* for handling low-level input. It is currently being developed by me but I welcome anyone who would like to join in.
 

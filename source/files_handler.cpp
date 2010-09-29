@@ -373,10 +373,7 @@ template <typename T> void FilesHandler::getIntArray(vector<T>& int_array, strin
 }
 
 /** @brief get pairs of strings form a file
-  *
-  * it's the workhorse of parsing files into a map for most functions
-  *
-  * parses file of a format:
+  * it's the workhorse of parsing files into a map for most functions - parses file of a format:
   * [key] #comments
   * value #comments
   * and returns pairs of strings
@@ -391,12 +388,13 @@ bool FilesHandler::getPairs(const string& filename, const string& dir, map<strin
     ifstream spec_file;
 
     spec_file.open(fs_filename.c_str());
+
     if (spec_file.is_open()) {
         unsigned int begin;
         unsigned int end;
 
         while (! spec_file.eof() ) {
-            getline (spec_file, buffer); //get line
+            getline(spec_file, buffer); //get line
 
             //and check if it's a key - is it insde []
             begin = buffer.find_first_of("[");
@@ -419,7 +417,7 @@ bool FilesHandler::getPairs(const string& filename, const string& dir, map<strin
 
             } else {
                 //append values to end_value string
-                end = buffer.find_first_of("#"); //ignore comments
+                end = buffer.find_last_of("#"); //ignore comments
 
                 //if # has been found then crop it out
                 value = (end < buffer.size())? buffer.substr(0, end) : buffer;
@@ -455,6 +453,48 @@ bool FilesHandler::getPairs(const string& filename, const string& dir, map<strin
     return !pairs.empty();
 }
 
+/** @brief get the string from the file
+  * parses for comments, doesn't strip whitespace, returns an empty string if no file found
+  */
+string FilesHandler::getStringFromFile(const string& filename)
+{
+    string buffer;
+    string value; //whatever is on next line except #comments
+    string end_value; //multiline result
+    ifstream string_file;
+
+    string_file.open(filename.c_str());
+
+    if (string_file.is_open()) {
+        unsigned int end;
+
+        while (! string_file.eof() ) {
+            getline(string_file, buffer); //get line
+
+            //ignore comments
+            end = buffer.find_last_of("#");
+            //if # has been found then crop it out
+            value = (end < buffer.size())? buffer.substr(0, end) : buffer;
+
+            //append what's left to the end_value string
+            if (!value.empty()) {
+                if (end_value.empty()) {
+                    end_value = value;
+
+                } else {
+                    //if not empty concatenate
+                    end_value+= "\n" + value;
+                }
+            }
+        }
+
+        //finished reading the file
+        string_file.close();
+    }
+
+    return end_value;
+}
+
 /** @brief fills the vector with game text
   * whilst doing this also creates a map for matching strings to numerical keys used internally
   */
@@ -476,7 +516,7 @@ bool FilesHandler::getGameText(vector<string>& game_text)
 
         while (! spec_file.eof() ) {
             //go line by line
-            getline (spec_file, buffer);
+            getline(spec_file, buffer);
 
             //check if it's a key - is it insde []?
             begin = buffer.find_first_of("[");
@@ -502,7 +542,7 @@ bool FilesHandler::getGameText(vector<string>& game_text)
                 //if it's not a key append values to end_value string
 
                 //ignore comments
-                end = buffer.find_first_of("#");
+                end = buffer.find_last_of("#");
 
                 //if # has been found then crop it out
                 value = (end < buffer.size())? buffer.substr(0, end) : buffer;

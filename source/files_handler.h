@@ -40,6 +40,9 @@ public:
     //read weapon design from file
     static bool getHudDesign(hud_design_t& hud_design, const string& filename);
 
+    //read file as string (still parses for comments)
+    static string getStringFromFile(const string& filename);
+
     //game strings
     static bool getGameText(vector<string>& game_text);
     static ulint getStringKey(const string& a_string);

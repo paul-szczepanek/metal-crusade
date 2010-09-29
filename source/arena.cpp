@@ -198,7 +198,7 @@ void Arena::loadTerrain()
 }
 
 /** @brief creates the terrain file
-  * @todo: stop rereading the files and do this as a pixel shader on a falt polygon
+  * @todo: stop rereading the files and do this as a pixel shader on a flat polygon
   */
 void Arena::createTerrain()
 {
