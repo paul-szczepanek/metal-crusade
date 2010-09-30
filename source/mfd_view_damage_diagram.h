@@ -1,4 +1,4 @@
-//Copyright 2010 Paul Szczepanek. Code released under GPLv3
+//Copyright 2010 Paul Szczepanek. Code released under GPL Version 3.
 
 #ifndef MFD_VIEW_DAMAGE_DIAGRAM_H
 #define MFD_VIEW_DAMAGE_DIAGRAM_H

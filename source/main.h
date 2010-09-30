@@ -1,4 +1,4 @@
-//Copyright 2010 Paul Szczepanek. Code released under GPLv3
+//Copyright 2010 Paul Szczepanek. Code released under GPL Version 3.
 
 #ifndef MAIN_H_INCLUDED
 #define MAIN_H_INCLUDED
@@ -50,6 +50,8 @@ using std::multimap;
 using std::ofstream;
 using std::ifstream;
 using std::make_pair;
+using std::find;
+using std::find_if;
 
 typedef pair<int, int> int_pair;
 typedef pair<unsigned int, unsigned int> uint_pair;

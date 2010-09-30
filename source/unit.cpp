@@ -1,4 +1,4 @@
-//Copyright 2010 Paul Szczepanek. Code released under GPLv3
+//Copyright 2010 Paul Szczepanek. Code released under GPL Version 3.
 
 #include "unit.h"
 #include "game.h"
@@ -65,18 +65,22 @@ bool Unit::getUnitAtPointer()
     Ogre::Vector3 pointer_position = controller->getPointerPos();
     uint_pair pointer_cell_index = Game::arena->getCellIndex(pointer_position.x,
                                                              pointer_position.z);
-    list<Unit*>* unit_list = Game::arena->getUnitCell(pointer_cell_index.first,
-                                                      pointer_cell_index.second);
+    vector<uint_pair> cell_indices;
+    Game::arena->getCellIndicesWithinRadius(pointer_cell_index, cell_indices);
 
-    //if there are any units in the cell or neighbouring cells TODO:neighbours
-    if (unit_list->size() > 0) {
-        list<Unit*>::iterator it = unit_list->begin();
-        list<Unit*>::iterator it_end = unit_list->end();
+    for (usint i = 0, for_size = cell_indices.size(); i < for_size; ++i) {
+        list<Unit*>& unit_list = Game::arena->getUnitCell(pointer_cell_index);
 
-        //walk through all projectiles
-        for (; it != it_end; ++it) {
-            if ((*it)->getBoundingSphere().contains(pointer_position)) {
-                return acquireTarget((*it));
+        //if there are any units in the cell or neighbouring cells TODO:neighbours
+        if (unit_list.size() > 0) {
+            list<Unit*>::iterator it = unit_list.begin();
+            list<Unit*>::iterator it_end = unit_list.end();
+
+            //walk through all projectiles
+            for (; it != it_end; ++it) {
+                if ((*it)->getBoundingSphere().contains(pointer_position)) {
+                    return acquireTarget((*it));
+                }
             }
         }
     }

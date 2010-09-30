@@ -1,4 +1,4 @@
-//Copyright 2010 Paul Szczepanek. Code released under GPLv3
+//Copyright 2010 Paul Szczepanek. Code released under GPL Version 3.
 
 #ifndef EQUIPMENT_TYPE_H
 #define EQUIPMENT_TYPE_H

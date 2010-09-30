@@ -1,4 +1,4 @@
-//Copyright 2010 Paul Szczepanek. Code released under GPLv3
+//Copyright 2010 Paul Szczepanek. Code released under GPL Version 3.
 
 #include "corpus.h"
 #include "game_controller.h"

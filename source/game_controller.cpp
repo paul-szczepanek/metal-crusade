@@ -1,4 +1,4 @@
-//Copyright 2010 Paul Szczepanek. Code released under GPLv3
+//Copyright 2010 Paul Szczepanek. Code released under GPL Version 3.
 
 #include "game_controller.h"
 #include "formation_factory.h"
@@ -6,7 +6,7 @@
 
 GameController::GameController(const string& a_name = "Player")
     : turn_speed(0.0), throttle(0.0), pointer_pos(Ogre::Vector3(0, 0, 0)), name(a_name),
-    option_invert_turn_to_pointer(false)
+    formation(NULL), option_invert_turn_to_pointer(false)
 {
     control_block.fire = false;
     control_block.turn_to_pointer = false;

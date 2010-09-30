@@ -1,17 +1,18 @@
-//Copyright 2010 Paul Szczepanek. Code released under GPLv3
+//Copyright 2010 Paul Szczepanek. Code released under GPL Version 3.
 
 #include "formation_factory.h"
 #include "formation.h"
+#include "faction.h"
 
 //struct for stl to use for comparison against formation name
 struct FormationEqualsName {
-    FormationEqualsName (const string& name) : faction_name(name) { };
+    FormationEqualsName (const string& name) : formation_name(name) { };
 
     //name being looked for
-    string faction_name;
+    string formation_name;
 
     //comparison for stl find_if
-    bool operator() (Formation* faction) { return faction_name == faction->getName(); }
+    bool operator() (Formation* formation) { return formation_name == formation->getName(); }
 };
 
 FormationFactory::FormationFactory()
@@ -26,9 +27,14 @@ FormationFactory::~FormationFactory()
 
 /** @brief creates a formation and adds it to the list
   */
-Formation* FormationFactory::createFormation(const string& name)
+Formation* FormationFactory::createFormation(const string& name, Faction* a_faction)
 {
+    //create a new formation
     formations.push_back(new Formation(name));
+
+    //formation join the faction
+    a_faction->joinFaction(formations.back());
+
     return formations.back();
 }
 
@@ -41,12 +47,12 @@ Formation* FormationFactory::getFormation(const string& name)
     list<Formation*>::iterator it = find_if(formations.begin(), formations.end(),
                                             FormationEqualsName(name));
 
-    //return the relation to the formation if found
+    //return the formation if found
     if (it != formations.end()) {
         return (*it);
 
     } else {
-        //otherwise return the relation to the formation
-        return createFormation("");
+        //otherwise create a fomration of that name and default to new mercs - this is wrong TODO
+        return createFormation(name, new Faction(global_faction::mercenary));
     }
 }

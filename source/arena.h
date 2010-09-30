@@ -1,4 +1,4 @@
-//Copyright 2010 Paul Szczepanek. Code released under GPLv3
+//Copyright 2010 Paul Szczepanek. Code released under GPL Version 3.
 
 #ifndef ARENA_H
 #define ARENA_H
@@ -6,8 +6,10 @@
 #include "main.h"
 
 //the arena is partitioned into cells to help find things and potential collisions
-//TODO: find the best value for the number of cells
-const unsigned int num_of_arena_cells = 256;
+const unsigned int size_of_arena_cell = 32; //size in metres
+
+//the rule is: no dynamic object bounding sphere can be bigger than 32 metres in diameter
+//if a structure is bigger it needs to occupy more than one cell at a time
 
 class GameController;
 class Corpus;
@@ -51,18 +53,27 @@ public:
     bool updateCellIndex(uint_pair& cell_index, Ogre::Vector3& pos_xyz, Unit* a_thing);
 
     //accessing objects on the map based on the cell index
-    list<Corpus*>* getCorpusCell(const uint a_i, const uint a_j);
-    list<Mobilis*>* getMobilisCell(const uint a_i, const uint a_j);
-    list<Unit*>* getUnitCell(const uint a_i, const uint a_j);
+    list<Corpus*>& getCorpusCell(const uint_pair a_index);
+    list<Mobilis*>& getMobilisCell(const uint_pair a_index);
+    list<Unit*>& getUnitCell(const uint_pair a_index);
     //fills an array with lists
-    void getCorpusCellGrid(const uint_pair cell_index, list<Corpus*>* grid[3]);
-    void getMobilisCellGrid(const uint_pair cell_index, list<Mobilis*>* grid[3]);
-    void getUnitCellGrid(const uint_pair cell_index, list<Unit*>* grid[3]);
+    void getCellIndicesWithinRadius(const uint_pair a_index, vector<uint_pair>& indices,
+                                    const Ogre::Real a_radius = 0);
 
 private:
     //inner main loop
     void updateLights();
     void updateCells();
+
+    //prepares the cells of the arena
+    void partitionArena();
+
+    //all the objects in the arena segregated into cells
+    vector<vector<list<Corpus*> > > corpus_cells;
+    vector<vector<list<Mobilis*> > > mobilis_cells;
+    vector<vector<list<Unit*> > > unit_cells;
+    //number of cells a side
+    uint num_of_arena_cells;
 
     //gravity
     Ogre::Real gravity;
@@ -89,13 +100,6 @@ private:
 
     //controllers for the units on the map cotnrolled by ais
     vector<GameController*> ai_game_controllers;
-
-    //all the objects in the arena segregated into cells
-    list<Corpus*> corpus_cells[num_of_arena_cells][num_of_arena_cells];
-    list<Mobilis*> mobilis_cells[num_of_arena_cells][num_of_arena_cells];
-    list<Unit*> unit_cells[num_of_arena_cells][num_of_arena_cells];
-    //size of individual cells in metres
-    Ogre::Real cell_size;
 };
 
 /** @brief returns whether the position is not outside of arena bounds and fixes the position
@@ -106,20 +110,20 @@ inline bool Arena::isOutOfBounds(Ogre::Vector3& pos_xyz)
     bool out_of_bounds = false;
 
     //if it's not, fix the position and mark that it was fixed
-    if (pos_xyz.x < cell_size) {
-        pos_xyz.x = cell_size;
+    if (pos_xyz.x < size_of_arena_cell) {
+        pos_xyz.x = size_of_arena_cell;
         out_of_bounds = true;
-    } else if (pos_xyz.x > scene_size - cell_size) {
-        pos_xyz.x = scene_size - cell_size;
+    } else if (pos_xyz.x > scene_size - size_of_arena_cell) {
+        pos_xyz.x = scene_size - size_of_arena_cell;
         out_of_bounds = true;
     }
 
     //same for vertical
-    if (pos_xyz.z < cell_size) {
-        pos_xyz.z = cell_size;
+    if (pos_xyz.z < size_of_arena_cell) {
+        pos_xyz.z = size_of_arena_cell;
         out_of_bounds = true;
-    } else if (pos_xyz.z > scene_size - cell_size) {
-        pos_xyz.z = scene_size - cell_size;
+    } else if (pos_xyz.z > scene_size - size_of_arena_cell) {
+        pos_xyz.z = scene_size - size_of_arena_cell;
         out_of_bounds = true;
     }
 
@@ -158,25 +162,25 @@ inline bool Arena::isOutOfArena(Ogre::Vector3& pos_xyz)
 inline uint_pair Arena::getCellIndex(Ogre::Real a_x, Ogre::Real a_y)
 {
     //get the index of the cell pased on position
-    unsigned int i = a_x / cell_size;
-    unsigned int j = a_y / cell_size;
+    unsigned int i = a_x / size_of_arena_cell;
+    unsigned int j = a_y / size_of_arena_cell;
 
     return make_pair(i, j);
 }
 
-inline list<Corpus*>* Arena::getCorpusCell(const uint a_i, const uint a_j)
+inline list<Corpus*>& Arena::getCorpusCell(const uint_pair a_index)
 {
-    return &corpus_cells[a_i][a_j];
+    return corpus_cells[a_index.first][a_index.second];
 }
 
-inline list<Mobilis*>* Arena::getMobilisCell(const uint a_i, const uint a_j)
+inline list<Mobilis*>& Arena::getMobilisCell(const uint_pair a_index)
 {
-    return &mobilis_cells[a_i][a_j];
+    return mobilis_cells[a_index.first][a_index.second];
 }
 
-inline list<Unit*>* Arena::getUnitCell(const uint a_i, const uint a_j)
+inline list<Unit*>& Arena::getUnitCell(const uint_pair a_index)
 {
-    return &unit_cells[a_i][a_j];
+    return unit_cells[a_index.first][a_index.second];
 }
 
 #endif // ARENA_H

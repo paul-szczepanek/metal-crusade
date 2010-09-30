@@ -1,4 +1,4 @@
-//Copyright 2010 Paul Szczepanek. Code released under GPLv3
+//Copyright 2010 Paul Szczepanek. Code released under GPL Version 3.
 
 #include "hud_weapon_tab.h"
 #include "game.h"
@@ -79,7 +79,7 @@ HudWeaponTab::HudWeaponTab(hud_part_design_t& a_hud_part_design)
         id = a_hud_part_design.name+"_name_text_"+Game::intIntoString(i); //unique id
         tab_name_elements.push_back(createTextArea(id, weapon_name, font_size,
                                                    Game::hud->hud_design.display_colours[0],
-                                                   offset + 2, size.second * i + 2,
+                                                   offset + 1, size.second * i + 3,
                                                    size.first - offset, size.second,
                                                    text_container));
 
@@ -87,7 +87,7 @@ HudWeaponTab::HudWeaponTab(hud_part_design_t& a_hud_part_design)
         id = a_hud_part_design.name+"_ammo_text_"+Game::intIntoString(i); //unique id
         tab_ammo_elements.push_back(createTextArea(id, "000", font_size,
                                                    Game::hud->hud_design.display_colours[0],
-                                                   12, size.second * i + 2, offset,
+                                                   11, size.second * i + 3, offset,
                                                    size.second, text_container));
     }
 }

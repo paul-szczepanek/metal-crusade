@@ -1,4 +1,4 @@
-//Copyright 2010 Paul Szczepanek. Code released under GPLv3
+//Copyright 2010 Paul Szczepanek. Code released under GPL Version 3.
 
 #ifndef HUD_STATUS_DISPLAY_H
 #define HUD_STATUS_DISPLAY_H

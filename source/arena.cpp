@@ -1,18 +1,21 @@
-//Copyright 2010 Paul Szczepanek. Code released under GPLv3
+//Copyright 2010 Paul Szczepanek. Code released under GPL Version 3.
 
 #include "arena.h"
 #include "game.h"
-#include "crusader.h"
-#include "unit_factory.h"
 #include "query_mask.h"
-#include "crusader_ai.h"
-#include "files_handler.h"
+#include "unit_factory.h"
+#include "projectile_factory.h"
+#include "formation_factory.h"
 #include "ai_factory.h"
+#include "crusader_ai.h"
+#include "crusader.h"
+#include "files_handler.h"
+#include "collision_handler.h"
 #include "camera.h"
 #include "game_controller.h"
-#include "projectile_factory.h"
 #include "hud.h"
-#include "collision_handler.h"
+#include "faction.h"
+#include "formation.h"
 
 //1pixel = 8 metres
 const Ogre::Real metres_per_pixel = 8;
@@ -120,11 +123,27 @@ int Arena::loadArena(const string& arena_name)
     //load the terrain from files
     loadTerrain();
 
+    //prepare the cells
+    partitionArena();
+
+    //TODO: read faction from game state file (save file) outside of the arena
+    //factions
+    Faction* faction_imperium = new Faction(global_faction::imperium);
+    Faction* faction_mercenary = new Faction(global_faction::mercenary);
+    //formations
+    Formation* enemy_formation = Game::formation_factory->createFormation("enemies",
+                                                                          faction_imperium);
+    Formation* player_formation = Game::formation_factory->createFormation("players",
+                                                                           faction_mercenary);
+    Formation* allied_formation = Game::formation_factory->createFormation("allies",
+                                                                           faction_mercenary);
+
     //fake game startup from code - ought to be read from file
     Crusader* player_unit = Game::unit_factory->spawnCrusader(Ogre::Vector3(600, 0, 600),
                             "base_husar_cavalry");
     //set player unit controller to local input
     player_unit->assignController(Game::instance()->getGameController(0));
+    player_formation->joinFormation(Game::instance()->getGameController(0));
 
     //create the hud according to the unit you're in - HUD NEEDS THE CONTROLLER to be assigned!
     Game::hud->loadHud(static_cast<Unit*>(player_unit));
@@ -134,12 +153,14 @@ int Arena::loadArena(const string& arena_name)
                            "base_husar_cavalry_red");
     Crusader* enemy_unit2 = Game::unit_factory->spawnCrusader(Ogre::Vector3(580, 0, 680),
                             "base_husar_cavalry_red");
+
     //create an enemy controller
     ai_game_controllers.push_back(new GameController("dummy ai"));
     CrusaderAI* ai = Game::ai_factory->createCrusaderAI(enemy_unit);
     ai->bindController(ai_game_controllers.back()); //assign the controller to the ai
     ai->activate(true);
     enemy_unit->assignController(ai_game_controllers.back()); //give the unit to the ai controller
+    enemy_formation->joinFormation(ai_game_controllers.back());
 
     //second enemy
     ai_game_controllers.push_back(new GameController("dummy ai"));
@@ -147,6 +168,7 @@ int Arena::loadArena(const string& arena_name)
     ai->bindController(ai_game_controllers.back()); //assign the controller to the ai
     ai->activate(false);
     enemy_unit2->assignController(ai_game_controllers.back()); //give the unit to the ai controller
+    allied_formation->joinFormation(ai_game_controllers.back());
 
     //and tell the camera to follow the players unit
     Game::camera->follow(player_unit);
@@ -158,6 +180,17 @@ int Arena::loadArena(const string& arena_name)
     updateLights();
 
     return 0;
+}
+
+void Arena::partitionArena()
+{
+    //set size for the cells holding the object on the map
+    corpus_cells = vector<vector<list<Corpus*> > >(num_of_arena_cells,
+                                                   vector<list<Corpus*> >(num_of_arena_cells));
+    mobilis_cells = vector<vector<list<Mobilis*> > >(num_of_arena_cells,
+                                                     vector<list<Mobilis*> >(num_of_arena_cells));
+    unit_cells = vector<vector<list<Unit*> > >(num_of_arena_cells,
+                                               vector<list<Unit*> >(num_of_arena_cells));
 }
 
 /** @brief loads the terrain
@@ -176,8 +209,8 @@ void Arena::loadTerrain()
     //size of the map in metres
     scene_size = texture_size * metres_per_pixel;
 
-    //size of cells with objects inside them
-    cell_size = scene_size / num_of_arena_cells;
+    //number of cells with objects inside them
+    num_of_arena_cells = scene_size / size_of_arena_cell;
 
     //heightmap data
     height = new Ogre::Real[texture_size * texture_size];
@@ -416,6 +449,57 @@ Ogre::Real Arena::getHeight(Ogre::Real a_x, Ogre::Real a_y)
 
     //return the sum of weighted samples
     return weight1 * sample1 + weight2 * sample2 + weight3 * sample3 + weight4 * sample4;
+}
+
+/** @brief fills the vector with indices of cells within the given radius from a cell
+  * you could cut off the corner indices for a big radius but it's hardly worth the bother
+  * at radius 4 you could save one cell, OK, TODO: cut them off
+  */
+void Arena::getCellIndicesWithinRadius(const uint_pair a_index, vector<uint_pair>& indices,
+                                       const Ogre::Real a_radius)
+{
+    //round up and add half the cell size to get possible hits from without the radius
+    int cell_radius = (a_radius + size_of_arena_cell * 0.5) / size_of_arena_cell + 1;
+
+    //push the centre cell
+    indices.push_back(a_index);
+
+    //centre for the spiral (measure from the edge, so even radius 0 gets 1 spiral arm)
+    uint c_i = a_index.first;
+    uint c_j = a_index.second;
+
+    //this goes in a spriral way putting in indices closer to first and further away last
+    //every time it checks if the index is valid
+    for (int r = 1; r <= cell_radius; ++r) {
+        if (c_i + r >= 0 && c_i + r <= num_of_arena_cells) {
+            for (int i = -r; i <= r; ++i) {
+                if (c_j + i >= 0 && c_j + i <= num_of_arena_cells) {
+                    indices.push_back(make_pair(c_i + r, c_j + i));
+                }
+            }
+        }
+        if (c_i - r >= 0 && c_i - r <= num_of_arena_cells) {
+            for (int i = -r; i <= r; ++i) {
+                if (c_j + i >= 0 && c_j + i <= num_of_arena_cells) {
+                    indices.push_back(make_pair(c_i - r, c_j + i));
+                }
+            }
+        }
+        if (c_j + r >= 0 && c_j + r <= num_of_arena_cells) {
+            for (int i = -(r - 1); i <= (r - 1); ++i) {
+                if (c_i + i >= 0 && c_i + i <= num_of_arena_cells) {
+                    indices.push_back(make_pair(c_i + i, c_j + r));
+                }
+            }
+        }
+        if (c_j - r >= 0 && c_j - r <= num_of_arena_cells) {
+            for (int i = -(r - 1); i <= (r - 1); ++i) {
+                if (c_i + i >= 0 && c_i + i <= num_of_arena_cells) {
+                    indices.push_back(make_pair(c_i + i, c_j - r));
+                }
+            }
+        }
+    }
 }
 
 /** @brief called when the object is newly created to add it to the cell (saves on checking)

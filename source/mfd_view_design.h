@@ -1,4 +1,4 @@
-//Copyright 2010 Paul Szczepanek. Code released under GPLv3
+//Copyright 2010 Paul Szczepanek. Code released under GPL Version 3.
 
 #ifndef MFD_VIEW_DESIGN_H_INCLUDED
 #define MFD_VIEW_DESIGN_H_INCLUDED
