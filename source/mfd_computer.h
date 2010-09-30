@@ -5,7 +5,6 @@
 
 #include "main.h"
 #include "hud_design.h"
-#include "internal_string.h"
 
 class MFDComputer
 {

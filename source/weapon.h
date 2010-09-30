@@ -14,7 +14,7 @@ enum weapon_type {
     weapon_type_launcher
 };
 
-struct weapon_spec_t {
+struct weapon_design_t {
     string filename;
     string model;
     weapon_type type;
@@ -58,11 +58,11 @@ public:
     bool fire();
 
     //for hud
-    ulint getAmmo() { return ammo / (weapon_spec.multi_fire + 1); };
-    Ogre::Real getCharge() { return 1 - (timeout / weapon_spec.recharge_time); };
+    ulint getAmmo() { return ammo / (weapon_design.multi_fire + 1); };
+    Ogre::Real getCharge() { return 1 - (timeout / weapon_design.recharge_time); };
     bool isOperational() { return (ammo > 0); };
 
-    weapon_spec_t weapon_spec;
+    weapon_design_t weapon_design;
 
 private:
     ulint ammo;

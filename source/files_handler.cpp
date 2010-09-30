@@ -6,17 +6,18 @@
 #include "crusader_design.h"
 #include "hud_design.h"
 #include "weapon.h"
+#include "radar_computer.h"
 #include "text_store.h"
 
 //this is a massive clusterfuck of parsing and fudging and will only get worse over time
 //TODO: look into replacing some of the building blocks with boost?
-
-const string config_dir = "config";
-const string units_dir = "units";
-const string weapon_dir = "weapons";
-const string designs_dir = "designs";
-const string hud_dir = "textures/hud";
 const string data_dir = "data";
+const string config_dir = "config";
+const string weapon_dir = "design/weapon";
+const string crusader_dir = "design/crusader";
+const string hud_dir = "design/hud";
+const string radar_dir = "design/radar";
+const string units_dir = "unit";
 const string text_dir = "text";
 const string game_text_file = "game_text";
 
@@ -284,6 +285,12 @@ int FilesHandler::getEnum(const string& a_string)
         enum_int = 6;
     else if (a_string == "squad_tactic")
         enum_int = 7;
+    else if (a_string == "rotating") //radar
+        enum_int = 0;
+    else if (a_string == "fixed")
+        enum_int = 1;
+    else if (a_string == "oscilating")
+        enum_int = 2;
     else //if all fails pring for debug
         cout << "malformed enum: " << a_string << endl;
 
@@ -969,7 +976,7 @@ bool FilesHandler::getKeyConfig(const string& filename, map<input_event, OIS::Ke
 
 /** @brief load weapon spec from file
   */
-bool FilesHandler::getWeaponSpec(const string& filename, weapon_spec_t& weapon_spec)
+bool FilesHandler::getWeaponDesign(const string& filename, weapon_design_t& weapon_design)
 {
     //prepare map to read data into
     map<string, string> pairs;
@@ -977,34 +984,74 @@ bool FilesHandler::getWeaponSpec(const string& filename, weapon_spec_t& weapon_s
     assert(getPairs(filename, weapon_dir, pairs));
 
     //fill structs with info from pairs
-    weapon_spec.filename = filename;
-    weapon_spec.text_name = getStringKey(pairs["weapon_spec.text_name"]);
-    weapon_spec.text_list_name = getStringKey(pairs["weapon_spec.text_list_name"]);
-    weapon_spec.text_description = getStringKey(pairs["weapon_spec.text_description"]);
-    weapon_spec.model = pairs["weapon_spec.model"];
-    weapon_spec.type = weapon_type(getEnum(pairs["weapon_spec.type"]));
-    weapon_spec.multi_fire = Game::stringIntoInt(pairs["weapon_spec.multi_fire"]);
-    weapon_spec.multi_fire_timout = getReal(pairs["weapon_spec.multi_fire_timout"]);
-    weapon_spec.spread = getReal(pairs["weapon_spec.spread"]) * pi;
-    weapon_spec.weight = getReal(pairs["weapon_spec.weight"]);
-    weapon_spec.internals = Game::stringIntoInt(pairs["weapon_spec.internals"]);
-    weapon_spec.panels = Game::stringIntoInt(pairs["weapon_spec.panels"]);
-    weapon_spec.recharge_time = getReal(pairs["weapon_spec.recharge_time"]);
-    weapon_spec.heat_generated = getReal(pairs["weapon_spec.heat_generated"]);
-    weapon_spec.muzzle_velocity = getReal(pairs["weapon_spec.muzzle_velocity"]);
-    weapon_spec.heat_dmg = getReal(pairs["weapon_spec.heat_dmg"]);
-    weapon_spec.ballistic_dmg = getReal(pairs["weapon_spec.ballistic_dmg"]);
-    weapon_spec.penetration = getReal(pairs["weapon_spec.penetration"]);
-    weapon_spec.energy_dmg = getReal(pairs["weapon_spec.energy_dmg"]);
-    weapon_spec.splash_range = getReal(pairs["weapon_spec.splash_range"]);
-    weapon_spec.splash_velocity = getReal(pairs["weapon_spec.splash_velocity"]);
-    weapon_spec.projectile = pairs["weapon_spec.projectile"];
-    weapon_spec.projectile_weight = getReal(pairs["weapon_spec.projectile_weight"]);
-    weapon_spec.fuel = getReal(pairs["weapon_spec.fuel"]);
-    weapon_spec.homing = getReal(pairs["weapon_spec.homing"]);
-    weapon_spec.lock_on_time = getReal(pairs["weapon_spec.lock_on_time"]);
-    weapon_spec.ammo_per_slot = Game::stringIntoInt(pairs["weapon_spec.ammo_per_slot"]);
-    weapon_spec.range = getReal(pairs["weapon_spec.range"]);
+    weapon_design.filename = filename;
+    weapon_design.model = pairs["weapon_design.model"];
+    //game text
+    weapon_design.text_name = getStringKey(pairs["weapon_design.text_name"]);
+    weapon_design.text_list_name = getStringKey(pairs["weapon_design.text_list_name"]);
+    weapon_design.text_description = getStringKey(pairs["weapon_design.text_description"]);
+    //dimensions
+    weapon_design.type = weapon_type(getEnum(pairs["weapon_design.type"]));
+    weapon_design.weight = getReal(pairs["weapon_design.weight"]);
+    weapon_design.internals = Game::stringIntoInt(pairs["weapon_design.internals"]);
+    weapon_design.panels = Game::stringIntoInt(pairs["weapon_design.panels"]);
+    //multifire weapons
+    weapon_design.multi_fire = Game::stringIntoInt(pairs["weapon_design.multi_fire"]);
+    weapon_design.multi_fire_timout = getReal(pairs["weapon_design.multi_fire_timout"]);
+    //basic properties
+    weapon_design.spread = getReal(pairs["weapon_design.spread"]) * pi;
+    weapon_design.recharge_time = getReal(pairs["weapon_design.recharge_time"]);
+    weapon_design.heat_generated = getReal(pairs["weapon_design.heat_generated"]);
+    weapon_design.muzzle_velocity = getReal(pairs["weapon_design.muzzle_velocity"]);
+    weapon_design.range = getReal(pairs["weapon_design.range"]);
+    weapon_design.ammo_per_slot = Game::stringIntoInt(pairs["weapon_design.ammo_per_slot"]);
+    //damage
+    weapon_design.heat_dmg = getReal(pairs["weapon_design.heat_dmg"]);
+    weapon_design.ballistic_dmg = getReal(pairs["weapon_design.ballistic_dmg"]);
+    weapon_design.penetration = getReal(pairs["weapon_design.penetration"]);
+    weapon_design.energy_dmg = getReal(pairs["weapon_design.energy_dmg"]);
+    //exploading damage
+    weapon_design.splash_range = getReal(pairs["weapon_design.splash_range"]);
+    weapon_design.splash_velocity = getReal(pairs["weapon_design.splash_velocity"]);
+    //projectile
+    weapon_design.projectile = pairs["weapon_design.projectile"];
+    weapon_design.projectile_weight = getReal(pairs["weapon_design.projectile_weight"]);
+    //used mainly for missiles
+    weapon_design.fuel = getReal(pairs["weapon_design.fuel"]);
+    weapon_design.homing = getReal(pairs["weapon_design.homing"]);
+    weapon_design.lock_on_time = getReal(pairs["weapon_design.lock_on_time"]);
+
+    return true;
+}
+
+/** @brief load weapon spec from file
+  */
+bool FilesHandler::getRadarDesign(const string& filename, radar_design_t& radar_design)
+{
+    //prepare map to read data into
+    map<string, string> pairs;
+    //insert data from file into pairs
+    assert(getPairs(filename, radar_dir, pairs));
+
+    //fill structs with info from pairs
+    radar_design.filename = filename;
+    radar_design.model = pairs["radar_design.model"];
+    //game text
+    radar_design.text_name = getStringKey(pairs["radar_design.text_name"]);
+    radar_design.text_list_name = getStringKey(pairs["radar_design.text_list_name"]);
+    radar_design.text_description = getStringKey(pairs["radar_design.text_description"]);
+    //basic properties
+    radar_design.weight = getReal(pairs["radar_design.weight"]);
+    //radar type
+    radar_design.active = getStringKey(pairs["radar_design.active"]);
+    radar_design.sweep = radar::sweep_type(getEnum(pairs["radar_design."]));
+    radar_design.cone_angle = Ogre::Radian(getReal(pairs["radar_design.cone_angle"]) * degree2rad);
+    radar_design.heads = Game::stringIntoInt(pairs["radar_design.heads"]);
+    //radar parameters
+    radar_design.power = getReal(pairs["radar_design.power"]);
+    radar_design.heat_sensivity = getReal(pairs["radar_design.power"]);
+    radar_design.electromagnetic_sensivity =
+        getReal(pairs["radar_design.electromagnetic_sensivity"]);
 
     return true;
 }
@@ -1021,7 +1068,7 @@ bool FilesHandler::getCrusaderDesign(const string& filename, crusader_design_t& 
     //prepare map to read data into
     map<string, string> pairs;
     //insert data from file into pairs
-    assert(getPairs(filename, designs_dir, pairs));
+    assert(getPairs(filename, units_dir, pairs));
 
     //fill structs with info from pairs
     design.filename = filename;
@@ -1036,6 +1083,7 @@ bool FilesHandler::getCrusaderDesign(const string& filename, crusader_design_t& 
     //continue loading the design
     design.material = pairs["design.material"];
     design.hud = pairs["design.hud"];
+    design.radar = pairs["design.hud"];
     getIntArray(design.weapons_extra_ammo, pairs["design.weapons_extra_ammo"]);
     getEnumArray(design.weapons_placement, pairs["design.weapons_placement"]);
     getStringArray(design.equipment, pairs["design.equipment"]);
@@ -1088,7 +1136,7 @@ bool FilesHandler::getCrusaderSpec(const string& filename, crusader_engine_t& en
     //prepare map to read data into
     map<string, string> pairs;
     //insert data from file into pairs
-    assert(getPairs(filename, units_dir, pairs));
+    assert(getPairs(filename, crusader_dir, pairs));
 
     //fill structs with info from pairs
     model.filename = filename;
@@ -1184,7 +1232,7 @@ bool FilesHandler::getCrusaderSpec(const string& filename, crusader_engine_t& en
 /** @brief load definition of the ingame hud
   * fills structs with specs read from a file
   */
-bool FilesHandler::getHudDesign(hud_design_t& hud_design, const string& filename)
+bool FilesHandler::getHudDesign(const string& filename, hud_design_t& hud_design)
 {
     //prepare map to read data into
     map<string, string> pairs;

@@ -85,6 +85,7 @@ struct crusader_design_t {
     armour_type armour;
     vector<Ogre::Real> armour_placement;
     vector<string> equipment;
+    string radar;
     vector<usint> weapon_groups[num_of_weapon_groups];
 };
 

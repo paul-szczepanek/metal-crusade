@@ -12,11 +12,11 @@ Weapon::Weapon(const string& a_name, Unit* a_unit, Ogre::Vector3 a_position, usi
     : timeout(0), projecitles_primed(0), unit(a_unit), position(a_position)
 {
     //load spec from file
-    if (FilesHandler::getWeaponSpec(a_name, weapon_spec) == false)
+    if (FilesHandler::getWeaponDesign(a_name, weapon_design) == false)
         Game::kill(a_name+" weapon spec garbled! Oh, dear.");
 
     //prime the ammo number from the spec
-    ammo = weapon_spec.ammo_per_slot + weapon_spec.ammo_per_slot * a_extra_ammo;
+    ammo = weapon_design.ammo_per_slot + weapon_design.ammo_per_slot * a_extra_ammo;
 }
 
 /** @brief update the timeout and fire weapon if primed
@@ -30,8 +30,8 @@ void Weapon::update(Ogre::Real a_dt)
             --projecitles_primed;
 
             //calculate the next step
-            timeout_step = weapon_spec.recharge_time - (weapon_spec.multi_fire
-                           - projecitles_primed) * weapon_spec.multi_fire_timout;
+            timeout_step = weapon_design.recharge_time - (weapon_design.multi_fire
+                           - projecitles_primed) * weapon_design.multi_fire_timout;
 
             //get the orientation of the torso for calulating the position of the projectile spawn
             Ogre::Quaternion orientation = unit->getLookingOrientation();
@@ -60,20 +60,20 @@ bool Weapon::fire()
     //only fire when previous cycle has finished and there is ammo
     if (timeout <= 0 && ammo > 0) {
         //fire the number of projectiles in multifire for as long as there is ammo
-        for (usint i = 0; i < weapon_spec.multi_fire && ammo > 0; ++i) {
+        for (usint i = 0; i < weapon_design.multi_fire && ammo > 0; ++i) {
             --ammo; //take one ammo
             ++projecitles_primed; //set it to launch
         }
 
         //calculate how long in between shots (for multifire waepons)
-        timeout_step = weapon_spec.recharge_time - (weapon_spec.multi_fire
-                                  - projecitles_primed) * weapon_spec.multi_fire_timout;
+        timeout_step = weapon_design.recharge_time - (weapon_design.multi_fire
+                                  - projecitles_primed) * weapon_design.multi_fire_timout;
 
         //generate heat
-        unit->addHeat(weapon_spec.heat_generated);
+        unit->addHeat(weapon_design.heat_generated);
 
         //set the timeout before next fire
-        timeout = weapon_spec.recharge_time;
+        timeout = weapon_design.recharge_time;
 
         //return that the weapon fired successfully
         return true;

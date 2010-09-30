@@ -8,13 +8,14 @@
 #include <OIS/OISMouse.h>
 #include <OIS/OISKeyboard.h>
 
-struct weapon_spec_t;
+struct weapon_design_t;
 struct crusader_design_t;
 struct crusader_engine_t;
 struct crusader_drive_t;
 struct crusader_chasis_t;
 struct crusader_model_t;
 struct hud_design_t;
+struct radar_design_t;
 
 class FilesHandler
 {
@@ -28,17 +29,16 @@ public:
     static bool getKeyConfig(const string& filename, map<input_event, OIS::KeyCode>& key_map,
                              map<input_event, OIS::MouseButtonID>& mouse_map);
 
-    //read crusader design from file
+    //read design from files
     static bool getCrusaderDesign(const string& filename, crusader_design_t& design,
                                   crusader_engine_t& engine, crusader_drive_t& drive,
                                   crusader_chasis_t& chasis, crusader_model_t& model);
     static bool getCrusaderSpec(const string& filename, crusader_engine_t& engine,
                                 crusader_drive_t& drive, crusader_chasis_t& chasis,
                                 crusader_model_t& model);
-    static bool getWeaponSpec(const string& filename, weapon_spec_t& weapon_spec);
-
-    //read weapon design from file
-    static bool getHudDesign(hud_design_t& hud_design, const string& filename);
+    static bool getWeaponDesign(const string& filename, weapon_design_t& weapon_design);
+    static bool getHudDesign(const string& filename, hud_design_t& hud_design);
+    static bool getRadarDesign(const string& filename, radar_design_t& radar_design);
 
     //read file as string (still parses for comments)
     static string getStringFromFile(const string& filename);

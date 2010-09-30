@@ -113,7 +113,7 @@ Crusader::Crusader(Ogre::Vector3 a_pos_xyz, const string& a_unit_name,
                                      : 0)); //oterwise assume no extra ammo
 
         //also adds extra ammo if available for that weapon
-        slots_used[design.weapons_placement[i]] += weapons[i]->weapon_spec.panels;
+        slots_used[design.weapons_placement[i]] += weapons[i]->weapon_design.panels;
     }
 
     //add heatsinks

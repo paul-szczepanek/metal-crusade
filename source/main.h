@@ -18,6 +18,7 @@ const Ogre::Real c1o3       = 0.33333333333333333333;
 const Ogre::Real c2o3       = 0.66666666666666666667;
 const Ogre::Real c2o9       = 0.22222222222222222222;
 const Ogre::Real c4o9       = 0.44444444444444444444;
+const Ogre::Real degree2rad = 0.01745329251994329576;
 
 using std::cout;
 using std::max;

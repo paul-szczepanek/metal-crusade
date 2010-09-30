@@ -20,7 +20,7 @@
 #include "log_computer.h"
 #include "status_computer.h"
 
-const string hud_textures_dir = "data/textures/hud/";
+const string hud_textures_dir = "data/texture/hud/";
 
 //hud designs in pixel coords baselined at 1024x768
 const Ogre::Real base_width(1024);
@@ -97,7 +97,7 @@ void Hud::loadHud(Unit* a_player_unit)
     timer = Game::instance()->getTimer();
 
     //try and load the definition
-    if (FilesHandler::getHudDesign(hud_design, player_unit->getHudName()+".hud") == false) {
+    if (FilesHandler::getHudDesign(player_unit->getHudName(), hud_design) == false) {
         Game::kill("hud definition failed to load!");
     }
 

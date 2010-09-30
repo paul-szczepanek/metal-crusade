@@ -7,5 +7,5 @@
   */
 KeyMap::KeyMap()
 {
-    assert(FilesHandler::getKeyConfig("key_config", keys, buttons));
+    assert(FilesHandler::getKeyConfig("controls", keys, buttons));
 }

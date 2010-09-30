@@ -61,7 +61,7 @@ void Game::init()
     FilesHandler::instantiate();
 
     //OGRE initialisation
-    ogre = new Ogre::Root("", "grfx.cfg", "ogre.log");
+    ogre = new Ogre::Root("", "data/config/graphics", "ogre.log");
 
     //load the OpenGL render system
     ogre->loadPlugin("/usr/lib/OGRE/RenderSystem_GL");
@@ -79,13 +79,13 @@ void Game::init()
 
         //set resources
         Ogre::ResourceGroupManager& resource_mngr = Ogre::ResourceGroupManager::getSingleton();
-        resource_mngr.addResourceLocation("data/models", "FileSystem", "models");
-        resource_mngr.addResourceLocation("data/textures", "FileSystem", "textures");
+        resource_mngr.addResourceLocation("data/model", "FileSystem", "models");
+        resource_mngr.addResourceLocation("data/texture", "FileSystem", "textures");
         //fonts
-        resource_mngr.addResourceLocation("data/textures/fonts", "FileSystem", "textures");
+        resource_mngr.addResourceLocation("data/texture/font", "FileSystem", "textures");
         resource_mngr.addResourceLocation("data/terrain", "FileSystem", "terrain");
         //set units TODO: needs to be automatic
-        resource_mngr.addResourceLocation("data/models/husar", "FileSystem", "models");
+        resource_mngr.addResourceLocation("data/model/husar", "FileSystem", "models");
 
         //load resources
         resource_mngr.initialiseResourceGroup("models");

@@ -75,7 +75,7 @@ HudWeaponTab::HudWeaponTab(hud_part_design_t& a_hud_part_design)
 
         //text for diasplaying weapon names
         //get the weapon shortened name
-        string weapon_name = Game::text->getText(weapons[i]->weapon_spec.text_list_name);
+        string weapon_name = Game::text->getText(weapons[i]->weapon_design.text_list_name);
         id = a_hud_part_design.name+"_name_text_"+Game::intIntoString(i); //unique id
         tab_name_elements.push_back(createTextArea(id, weapon_name, font_size,
                                                    Game::hud->hud_design.display_colours[0],

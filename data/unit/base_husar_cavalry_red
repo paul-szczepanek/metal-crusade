@@ -1,7 +1,7 @@
 [design.unit]
 crusader_husar
 [design.material]
-husar
+husar_red
 [design.weapons]
 200mm_rfc_e #0
 200mm_rfc_e #1
@@ -10,8 +10,8 @@ husar
 [design.weapons_extra_ammo]
 0
 0
-0
-0
+2
+2
 [design.hud]
 military
 [design.equipment]
@@ -19,6 +19,8 @@ short_range_targeting
 ecm
 scanner_short_range
 shock_proof_electronics
+[design.radar]
+nesa-2x
 [design.armour]
 armour_type_composite
 [design.armour_placement.torso]
@@ -48,8 +50,7 @@ torso_right
 torso_left
 [design.internals]
 internal_type_heatsink
-internal_type_heatsink
-internal_type_heatsink
+internal_type_structure
 internal_type_gyro
 internal_type_structure
 internal_type_structure
@@ -58,7 +59,6 @@ internal_type_structure
 internal_type_structure
 internal_type_structure
 [design.internals_placement]
-torso
 torso
 torso
 torso

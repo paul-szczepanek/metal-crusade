@@ -61,7 +61,7 @@ United Nations
 200mm Rapid Chain-Fire Cannon
 [200mm_rfc_3_list_name]
 200 RFC-3
-[200mm_rfc_3_name_description]
+[200mm_rfc_3_description]
 200mm RFC Fire Cannon description, description, description, description, description, description, description, description, description, description, description, description, description, description, description, description, description, description, description, description, description.
 
 [200mm_rfc_explosive_name]
@@ -70,3 +70,12 @@ United Nations
 200 RFC-E
 [200mm_rfc_explosive_description]
 200mm Rapid Fire Explosive Shell Cannon description, description, description, description, description, description, description, description, description, description, description, description, description, description, description, description, description, description, description, description, description.
+
+#radars
+
+[nesa-2x_name]
+WARRAD NESA-2X radar system
+[nesa-2x_list_name]
+NESA-2X
+[nesa-2x_description]
+WARRAD NESA-2x dualhead radar system

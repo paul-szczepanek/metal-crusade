@@ -65,8 +65,8 @@ void ProjectileFactory::fireProjectile(Ogre::Vector3 a_pos_xyz, Ogre::Quaternion
     projectile_mesh->setQueryFlags(query_mask_projectiles); //mask as projectile
 
     //create variation to the angle of firing
-    Ogre::Radian angle_of_spread(Ogre::Math::RangeRandom(-a_weapon->weapon_spec.spread,
-                                 a_weapon->weapon_spec.spread));
+    Ogre::Radian angle_of_spread(Ogre::Math::RangeRandom(-a_weapon->weapon_design.spread,
+                                 a_weapon->weapon_design.spread));
     Ogre::Quaternion firing_cone = Ogre::Quaternion(angle_of_spread, Ogre::Vector3::UNIT_Y);
 
     //TODO: the spread needs to be in a cone, not in a plane

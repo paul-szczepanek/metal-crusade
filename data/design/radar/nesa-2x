@@ -1,0 +1,24 @@
+[radar_design.text_name]
+nesa-2x_name
+[radar_design.text_description]
+nesa-2x_description
+[radar_design.text_list_name]
+nesa-2x_list_name
+[radar_design.model]
+R-WRD-N201A #this is just for show type-manufacturer-modelyearvariant
+[radar_design.active]
+true #ture, false
+[radar_design.power]
+1
+[radar_design.heat_sensivity]
+2
+[radar_design.electromagnetic_sensivity]
+1
+[radar_design.weight]
+2
+[radar_design.sweep_type]
+rotating
+[radar_design.cone_angle]
+10 #degrees
+[radar_design.heads]
+2

@@ -21,14 +21,14 @@ Projectile::Projectile(Ogre::Vector3 a_pos_xyz, const string& a_unit_name,
     velocity_dmg_multiplier(1)
 {
     //read properties from weapon spec
-    penetration = weapon->weapon_spec.penetration;
-    total_weight = weapon->weapon_spec.projectile_weight;
+    penetration = weapon->weapon_design.penetration;
+    total_weight = weapon->weapon_design.projectile_weight;
 
     //all projectiles die on collision
     collision = collision_type_impact;
 
     //fake speed so that you can see it fly.
-    velocity = direction * velocity_scale * weapon->weapon_spec.muzzle_velocity;
+    velocity = direction * velocity_scale * weapon->weapon_design.muzzle_velocity;
 
     //projectiles don't need one, they are instantly active
     controller_active = true;
@@ -36,17 +36,17 @@ Projectile::Projectile(Ogre::Vector3 a_pos_xyz, const string& a_unit_name,
 
 Ogre::Real Projectile::getBallisticDmg()
 {
-    return weapon->weapon_spec.ballistic_dmg * coverage * velocity_dmg_multiplier;
+    return weapon->weapon_design.ballistic_dmg * coverage * velocity_dmg_multiplier;
 }
 
 Ogre::Real Projectile::getEnergyDmg()
 {
-    return weapon->weapon_spec.energy_dmg * coverage;
+    return weapon->weapon_design.energy_dmg * coverage;
 }
 
 Ogre::Real Projectile::getHeatDmg()
 {
-    return weapon->weapon_spec.heat_dmg * coverage;
+    return weapon->weapon_design.heat_dmg * coverage;
 }
 
 bool Projectile::validateCollision(Corpus* a_colliding_object)
@@ -65,7 +65,7 @@ bool Projectile::validateCollision(Corpus* a_colliding_object)
         } else { //if it's the first impact and not exploading yet
             //make the damage inversly proportional to the loss of velocity after firing
             velocity_dmg_multiplier
-                = velocity.length() / (weapon->weapon_spec.muzzle_velocity * velocity_scale);
+                = velocity.length() / (weapon->weapon_design.muzzle_velocity * velocity_scale);
         }
         return true;
     }
@@ -84,27 +84,27 @@ int Projectile::updateController()
 {
     //kill after terrain hit
     if (pos_xyz.y < Game::arena->getHeight(pos_xyz.x, pos_xyz.z) //kill when ground hit
-        || lifetime > weapon->weapon_spec.range) //kill after range exceeded
+        || lifetime > weapon->weapon_design.range) //kill after range exceeded
         exploading = true;
 
     //TODO: on extermely low framerate this could destroy the splash without causing any collisions
     if (exploading) {
         //does the projectile explode causing splash damage
-        if (weapon->weapon_spec.splash_range > 0) {
+        if (weapon->weapon_design.splash_range > 0) {
             //stop projectile
             velocity = Ogre::Vector3::ZERO;
 
             //start splash expansion and degradation
-            Ogre::Real expansion = dt * weapon->weapon_spec.splash_velocity;
+            Ogre::Real expansion = dt * weapon->weapon_design.splash_velocity;
             //expand the bounding sphere
             bounding_sphere.radius += expansion;
 
             //as the ball expands make hp (density) smaller,
             //hp gets below zero if the sphere is larger than max radius of the explosion
-            core_integrity = 1 - (bounding_sphere.radius / weapon->weapon_spec.splash_range);
+            core_integrity = 1 - (bounding_sphere.radius / weapon->weapon_design.splash_range);
 
             //how much of the expolsion damage to apply
-            coverage = (expansion / weapon->weapon_spec.splash_range);
+            coverage = (expansion / weapon->weapon_design.splash_range);
 
         } else { //no splash damage
             core_integrity = 0; //kill instantly
@@ -117,7 +117,7 @@ int Projectile::updateController()
 
     //retard motion while the physics weep (air resistance should be velocity squared)
     if (Ogre::Vector2(velocity.x, velocity.z).length() > air_resistance_cutoff) {
-        velocity -= direction * weapon->weapon_spec.muzzle_velocity * velocity_scale * dt;
+        velocity -= direction * weapon->weapon_design.muzzle_velocity * velocity_scale * dt;
     }
     //intentionally wrong because we already retarded the downward motion
     velocity.y = velocity.y - Game::arena->getGravity() * dt * inverse_velocity_scale;
