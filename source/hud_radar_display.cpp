@@ -82,12 +82,11 @@ void HudRadarDisplay::update(Ogre::Real a_dt)
             }
         }
 
-        Ogre::Real radar_angle = (Ogre::Radian(pi)
-                                  - Game::camera->getOrientation().getYaw()).valueRadians();
+        Ogre::Real radar_angle = (Game::camera->getOrientation().getYaw()).valueRadians();
 
         Ogre::Real x0 = Game::hud->player_unit->getX();
         Ogre::Real y0 = Game::hud->player_unit->getZ();
-        Ogre::Real range_scale = size.first / (Game::hud->radar->getRadarRange());
+        Ogre::Real range_scale = size.first / Game::hud->radar->getRadarRange();
 
         for (uint i = 0, for_size = dot_elements.size(); i < for_size; ++i) {
             if (i < num_of_dots && dots[i].detected) {
@@ -96,9 +95,9 @@ void HudRadarDisplay::update(Ogre::Real a_dt)
                 Ogre::Real x = (dots[i].position.x - x0) * range_scale;
                 Ogre::Real y = (dots[i].position.z - y0) * range_scale;
 
-                x = -(cos(radar_angle) * (x) - sin(radar_angle) * (y) + x) * 0.25
+                x = (cos(radar_angle) * x - sin(radar_angle) * y) * 0.5
                     + (size.first - dot_size) * 0.5;
-                y = -(sin(radar_angle) * (x) + cos(radar_angle) * (y) + y) * 0.25
+                y = (sin(radar_angle) * x + cos(radar_angle) * y) * 0.5
                     + (size.first - dot_size) * 0.5;
 
                 dot_elements[i]->setPosition(x, y);
