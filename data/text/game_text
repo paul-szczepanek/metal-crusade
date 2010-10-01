@@ -1,17 +1,19 @@
-#if you need the hash char used for comments
-#then use it normally in the string and then put one at the end of the line
-#only the last hash character in the line is considered a comment
+#if you need to use the hash char which is used for comments
+#then use it normally in the string and then put one at the end of the line as well
+#as only the last hash character in the line is considered a comment
 
 #internal strings must be defined first and in order of the enum
+
+#**********start of onternal strings**********
 
 [missing_string]
 m!ss!ng string
 
-#mfd aux lines view names
+#----------mfd aux lines view names
 
 #this one needs to show page
 [select_view_type]
- SELECT VIEW
+SELECT VIEW
 #max leng->| 1/2
 
 #all below
@@ -34,12 +36,12 @@ systems control
 [squad_tactic]
 squad tactics
 
-#log messages
+#----------log messages
 
 [shock_damage_sustained]
 $rCore damaged from $eshock$r by
 
-#faction names
+#----------faction names
 
 [faction_mercenary]
 mercenary
@@ -50,7 +52,7 @@ Imperium
 [faction_un]
 United Nations
 
-#end of onternal strings
+#**********end of onternal strings**********
 
 
 #string indexed strings
@@ -59,7 +61,7 @@ United Nations
 
 [200mm_rfc_3_name]
 200mm Rapid Chain-Fire Cannon
-[200mm_rfc_3_list_name]
+[200mm_rfc_3_list_name] #max 12 chars
 200 RFC-3
 [200mm_rfc_3_description]
 200mm RFC Fire Cannon description, description, description, description, description, description, description, description, description, description, description, description, description, description, description, description, description, description, description, description, description.
