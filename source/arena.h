@@ -6,7 +6,7 @@
 #include "main.h"
 
 //the arena is partitioned into cells to help find things and potential collisions
-const unsigned int size_of_arena_cell = 32; //size in metres
+const unsigned int size_of_arena_cell = 64; //size in metres
 
 //the rule is: no dynamic object bounding sphere can be bigger than 32 metres in diameter
 //if a structure is bigger it needs to occupy more than one cell at a time
@@ -51,6 +51,8 @@ public:
     //returns true if it's out of bounds - possibly confusing but convenient
     bool updateCellIndex(uint_pair& cell_index, Ogre::Vector3& pos_xyz, Mobilis* a_thing);
     bool updateCellIndex(uint_pair& cell_index, Ogre::Vector3& pos_xyz, Unit* a_thing);
+    void purgeCellIndex(uint_pair& cell_index, Mobilis* a_thing);
+    void purgeCellIndex(uint_pair& cell_index, Unit* a_thing);
 
     //accessing objects on the map based on the cell index
     list<Corpus*>& getCorpusCell(const uint_pair a_index);
@@ -181,6 +183,18 @@ inline list<Mobilis*>& Arena::getMobilisCell(const uint_pair a_index)
 inline list<Unit*>& Arena::getUnitCell(const uint_pair a_index)
 {
     return unit_cells[a_index.first][a_index.second];
+}
+
+/** @brief remove object from the cell
+  */
+inline void Arena::purgeCellIndex(uint_pair& cell_index, Mobilis* a_thing)
+{
+    mobilis_cells[cell_index.first][cell_index.second].remove(a_thing);
+}
+
+inline void Arena::purgeCellIndex(uint_pair& cell_index, Unit* a_thing)
+{
+    unit_cells[cell_index.first][cell_index.second].remove(a_thing);
 }
 
 #endif // ARENA_H

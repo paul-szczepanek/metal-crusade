@@ -4,14 +4,47 @@
 #define RADARCOMPUTER_H
 
 #include "main.h"
-//#include "hud_design.h"
 #include "sphere.h"
+
+class Corpus;
+class Mobilis;
+class Unit;
+class GameController;
 
 namespace radar {
     enum sweep_type {
         rotating,
         fixed,
         oscilating
+    };
+
+    enum dot_type {
+        solid, //unmoving structures
+        solid_target, //enemies if they are targets and recignised as such
+        ally, //units responding to iff query
+        target, //enemies if they are targets and recignised as such
+        unknown //evertyhing that doesn't identify as ally
+    };
+
+    struct CorpusDot {
+        CorpusDot(Corpus* a_object, Ogre::Real a_size, Ogre::Vector3 a_position)
+            : type(solid), size(a_size), position(a_position), detected(false), object(a_object) { }
+        dot_type type;
+        Ogre::Real size;
+        Ogre::Vector3 position;
+        bool detected;
+        Corpus* object;
+    };
+
+    struct MobilisDot {
+        MobilisDot(Mobilis* a_object, Ogre::Real a_size)
+            : type(unknown), size(a_size), position(Ogre::Vector3::ZERO), detected(false),
+            object(a_object) { }
+        dot_type type;
+        Ogre::Real size;
+        Ogre::Vector3 position;
+        bool detected;
+        Mobilis* object;
     };
 };
 
@@ -32,11 +65,6 @@ struct radar_design_t {
     ulint text_list_name;
 };
 
-class Corpus;
-class Mobilis;
-class Unit;
-class GameController;
-
 class RadarComputer
 {
 public:
@@ -47,13 +75,20 @@ public:
     void update(Ogre::Real a_dt);
 
     //make active
-    void activate(bool a_toggle) { active = a_toggle; };
+    void setActive(bool a_toggle) { active = a_toggle; };
+    bool getActive() { return active; };
 
     //toggle radar active of passive
     void setActiveRadar(bool a_toggle) { active_radar = a_toggle; };
+    bool getActiveRadar() { return active_radar; };
 
     //radar range
-    Ogre::Real getRadarRange(Ogre::Real a_range) { return radar_sphere.radius; };
+    Ogre::Real getRadarRange() { return radar_sphere.radius; };
+    void setRadarRange(Ogre::Real a_range);
+
+    //objects within the radar's radius
+    vector<radar::CorpusDot> corpus_dots;
+    vector<radar::MobilisDot> mobilis_dots;
 
 private:
     //main loop
@@ -69,22 +104,14 @@ private:
     radar_design_t radar_design;
     //owner
     Unit* unit;
-    GameController* controller;
 
     //radar currently in passive/active mode
     bool active_radar;
-    //current radar range
-    usint range_index;
     Sphere radar_sphere;
 
     //for checking units only periodically
     Ogre::Real units_refresh_interval;
     Ogre::Real units_refresh_accumulator;
-
-    //objects within the radar's radius
-    list<Corpus*> corpus_list;
-    list<Mobilis*> mobilis_list;
-    list<Unit*> unit_list;
 };
 
 #endif // RADARCOMPUTER_H

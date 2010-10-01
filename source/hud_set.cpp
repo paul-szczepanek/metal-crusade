@@ -5,6 +5,7 @@
 #include "hud.h"
 #include "game_controller.h"
 #include "timer.h"
+#include "radar_computer.h"
 
 HudSet::HudSet(hud_part_design_t& a_hud_part_design)
     : HudPart(a_hud_part_design), item_to_show(0)
@@ -69,8 +70,12 @@ void HudSet::switchItems(usint a_item_to_show)
 //bound to at creation to save on constant checking every frame
 usint HudSet::getRadarPower()
 {
-    if (Game::hud->controller->control_block.radar) { //this should query a radar, not a controller
-        return 0;
+    if (Game::hud->radar->getActive()) {
+        if (Game::hud->radar->getActiveRadar()) {
+            return 1;
+        } else {
+            return 0;
+        }
     } else {
         return 2;
     }

@@ -15,6 +15,7 @@ class Timer;
 class MFDComputer;
 class LogComputer;
 class StatusComputer;
+class RadarComputer;
 
 class Hud
 {
@@ -57,6 +58,7 @@ public:
     //the unit using the hud
     Unit* player_unit;
     GameController* controller;
+    RadarComputer* radar;
 
     //local time
     Timer* timer;

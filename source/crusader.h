@@ -10,6 +10,7 @@
 
 class Weapon;
 class Animation;
+class RadarComputer;
 
 class Crusader : public Unit
 {

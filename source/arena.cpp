@@ -151,7 +151,7 @@ int Arena::loadArena(const string& arena_name)
     //create enemies
     Crusader* enemy_unit = Game::unit_factory->spawnCrusader(Ogre::Vector3(780, 0, 680),
                            "base_husar_cavalry_red");
-    Crusader* enemy_unit2 = Game::unit_factory->spawnCrusader(Ogre::Vector3(580, 0, 680),
+    Crusader* enemy_unit2 = Game::unit_factory->spawnCrusader(Ogre::Vector3(600, 0, 700),
                             "base_husar_cavalry_red");
 
     //create an enemy controller

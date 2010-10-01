@@ -68,7 +68,7 @@ public:
     static int stringIntoInt(string& a_string);
     static Ogre::Real stringIntoReal(string& a_string);
     static string intIntoString(int a_integer);
-    static string realIntoString(Ogre::Real a_real, usint a_precision = 2);
+    static string realIntoString(Ogre::Real a_real, usint a_precision = 3);
     bool static take(bool& do_once);
 
     //terminate game

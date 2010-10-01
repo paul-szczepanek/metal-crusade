@@ -124,6 +124,7 @@ int Mobilis::update(Ogre::Real a_dt)
     } else { //if it's dead
         if (registered) { //remove from collisin checking
             Game::collider->deregisterMobilis(this);
+            Game::arena->purgeCellIndex(cell_index, this);
         }
     }
 

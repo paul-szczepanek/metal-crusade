@@ -59,6 +59,7 @@ private:
 
     //helper funcitons for processing all the strings read from files into appropriate types
     static Ogre::Real getReal(string a_string);
+    static bool getBool(string a_string);
     static int getEnum(const string& a_string);
     static bool getPairs(const string& filename, const string& dir, map<string, string>& pairs);
     static void getStringArray(vector<string>& string_array, string a_buffer);

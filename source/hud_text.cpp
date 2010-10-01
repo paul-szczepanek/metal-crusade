@@ -1,6 +1,7 @@
 //Copyright 2010 Paul Szczepanek. Code released under GPL Version 3.
 
 #include "hud_text.h"
+#include "radar_computer.h"
 #include "game.h"
 #include "hud.h"
 #include "unit.h"
@@ -107,7 +108,7 @@ string HudText::getTextClock()
 
 string HudText::getTextRadarRange()
 {
-    return string("000");
+    return Game::realIntoString(Game::hud->radar->getRadarRange(), 3);
 }
 
 string HudText::getTextRadarPower()

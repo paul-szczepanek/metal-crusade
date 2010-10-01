@@ -26,6 +26,9 @@ public:
     Ogre::Real getEnergyDmg();
     Ogre::Real getHeatDmg();
 
+    //radar
+    bool isDetectable() { return false; };
+
     //handle collision
     bool validateCollision(Corpus* a_collision);
 

@@ -16,6 +16,7 @@
 #include "hud_weapon_tab.h"
 #include "hud_mfd_aux_display.h"
 #include "hud_mfd_display.h"
+#include "hud_radar_display.h"
 #include "mfd_computer.h"
 #include "log_computer.h"
 #include "status_computer.h"
@@ -90,8 +91,9 @@ void Hud::loadHud(Unit* a_player_unit)
     player_unit = a_player_unit;
     player_unit->attachHud(true);
 
-    //alias the controller for hud parts access
+    //alias the controller and radar for hud parts' access
     controller = player_unit->getController();
+    radar = player_unit->getRadar();
 
     //hook up the timer
     timer = Game::instance()->getTimer();
@@ -163,7 +165,7 @@ void Hud::loadHud(Unit* a_player_unit)
                 Game::kill(string("this mfdaux needs an mfd def first: ")+hud_design.parts[i].name);
             }
         } else if (hud_design.parts[i].type == hud_part_enum::radar_military) {
-            //
+            hud_parts.push_back(new HudRadarDisplay(hud_design.parts[i]));
 
         } else if (hud_design.parts[i].type == hud_part_enum::set) {
             hud_parts.push_back(new HudSet(hud_design.parts[i]));

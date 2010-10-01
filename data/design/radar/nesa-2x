@@ -16,7 +16,7 @@ true #ture, false
 1
 [radar_design.weight]
 2
-[radar_design.sweep_type]
+[radar_design.sweep]
 rotating
 [radar_design.cone_angle]
 10 #degrees

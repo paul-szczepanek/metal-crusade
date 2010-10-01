@@ -6,6 +6,7 @@
 #include "mobilis.h"
 
 class Weapon;
+class RadarComputer;
 
 namespace interface_mode {
     enum modes {
@@ -39,6 +40,7 @@ public:
     virtual string getHudName() { return string("military"); };
     void attachHud(bool a_toggle) { hud_attached = a_toggle; };
     interface_mode::modes getHudMode() { return hud_mode; };
+    RadarComputer* getRadar() { return radar; };
 
     //hud operation
     vector<Weapon*>& getWeapons() { return weapons; };
@@ -63,6 +65,8 @@ protected:
     //hud
     interface_mode::modes hud_mode;
     bool hud_attached;
+
+    RadarComputer* radar;
 };
 
 #endif // UNIT_H_INCLUDED

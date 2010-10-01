@@ -48,6 +48,13 @@ Ogre::Real FilesHandler::getReal(string a_string)
     return Game::stringIntoReal(a_string);
 }
 
+/** @brief true/false string to bool
+  */
+bool FilesHandler::getBool(string a_string)
+{
+    return (a_string == "true");
+}
+
 /** @brief string to int later to be cast into an enum,
   * I know it's a bit ugly if it gets too long it can be seperated into seperate enums
   * TODO: it's getting long, if you start using it outside of files ffs split it up
@@ -1036,8 +1043,8 @@ bool FilesHandler::getRadarDesign(const string& filename, radar_design_t& radar_
     //basic properties
     radar_design.weight = getReal(pairs["radar_design.weight"]);
     //radar type
-    radar_design.active = getStringKey(pairs["radar_design.active"]);
-    radar_design.sweep = radar::sweep_type(getEnum(pairs["radar_design."]));
+    radar_design.active = getBool(pairs["radar_design.active"]);
+    radar_design.sweep = radar::sweep_type(getEnum(pairs["radar_design.sweep"]));
     radar_design.cone_angle = Ogre::Radian(getReal(pairs["radar_design.cone_angle"]) * degree2rad);
     radar_design.heads = Game::stringIntoInt(pairs["radar_design.heads"]);
     //radar parameters
@@ -1076,7 +1083,7 @@ bool FilesHandler::getCrusaderDesign(const string& filename, crusader_design_t& 
     //continue loading the design
     design.material = pairs["design.material"];
     design.hud = pairs["design.hud"];
-    design.radar = pairs["design.hud"];
+    design.radar = pairs["design.radar"];
     getIntArray(design.weapons_extra_ammo, pairs["design.weapons_extra_ammo"]);
     getEnumArray(design.weapons_placement, pairs["design.weapons_placement"]);
     getStringArray(design.equipment, pairs["design.equipment"]);

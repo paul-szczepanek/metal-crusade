@@ -13,6 +13,7 @@
 #include "animation.h"
 #include "log_computer.h"
 #include "status_computer.h"
+#include "radar_computer.h"
 #include "text_store.h"
 
 /** gets positions for all the panels used to mount weapons
@@ -54,6 +55,8 @@ Crusader::~Crusader()
     delete terrain_ray_query;
 
     delete animation;
+
+    delete radar;
 };
 
 /** This reads the Crusader definition from a file and creates one
@@ -164,6 +167,9 @@ Crusader::Crusader(Ogre::Vector3 a_pos_xyz, const string& a_unit_name,
 
     //get animations
     animation = new Animation(scene_node);
+
+    //creat the radar
+    radar = new RadarComputer(design.radar, this);
 }
 
 /** @brief resolves collision including damage and physics
@@ -761,18 +767,22 @@ int Crusader::updateController()
             hud_mode = interface_mode::mfd1;
         }
 
-        //crusader logic and physics
+        //damage and heat
         shockDamage();
         pumpHeat();
 
+        //weapons and targeting
         fireWeapons();
-
         updateTargets();
 
+        //moving
         moveCrusader();
         moveTorso();
 
+        //animation loop
         animation->update(dt);
+        //radar loop
+        radar->update(dt);
 
         //temp
         if (hud_attached) {
@@ -793,8 +803,6 @@ int Crusader::updateController()
         }
     }
 
-
-    //if out of bounds destroy
     if (Game::arena->isOutOfBounds(pos_xyz)) {
         //TODO: either flag this as a bollocked map or if the map has an exit do something here
     }

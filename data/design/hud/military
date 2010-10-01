@@ -128,8 +128,8 @@ hud_radar #area
 hud_radar #name
 radar_military;() #type
 radar #function
-0;0 #position
-180;180 #size
+15;15 #position
+150;150 #size
 [hud_design.parts.5]
 hud_radar #area
 hud_radar_power #name

@@ -37,6 +37,9 @@ public:
     //called by targeted object that requires this to relinquish its current target
     bool loseTarget(Mobilis* a_targeted_by, bool a_forced = false);
 
+    //radar
+    virtual bool isDetectable() { return true; };
+
     //return the target of this
     Mobilis* getTarget() { return target; };
 

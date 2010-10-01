@@ -106,7 +106,7 @@ void HudWeaponTab::update(Ogre::Real a_dt)
         usint current_weapon = -1;
 
         //if in single mode find the current weapon
-        if (~Game::hud->controller->control_block.fire_mode_group) {
+        if (!Game::hud->controller->control_block.fire_mode_group) {
             current_weapon = Game::hud->player_unit->getSelectedWeapon();
         }
 
