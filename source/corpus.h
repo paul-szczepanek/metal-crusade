@@ -13,7 +13,6 @@ const usint max_num_es = 8;
 
 class Collision;
 class GameController;
-class Sphere;
 
 struct exclusion_sphere_t {
     Sphere sphere;
@@ -36,6 +35,7 @@ public:
     Ogre::Real getZ() { return pos_xyz.z; };
     Ogre::Vector2 getXZ() { return Ogre::Vector2(pos_xyz.x, pos_xyz.z); };
     Ogre::Vector3 getPosition() { return pos_xyz; };
+    uint_pair& getCellIndex() { return cell_index; };
 
     //name (model or unit name, not the actual entity)
     string getName() { return unit_name; };
@@ -128,7 +128,7 @@ protected:
     Ogre::Real friction;
     Ogre::Real conductivity;
 
-    //index of the cell in the arena the ojbect is in
+    //index of the cell in the arena the object is in
     uint_pair cell_index;
 
     //debug

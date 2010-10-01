@@ -8,9 +8,8 @@
 //tells you wha the distance is to another sphere
 //and if it intersects with it
 
-class Sphere
+struct Sphere
 {
-public:
     Sphere()
         : radius(1), centre(Ogre::Vector3::ZERO) { };
     Sphere(Ogre::Real a_radius)
@@ -23,12 +22,14 @@ public:
     bool intersects(const Sphere& sphere) const {
         return ((sphere.centre - centre).length() <= sphere.radius + radius);
     };
+
     bool contains(const Sphere& sphere) const {
         return ((sphere.centre - centre).length() + sphere.radius <= radius);
     };
     bool contains(const Ogre::Vector3& point) const {
         return ((point - centre).length() <= radius);
     };
+
     Ogre::Real distanceToSurface(const Sphere& sphere) const {
         return ((sphere.centre - centre).length() - sphere.radius - radius);
     };

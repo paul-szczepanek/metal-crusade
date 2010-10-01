@@ -11,14 +11,7 @@
 
 //this is a massive clusterfuck of parsing and fudging and will only get worse over time
 //TODO: look into replacing some of the building blocks with boost?
-const string data_dir = "data";
-const string config_dir = "config";
-const string weapon_dir = "design/weapon";
-const string crusader_dir = "design/crusader";
-const string hud_dir = "design/hud";
-const string radar_dir = "design/radar";
-const string units_dir = "unit";
-const string text_dir = "text";
+
 const string game_text_file = "game_text";
 
 //this is temporary solution for storing the string keys
@@ -391,7 +384,7 @@ bool FilesHandler::getPairs(const string& filename, const string& dir, map<strin
     string key; //[key] ignore whatver is after ]
     string value; //whatever is on next line except #comments
     string end_value; //multiline result
-    string fs_filename = data_dir + "/" + dir + "/" + filename;
+    string fs_filename = data_dir+dir+filename;
     ifstream spec_file;
 
     spec_file.open(fs_filename.c_str());
@@ -437,7 +430,7 @@ bool FilesHandler::getPairs(const string& filename, const string& dir, map<strin
 
                     } else {
                         //if not empty separate values with ';'
-                        end_value+= ";" + value;
+                        end_value += ";"+value;
                     }
                 }
             }
@@ -490,7 +483,7 @@ string FilesHandler::getStringFromFile(const string& filename)
 
                 } else {
                     //if not empty concatenate
-                    end_value+= "\n" + value;
+                    end_value += "\n"+value;
                 }
             }
         }
@@ -511,7 +504,7 @@ bool FilesHandler::getGameText(vector<string>& game_text)
     string key; //[key] ignore whatver is after ]
     string value; //whatever is on next line except #comments
     string end_value; //multiline result
-    string fs_filename = data_dir + "/" + text_dir + "/" + game_text_file;
+    string fs_filename = data_dir+text_dir+game_text_file;
     ifstream spec_file;
     ulint string_n = 0; //number of keys insrted
 
@@ -559,7 +552,7 @@ bool FilesHandler::getGameText(vector<string>& game_text)
                         end_value = value;
 
                     } else { //there are multiple lines in the string put in newlines between values
-                        end_value+= "\n" + value;
+                        end_value += "\n"+value;
                     }
                 }
             }
@@ -1061,21 +1054,21 @@ bool FilesHandler::getRadarDesign(const string& filename, radar_design_t& radar_
   */
 bool FilesHandler::getCrusaderDesign(const string& filename, crusader_design_t& design,
                                      crusader_engine_t& engine, crusader_drive_t& drive,
-                                     crusader_chasis_t& chasis, crusader_model_t& model)
+                                     crusader_chasis_t& chasis)
 {
     using namespace crusader_part;
 
     //prepare map to read data into
     map<string, string> pairs;
     //insert data from file into pairs
-    assert(getPairs(filename, units_dir, pairs));
+    assert(getPairs(filename, unit_dir, pairs));
 
     //fill structs with info from pairs
     design.filename = filename;
     design.unit = pairs["design.unit"];
 
     //load spec
-    getCrusaderSpec(design.unit, engine, drive, chasis, model);
+    getCrusaderSpec(design.unit, engine, drive, chasis);
     getStringArray(design.weapons, pairs["design.weapons"]);
     vector<Ogre::Real> default_0(chasis.num_of_areas, 0); //defaults 0 armour
     design.armour_placement = default_0;
@@ -1128,8 +1121,7 @@ bool FilesHandler::getCrusaderDesign(const string& filename, crusader_design_t& 
   * fills structs with specs read from a file
   */
 bool FilesHandler::getCrusaderSpec(const string& filename, crusader_engine_t& engine,
-                                   crusader_drive_t& drive, crusader_chasis_t& chasis,
-                                   crusader_model_t& model)
+                                   crusader_drive_t& drive, crusader_chasis_t& chasis)
 {
     using namespace crusader_part;
 
@@ -1139,10 +1131,10 @@ bool FilesHandler::getCrusaderSpec(const string& filename, crusader_engine_t& en
     assert(getPairs(filename, crusader_dir, pairs));
 
     //fill structs with info from pairs
-    model.filename = filename;
-    model.name = pairs["model.name"];
-    model.model = pairs["model.model"];
-    model.type = crusader_type(getEnum(pairs["model.type"]));
+    chasis.filename = filename;
+    chasis.name = pairs["chasis.name"];
+    chasis.model = pairs["chasis.model"];
+    chasis.type = crusader_type(getEnum(pairs["chasis.type"]));
     engine.rating = getReal(pairs["engine.rating"]); //effective[KN]
     engine.rating_reverse = getReal(pairs["engine.rating_reverse"]); //effective[KN]
     engine.heat = getReal(pairs["engine.heat"]); //[MJ]

@@ -62,11 +62,11 @@ Crusader::~Crusader()
 Crusader::Crusader(Ogre::Vector3 a_pos_xyz, const string& a_unit_name,
                    Ogre::SceneNode* a_scene_node, Ogre::Quaternion a_orientation,
                    crusader_design_t a_design, crusader_engine_t a_engine,
-                   crusader_drive_t a_drive, crusader_chasis_t a_chasis, crusader_model_t a_model)
+                   crusader_drive_t a_drive, crusader_chasis_t a_chasis)
     : Unit::Unit(a_pos_xyz, a_unit_name, a_scene_node, a_orientation), //chain constructors
     weapons_operational(false), current_group(0), current_weapon(0),
     shock_damage_old(Ogre::Vector3::ZERO), shock_damage_new(Ogre::Vector3::ZERO),
-    design(a_design), engine(a_engine), drive(a_drive), chasis(a_chasis), model(a_model),
+    design(a_design), engine(a_engine), drive(a_drive), chasis(a_chasis),
     throttle(0), angular_momentum_top(0), crusader_height(0), coolant_level(100)
 {
     //for battering, should be part of design struct

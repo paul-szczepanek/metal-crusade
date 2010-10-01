@@ -17,7 +17,7 @@ public:
     Crusader(Ogre::Vector3 a_pos_xyz, const string& a_unit_name,
              Ogre::SceneNode* a_scene_node, Ogre::Quaternion a_orientation,
              crusader_design_t a_design, crusader_engine_t a_engine, crusader_drive_t a_drive,
-             crusader_chasis_t a_chasis, crusader_model_t a_model);
+             crusader_chasis_t a_chasis);
     ~Crusader();
 
     //main loop
@@ -87,7 +87,6 @@ private:
     crusader_engine_t engine;
     crusader_drive_t drive;
     crusader_chasis_t chasis;
-    crusader_model_t model;
 
     //effective heatsinks
     usint heatsinks;

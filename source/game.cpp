@@ -34,8 +34,9 @@ CollisionHandler* Game::collider;
 
 // 64fps limit for the game
 const unsigned int fps_interval = 16;
+
 //version number
-const string version_number = FilesHandler::getStringFromFile("version");
+const string version_number = FilesHandler::getStringFromFile(data_dir+"version");
 
 /** singleton
   */
@@ -61,7 +62,7 @@ void Game::init()
     FilesHandler::instantiate();
 
     //OGRE initialisation
-    ogre = new Ogre::Root("", "data/config/graphics", "ogre.log");
+    ogre = new Ogre::Root("", data_dir+config_dir+"graphics", "ogre.log");
 
     //load the OpenGL render system
     ogre->loadPlugin("/usr/lib/OGRE/RenderSystem_GL");
@@ -79,13 +80,13 @@ void Game::init()
 
         //set resources
         Ogre::ResourceGroupManager& resource_mngr = Ogre::ResourceGroupManager::getSingleton();
-        resource_mngr.addResourceLocation("data/model", "FileSystem", "models");
-        resource_mngr.addResourceLocation("data/texture", "FileSystem", "textures");
+        resource_mngr.addResourceLocation(data_dir+"model", "FileSystem", "models");
+        resource_mngr.addResourceLocation(data_dir+"texture", "FileSystem", "textures");
         //fonts
-        resource_mngr.addResourceLocation("data/texture/font", "FileSystem", "textures");
-        resource_mngr.addResourceLocation("data/terrain", "FileSystem", "terrain");
+        resource_mngr.addResourceLocation(data_dir+"texture/font", "FileSystem", "textures");
+        resource_mngr.addResourceLocation(data_dir+"terrain", "FileSystem", "terrain");
         //set units TODO: needs to be automatic
-        resource_mngr.addResourceLocation("data/model/husar", "FileSystem", "models");
+        resource_mngr.addResourceLocation(data_dir+"model/husar", "FileSystem", "models");
 
         //load resources
         resource_mngr.initialiseResourceGroup("models");

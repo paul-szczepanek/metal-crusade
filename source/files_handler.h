@@ -13,7 +13,6 @@ struct crusader_design_t;
 struct crusader_engine_t;
 struct crusader_drive_t;
 struct crusader_chasis_t;
-struct crusader_model_t;
 struct hud_design_t;
 struct radar_design_t;
 
@@ -32,10 +31,9 @@ public:
     //read design from files
     static bool getCrusaderDesign(const string& filename, crusader_design_t& design,
                                   crusader_engine_t& engine, crusader_drive_t& drive,
-                                  crusader_chasis_t& chasis, crusader_model_t& model);
+                                  crusader_chasis_t& chasis);
     static bool getCrusaderSpec(const string& filename, crusader_engine_t& engine,
-                                crusader_drive_t& drive, crusader_chasis_t& chasis,
-                                crusader_model_t& model);
+                                crusader_drive_t& drive, crusader_chasis_t& chasis);
     static bool getWeaponDesign(const string& filename, weapon_design_t& weapon_design);
     static bool getHudDesign(const string& filename, hud_design_t& hud_design);
     static bool getRadarDesign(const string& filename, radar_design_t& radar_design);
@@ -78,5 +76,14 @@ private:
     //stores game string keys used in files
     static map<string, ulint> string_key_map;
 };
+
+const string data_dir = "data/";
+const string config_dir = "config/";
+const string weapon_dir = "design/weapon/";
+const string crusader_dir = "design/crusader/";
+const string hud_dir = "design/hud/";
+const string radar_dir = "design/radar/";
+const string unit_dir = "unit/";
+const string text_dir = "text/";
 
 #endif // FILESHANDLER_H

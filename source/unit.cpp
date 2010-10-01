@@ -69,9 +69,9 @@ bool Unit::getUnitAtPointer()
     Game::arena->getCellIndicesWithinRadius(pointer_cell_index, cell_indices);
 
     for (usint i = 0, for_size = cell_indices.size(); i < for_size; ++i) {
-        list<Unit*>& unit_list = Game::arena->getUnitCell(pointer_cell_index);
+        list<Unit*>& unit_list = Game::arena->getUnitCell(cell_indices[i]);
 
-        //if there are any units in the cell or neighbouring cells TODO:neighbours
+        //if there are any units in the cell
         if (unit_list.size() > 0) {
             list<Unit*>::iterator it = unit_list.begin();
             list<Unit*>::iterator it_end = unit_list.end();

@@ -66,11 +66,10 @@ Crusader* UnitFactory::spawnCrusader(Ogre::Vector3 a_pos_xyz, const string& a_na
     crusader_engine_t engine;
     crusader_drive_t drive;
     crusader_chasis_t chasis;
-    crusader_model_t model;
     crusader_design_t design;
 
     //load spec from file
-    FilesHandler::getCrusaderDesign(a_name, design, engine, drive, chasis, model);
+    FilesHandler::getCrusaderDesign(a_name, design, engine, drive, chasis);
 
     //get unique string from id
     string id_string = getUniqueID()+'_'+chasis.mesh; //append unique id to name
@@ -120,7 +119,7 @@ Crusader* UnitFactory::spawnCrusader(Ogre::Vector3 a_pos_xyz, const string& a_na
 
     //pass the root node (drive) to the crusader object
     Crusader* spawn = new Crusader(a_pos_xyz, chasis.mesh, crusader_node, a_orientation,
-                                   design, engine, drive, chasis, model);
+                                   design, engine, drive, chasis);
 
     //put the unit on the list
     units.push_back(spawn);

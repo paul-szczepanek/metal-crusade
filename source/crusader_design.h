@@ -90,6 +90,10 @@ struct crusader_design_t {
 };
 
 struct crusader_chasis_t {
+    crusader_type type;
+    string model;
+    string name;
+    string filename;
     string mesh;
     usint num_of_parts;
     usint num_of_areas;
@@ -126,13 +130,6 @@ struct crusader_engine_t {
     Ogre::Real heat; //[MJ]
     Ogre::Real weight; //[t]
     usint size; //[m3]
-};
-
-struct crusader_model_t {
-    crusader_type type;
-    string model;
-    string name;
-    string filename;
 };
 
 #endif // CRUSADER_DESIGN_H_INCLUDED
