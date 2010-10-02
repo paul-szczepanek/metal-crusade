@@ -10,4 +10,8 @@ enum collision_type {
     collision_type_impact
 };
 
+//just piggybacking, move along
+const usint max_num_cs = 32;
+const usint max_num_es = 8;
+
 #endif // COLLISIONTYPE_H

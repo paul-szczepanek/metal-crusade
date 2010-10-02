@@ -11,32 +11,32 @@ const usint num_of_weapon_groups = 5; //max 5 because there are only 5 input eve
 
 namespace crusader_part {
     enum body_part { //for indexing arrays
-        torso,
-        torso_right,
-        torso_left,
-        arm_right,
-        arm_left,
-        leg_right,
-        leg_left,
-        leg_right_back,
-        leg_left_back
+        torso,      //0
+        torso_right,//1
+        torso_left, //2
+        arm_right,  //3
+        arm_left,   //4
+        leg_right,  //5
+        leg_left,   //6
+        leg_right_back,//7
+        leg_left_back//8
     };
 };
 
 namespace crusader_area {
     enum body_area { //for indexing arrays
-        torso,
-        torso_right,
-        torso_left,
-        arm_right,
-        arm_left,
-        leg_right,
-        leg_left,
-        torso_back,
-        torso_right_back,
-        torso_left_back,
-        leg_right_back,
-        leg_left_back
+        torso,      //0
+        torso_right,//1
+        torso_left, //2
+        arm_right,  //3
+        arm_left,   //4
+        leg_right,  //5
+        leg_left,   //6
+        torso_back, //7
+        torso_right_back,//8
+        torso_left_back,//9
+        leg_right_back,//10
+        leg_left_back//11
     };
 };
 

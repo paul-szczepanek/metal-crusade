@@ -6,12 +6,13 @@
 #include "query_mask.h"
 #include "game.h"
 #include "arena.h"
+#include "files_handler.h"
 
 ulint Corpus::unique_id = 0; //unieque id for each corpus entity in game
 
 Corpus::Corpus(Ogre::Vector3 a_pos_xyz, const string& a_unit_name, Ogre::SceneNode* a_scene_node,
                Ogre::Quaternion a_orientation)
-    : scene_node(a_scene_node), bounding_sphere_invalid(true), es_invalid(), cs_invalid(),
+    : scene_node(a_scene_node), bounding_sphere_invalid(true), es_invalid(0), cs_invalid(0),
     dt(0), pos_xyz(a_pos_xyz), orientation(a_orientation), unit_name(a_unit_name),
     controller_active(false), collision(collision_type_blocking), penetration(0),
     friction(0.5), conductivity(1), cell_index(make_pair(0, 0)), display_collision_debug(false)
@@ -48,14 +49,14 @@ bitset<max_num_es> Corpus::getExclusionSpheres(Sphere& sphere)
     for (usint i = 0, for_size = exclusion_spheres.size(); i < for_size; ++i) {
         //recaltulate position if it's first time this tick
         if (es_invalid[i]) {
-            exclusion_spheres[i].sphere.centre = orientation * relative_es_positions[i] + pos_xyz;
+            exclusion_spheres[i].centre = orientation * relative_es_positions[i] + pos_xyz;
 
             //mark recalculated
             es_invalid[i] = 0;
         }
 
         //if it intersects return as potential exclusion sphere
-        if (exclusion_spheres[i].sphere.intersects(sphere)) {
+        if (exclusion_spheres[i].intersects(sphere)) {
             es_bitset[i] = 1;
         }
     }
@@ -86,7 +87,7 @@ bitset<max_num_cs> Corpus::getCollisionSpheres(Sphere& sphere, bitset<max_num_es
     cs_bitset.set();
 
     //stop this loop if you eliminate all spheres
-    for (usint i = 0; i < exclusion_spheres.size() && cs_bitset.any(); ++i) {
+    for (usint i = 0, for_size = exclusion_spheres.size(); i < for_size && cs_bitset.any(); ++i) {
         //only check potential exclusion spheres
         if (es_bitset[i]) {
             //recaltulate position if it's first time this tick
@@ -95,18 +96,18 @@ bitset<max_num_cs> Corpus::getCollisionSpheres(Sphere& sphere, bitset<max_num_es
                 es_invalid[i] = 0;
 
                 //reaclucalte position depenting on current unit position and orientation
-                exclusion_spheres[i].sphere.centre = orientation * relative_es_positions[i]
+                exclusion_spheres[i].centre = orientation * relative_es_positions[i]
                                                      + pos_xyz;
             }
 
             //if it doesn't intersect with the exclusion sphere
-            if (exclusion_spheres[i].sphere.intersects(sphere) == false) {
+            if (exclusion_spheres[i].intersects(sphere) == false) {
                 //exclude the all spheres within the exclusion sphere
-                cs_bitset &= exclusion_spheres[i].cs_bitset;
+                cs_bitset &= exclusion_bitsets[i];
             }
         } else {
             //if it's already been checked to be outside - exclude
-            cs_bitset &= exclusion_spheres[i].cs_bitset;
+            cs_bitset &= exclusion_bitsets[i];
         }
     }
 
@@ -129,65 +130,33 @@ bitset<max_num_cs> Corpus::getCollisionSpheres(Sphere& sphere, bitset<max_num_es
 }
 
 /** @brief loads collision spheres from a file based on mesh name
-  * @todo: load them from a file!
   */
 void Corpus::loadCollisionSpheres()
 {
-    //fake TODO: read from file and partially autocalculate
+    //TEMP!!! fake, only works for crusaders for now
     if (unit_name == "bullet") {
         relative_bs_position = Ogre::Vector3::ZERO;
         bounding_sphere = Sphere(relative_bs_position, 2);
 
     } else {
-        relative_bs_position = Ogre::Vector3::ZERO;
-        bounding_sphere = Sphere(relative_bs_position, 8);
-        exclusion_sphere_t exclusion_sphere;
+        if (FilesHandler::getCollisionSpheres(unit_name+"/"+unit_name+"_collision",
+                                              bounding_sphere, exclusion_spheres,
+                                              exclusion_bitsets, es_areas,
+                                              collision_spheres, cs_areas)) {
 
-        relative_es_positions.push_back(Ogre::Vector3(-9, 0, 0));
-        exclusion_sphere.sphere = Sphere(relative_es_positions.back(), 9);
-        exclusion_sphere.cs_bitset = bitset<max_num_cs>(string("110011"));
-        exclusion_spheres.push_back(exclusion_sphere);
+            //store the initial positions of exclusion spheres as relative positions
+            for (usint i = 0, for_size = exclusion_spheres.size(); i < for_size; ++i) {
+                relative_es_positions.push_back(exclusion_spheres[i].centre);
+            }
+            //same for collision spheres
+            for (usint i = 0, for_size = collision_spheres.size(); i < for_size; ++i) {
+                relative_cs_positions.push_back(collision_spheres[i].centre);
+            }
+            //and the bounding sphere
+            relative_bs_position = bounding_sphere.centre;
 
-        relative_es_positions.push_back(Ogre::Vector3(9, 0, 0));
-        exclusion_sphere.sphere = Sphere(relative_es_positions.back(), 9);
-        exclusion_sphere.cs_bitset = bitset<max_num_cs>(string("11001100"));
-        exclusion_spheres.push_back(exclusion_sphere);
-
-        relative_es_positions.push_back(Ogre::Vector3(0, 0, -9));
-        exclusion_sphere.sphere = Sphere(relative_es_positions.back(), 9);
-        exclusion_sphere.cs_bitset = bitset<max_num_cs>(string("1100110"));
-        exclusion_spheres.push_back(exclusion_sphere);
-
-        relative_es_positions.push_back(Ogre::Vector3(0, 0, 9));
-        exclusion_sphere.sphere = Sphere(relative_es_positions.back(), 9);
-        exclusion_sphere.cs_bitset = bitset<max_num_cs>(string("10011001"));
-        exclusion_spheres.push_back(exclusion_sphere);
-
-        relative_cs_positions.push_back(Ogre::Vector3(2, 2, -2));
-        collision_spheres.push_back(Sphere(3));
-        relative_cs_positions.push_back(Ogre::Vector3(2, 2, 2));
-        collision_spheres.push_back(Sphere(3));
-        relative_cs_positions.push_back(Ogre::Vector3(-2, 2, 2));
-        collision_spheres.push_back(Sphere(3));
-        relative_cs_positions.push_back(Ogre::Vector3(-2, 2, -2));
-        collision_spheres.push_back(Sphere(3));
-
-        relative_cs_positions.push_back(Ogre::Vector3(2, -2, -2));
-        collision_spheres.push_back(Sphere(3));
-        relative_cs_positions.push_back(Ogre::Vector3(2, -2, 2));
-        collision_spheres.push_back(Sphere(3));
-        relative_cs_positions.push_back(Ogre::Vector3(-2, -2, 2));
-        collision_spheres.push_back(Sphere(3));
-        relative_cs_positions.push_back(Ogre::Vector3(-2, -2, -2));
-        collision_spheres.push_back(Sphere(3));
-
-        for (usint i = 0, for_size = collision_spheres.size(); i < for_size; ++i) {
-            collision_spheres[i].centre = relative_cs_positions[i];
-            cs_areas.push_back(0);
-        }
-
-        for (usint i = 0, for_size = exclusion_spheres.size(); i < for_size; ++i) {
-            cs_areas.push_back(0);
+        } else {
+            Game::kill(unit_name+" collision file is corrupt, we can't play the game like this");
         }
     }
     //displayCollision(true);

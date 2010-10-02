@@ -864,6 +864,104 @@ void FilesHandler::getColourArray(vector<Ogre::ColourValue>& colour_array, strin
     assert(colour_array.size() > 0);
 }
 
+/** @brief loads collision spheres from a file
+  */
+bool FilesHandler::getCollisionSpheres(const string& filename, Sphere& bounding_sphere,
+                                       vector<Sphere>& exclusion_spheres,
+                                       vector<bitset<max_num_cs> >& exclusion_bitsets,
+                                       vector<usint>& es_areas,
+                                       vector<Sphere>&  collision_spheres, vector<usint>& cs_areas)
+{
+    map<string, string> pairs;
+    assert(getPairs(filename, model_dir, pairs));
+
+    //bounding sphere
+    vector<string> bs_sphere_string;
+    getStringArray(bs_sphere_string, pairs["bs"]);
+
+    //makes sure the are enough values
+    if (bs_sphere_string.size() < 4) {
+        cout << "bounding sphere sphere in ";
+        return false;
+    }
+
+    //read in the bounding sphere
+    bounding_sphere.centre = Ogre::Vector3(getReal(bs_sphere_string[0]),
+                                           getReal(bs_sphere_string[1]),
+                                           getReal(bs_sphere_string[2]));
+    bounding_sphere.radius = getReal(bs_sphere_string[3]);
+
+    Sphere sphere;
+    int i = 0;
+
+    //check to see if a exclusion sphere with a consecutive id exists
+    while (pairs.find(string("es.")+Game::intIntoString(i)) != pairs.end() && i < max_num_es) {
+        //load the es definition string
+        vector<string> es_sphere_string;
+        getStringArray(es_sphere_string, pairs["es."+Game::intIntoString(i)]);
+
+        //makes sure the are enough values
+        if (es_sphere_string.size() < 5) {
+            cout << "exclusion sphere sphere in ";
+            return false;
+        }
+
+        //exclusion sphere area (to move the sphere when it moves)
+        es_areas.push_back(Game::stringIntoInt(es_sphere_string[1]));
+
+        //read in the exclusion sphere
+        sphere.centre = Ogre::Vector3(getReal(es_sphere_string[1]),
+                                      getReal(es_sphere_string[2]),
+                                      getReal(es_sphere_string[3]));
+        sphere.radius = getReal(es_sphere_string[4]);
+        //put the sphere in the vector
+        exclusion_spheres.push_back(sphere);
+
+        //create an empty bitset for the sphere
+        exclusion_bitsets.push_back(bitset<max_num_cs>(0));
+
+        ++i;
+    }
+
+    i = 0;
+
+    //check to see if a collision sphere with a consecutive id exists
+    while (pairs.find(string("cs.")+Game::intIntoString(i)) != pairs.end() && i < max_num_cs) {
+        //load the cs definition string
+        vector<string> cs_sphere_string;
+        getStringArray(cs_sphere_string, pairs["cs."+Game::intIntoString(i)]);
+
+        //makes sure the are enough values
+        if (cs_sphere_string.size() < 6) {
+            cout << "collision sphere in ";
+            return false;
+        }
+
+        //collision sphere area (to place hits)
+        cs_areas.push_back(Game::stringIntoInt(cs_sphere_string[0]));
+
+        //set exclusion spheres' bitsets
+        for (usint j = 0, for_size = exclusion_bitsets.size(); j < for_size; ++j) {
+            //if the bit is set for this es then set the bit for the cs in the es bitset
+            if (cs_sphere_string[1][j] == '1') {
+                exclusion_bitsets[j][i] = 1;
+            }
+        }
+
+        //read in the collision sphere
+        sphere.centre = Ogre::Vector3(getReal(cs_sphere_string[2]),
+                                      getReal(cs_sphere_string[3]),
+                                      getReal(cs_sphere_string[4]));
+        sphere.radius = getReal(cs_sphere_string[5]);
+        //put the sphere in the vector
+        collision_spheres.push_back(sphere);
+
+        ++i;
+    }
+
+    return true;
+}
+
 /** @brief loads the config from a file
   */
 bool FilesHandler::getKeyConfig(const string& filename, map<input_event, OIS::KeyCode>& key_map,

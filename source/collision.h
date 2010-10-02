@@ -25,7 +25,7 @@ public:
     Ogre::Vector3 getVelocity();
 
     //get spheres that actually colllided on the calling object
-    vector<usint> getCollisionSphereIndeces();
+    vector<usint> getCollisionSphereIndices();
 
     //if the objects requires to inspect the other colliding object directly
     Corpus* getCollidingObject() { return handling_first_object? object2 : object1; };
@@ -60,7 +60,7 @@ const Ogre::Real damping = 0.9;
 
 /** @brief returns the spheres on the calling object that were hit in the collision
   */
-inline vector<usint> Collision::getCollisionSphereIndeces() {
+inline vector<usint> Collision::getCollisionSphereIndices() {
     return handling_first_object? collisions_sphere_indices1 : collisions_sphere_indices2;
 }
 

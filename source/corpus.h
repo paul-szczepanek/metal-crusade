@@ -8,16 +8,8 @@
 #include "armour_type.h"
 #include "sphere.h"
 
-const usint max_num_cs = 32;
-const usint max_num_es = 8;
-
 class Collision;
 class GameController;
-
-struct exclusion_sphere_t {
-    Sphere sphere;
-    bitset<max_num_cs> cs_bitset;
-};
 
 class Corpus
 {
@@ -86,10 +78,11 @@ protected:
     virtual int updateController() { return 0; };
 
     //read collision spheres for the object TEMP
-    void loadCollisionSpheres();
+    virtual void loadCollisionSpheres();
 
     //collision spheres
-    vector<exclusion_sphere_t> exclusion_spheres;
+    vector<Sphere> exclusion_spheres;
+    vector<bitset<max_num_cs> > exclusion_bitsets;
     bool bounding_sphere_invalid;
     bitset<max_num_es> es_invalid; //exclusion spheres that need their position recalculated
     bitset<max_num_cs> cs_invalid; //same for collision spheres

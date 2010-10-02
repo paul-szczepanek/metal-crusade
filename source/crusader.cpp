@@ -186,7 +186,7 @@ int Crusader::handleCollision(Collision* a_collision)
     //get affected body parts
     bitset<num_of_body_areas> body_areas_bitset;
     vector<crusader_area::body_area> body_areas_hit;
-    vector<usint> sphere_indices = a_collision->getCollisionSphereIndeces();
+    vector<usint> sphere_indices = a_collision->getCollisionSphereIndices();
 
     //get all parts involved (manual set mechanic) into a vector of unique elements
     for (usint i = 0, for_size = sphere_indices.size(); i < for_size; ++i) {
@@ -532,7 +532,7 @@ void Crusader::pumpHeat()
 }
 
 /** @brief move the crusader
-  * moving and @todo: clamping to terrain
+  * moving and @todo: slow down on slopes
   */
 void Crusader::moveCrusader()
 {
@@ -604,31 +604,8 @@ void Crusader::moveCrusader()
     move = velocity * dt; //save the difference of positions into move
     pos_xyz = pos_xyz + move;
 
-    //terrain clamping TODO!!
+    //terrain clamping
     pos_xyz.y = crusader_height + Game::arena->getHeight(pos_xyz.x, pos_xyz.z);
-
-    /*
-    terrain_ray->setOrigin(pos_xyz);
-    terrain_ray->setDirection(Ogre::Vector3(0, -1, 0));
-    terrain_ray_query->setRay(*terrain_ray); //use the ray in the query
-    Ogre::RaySceneQueryResult &result = terrain_ray_query->execute(); //execute query
-    //iterate through results and find the nearest point
-    Ogre::RaySceneQueryResult::iterator itr = result.begin();
-    Ogre::Real distance = 1 * dt + crusader_height; //drop in void
-    if (itr != result.end()) {
-        distance = itr->worldFragment->singleIntersection.y;
-                //debug print
-        stringstream string_dbg;
-        string_dbg << "distance: " << distance;
-        Game::instance()->debug_lines[5] = string_dbg.str();
-    }
-    //get point coordinates along the ray with the dist from ray collision
-    Ogre::Vector3 real_pos = terrain_ray->getPoint(distance);
-    real_pos.y += crusader_height;//crusader heightw
-    //pass the pointer pos to game cotnroller
-    pos_xyz = real_pos;
-    terrain_ray_query->clearResults(); //clear query
-    */
 
     //get where the drive is turning
     Ogre::Radian turning_speed = controller->getTurnSpeed() * -drive.turn_speed;

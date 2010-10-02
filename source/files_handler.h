@@ -5,6 +5,8 @@
 
 #include "main.h"
 #include "input_event.h"
+#include "collision_type.h"
+#include "sphere.h"
 #include <OIS/OISMouse.h>
 #include <OIS/OISKeyboard.h>
 
@@ -37,6 +39,13 @@ public:
     static bool getWeaponDesign(const string& filename, weapon_design_t& weapon_design);
     static bool getHudDesign(const string& filename, hud_design_t& hud_design);
     static bool getRadarDesign(const string& filename, radar_design_t& radar_design);
+
+    //collisions
+    static bool getCollisionSpheres(const string& filename, Sphere& bounding_sphere,
+                                    vector<Sphere>& exclusion_spheres,
+                                    vector<bitset<max_num_cs> >& exclusion_bitsets,
+                                    vector<usint>& es_areas, vector<Sphere>&  collision_spheres,
+                                    vector<usint>& cs_areas);
 
     //read file as string (still parses for comments)
     static string getStringFromFile(const string& filename);
@@ -86,5 +95,6 @@ const string hud_dir = "design/hud/";
 const string radar_dir = "design/radar/";
 const string unit_dir = "unit/";
 const string text_dir = "text/";
+const string model_dir = "model/";
 
 #endif // FILESHANDLER_H
