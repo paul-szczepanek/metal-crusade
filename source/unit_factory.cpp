@@ -26,7 +26,7 @@ UnitFactory::~UnitFactory()
     units.clear();
 }
 
-void UnitFactory::updateUnits(Ogre::Real a_dt)
+void UnitFactory::update(Ogre::Real a_dt)
 {
     //call update on every unit
     for (list<Unit*>::iterator it = units.begin(); it != units.end(); ) {

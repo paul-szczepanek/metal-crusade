@@ -5,6 +5,7 @@
 #include "query_mask.h"
 #include "unit_factory.h"
 #include "projectile_factory.h"
+#include "particle_factory.h"
 #include "formation_factory.h"
 #include "ai_factory.h"
 #include "crusader_ai.h"
@@ -33,6 +34,7 @@ Arena::Arena()
     Game::ai_factory = new AIFactory();
     Game::projectile_factory = new ProjectileFactory();
     Game::unit_factory = new UnitFactory();
+    Game::particle_factory = new ParticleFactory();
     Game::hud = new Hud();
     Game::collider = new CollisionHandler();
 
@@ -82,6 +84,7 @@ Arena::~Arena()
     delete Game::ai_factory;
     delete Game::projectile_factory;
     delete Game::unit_factory;
+    delete Game::particle_factory;
     delete Game::hud;
     delete Game::collider;
 }

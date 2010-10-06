@@ -15,7 +15,7 @@ AIFactory::~AIFactory()
 /** @brief updates AIs
   * @todo: pretty much everything
   */
-void AIFactory::updateAIs()
+void AIFactory::update()
 {
     //call update on every unit
     for (unsigned int i = 0, for_size = ais.size(); i < for_size; ++i) {

@@ -26,7 +26,7 @@ ProjectileFactory::~ProjectileFactory()
 
 /** @brief updates all projectiles
   */
-void ProjectileFactory::updateProjectiles(Ogre::Real a_dt)
+void ProjectileFactory::update(Ogre::Real a_dt)
 {
     //walk through all projectiles and update them
     for (list<Projectile*>::iterator it = projectile_list.begin(); it != projectile_list.end(); ) {

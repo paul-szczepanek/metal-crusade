@@ -18,7 +18,7 @@ public:
     ~AIFactory();
 
     //main loop
-    void updateAIs();
+    void update();
 
     //ai creation
     CrusaderAI* createCrusaderAI(Crusader* a_self);

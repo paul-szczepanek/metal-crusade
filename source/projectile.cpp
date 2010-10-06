@@ -4,6 +4,7 @@
 #include "game.h"
 #include "arena.h"
 #include "collision_handler.h"
+#include "particle_factory.h"
 #include "collision.h"
 #include "weapon.h"
 
@@ -74,10 +75,24 @@ bool Projectile::validateCollision(Corpus* a_colliding_object)
 int Projectile::handleCollision(Collision* a_collision)
 {
     //explode and apply velocity
-    exploading = true;
     velocity = a_collision->getVelocity();
 
+    if (~exploading) {
+        exploading = true;
+        exploadingEffect();
+    }
+
     return 0;
+}
+
+void Projectile::exploadingEffect()
+{
+    if (weapon->weapon_design.splash_range > 0) {
+        Game::particle_factory->createExplosion(pos_xyz, weapon->weapon_design.splash_range,
+                                                weapon->weapon_design.splash_range
+                                        / (weapon->weapon_design.splash_velocity * velocity_scale),
+                                                weapon->weapon_design.heat_dmg);
+    }
 }
 
 int Projectile::updateController()
@@ -85,8 +100,10 @@ int Projectile::updateController()
     //kill after terrain hit
     if (pos_xyz.y < Game::arena->getHeight(pos_xyz.x, pos_xyz.z) //kill when ground hit
         || lifetime > weapon->weapon_design.range) //kill after range exceeded
-        exploading = true;
-
+        if (~exploading) {
+            exploading = true;
+            exploadingEffect();
+        }
     //TODO: on extermely low framerate this could destroy the splash without causing any collisions
     if (exploading) {
         //does the projectile explode causing splash damage
@@ -95,7 +112,7 @@ int Projectile::updateController()
             velocity = Ogre::Vector3::ZERO;
 
             //start splash expansion and degradation
-            Ogre::Real expansion = dt * weapon->weapon_design.splash_velocity;
+            Ogre::Real expansion = dt * weapon->weapon_design.splash_velocity * velocity_scale;
             //expand the bounding sphere
             bounding_sphere.radius += expansion;
 
@@ -109,19 +126,21 @@ int Projectile::updateController()
         } else { //no splash damage
             core_integrity = 0; //kill instantly
         }
+    } else {
+        //retard motion while the physics weep (air resistance should be velocity squared)
+        if (Ogre::Vector2(velocity.x, velocity.z).length() > air_resistance_cutoff) {
+            velocity -= direction * weapon->weapon_design.muzzle_velocity * velocity_scale * dt;
+        }
+        //intentionally wrong because we already retarded the downward motion
+        velocity.y = velocity.y - Game::arena->getGravity() * dt * inverse_velocity_scale;
+        //and there's the euluer integration error too and we need it to plunge fast
     }
 
     if (core_integrity <= 0) { //kill on hp 0
         return 1;
     }
 
-    //retard motion while the physics weep (air resistance should be velocity squared)
-    if (Ogre::Vector2(velocity.x, velocity.z).length() > air_resistance_cutoff) {
-        velocity -= direction * weapon->weapon_design.muzzle_velocity * velocity_scale * dt;
-    }
-    //intentionally wrong because we already retarded the downward motion
-    velocity.y = velocity.y - Game::arena->getGravity() * dt * inverse_velocity_scale;
-    //and there's the euluer integration error too and we need it to plunge fast
+
 
     //move and save the difference of positions into move
     move = velocity * dt;

@@ -16,7 +16,7 @@ public:
     ~ProjectileFactory();
 
     //main loop
-    void updateProjectiles(Ogre::Real a_dt);
+    void update(Ogre::Real a_dt);
 
     //object creation
     void fireProjectile(Ogre::Vector3 a_pos_xyz, Ogre::Quaternion a_orientation,

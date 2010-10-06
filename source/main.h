@@ -63,5 +63,6 @@ typedef unsigned short int usint;
 typedef unsigned long int ulint;
 typedef unsigned int uint;
 typedef unsigned char uchar;
+typedef Ogre::TextureUnitState::TextureAddressingMode texture_addressing;
 
 #endif // MAIN_H_INCLUDED

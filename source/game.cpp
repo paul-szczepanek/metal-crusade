@@ -8,6 +8,7 @@
 #include "input_handler.h"
 #include "unit_factory.h"
 #include "ai_factory.h"
+#include "particle_factory.h"
 #include "projectile_factory.h"
 #include "formation_factory.h"
 #include "timer.h"
@@ -17,6 +18,7 @@
 #include "camera.h"
 
 //define static members
+ParticleFactory* Game::particle_factory;
 ProjectileFactory* Game::projectile_factory;
 UnitFactory* Game::unit_factory;
 FormationFactory* Game::formation_factory;
@@ -65,7 +67,8 @@ void Game::init()
     ogre = new Ogre::Root("", data_dir+config_dir+"graphics", "ogre.log");
 
     //load the OpenGL render system
-    ogre->loadPlugin("/usr/lib/OGRE/RenderSystem_GL");
+    ogre->loadPlugin("/usr/local/lib/OGRE/RenderSystem_GL");
+    ogre->loadPlugin("/usr/local/lib/OGRE/Plugin_ParticleFX");
 
     if(ogre->restoreConfig() || ogre->showConfigDialog()) {
         //DO NOT change order of creation! you might upset the zen of the feng-shui layout
@@ -82,7 +85,7 @@ void Game::init()
         Ogre::ResourceGroupManager& resource_mngr = Ogre::ResourceGroupManager::getSingleton();
         resource_mngr.addResourceLocation(data_dir+"model", "FileSystem", "models");
         resource_mngr.addResourceLocation(data_dir+"texture", "FileSystem", "textures");
-        //fonts
+        resource_mngr.addResourceLocation(data_dir+"texture/particle", "FileSystem", "particles");
         resource_mngr.addResourceLocation(data_dir+"texture/font", "FileSystem", "textures");
         resource_mngr.addResourceLocation(data_dir+"terrain", "FileSystem", "terrain");
         //set units TODO: needs to be automatic
@@ -91,6 +94,7 @@ void Game::init()
         //load resources
         resource_mngr.initialiseResourceGroup("models");
         resource_mngr.initialiseResourceGroup("textures");
+        resource_mngr.initialiseResourceGroup("particles");
         resource_mngr.initialiseResourceGroup("terrain");
 
         //create the text store
@@ -182,8 +186,9 @@ void Game::logic(int a_d_ticks)
         Ogre::Real dt = Ogre::Real(a_d_ticks) / Ogre::Real(1000);
 
         //update game objects
-        unit_factory->updateUnits(dt);
-        projectile_factory->updateProjectiles(dt);
+        unit_factory->update(dt);
+        projectile_factory->update(dt);
+        particle_factory->update(dt);
 
         //move camera
         camera->update(dt);
@@ -194,7 +199,7 @@ void Game::logic(int a_d_ticks)
         //find and resolve collisions
         collider->update(dt);
 
-        ai_factory->updateAIs();
+        ai_factory->update();
         //ai called as the last thing in the frame
         //so that I can later use it to pad the execution time with ai
     }

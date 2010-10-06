@@ -13,6 +13,7 @@ class AIFactory;
 class Timer;
 class Arena;
 class Camera;
+class ParticleFactory;
 class ProjectileFactory;
 class FormationFactory;
 class CollisionHandler;
@@ -43,7 +44,7 @@ public:
     //TODO: this is temp!!
     GameController* getGameController(const string& a_name) { return game_controllers.at(0); };
 
-    //becuase I am a lazy fuck and becase it saves on the singleton call overhead
+    //becuase I am a lazy fuck and because it saves on the singleton call overhead
     //I'm going to piggy back on this singleton to globally scope these:
     static Ogre::Root* ogre;
     static Ogre::Viewport* viewport;
@@ -53,6 +54,7 @@ public:
     static Camera* camera;
     static Arena* arena;
     static Hud* hud;
+    static ParticleFactory* particle_factory;
     static ProjectileFactory* projectile_factory;
     static FormationFactory* formation_factory;
     static UnitFactory* unit_factory;

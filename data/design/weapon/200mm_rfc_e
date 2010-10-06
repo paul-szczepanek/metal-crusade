@@ -27,17 +27,17 @@ weapon_type_cannon
 [weapon_design.muzzle_velocity]
 800 #m/s
 [weapon_design.heat_dmg]
-10
+1000
 [weapon_design.ballistic_dmg]
-0.25
+4.0
 [weapon_design.penetration]
 0.0 #armour penetration multiplier
 [weapon_design.energy_dmg]
 0
 [weapon_design.splash_range]
-10
+40
 [weapon_design.splash_velocity]
-100 #m/s
+1000 #m/s
 [weapon_design.projectile]
 bullet
 [weapon_design.projectile_weight]
@@ -49,6 +49,6 @@ bullet
 [weapon_design.lock_on_time]
 0
 [weapon_design.ammo_per_slot]
-8
+800
 [weapon_design.range]
 80

@@ -31,6 +31,7 @@ public:
 
     //handle collision
     bool validateCollision(Corpus* a_collision);
+    void exploadingEffect();
 
 private:
     Corpus* owner;

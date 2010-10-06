@@ -15,7 +15,7 @@ public:
     ~UnitFactory();
 
     //main loop
-    void updateUnits(Ogre::Real a_dt);
+    void update(Ogre::Real a_dt);
 
     //creation
     Crusader* spawnCrusader(Ogre::Vector3 a_pos_xyz, const string& a_name,

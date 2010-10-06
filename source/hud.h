@@ -6,8 +6,6 @@
 #include "main.h"
 #include "hud_design.h"
 
-typedef Ogre::TextureUnitState::TextureAddressingMode texture_addressing;
-
 class HudPart;
 class Unit;
 class GameController;
