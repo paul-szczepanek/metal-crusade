@@ -11,6 +11,7 @@
 class Weapon;
 class Animation;
 class RadarComputer;
+class ParticleEffectStepDust;
 
 class Crusader : public Unit
 {
@@ -97,6 +98,9 @@ private:
 
     //moving
     Ogre::Real throttle;
+
+    //dust from steps
+    ParticleEffectStepDust* step_dust;
 
     //orientation
     int angular_momentum_top;

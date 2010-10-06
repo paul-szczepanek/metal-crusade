@@ -97,8 +97,8 @@ void Arena::updateLights()
     //z+ is left //x- is forward //y+ is up
     //read those from a table witch hashes time, date, location, weather
     Ogre::Real r = 0.9;
-    Ogre::Real b = 0.7;
     Ogre::Real g = 0.8;
+    Ogre::Real b = 0.7;
 
     //sunlight
     sunlight->setDiffuseColour(r, g, b);

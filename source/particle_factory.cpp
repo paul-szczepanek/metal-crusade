@@ -1,6 +1,7 @@
 #include "particle_factory.h"
 #include "particle_effect.h"
 #include "particle_effect_explosion.h"
+#include "particle_effect_step_dust.h"
 #include "game.h"
 
 ParticleFactory::ParticleFactory()
@@ -52,6 +53,15 @@ ParticleEffect* ParticleFactory::createExplosion(Ogre::SceneNode* scene_node, Og
     Ogre::SceneNode* particle_node = scene_node->createChildSceneNode();
 
     effects.push_back(new ParticleEffectExplosion(particle_node, a_size, a_time, a_ferocity));
+
+    return effects.back();
+}
+
+ParticleEffect* ParticleFactory::createStepDust(Ogre::SceneNode* scene_node)
+{
+    Ogre::SceneNode* particle_node = scene_node->createChildSceneNode();
+
+    effects.push_back(new ParticleEffectStepDust(particle_node));
 
     return effects.back();
 }

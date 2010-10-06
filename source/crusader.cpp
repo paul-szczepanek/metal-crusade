@@ -6,6 +6,8 @@
 #include "hud.h"
 #include "files_handler.h"
 #include "collision_handler.h"
+#include "particle_factory.h"
+#include "particle_effect_step_dust.h"
 #include "weapon.h"
 #include "game_controller.h"
 #include "query_mask.h"
@@ -170,6 +172,13 @@ Crusader::Crusader(Ogre::Vector3 a_pos_xyz, const string& a_unit_name,
 
     //creat the radar
     radar = new RadarComputer(design.radar, this);
+
+    //assign dust emmitter for walking on surfaces producing particles
+    Ogre::SceneNode* step_dust_node = scene_node->createChildSceneNode();
+    //put the scene node at ground level
+    step_dust_node->setPosition(Ogre::Vector3(0, -crusader_height, 0));
+    step_dust = static_cast<ParticleEffectStepDust*>
+                    (Game::particle_factory->createStepDust(step_dust_node));
 }
 
 /** @brief resolves collision including damage and physics
@@ -617,6 +626,9 @@ void Crusader::moveCrusader()
 
     //hook it up to animation
     animation->turn(turning_speed);
+
+    //dust from under the feet
+    step_dust->setRate(max(corrected_velocity_scalar, 3 * turning_speed.valueRadians()));
 }
 
 /** @brief rotates the torso

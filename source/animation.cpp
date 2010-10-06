@@ -216,7 +216,7 @@ void Animation::update(Ogre::Real a_dt)
                     animations[current_animation][i]->addTime(a_dt);
                 }
 
-                //when blending copy the animation position
+                //when blending copy the current animation position
                 if (!valid_animation){
                     for (usint i = 0, size = animations[target_animation].size(); i < size; ++i) {
                         animation_time
@@ -225,7 +225,6 @@ void Animation::update(Ogre::Real a_dt)
                     }
                 }
             }
-
         } else {
             //if moving translate time passed to animation time
             Ogre::Real time_to_add = a_dt * rate;

@@ -1,9 +1,11 @@
 material dust {
   receive_shadows off
-  scene_blend alpha_blend
   technique {
     pass {
+      scene_blend alpha_blend
+      diffuse 1 1 1 0.15
       texture_unit {
+        colour_op alpha_blend
         tex_address_mode clamp
         texture dust_01.dds
       }

@@ -18,6 +18,7 @@ public:
                                     Ogre::Real a_time, usint a_ferocity = 1);
     ParticleEffect* createExplosion(Ogre::Vector3 a_position, Ogre::Real a_size,
                                     Ogre::Real a_time, usint a_ferocity = 1);
+    ParticleEffect* createStepDust(Ogre::SceneNode* scene_node);
 
 private:
     list<ParticleEffect*> effects;
