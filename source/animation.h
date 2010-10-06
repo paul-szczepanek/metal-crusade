@@ -5,9 +5,6 @@
 
 #include "main.h"
 
-//speed at which you consider to be not moving
-const Ogre::Real crusader_stopping_speed = 0.001;
-
 const usint num_of_movement_modes = 3;
 const usint num_of_animations = 4;
 const usint num_of_animated_body_parts = 7;
@@ -46,6 +43,7 @@ private:
     Ogre::Real rate;
     animation::crusader current_animation;
     animation::crusader target_animation;
+    Ogre::Real switching_progress;
 
     //animation data
     vector<Ogre::AnimationState*> animations[num_of_animations];

@@ -3,11 +3,16 @@
 #include "animation.h"
 #include "game.h"
 
+//speed at which you consider to be not moving
+const Ogre::Real crusader_stopping_speed = 0.001;
+const Ogre::Real switching_time = 1;
+
+
 //TODO: animation blending!!! ffs
 
 Animation::Animation(Ogre::SceneNode* a_scene_node)
     : stopped(true), cycle_length(2), rate(0),
-    current_animation(animation::stand), target_animation(animation::stand)
+    current_animation(animation::stand), target_animation(animation::stand), switching_progress(0)
 {
     for (usint i = 0; i < num_of_movement_modes; ++i) {
         animations[0].reserve(num_of_animated_body_parts);
@@ -19,7 +24,7 @@ Animation::Animation(Ogre::SceneNode* a_scene_node)
     movement_speeds[2] = 0.13;
     //at what speed to start each animation
     movement_speed_limits[0] = 0;
-    movement_speed_limits[1] = 1.8;
+    movement_speed_limits[1] = 0.1;
     movement_speed_limits[2] = 14;
     //points when you can switch animations
     switch_points[0] = cycle_length * 0.5;
@@ -125,6 +130,7 @@ void Animation::turn(Ogre::Radian a_turning_speed)
 
 /** @brief blends animations between different walking modes: stand, walk, run
   * @todo: deal with crouch and collisions
+  * @todo: disable anim when not on screen?
   * @return whether the current_animation == target_animation
   */
 bool Animation::switchAnimations(Ogre::Real a_time_to_add)
@@ -139,7 +145,11 @@ bool Animation::switchAnimations(Ogre::Real a_time_to_add)
         bool crossed_switch2 = (animation_time >= switch_points[1] &&
                                 animation_time - a_time_to_add <= switch_points[1]);
 
-        if (crossed_switch1 || crossed_switch2) { //if either switch passed change animation
+        //continue blending
+        switching_progress += a_time_to_add;
+
+        //if either switch passed or time limit reached change animation
+        if (crossed_switch1 || crossed_switch2 || switching_progress >= switching_time) {
             //disable old anims
             for (usint i = 0, for_size = animations[current_animation].size(); i < for_size; ++i) {
                 animations[current_animation][i]->setEnabled(false);
@@ -148,14 +158,27 @@ bool Animation::switchAnimations(Ogre::Real a_time_to_add)
             //switch anims
             current_animation = target_animation;
 
+            //animation switched so no need to continue blending
+            switching_progress = 0;
+
             //turn the new anims on
             for (usint i = 0, for_size = animations[current_animation].size(); i < for_size; ++i) {
                 animations[current_animation][i]->setEnabled(true);
+                animations[current_animation][i]->setWeight(1);
 
                 //pick up the anim where the last one left off
                 animations[current_animation][i]->setTimePosition(animation_time);
             }
         } else {
+            //apply wieghts to blend animations smoothly
+            Ogre::Real anim_weight = switching_progress / switching_time;
+
+            for (usint i = 0, for_size = animations[current_animation].size(); i < for_size; ++i) {
+                animations[target_animation][i]->setEnabled(true);
+                animations[current_animation][i]->setWeight(1 - anim_weight);
+                animations[target_animation][i]->setWeight(anim_weight);
+            }
+
             return false; //still trying to switch animations
         }
     }
@@ -192,6 +215,15 @@ void Animation::update(Ogre::Real a_dt)
                 for (usint i = 0, size = animations[current_animation].size(); i < size; ++i) {
                     animations[current_animation][i]->addTime(a_dt);
                 }
+
+                //when blending copy the animation position
+                if (!valid_animation){
+                    for (usint i = 0, size = animations[target_animation].size(); i < size; ++i) {
+                        animation_time
+                            = animations[current_animation][i]->getTimePosition();
+                        animations[target_animation][i]->setTimePosition(animation_time);
+                    }
+                }
             }
 
         } else {
@@ -203,8 +235,13 @@ void Animation::update(Ogre::Real a_dt)
                 animations[current_animation][i]->addTime(time_to_add);
             }
 
-            //switch animations if needed
-            switchAnimations(time_to_add);
+            //when blending copy the animation position
+            if (!switchAnimations(time_to_add)){
+                for (usint i = 0, size = animations[target_animation].size(); i < size; ++i) {
+                    Ogre::Real animation_time = animations[current_animation][i]->getTimePosition();
+                    animations[target_animation][i]->setTimePosition(animation_time);
+                }
+            }
         }
     }
 }
