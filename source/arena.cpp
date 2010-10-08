@@ -3,6 +3,7 @@
 #include "arena.h"
 #include "game.h"
 #include "query_mask.h"
+#include "corpus_factory.h"
 #include "unit_factory.h"
 #include "projectile_factory.h"
 #include "particle_factory.h"
@@ -32,6 +33,7 @@ Arena::Arena()
 {
     //objects only needed when in arena but using game for global scoping
     Game::ai_factory = new AIFactory();
+    Game::corpus_factory = new CorpusFactory();
     Game::projectile_factory = new ProjectileFactory();
     Game::unit_factory = new UnitFactory();
     Game::particle_factory = new ParticleFactory();
@@ -82,6 +84,7 @@ Arena::~Arena()
 
     //cleanup game objects created for the arena
     delete Game::ai_factory;
+    delete Game::corpus_factory;
     delete Game::projectile_factory;
     delete Game::unit_factory;
     delete Game::particle_factory;
@@ -151,27 +154,34 @@ int Arena::loadArena(const string& arena_name)
     //create the hud according to the unit you're in - HUD NEEDS THE CONTROLLER to be assigned!
     Game::hud->loadHud(static_cast<Unit*>(player_unit));
 
-    //create enemies
-    Crusader* enemy_unit = Game::unit_factory->spawnCrusader(Ogre::Vector3(780, 0, 680),
-                           "base_husar_cavalry_red");
-    Crusader* enemy_unit2 = Game::unit_factory->spawnCrusader(Ogre::Vector3(600, 0, 700),
-                            "base_husar_cavalry_red");
+    Game::corpus_factory->spawnSceneryBuidling(Ogre::Vector3(630, getHeight(630, 650), 650),
+                                               "building_test_01");
 
-    //create an enemy controller
-    ai_game_controllers.push_back(new GameController("dummy ai"));
-    CrusaderAI* ai = Game::ai_factory->createCrusaderAI(enemy_unit);
-    ai->bindController(ai_game_controllers.back()); //assign the controller to the ai
-    ai->activate(true);
-    enemy_unit->assignController(ai_game_controllers.back()); //give the unit to the ai controller
-    enemy_formation->joinFormation(ai_game_controllers.back());
+    Game::corpus_factory->spawnSceneryBuidling(Ogre::Vector3(570, getHeight(630, 650), 650),
+                                               "building_test_02");
 
-    //second enemy
-    ai_game_controllers.push_back(new GameController("dummy ai"));
-    ai = Game::ai_factory->createCrusaderAI(enemy_unit2);
-    ai->bindController(ai_game_controllers.back()); //assign the controller to the ai
-    ai->activate(false);
-    enemy_unit2->assignController(ai_game_controllers.back()); //give the unit to the ai controller
-    allied_formation->joinFormation(ai_game_controllers.back());
+//    //create enemies
+//    Crusader* enemy_unit2 = Game::unit_factory->spawnCrusader(Ogre::Vector3(780, 0, 680),
+//                           "base_husar_cavalry_red");
+//    Crusader* enemy_unit = Game::unit_factory->spawnCrusader(Ogre::Vector3(600, 0, 700),
+//                            "base_husar_cavalry_red");
+//
+//
+//    //create an enemy controller
+//    ai_game_controllers.push_back(new GameController("dummy ai"));
+//    CrusaderAI* ai = Game::ai_factory->createCrusaderAI(enemy_unit);
+//    ai->bindController(ai_game_controllers.back()); //assign the controller to the ai
+//    ai->activate(false);
+//    enemy_unit->assignController(ai_game_controllers.back()); //give the unit to the ai controller
+//    enemy_formation->joinFormation(ai_game_controllers.back());
+//
+//    //second enemy
+//    ai_game_controllers.push_back(new GameController("dummy ai"));
+//    ai = Game::ai_factory->createCrusaderAI(enemy_unit2);
+//    ai->bindController(ai_game_controllers.back()); //assign the controller to the ai
+//    ai->activate(true);
+//    enemy_unit2->assignController(ai_game_controllers.back()); //give the unit to the ai controller
+//    allied_formation->joinFormation(ai_game_controllers.back());
 
     //and tell the camera to follow the players unit
     Game::camera->follow(player_unit);
@@ -519,17 +529,28 @@ bool Arena::updateCellIndex(uint_pair& cell_index, Ogre::Vector3& pos_xyz, Mobil
 {
     //if it's not within the limits of the arena rectiify the position
     bool out_of_bounds = isOutOfBounds(pos_xyz);
-
     //get the cell index based on position
     uint_pair new_cell_index = getCellIndex(pos_xyz.x, pos_xyz.z);
 
     if (cell_index != new_cell_index) {
         //remove the old cell
         mobilis_cells[cell_index.first][cell_index.second].remove(a_thing);
+
+        //if no objects left remove from the list of live cells
+        if (mobilis_cells[cell_index.first][cell_index.second].size() == 0) {
+            live_mobilis_cells.remove(&mobilis_cells[cell_index.first][cell_index.second]);
+        }
+
         //set the new index
         cell_index = new_cell_index;
+
         //add to the new cell
         mobilis_cells[cell_index.first][cell_index.second].push_back(a_thing);
+
+        //if it's the first object inset the cell into the list of live cells
+        if (mobilis_cells[cell_index.first][cell_index.second].size() == 1) {
+            live_mobilis_cells.push_back(&mobilis_cells[cell_index.first][cell_index.second]);
+        }
     }
 
     return out_of_bounds;
@@ -540,12 +561,31 @@ bool Arena::updateCellIndex(uint_pair& cell_index, Ogre::Vector3& pos_xyz, Mobil
   */
 bool Arena::updateCellIndex(uint_pair& cell_index, Ogre::Vector3& pos_xyz, Unit* a_thing)
 {
+    //if it's not within the limits of the arena rectiify the position
     bool out_of_bounds = isOutOfBounds(pos_xyz);
+    //get the cell index based on position
     uint_pair new_cell_index = getCellIndex(pos_xyz.x, pos_xyz.z);
+
     if (cell_index != new_cell_index) {
+        //remove the old cell
         unit_cells[cell_index.first][cell_index.second].remove(a_thing);
+
+        //if no objects left remove from the list of live cells
+        if (unit_cells[cell_index.first][cell_index.second].size() == 0) {
+            live_unit_cells.remove(&unit_cells[cell_index.first][cell_index.second]);
+        }
+
+        //set the new index
         cell_index = new_cell_index;
+
+        //add to the new cell
         unit_cells[cell_index.first][cell_index.second].push_back(a_thing);
+
+        //if it's the first object inset the cell into the list of live cells
+        if (unit_cells[cell_index.first][cell_index.second].size() == 1) {
+            live_unit_cells.push_back(&unit_cells[cell_index.first][cell_index.second]);
+        }
     }
+
     return out_of_bounds;
 }

@@ -8,6 +8,7 @@
 #include "input_handler.h"
 #include "unit_factory.h"
 #include "ai_factory.h"
+#include "corpus_factory.h"
 #include "particle_factory.h"
 #include "projectile_factory.h"
 #include "formation_factory.h"
@@ -18,6 +19,7 @@
 #include "camera.h"
 
 //define static members
+CorpusFactory* Game::corpus_factory;
 ParticleFactory* Game::particle_factory;
 ProjectileFactory* Game::projectile_factory;
 UnitFactory* Game::unit_factory;
@@ -90,6 +92,10 @@ void Game::init()
         resource_mngr.addResourceLocation(data_dir+"terrain", "FileSystem", "terrain");
         //set units TODO: needs to be automatic
         resource_mngr.addResourceLocation(data_dir+"model/husar", "FileSystem", "models");
+        resource_mngr.addResourceLocation(data_dir+"model/building_test_01", "FileSystem",
+                                          "models");
+        resource_mngr.addResourceLocation(data_dir+"model/building_test_02", "FileSystem",
+                                          "models");
 
         //load resources
         resource_mngr.initialiseResourceGroup("models");

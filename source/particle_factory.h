@@ -1,11 +1,13 @@
+//Copyright 2010 Paul Szczepanek. Code released under GPL Version 3.
+
 #ifndef PARTICLEFACTORY_H
 #define PARTICLEFACTORY_H
 
-#include "corpus_factory.h"
+#include "factory.h"
 
 class ParticleEffect;
 
-class ParticleFactory : public CorpusFactory
+class ParticleFactory : public Factory
 {
 public:
     ParticleFactory();

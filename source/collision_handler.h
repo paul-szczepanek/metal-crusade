@@ -25,8 +25,8 @@ public:
     void update(Ogre::Real a_dt);
 
     //functions hooking up objects into the system
-    void registerMobilis(Corpus* a_mobilis);
-    void deregisterMobilis(Corpus* a_mobilis);
+    void registerMobilis(Mobilis* a_mobilis);
+    void deregisterMobilis(Mobilis* a_mobilis);
 
 private:
     //main loop
@@ -38,7 +38,7 @@ private:
     vector<Collision*> collisions;
 
     //all registered objects
-    list<Corpus*> registered_objects;
+    list<Mobilis*> registered_objects;
 
     //temp
     Ogre::Vector2 arena_size;

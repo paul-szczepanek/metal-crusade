@@ -1,9 +1,10 @@
 //Copyright 2010 Paul Szczepanek. Code released under GPL Version 3.
 
 #include "game.h"
+#include "arena.h"
 #include "collision_handler.h"
 #include "collision.h"
-#include "corpus.h"
+#include "unit.h"
 
 CollisionHandler::CollisionHandler()
 {
@@ -20,19 +21,17 @@ CollisionHandler::~CollisionHandler()
 
 /** @brief put the dynamic object into the collision system
   */
-void CollisionHandler::registerMobilis(Corpus* a_mobilis)
+void CollisionHandler::registerMobilis(Mobilis* a_mobilis)
 {
     registered_objects.push_back(a_mobilis);
 }
 
 /** @brief remove the dynamic object from the collision system
   */
-void CollisionHandler::deregisterMobilis(Corpus* a_mobilis)
+void CollisionHandler::deregisterMobilis(Mobilis* a_mobilis)
 {
     registered_objects.remove(a_mobilis);
 }
-
-
 
 /** @brief fills a list of potential collisions based on bounding spheres
   */
@@ -41,27 +40,92 @@ void CollisionHandler::updatePotentialCollisions()
     //clear last frame collisions if any
     possible_collisions.clear();
 
-    list<Corpus*>::iterator it = registered_objects.begin();
-    list<Corpus*>::iterator it_end = registered_objects.end();
+    list<Mobilis*>::iterator it = registered_objects.begin();
+    list<Mobilis*>::iterator it_end = registered_objects.end();
 
     //don't do last one as there would be nothing to intersect with
     for (; it != it_end; ++it) {
         //goes through all elements in list and gets bounding spheres
         Sphere sphere1 = (*it)->getBoundingSphere();
 
-        //check against all except the ones before
-        list<Corpus*>::iterator it2 = it;
-        ++it2;
+        //get adjacent cell indices
+        vector<uint_pair> cell_indices;
+        Game::arena->getCellIndicesWithinRadius((*it)->getCellIndex(), cell_indices);
 
-        for (; it2 != registered_objects.end(); ++it2) {
-            Sphere sphere2 = (*it2)->getBoundingSphere();
+        //go through all the cells
+        for (usint i = 0, for_size = cell_indices.size(); i < for_size; ++i) {
+            //get lists from that each cell
+            list<Unit*>& unit_list = Game::arena->getUnitCell(cell_indices[i]);
+            list<Mobilis*>& mobilis_list = Game::arena->getMobilisCell(cell_indices[i]);
+            list<Corpus*>& corpus_list = Game::arena->getCorpusCell(cell_indices[i]);
 
-            //check if bounding spehres intersect
-            if (sphere1.intersects(sphere2)) {
-                //validate whether the collision is possible
-                if ((*it)->validateCollision((*it2)) && (*it2)->validateCollision((*it))) {
-                    //stick it in the list of potential collisions
-                    possible_collisions.push_back(collision_pair(*it, *it2));
+            //if there's anything in the cell go trhough the list
+            if (unit_list.size() > 0) {
+                list<Unit*>::iterator it2 = unit_list.begin();
+                list<Unit*>::iterator it2_end = unit_list.end();
+
+                //walk through all objects
+                for (; it2 != it2_end; ++it2) {
+                    Sphere sphere2 = (*it2)->getBoundingSphere();
+
+                    //check if this collision is already on the list
+                    if ((*it) != (*it2) && !(*it)->hasCollidedWith(*it2)) {
+                        //check if bounding spehres intersect
+                        if (sphere1.intersects(sphere2)) {
+                            //validate whether the collision is possible
+                            if ((*it)->validateCollision(*it2)) {
+                                //set the other object as collided with to avoid double collisions
+                                (*it2)->collideWith(*it);
+                                //stick it in the list of potential collisions]
+                                possible_collisions.push_back(collision_pair(*it,
+                                                                    static_cast<Corpus*>(*it2)));
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (mobilis_list.size() > 0) {
+                list<Mobilis*>::iterator it2 = mobilis_list.begin();
+                list<Mobilis*>::iterator it2_end = mobilis_list.end();
+
+                //walk through all objects
+                for (; it2 != it2_end; ++it2) {
+                    Sphere sphere2 = (*it2)->getBoundingSphere();
+
+                    //check if this collision is already on the list
+                    if ((*it) != (*it2) && !(*it)->hasCollidedWith(*it2)) {
+                        //check if bounding spehres intersect
+                        if (sphere1.intersects(sphere2)) {
+                            //validate whether the collision is possible
+                            if ((*it)->validateCollision(*it2) && (*it2)->validateCollision(*it)) {
+                                //set the other object as collided with to avoid double collisions
+                                (*it2)->collideWith(*it);
+                                //stick it in the list of potential collisions
+                                possible_collisions.push_back(collision_pair(*it,
+                                                                    static_cast<Corpus*>(*it2)));
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (corpus_list.size() > 0) {
+                list<Corpus*>::iterator it2 = corpus_list.begin();
+                list<Corpus*>::iterator it2_end = corpus_list.end();
+
+                //walk through all objects
+                for (; it2 != it2_end; ++it2) {
+                    Sphere sphere2 = (*it2)->getBoundingSphere();
+
+                    //check if bounding spehres intersect
+                    if (sphere1.intersects(sphere2)) {
+                        //validate whether the collision is possible
+                        if ((*it)->validateCollision(*it2)) {
+                            //stick it in the list of potential collisions
+                            possible_collisions.push_back(collision_pair(*it, *it2));
+                        }
+                    }
                 }
             }
         }

@@ -57,6 +57,10 @@ public:
     //partitionening into cells on the arena made
     virtual void updateCellIndex();
 
+    //collision handling
+    void collideWith(Mobilis* a_thing) { collided_with.push_back(a_thing); }
+    bool hasCollidedWith(Mobilis* a_thing);
+
 protected:
     //main loop
     virtual int updateController();
@@ -76,6 +80,10 @@ protected:
 
     //collision system
     bool registered;
+    //if it's been collided with this frame
+    bool collided;
+    //list of objects collided with this frame
+    vector<Mobilis*> collided_with;
 
     //hit points
     Ogre::Real core_integrity;
@@ -86,5 +94,19 @@ protected:
     //targeted by objects
     vector<Mobilis*> target_holders;
 };
+
+inline bool Mobilis::hasCollidedWith(Mobilis* a_thing)
+{
+    if (collided_with.size() > 0) {
+        vector<Mobilis*>::iterator it = collided_with.begin();
+        vector<Mobilis*>::iterator it_end = collided_with.end();
+
+        if (find(it, it_end, a_thing) != it_end) {
+            return true;
+        }
+    }
+
+    return false;
+}
 
 #endif // MOBILIS_H

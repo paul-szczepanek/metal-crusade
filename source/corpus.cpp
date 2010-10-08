@@ -21,6 +21,9 @@ Corpus::Corpus(Ogre::Vector3 a_pos_xyz, const string& a_unit_name, Ogre::SceneNo
     direction = orientation * Ogre::Vector3::UNIT_Z;
     loadCollisionSpheres();
 
+    es_invalid.set();
+    cs_invalid.set();
+
     //make sure it's within bounds
     if (Game::arena->isOutOfBounds(pos_xyz)) {
         Game::kill(unit_name+" is out of bounds, possibly garbled arena definition");
@@ -159,6 +162,8 @@ void Corpus::loadCollisionSpheres()
             Game::kill(unit_name+" collision file is corrupt, we can't play the game like this");
         }
     }
+
+    //debug
     //displayCollision(true);
 }
 

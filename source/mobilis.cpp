@@ -102,6 +102,9 @@ int Mobilis::update(Ogre::Real a_dt)
 {
     updateCellIndex();
 
+    //clear last frame collisions
+    collided_with.clear();
+
     //chain the corpus update
     int return_code = Corpus::update(a_dt);
 

@@ -84,33 +84,41 @@ void Collision::resolve(Ogre::Real a_dt)
         Ogre::Vector3 collision_vector = (sphere1.centre - sphere2.centre);
         collision_vector.normalise(); //get a unit vector
 
-        //get the scalar velocities perpendicular to the collision plane
-        Ogre::Real velocity1_perp = velocity1.dotProduct(collision_vector);
-        Ogre::Real velocity2_perp = velocity2.dotProduct(collision_vector);
-
-        //scalar velocities after collision
-        Ogre::Real new_velocity1_perp = ((velocity1_perp * (weight1 - weight2)
-                                          + 2 * weight2 * velocity2_perp) * weight_denominator);
-        Ogre::Real new_velocity2_perp = ((velocity2_perp * (weight2 - weight1)
-                                          + 2 * weight1 * velocity1_perp) * weight_denominator);
-
-        //new reflected velocities
-        velocity1 = velocity1 - 2 * new_velocity1_perp * collision_vector;
-        velocity2 = velocity2 - 2 * new_velocity2_perp * collision_vector;
-
-        //mix elastic and inelastic collisions
-        if (result_type == collision_type_soft) {
-            //for soft and impact favour inelastic
-            combined_velocity *= damping; //damping - take energy out of the system
-            velocity1 = velocity1 * collision_elasticity;
-            velocity1 += combined_velocity * (1 - collision_elasticity);
-            velocity2 = velocity2 * collision_elasticity;
-            velocity2 += combined_velocity * (1 - collision_elasticity);
+        if (result_type == collision_type_blocking) {
+            //hit a concrete wall
+            velocity1 = 0;
+            velocity2 = 0;
 
         } else {
-            //everything else is hard, favour elastic impact
-            velocity1 *= damping; //damping - take energy out of the system
-            velocity2 *= damping;
+            //get the scalar velocities perpendicular to the collision plane
+            Ogre::Real velocity1_perp = velocity1.dotProduct(collision_vector);
+            Ogre::Real velocity2_perp = velocity2.dotProduct(collision_vector);
+
+            //scalar velocities after collision
+            Ogre::Real new_velocity1_perp = ((velocity1_perp * (weight1 - weight2)
+                                              + 2 * weight2 * velocity2_perp) * weight_denominator);
+            Ogre::Real new_velocity2_perp = ((velocity2_perp * (weight2 - weight1)
+                                              + 2 * weight1 * velocity1_perp) * weight_denominator);
+
+
+
+            //new reflected velocities
+            velocity1 = velocity1 - 2 * new_velocity1_perp * collision_vector;
+            velocity2 = velocity2 - 2 * new_velocity2_perp * collision_vector;
+
+            //mix elastic and inelastic collisions
+            if (result_type == collision_type_soft) {
+                //for soft and impact favour inelastic
+                combined_velocity *= damping; //damping - take energy out of the system
+                velocity1 = velocity1 * collision_elasticity;
+                velocity1 += combined_velocity * (1 - collision_elasticity);
+                velocity2 = velocity2 * collision_elasticity;
+                velocity2 += combined_velocity * (1 - collision_elasticity);
+            } else {
+                //everything else is hard, favour elastic impact
+                velocity1 *= -damping; //damping - take energy out of the system
+                velocity2 *= -damping;
+            }
         }
 
         //push object gently away regardless of angles

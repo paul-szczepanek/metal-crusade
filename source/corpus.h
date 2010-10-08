@@ -9,6 +9,7 @@
 #include "sphere.h"
 
 class Collision;
+class Mobilis;
 class GameController;
 
 class Corpus
@@ -27,7 +28,7 @@ public:
     Ogre::Real getZ() { return pos_xyz.z; };
     Ogre::Vector2 getXZ() { return Ogre::Vector2(pos_xyz.x, pos_xyz.z); };
     Ogre::Vector3 getPosition() { return pos_xyz; };
-    uint_pair& getCellIndex() { return cell_index; };
+    uint_pair getCellIndex() { return cell_index; };
 
     //name (model or unit name, not the actual entity)
     string getName() { return unit_name; };

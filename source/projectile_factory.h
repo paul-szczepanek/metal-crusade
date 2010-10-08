@@ -3,13 +3,13 @@
 #ifndef PROJECTILEFACTORY_H
 #define PROJECTILEFACTORY_H
 
-#include "corpus_factory.h"
+#include "factory.h"
 
 class Projectile;
 class Weapon;
 class Unit;
 
-class ProjectileFactory : public CorpusFactory
+class ProjectileFactory : public Factory
 {
 public:
     ProjectileFactory() { };
