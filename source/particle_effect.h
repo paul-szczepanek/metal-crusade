@@ -1,3 +1,5 @@
+//Copyright 2010 Paul Szczepanek. Code released under GPL Version 3.
+
 #ifndef PARTICLEEFFECT_H
 #define PARTICLEEFFECT_H
 

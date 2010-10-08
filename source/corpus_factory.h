@@ -3,33 +3,22 @@
 #ifndef CORPUSFACTORY_H
 #define CORPUSFACTORY_H
 
-#include "main.h"
+#include "factory.h"
 
-class CorpusFactory
+class Corpus;
+
+class CorpusFactory : public Factory
 {
 public:
     CorpusFactory() { };
-    virtual ~CorpusFactory() { };
+    ~CorpusFactory();
 
-    //destroys the scene node, its children and all the enitites as well
-    static void destroyModel(Ogre::SceneNode* a_scene_node);
+    Corpus* spawnSceneryBuidling(Ogre::Vector3 a_pos_xyz, const string& a_name,
+                                 Ogre::Quaternion a_orientation = Ogre::Quaternion(1, 0, 0, 0));
 
 protected:
-    //unique id for creation
-    static string getUniqueID();
-    static ulint id;
+    list<Corpus*> corpus;
 };
 
-/** @brief creates a unique ID for Ogre entity and mesh creation
-  */
-inline string CorpusFactory::getUniqueID()
-{
-    //get unique string from id
-    string id_string;
-    stringstream stream;
-    stream << setfill('0') << setw(10) << ++id; //format id string to 0000000001
-    stream >> id_string;
-    return id_string;
-}
 
 #endif // CORPUSFACTORY_H

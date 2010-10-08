@@ -77,6 +77,10 @@ private:
     //number of cells a side
     uint num_of_arena_cells;
 
+    //a list of non-empty cells
+    list<list<Mobilis*>* > live_mobilis_cells;
+    list<list<Unit*>* > live_unit_cells;
+
     //gravity
     Ogre::Real gravity;
 

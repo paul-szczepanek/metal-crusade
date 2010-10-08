@@ -13,6 +13,7 @@ class AIFactory;
 class Timer;
 class Arena;
 class Camera;
+class CorpusFactory;
 class ParticleFactory;
 class ProjectileFactory;
 class FormationFactory;
@@ -54,6 +55,7 @@ public:
     static Camera* camera;
     static Arena* arena;
     static Hud* hud;
+    static CorpusFactory* corpus_factory;
     static ParticleFactory* particle_factory;
     static ProjectileFactory* projectile_factory;
     static FormationFactory* formation_factory;

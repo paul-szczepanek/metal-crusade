@@ -27,7 +27,7 @@ weapon_type_cannon
 [weapon_design.muzzle_velocity]
 800 #m/s
 [weapon_design.heat_dmg]
-1000
+100
 [weapon_design.ballistic_dmg]
 4.0
 [weapon_design.penetration]

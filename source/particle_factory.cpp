@@ -1,3 +1,5 @@
+//Copyright 2010 Paul Szczepanek. Code released under GPL Version 3.
+
 #include "particle_factory.h"
 #include "particle_effect.h"
 #include "particle_effect_explosion.h"

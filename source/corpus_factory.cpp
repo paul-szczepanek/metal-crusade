@@ -1,34 +1,53 @@
 //Copyright 2010 Paul Szczepanek. Code released under GPL Version 3.
 
 #include "corpus_factory.h"
+#include "corpus.h"
 #include "game.h"
+#include "arena.h"
+#include "query_mask.h"
 
-ulint CorpusFactory::id = 0; //unieque id for each object in the game
-
-/** @brief clears the Ogre objects for a projectile
-  */
-void CorpusFactory::destroyModel(Ogre::SceneNode* a_scene_node)
+CorpusFactory::~CorpusFactory()
 {
-    //destroy attached entities
-    Ogre::SceneNode::ObjectIterator it = a_scene_node->getAttachedObjectIterator();
-    while (it.hasMoreElements()) {
-        Ogre::MovableObject* movable_object = static_cast<Ogre::MovableObject*>(it.getNext());
-        a_scene_node->getCreator()->destroyMovableObject(movable_object);
+    for (list<Corpus*>::iterator it = corpus.begin(), it_end = corpus.end(); it != it_end; ++it) {
+        //delete entities (meshes)
+        destroyModel((*it)->scene_node);
+        //delte the corpus itself
+        delete *it;
     }
 
-    //destroy children if any
-    Ogre::SceneNode::ChildNodeIterator it2 = a_scene_node->getChildIterator();
-    while (it2.hasMoreElements()) {
-        Ogre::SceneNode* child_node = static_cast<Ogre::SceneNode*>(it2.getNext());
-        destroyModel(child_node);
-    }
-
-    //at last remove the scene node
-    Game::scene->destroySceneNode(a_scene_node);
+    corpus.clear();
 }
 
+/** @brief creates static buildings and add's them to a list - they never get updated
+  */
+Corpus* CorpusFactory::spawnSceneryBuidling(Ogre::Vector3 a_pos_xyz, const string& a_name,
+                                            Ogre::Quaternion a_orientation)
+{
+    //get unique string from id and append the name
+    string id_string = getUniqueID()+'_'+a_name;
 
-//corpus factory needs to do this:
-//Game::arena->setCellIndex(cell_index, this);
-//get it's cell index on the arana
-//cell_index = Game::arena->getCellIndex(pos_xyz.x, pos_xyz.z);
+    //create entity
+    Ogre::Entity* building_mesh = Game::scene->createEntity(id_string, a_name+".mesh");
+
+    //assign material
+    building_mesh->setMaterialName(a_name);
+    //set flags
+    building_mesh->setQueryFlags(query_mask_scenery);
+
+    //create the root node
+    Ogre::SceneNode* building_node = Game::scene->getRootSceneNode()->createChildSceneNode();
+    //attach the mesh
+    building_node->attachObject(building_mesh);
+
+    //put the structure on the list
+    corpus.push_back(new Corpus(a_pos_xyz, a_name, building_node, a_orientation));
+
+    //position the node for the Corpus because it doens't do a whole lot by itself
+    building_node->setPosition(a_pos_xyz);
+
+   //record its cell index on the arana - it never changes for corpus
+    uint_pair cell_index = Game::arena->getCellIndex(a_pos_xyz.x, a_pos_xyz.z);
+    Game::arena->setCellIndex(cell_index, corpus.back());
+
+    return corpus.back();
+}
