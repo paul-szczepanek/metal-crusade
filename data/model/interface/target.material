@@ -1,0 +1,13 @@
+material target 
+{
+	receive_shadows off
+	technique
+	{
+		pass
+		{
+			diffuse 0.500000 0.900000 0.300000 0.600000
+			scene_blend alpha_blend
+			depth_write off
+		}
+	}
+}

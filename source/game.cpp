@@ -90,6 +90,7 @@ void Game::init()
         resource_mngr.addResourceLocation(data_dir+"texture/particle", "FileSystem", "particles");
         resource_mngr.addResourceLocation(data_dir+"texture/font", "FileSystem", "textures");
         resource_mngr.addResourceLocation(data_dir+"terrain", "FileSystem", "terrain");
+        resource_mngr.addResourceLocation(data_dir+"model/interface", "FileSystem", "models");
         //set units TODO: needs to be automatic
         resource_mngr.addResourceLocation(data_dir+"model/husar", "FileSystem", "models");
         resource_mngr.addResourceLocation(data_dir+"model/building_test_01", "FileSystem",

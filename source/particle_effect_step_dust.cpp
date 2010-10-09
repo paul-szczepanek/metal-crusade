@@ -65,7 +65,7 @@ int ParticleEffectStepDust::update(Ogre::Real a_dt)
 void ParticleEffectStepDust::setRate(Ogre::Real a_rate)
 {
     //the faster the crusader goes more dust gets upset
-    dust_emitter->setEmissionRate(a_rate);
+    dust_emitter->setEmissionRate(a_rate * a_rate * 0.1);
 
     //this is a really cheap way to set the dust size
     if (a_rate > 8) {

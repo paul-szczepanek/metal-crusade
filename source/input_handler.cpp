@@ -23,7 +23,7 @@ InputHandler::InputHandler()
 
     //to stop the mouse being trapped and keyboard madness
     param_list.insert(make_pair(string("x11_mouse_grab"), string("false")));
-    param_list.insert(make_pair(string("x11_mouse_hide"), string("false")));
+    param_list.insert(make_pair(string("x11_mouse_hide"), string("true")));
     param_list.insert(make_pair(string("x11_keyboard_grab"), string("false")));
     param_list.insert(make_pair(string("XAutoRepeatOn"), string("true")));
 
@@ -65,11 +65,19 @@ InputHandler::InputHandler()
     resize();
 
     //create pointer mesh TODO: pointer mesh!
-    Ogre::Entity* pointer_mesh = Game::scene->createEntity("pointer", "bullet.mesh");
+    Ogre::Entity* pointer_mesh = Game::scene->createEntity("pointer", "target.mesh");
+    Ogre::Entity* pointer_centre_mesh = Game::scene->createEntity("pointer_centre",
+                                                                  "target_centre.mesh");
+    pointer_mesh->setMaterialName("target");
     pointer_mesh->setQueryFlags(query_mask_ignore);
     pointer_mesh->setCastShadows(false);
+    pointer_centre_mesh->setMaterialName("target");
+    pointer_centre_mesh->setQueryFlags(query_mask_ignore);
+    pointer_centre_mesh->setCastShadows(false);
     pointer_node = Game::scene->getRootSceneNode()->createChildSceneNode();
     pointer_node->attachObject(pointer_mesh); //attach mesh
+    pointer_centre_node = Game::scene->getRootSceneNode()->createChildSceneNode();
+    pointer_centre_node->attachObject(pointer_centre_mesh); //attach mesh
 }
 
 InputHandler::~InputHandler()
@@ -165,7 +173,11 @@ void InputHandler::updateMousePointer()
         position = mouse_ray->getPoint(middle_distance);
     }
 
-    //adjust by the target mode
+    //pinter centre always at target high
+    pointer_centre_node->setPosition(position
+                                     + Ogre::Vector3(0, target_high_offset, 0));
+
+    //adjust by target mode
     if (game_controller->control_block.target_high) {
         position.y += target_high_offset;
     } else if (game_controller->control_block.target_air) {
@@ -177,6 +189,7 @@ void InputHandler::updateMousePointer()
     //pass the pointer pos to game cotnroller
     game_controller->setPointerPos(position);
 
+    //move the outer target mesh
     pointer_node->setPosition(position);
 }
 

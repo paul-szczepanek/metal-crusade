@@ -61,6 +61,7 @@ private:
     Ogre::Real pointer_x, pointer_y;
 
     Ogre::SceneNode* pointer_node;
+    Ogre::SceneNode* pointer_centre_node;
 
     //screen size
     unsigned int screen_width;
