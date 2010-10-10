@@ -29,7 +29,7 @@ const Ogre::Real base_height(768);
 
 Hud::Hud()
     : active(false), hud_width(base_width), hud_height(base_height),
-    scale(1), scale_w(1), scale_h(1), selected_mfd(0)
+    scale(1), scale_w(1), scale_h(1), selected_mfd(0), hud_mode(interface_mode::mfd1)
 {
     log = new LogComputer();
     status = new StatusComputer();
@@ -229,35 +229,54 @@ void Hud::offsetUpdate(Ogre::Real a_dt, hud_area a_hud_area, bool a_alternative)
 void Hud::update(Ogre::Real a_dt)
 {
     if (active) {
-        //mfd selection
-        if (Game::take(Game::hud->controller->control_block.mfd1_select)) {
-            //select previous mfd
-            mfds[selected_mfd]->activate(false);
-            --selected_mfd;
-            if (selected_mfd > mfds.size()) {
-                selected_mfd = 0;
+        //interface modes
+        if (controller->control_block.communication_interface) {
+            hud_mode = interface_mode::communication;
+
+        } else if (controller->control_block.menu_interface) {
+            hud_mode = interface_mode::computer;
+
+        } else if (controller->control_block.log) {
+            hud_mode = interface_mode::log;
+
+        } else {
+            hud_mode = interface_mode::mfd;
+        }
+
+        //mfd mode
+        if (hud_mode == interface_mode::mfd) {
+            //mfd selection
+            if (Game::take(Game::hud->controller->control_block.mfd1_select)) {
+                //select previous mfd
+                mfds[selected_mfd]->activate(false);
+                --selected_mfd;
+                if (selected_mfd > mfds.size()) {
+                    selected_mfd = 0;
+                }
+            } else if (Game::take(Game::hud->controller->control_block.mfd2_select)) {
+                //select next mfd
+                mfds[selected_mfd]->activate(false);
+                ++selected_mfd;
+                if (selected_mfd > mfds.size() - 1) {
+                    selected_mfd = mfds.size() - 1;
+                }
             }
+
             mfds[selected_mfd]->activate(true);
 
-        } else if (Game::take(Game::hud->controller->control_block.mfd2_select)) {
-            //select next mfd
+        } else {
             mfds[selected_mfd]->activate(false);
-            ++selected_mfd;
-            if (selected_mfd > mfds.size() - 1) {
-                selected_mfd = mfds.size() - 1;
-            }
-            mfds[selected_mfd]->activate(true);
         }
 
         //slide the log and status computer if active TODO: do as lazy update
-        if (player_unit->getHudMode() == interface_mode::log) {
+        if (hud_mode == interface_mode::log) {
             offsetUpdate(a_dt, hud_log, false);
             mfds[selected_mfd]->activate(false);
         } else {
             offsetUpdate(a_dt, hud_log, true);
         }
 
-        if (player_unit->getHudMode() == interface_mode::computer) {
+        if (hud_mode == interface_mode::computer) {
             offsetUpdate(a_dt, hud_status, false);
             mfds[selected_mfd]->activate(false);
         } else {

@@ -9,7 +9,7 @@ class ParticleEffectExplosion : public ParticleEffect
 {
 public:
     ParticleEffectExplosion(Ogre::SceneNode* scene_node, Ogre::Real a_size, Ogre::Real a_time,
-                            usint a_ferocity);
+                            Ogre::Real a_ferocity);
     ~ParticleEffectExplosion();
 
     int update(Ogre::Real a_dt);

@@ -85,7 +85,7 @@ void Collision::resolve(Ogre::Real a_dt)
         collision_vector.normalise(); //get a unit vector
 
         if (result_type == collision_type_blocking) {
-            //hit a concrete wall
+            //hit a concrete wall - instant stop
             velocity1 = 0;
             velocity2 = 0;
 
@@ -100,8 +100,6 @@ void Collision::resolve(Ogre::Real a_dt)
             Ogre::Real new_velocity2_perp = ((velocity2_perp * (weight2 - weight1)
                                               + 2 * weight1 * velocity1_perp) * weight_denominator);
 
-
-
             //new reflected velocities
             velocity1 = velocity1 - 2 * new_velocity1_perp * collision_vector;
             velocity2 = velocity2 - 2 * new_velocity2_perp * collision_vector;
@@ -109,15 +107,14 @@ void Collision::resolve(Ogre::Real a_dt)
             //mix elastic and inelastic collisions
             if (result_type == collision_type_soft) {
                 //for soft and impact favour inelastic
-                combined_velocity *= damping; //damping - take energy out of the system
                 velocity1 = velocity1 * collision_elasticity;
                 velocity1 += combined_velocity * (1 - collision_elasticity);
                 velocity2 = velocity2 * collision_elasticity;
                 velocity2 += combined_velocity * (1 - collision_elasticity);
+
             } else {
                 //everything else is hard, favour elastic impact
-                velocity1 *= -damping; //damping - take energy out of the system
-                velocity2 *= -damping;
+                //which is rleady calculated TODO: handle blocking here better - it can't move
             }
         }
 
@@ -126,8 +123,12 @@ void Collision::resolve(Ogre::Real a_dt)
         Ogre::Real depth = sphere1.distanceToSurface(sphere2); //how deep the hit is
 
         //move them back depending on the weight ratio
-        object1->revertMove(collision_vector * depth * weight1 * weight_denominator);
-        object2->revertMove(-collision_vector * depth * weight2 * weight_denominator);
+        if (object1->revertMove(collision_vector * depth * weight1 * weight_denominator)) {
+            velocity1 *= -damping; //damping - take energy out of the system
+        }
+        if (object2->revertMove(-collision_vector * depth * weight2 * weight_denominator)) {
+            velocity2 *= -damping; //damping - take energy out of the system
+        }
 
         //this is a tmporary cheap cheat to help rotating near obstacles
         velocity1 += collision_vector * repulsion;
@@ -140,7 +141,7 @@ void Collision::resolve(Ogre::Real a_dt)
     object2->handleCollision(this);
 
     //heat exchange (yes, again, I know this is not how the real world works
-    //but I don't have a cluster to do real heat physics simulation
+    //but I don't have a beowolf cluster handy to do real heat physics simulation
     //and I need to bend reality a lot for gameplay reasons, I feel slightly guilty though)
     if (result_type != collision_type_impact) { //if it's an impact heat damage is handled in object
         //get surface temps
@@ -151,9 +152,9 @@ void Collision::resolve(Ogre::Real a_dt)
         Ogre::Real difference = surface_temperature1 - surface_temperature2;
 
         //appty the difference to both bodies according to their own conductivity
+        //TODO: this doesn't work well beacuse of the repulsion hack
         object1->setSurfaceTemperature(surface_temperature1 - conductivity1 * a_dt * difference);
         object2->setSurfaceTemperature(surface_temperature2 + conductivity2 * a_dt * difference);
-
         //...and the first law of thermodynamics is crying silently in the corner, sorry
     }
 }

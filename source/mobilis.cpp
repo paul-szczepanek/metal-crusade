@@ -117,7 +117,6 @@ int Mobilis::update(Ogre::Real a_dt)
     es_invalid.set();
     cs_invalid.set();
 
-    //TODO: soon will be obsolete!
     //collision system hookup
     if (return_code == 0) { //if it's not dead
         if (!registered) { //and not registered yet

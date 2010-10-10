@@ -4,7 +4,7 @@
 #include "game.h"
 
 ParticleEffectExplosion::ParticleEffectExplosion(Ogre::SceneNode* particle_node, Ogre::Real a_size,
-                                                 Ogre::Real a_time, usint a_ferocity)
+                                                 Ogre::Real a_time, Ogre::Real a_ferocity)
 {
     scene_node = particle_node;
     lifetime = 0;
@@ -13,31 +13,31 @@ ParticleEffectExplosion::ParticleEffectExplosion(Ogre::SceneNode* particle_node,
     explosion = Game::scene->createParticleSystem(10, "particles");
     explosion->setSortingEnabled(true);
     explosion->setMaterialName("explosion");
-    explosion->setParameter("particle_width", "1");
+    explosion->setParameter("particle_width", "10");
     explosion->setParameter("particle_height", "1");
 
     //scale up
     Ogre::ParticleAffector* explosion_scaler = explosion->addAffector("Scaler");
-    explosion_scaler->setParameter("rate", Game::realIntoString(a_size / a_time));
+    explosion_scaler->setParameter("rate", Game::realIntoString(a_size / (a_time * 2)));
 
     //rotate
     Ogre::ParticleAffector* explosion_rotator = explosion->addAffector("Rotator");
     explosion_rotator->setParameter("rotation_speed_range_start", "0");
-    explosion_rotator->setParameter("rotation_speed_range_end", "180");
+    explosion_rotator->setParameter("rotation_speed_range_end", "360");
     explosion_rotator->setParameter("rotation_range_start", "0");
     explosion_rotator->setParameter("rotation_range_end", "360");
 
     //emit from a sphere
     Ogre::ParticleEmitter* explosion_emitter = explosion->addEmitter("Ellipsoid");
-    explosion_emitter->setParameter("width", "8");
-    explosion_emitter->setParameter("height", "8");
-    explosion_emitter->setParameter("depth", "8");
+    explosion_emitter->setParameter("width", "4");
+    explosion_emitter->setParameter("height", "4");
+    explosion_emitter->setParameter("depth", "4");
     explosion_emitter->setAngle(Ogre::Radian(pi));
-    explosion_emitter->setEmissionRate(a_ferocity / 20);
+    explosion_emitter->setEmissionRate(a_ferocity);
     explosion_emitter->setMinParticleVelocity(1);
     explosion_emitter->setMaxParticleVelocity(4);
     explosion_emitter->setTimeToLive(a_time);
-    explosion_emitter->setDuration(0.2);
+    explosion_emitter->setDuration(0.25);
 
     scene_node->attachObject(explosion);
 

@@ -31,9 +31,12 @@ public:
 
     //handle collision
     bool validateCollision(Corpus* a_collision);
-    void exploadingEffect();
+    bool revertMove(Ogre::Vector3 a_move);
 
 private:
+    //start the explosion if it has splash damage
+    void explode();
+
     Corpus* owner;
     Weapon* weapon;
 

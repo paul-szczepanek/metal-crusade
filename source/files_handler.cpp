@@ -55,9 +55,7 @@ bool FilesHandler::getBool(string a_string)
     return (a_string == "true");
 }
 
-/** @brief string to int later to be cast into an enum,
-  * I know it's a bit ugly if it gets too long it can be seperated into seperate enums
-  * TODO: it's getting long, if you start using it outside of files ffs split it up
+/** @brief translate string key into int key
   */
 ulint FilesHandler::getStringKey(const string& a_string)
 {

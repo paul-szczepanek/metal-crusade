@@ -179,7 +179,7 @@ int Arena::loadArena(const string& arena_name)
     ai_game_controllers.push_back(new GameController("dummy ai"));
     ai = Game::ai_factory->createCrusaderAI(enemy_unit2);
     ai->bindController(ai_game_controllers.back()); //assign the controller to the ai
-    ai->activate(true);
+    ai->activate(false);
     enemy_unit2->assignController(ai_game_controllers.back()); //give the unit to the ai controller
     allied_formation->joinFormation(ai_game_controllers.back());
 

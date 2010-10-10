@@ -8,7 +8,7 @@
 Unit::Unit(Ogre::Vector3 a_pos_xyz, const string& a_unit_name,
            Ogre::SceneNode* a_scene_node, Ogre::Quaternion a_orientation)
     : Mobilis::Mobilis(a_pos_xyz, a_unit_name, a_scene_node, a_orientation),
-    core_temperature(0), hud_mode(interface_mode::mfd1), hud_attached(false)
+    core_temperature(0), hud_attached(false)
 {
 
 }

@@ -15,6 +15,15 @@ class LogComputer;
 class StatusComputer;
 class RadarComputer;
 
+namespace interface_mode {
+    enum modes {
+        mfd,
+        log,
+        computer,
+        communication
+    };
+};
+
 class Hud
 {
 public:
@@ -92,6 +101,9 @@ private:
     //MFD
     vector<MFDComputer*> mfds;
     usint selected_mfd;
+
+    //wchich item is active
+    interface_mode::modes hud_mode;
 };
 
 inline void Hud::addContainer(hud_area a_hud_area, Ogre::OverlayContainer* a_container)

@@ -271,7 +271,7 @@ void MFDViewDamageDiagram::updateDiagramElements(Ogre::Real a_dt, Mobilis* a_tar
     heat_bar_material->setTextureVScale(1 / temperature);
     heat_bar_material->setTextureVScroll(0.5 * (1 - temperature));
 
-    for (usint i = 0; i < mfd_view::num_of_diagram_elements[diagram]; ++i) {
+    for (usint i = 0, for_size = mfd_view::num_of_diagram_elements[diagram]; i < for_size; ++i) {
         //get the damage for each area corresponding to the diagam elemnt
         Ogre::Real damage = a_target->getDamage(i);
 
@@ -281,25 +281,25 @@ void MFDViewDamageDiagram::updateDiagramElements(Ogre::Real a_dt, Mobilis* a_tar
         if (damage >= 0) {
             //get the index of the damage colours vector rounded down - hence the * 0.9
             damage_index = damage * num_of_damage_levels * 0.99999;
+
+            //if damage at a certain level start flashing
+            if (dmg_level_flashing[damage_index] > 0) {
+                //use flashing_accumulator to keep track of flashing
+                flashing_accumulator += a_dt;
+
+                //after the same interval reset the flashing process
+                if (flashing_accumulator > 2 * dmg_level_flashing[damage_index]) {
+                    flashing_accumulator = 0;
+                } else if (flashing_accumulator > dmg_level_flashing[damage_index]) {
+                    //if larger then the set interval hide the flashing red element
+                    damage_index = num_of_damage_levels;
+                }
+            }
         }
 
         //apply alpha values to the green elements
         (*materials_grns[diagram])[i]->setAlphaOperation(Ogre::LBX_MODULATE, Ogre::LBS_MANUAL,
                                 Ogre::LBS_TEXTURE, dmg_level_colour_values[damage_index].first);
-
-        //if damage at a certain level start flashing
-        if (dmg_level_flashing[damage_index] > 0) {
-            //use flashing_accumulator to keep track of flashing
-            flashing_accumulator += a_dt;
-
-            //after the same interval reset the flashing process
-            if (flashing_accumulator > 2 * dmg_level_flashing[damage_index]) {
-                flashing_accumulator = 0;
-            } else if (flashing_accumulator > dmg_level_flashing[damage_index]) {
-                //if larger then the set interval hide the flashing red element
-                damage_index = num_of_damage_levels - 1;
-            }
-        }
 
         //apply alpha values to the red elements
         (*materials_reds[diagram])[i]->setAlphaOperation(Ogre::LBX_MODULATE, Ogre::LBS_MANUAL,

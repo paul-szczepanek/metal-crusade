@@ -8,16 +8,6 @@
 class Weapon;
 class RadarComputer;
 
-namespace interface_mode {
-    enum modes {
-        mfd1,
-        mfd2,
-        log,
-        computer,
-        communication
-    };
-};
-
 class Unit : public Mobilis
 {
 public:
@@ -39,7 +29,6 @@ public:
     //hud creation
     virtual string getHudName() { return string("military"); };
     void attachHud(bool a_toggle) { hud_attached = a_toggle; };
-    interface_mode::modes getHudMode() { return hud_mode; };
     RadarComputer* getRadar() { return radar; };
 
     //hud operation
@@ -63,7 +52,6 @@ protected:
     vector<Weapon*> weapons;
 
     //hud
-    interface_mode::modes hud_mode;
     bool hud_attached;
 
     RadarComputer* radar;

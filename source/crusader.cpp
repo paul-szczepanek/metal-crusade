@@ -197,11 +197,12 @@ int Crusader::handleCollision(Collision* a_collision)
     vector<crusader_area::body_area> body_areas_hit;
     vector<usint> sphere_indices = a_collision->getCollisionSphereIndices();
 
-    //get all parts involved (manual set mechanic) into a vector of unique elements
+    //get all parts involved in collision
     for (usint i = 0, for_size = sphere_indices.size(); i < for_size; ++i) {
-        body_areas_bitset |= 1 << (cs_areas[sphere_indices[i]]);
+        body_areas_bitset[cs_areas[sphere_indices[i]]] = 1;
     }
 
+    //translate bodyset into a vector of enum body area
     for (usint i = 0; i < num_of_body_areas && body_areas_bitset.any(); ++i) {
         if (body_areas_bitset[i]) {
             body_areas_bitset[i] = 0;
@@ -210,7 +211,7 @@ int Crusader::handleCollision(Collision* a_collision)
     }
 
     //spread the damage evenly among hit parts this is mostly for splash damage
-    Ogre::Real damage_spread = 1 / body_areas_hit.size();
+    Ogre::Real damage_spread = 1.0 / body_areas_hit.size();
 
     //move this to a separate function
     Corpus* hit = a_collision->getCollidingObject();
@@ -219,6 +220,15 @@ int Crusader::handleCollision(Collision* a_collision)
     Ogre::Real ballistic_dmg = hit->getBallisticDmg() * damage_spread;
     Ogre::Real energy_dmg = hit->getEnergyDmg() * damage_spread;
     Ogre::Real heat_dmg = hit->getHeatDmg() * damage_spread;
+
+    if (damage_spread > 1) {
+        //
+        heat_dmg = heat_dmg * 1;
+        if (heat_dmg > 0) {
+            //break
+            heat_dmg *= 1;
+        }
+    }
 
     //summed for all the parts
     Ogre::Real total_conductivity = 0;
@@ -235,7 +245,7 @@ int Crusader::handleCollision(Collision* a_collision)
         damage += energy_dmg / (effective_armour * armour_conductivity + 1);
 
         //heat from damage
-        Ogre::Real local_armour_conductivity = armour_conductivity / (effective_armour + 1);
+        Ogre::Real local_armour_conductivity = armour_conductivity;// / (effective_armour + 1);
         heat += heat_dmg * local_armour_conductivity;
 
         //heat generated from armour reaction
@@ -268,7 +278,7 @@ int Crusader::handleCollision(Collision* a_collision)
     a_collision->setHitConductivity(total_conductivity);
 
     //apply heat damage (weight used for scaling as above)
-    core_temperature += heat / chasis.weight;
+    surface_temperature += heat / chasis.weight;
 
     return 0;
 }
@@ -738,24 +748,6 @@ inline void Crusader::localiseAngle(Ogre::Radian &angle, const Ogre::Radian &glo
 int Crusader::updateController()
 {
     if (core_integrity > 0) {
-        //TODO: move this to hud
-        //interface modes
-        if (controller->control_block.mfd2_select) {
-            hud_mode = interface_mode::mfd2;
-
-        } else if (controller->control_block.communication_interface) {
-            hud_mode = interface_mode::communication;
-
-        } else if (controller->control_block.menu_interface) {
-            hud_mode = interface_mode::computer;
-
-        } else if (controller->control_block.log) {
-            hud_mode = interface_mode::log;
-
-        } else {
-            hud_mode = interface_mode::mfd1;
-        }
-
         //damage and heat
         shockDamage();
         pumpHeat();

@@ -7,9 +7,6 @@
 const Ogre::Real crusader_stopping_speed = 0.001;
 const Ogre::Real switching_time = 1;
 
-
-//TODO: animation blending!!! ffs
-
 Animation::Animation(Ogre::SceneNode* a_scene_node)
     : stopped(true), cycle_length(2), rate(0),
     current_animation(animation::stand), target_animation(animation::stand), switching_progress(0)
@@ -134,7 +131,7 @@ void Animation::turn(Ogre::Radian a_turning_speed)
 
 /** @brief blends animations between different walking modes: stand, walk, run
   * @todo: deal with crouch and collisions
-  * @todo: disable anim when not on screen?
+  * @todo: disable anim when not on screen
   * @return whether the current_animation == target_animation
   */
 bool Animation::switchAnimations(Ogre::Real a_time_to_add)

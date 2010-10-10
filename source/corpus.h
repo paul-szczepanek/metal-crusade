@@ -55,7 +55,7 @@ public:
     virtual int handleCollision(Collision* a_collision);
     virtual Ogre::Vector3 getVelocity() { return Ogre::Vector3::ZERO; };
     virtual Ogre::Real getWeight() { return 10000; };
-    virtual bool revertMove(Ogre::Vector3 a_move) { return true; };
+    virtual bool revertMove(Ogre::Vector3 a_move) { return false; };
 
     //collisions
     collision_type getCollisionType() { return collision; };

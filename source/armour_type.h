@@ -29,10 +29,10 @@ const Ogre::Real armour_type_to_ballistic[] = {
 };
 
 const Ogre::Real armour_type_to_conductivity[] = {
-    0.1, //armour_type_composite
-    0.4, //armour_type_reactive
-    0.8, //armour_type_plastic
-    1,   //armour_type_ceramic
+    1, //armour_type_composite
+    0.8, //armour_type_reactive
+    0.2, //armour_type_plastic
+    0.1,   //armour_type_ceramic
     0.5, //armour_type_tesla
 };
 

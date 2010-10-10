@@ -13,6 +13,8 @@ const Ogre::Real velocity_scale = 0.1;
 const Ogre::Real inverse_velocity_scale = 10;
 //when the air resistance start to become negligable (for gameplay purposes, not in real life)
 const Ogre::Real air_resistance_cutoff = 400 * velocity_scale;
+//grace time for projectiles after spawning so that they don't explode in the owner crusader
+const Ogre::Real grace_period = 10;
 
 Projectile::Projectile(Ogre::Vector3 a_pos_xyz, const string& a_unit_name,
                        Ogre::SceneNode* a_scene_node, Ogre::Quaternion a_orientation,
@@ -35,6 +37,15 @@ Projectile::Projectile(Ogre::Vector3 a_pos_xyz, const string& a_unit_name,
     controller_active = true;
 }
 
+/** @brief ignores revert requests because it's allowed to penetrate objects
+  */
+bool Projectile::revertMove(Ogre::Vector3 a_move)
+{
+    return false;
+}
+
+/** @brief interface for collision resolution when the other object is taking damage
+  */
 Ogre::Real Projectile::getBallisticDmg()
 {
     return weapon->weapon_design.ballistic_dmg * coverage * velocity_dmg_multiplier;
@@ -50,10 +61,12 @@ Ogre::Real Projectile::getHeatDmg()
     return weapon->weapon_design.heat_dmg * coverage;
 }
 
+/** @brief check if the collision can happen and prepares the projectile to handle it
+  */
 bool Projectile::validateCollision(Corpus* a_colliding_object)
 {
     //ignore other projectiles and ignore hits at close range
-    if (lifetime < 10 && owner == a_colliding_object) {
+    if (lifetime < grace_period && owner == a_colliding_object) {
         return false;
 
     } else if (a_colliding_object->getCollisionType() == collision_type_impact) { //ignore bullets
@@ -72,26 +85,33 @@ bool Projectile::validateCollision(Corpus* a_colliding_object)
     }
 }
 
+/** @brief resolves collisions
+  */
 int Projectile::handleCollision(Collision* a_collision)
 {
     //explode and apply velocity
     velocity = a_collision->getVelocity();
 
-    if (~exploading) {
-        exploading = true;
-        exploadingEffect();
+    if (!exploading) {
+        explode();
     }
 
     return 0;
 }
 
-void Projectile::exploadingEffect()
+/** @brief sets the exploding state stopping motion and starts the explosion effect if needed
+  */
+void Projectile::explode()
 {
+    exploading = true;
+
+    lifetime = grace_period;
+
     if (weapon->weapon_design.splash_range > 0) {
         Game::particle_factory->createExplosion(pos_xyz, weapon->weapon_design.splash_range,
                                                 weapon->weapon_design.splash_range
                                         / (weapon->weapon_design.splash_velocity * velocity_scale),
-                                                weapon->weapon_design.heat_dmg);
+                                                weapon->weapon_design.heat_dmg / 100.0);
     }
 }
 
@@ -100,11 +120,9 @@ int Projectile::updateController()
     //kill after terrain hit
     if (pos_xyz.y < Game::arena->getHeight(pos_xyz.x, pos_xyz.z) //kill when ground hit
         || lifetime > weapon->weapon_design.range) //kill after range exceeded
-        if (~exploading) {
-            exploading = true;
-            exploadingEffect();
+        if (!exploading) {
+            explode();
         }
-    //TODO: on extermely low framerate this could destroy the splash without causing any collisions
     if (exploading) {
         //does the projectile explode causing splash damage
         if (weapon->weapon_design.splash_range > 0) {
@@ -139,8 +157,6 @@ int Projectile::updateController()
     if (core_integrity <= 0) { //kill on hp 0
         return 1;
     }
-
-
 
     //move and save the difference of positions into move
     move = velocity * dt;
