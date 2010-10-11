@@ -33,9 +33,11 @@ void MFDComputer::activate(bool a_toggle)
 {
     selected = a_toggle;
 
-    //rest the state if reselected or deselected
-    selecting_view = false;
-    Game::take(Game::hud->controller->control_block.mfd_toggle);
+    //reset the state if deselected
+    if (!selected) {
+        selecting_view = false;
+        Game::take(Game::hud->controller->control_block.mfd_toggle);
+    }
 }
 
 /** @brief select the mfd view

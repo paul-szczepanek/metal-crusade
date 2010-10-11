@@ -29,9 +29,9 @@ weapon_type_cannon
 [weapon_design.heat_dmg]
 4000
 [weapon_design.ballistic_dmg]
-1
+0.025
 [weapon_design.penetration]
-0.05 #armour penetration multiplier
+0 #armour penetration multiplier
 [weapon_design.energy_dmg]
 1
 [weapon_design.splash_range]

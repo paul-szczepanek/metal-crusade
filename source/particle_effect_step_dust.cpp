@@ -37,7 +37,7 @@ ParticleEffectStepDust::ParticleEffectStepDust(Ogre::SceneNode* particle_node)
     //emit in a plane under the feet
     dust_emitter = dust->addEmitter("Box");
 
-    dust_emitter->setParameter("width", "4");
+    dust_emitter->setParameter("width", "6");
     dust_emitter->setParameter("height", "0");
     dust_emitter->setParameter("depth", "2");
     dust_emitter->setAngle(Ogre::Radian(pi));
@@ -65,7 +65,7 @@ int ParticleEffectStepDust::update(Ogre::Real a_dt)
 void ParticleEffectStepDust::setRate(Ogre::Real a_rate)
 {
     //the faster the crusader goes more dust gets upset
-    dust_emitter->setEmissionRate(a_rate * a_rate * 0.1);
+    dust_emitter->setEmissionRate(a_rate * a_rate * 0.025);
 
     //this is a really cheap way to set the dust size
     if (a_rate > 8) {

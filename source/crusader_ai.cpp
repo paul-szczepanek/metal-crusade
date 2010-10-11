@@ -29,7 +29,7 @@ void CrusaderAI::update()
         //if it's at an angle that can hit the target
         bool hitting = (self->getDirection().dotProduct(direction_to_enemy) > 0.99);
 
-        if (direction_to_enemy.length() < 30) {
+        if (direction_to_enemy.length() < 40) {
             //turn sideways to the enemy
             if (self->getDriveDirection().dotProduct(direction_to_enemy) > 0.1) {
                 if (self->getDriveDirection().crossProduct(direction_to_enemy).y > 0)
@@ -56,7 +56,8 @@ void CrusaderAI::update()
         }
 
         if (hitting) {
-            if (Ogre::Math::UnitRandom() > 0.995) { //fire less often nasty as fuck
+            //fire less often nasty as fuck
+            if (Ogre::Math::UnitRandom() > 0.99 && direction_to_enemy.length() < 80) {
                 game_controller->control_block.fire = true;
 
             } else {

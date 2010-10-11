@@ -29,7 +29,7 @@ const Ogre::Real base_height(768);
 
 Hud::Hud()
     : active(false), hud_width(base_width), hud_height(base_height),
-    scale(1), scale_w(1), scale_h(1), selected_mfd(0), hud_mode(interface_mode::mfd1)
+    scale(1), scale_w(1), scale_h(1), selected_mfd(0), hud_mode(interface_mode::mfd)
 {
     log = new LogComputer();
     status = new StatusComputer();

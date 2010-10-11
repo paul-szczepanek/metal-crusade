@@ -288,12 +288,12 @@ int Crusader::handleCollision(Collision* a_collision)
 void Crusader::shockDamage()
 {
     //to make sure dt is sane (1 - span) is > 0
-    Ogre::Real span = min(dt, Ogre::Real(0.1));
+    //Ogre::Real span = min(dt, Ogre::Real(0.1)); //already guaranteed by timer
 
     //average over span
-    shock_damage_new = shock_damage_new * (1 - span * 10) + velocity * span * 10;
+    shock_damage_new = shock_damage_new * (1 - dt * 10) + velocity * dt * 10;
     //average over a two spans
-    shock_damage_old = shock_damage_old * (1 - span) + velocity * span;
+    shock_damage_old = shock_damage_old * (1 - dt) + velocity * dt;
 
     //get the change in velocity
     Ogre::Real shock = (shock_damage_new - shock_damage_old).length();
