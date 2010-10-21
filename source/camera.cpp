@@ -70,7 +70,7 @@ void Camera::resize(int a_width, int a_height)
 
 /** @brief add an object to follow with the camera
   */
-void Camera::follow(Corpus* a_corpus, short int a_slot)
+void Camera::follow(Corpus* a_corpus)
 {
     follow_list.push_back(a_corpus);
 

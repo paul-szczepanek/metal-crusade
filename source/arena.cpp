@@ -144,6 +144,13 @@ int Arena::loadArena(const string& arena_name)
     Formation* allied_formation = Game::formation_factory->createFormation("allies",
                                                                            faction_mercenary);
 
+    //temp buildings
+    Game::corpus_factory->spawnSceneryBuidling(Ogre::Vector3(630, getHeight(630, 650), 650),
+                                               "building_test_01");
+
+    Game::corpus_factory->spawnSceneryBuidling(Ogre::Vector3(570, getHeight(630, 650), 650),
+                                               "building_test_02");
+
     //fake game startup from code - ought to be read from file
     Crusader* player_unit = Game::unit_factory->spawnCrusader(Ogre::Vector3(600, 0, 600),
                             "base_husar_cavalry");
@@ -153,12 +160,6 @@ int Arena::loadArena(const string& arena_name)
 
     //create the hud according to the unit you're in - HUD NEEDS THE CONTROLLER to be assigned!
     Game::hud->loadHud(static_cast<Unit*>(player_unit));
-
-    Game::corpus_factory->spawnSceneryBuidling(Ogre::Vector3(630, getHeight(630, 650), 650),
-                                               "building_test_01");
-
-    Game::corpus_factory->spawnSceneryBuidling(Ogre::Vector3(570, getHeight(630, 650), 650),
-                                               "building_test_02");
 
     //create enemies
     Crusader* enemy_unit2 = Game::unit_factory->spawnCrusader(Ogre::Vector3(780, 0, 680),

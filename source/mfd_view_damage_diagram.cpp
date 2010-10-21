@@ -5,80 +5,74 @@
 #include "hud.h"
 #include "unit.h"
 
-//this is pretty much the bottom level of the MFD,
-//stuff here is specific to one hud - the military hud, it's pretty much hardcoded
-//I did my best to make it a modular slot in so it's not tied to anything and can be easily
-//replaced with a different view - I'm just running out of time and need to get the hud working
-
 //TODO:move this to a config file
 const int dmg_pic_w = 128;
 const int dmg_ico_w = 64;
 
-const vector<string> military_blank_grn_tex_names = {
-    "mfd_dmg_grn_blank"
-};
-
-const vector<string> military_blank_red_tex_names = {
-    "mfd_dmg_red_blank"
-};
-
-const vector<string> military_object_grn_tex_names = {
-    "mfd_dmg_grn_object"
-};
-
-const vector<string> military_object_red_tex_names = {
-    "mfd_dmg_red_object"
-};
-
-const vector<string> military_biped_crusader_grn_tex_names = {
-    "mfd_dmg_grn_tc",
-    "mfd_dmg_grn_tr",
-    "mfd_dmg_grn_tl",
-    "mfd_dmg_grn_ar",
-    "mfd_dmg_grn_al",
-    "mfd_dmg_grn_lr",
-    "mfd_dmg_grn_ll",
-    "mfd_dmg_grn_tcb",
-    "mfd_dmg_grn_trb",
-    "mfd_dmg_grn_tlb"
-};
-
-const vector<string> military_biped_crusader_red_tex_names = {
-    "mfd_dmg_red_tc",
-    "mfd_dmg_red_tr",
-    "mfd_dmg_red_tl",
-    "mfd_dmg_red_ar",
-    "mfd_dmg_red_al",
-    "mfd_dmg_red_lr",
-    "mfd_dmg_red_ll",
-    "mfd_dmg_red_tcb",
-    "mfd_dmg_red_trb",
-    "mfd_dmg_red_tlb"
-};
-
 const usint num_of_damage_levels = 5;
 
-const vector<Ogre::Real> dmg_level_flashing = {
-    0.1,
-    0.5,
-    0,
-    0,
-    0,
-    0, //destroyed
-};
-
-const vector<real_pair> dmg_level_colour_values = {
-    make_pair(0, 1),        //<0.2
-    make_pair(0.25, 1),     //<0.4
-    make_pair(0.25, 1),     //<0.6
-    make_pair(1, 0.75),     //<0.8
-    make_pair(1, 0),        //<1.0
-    make_pair(0, 0.25),     //=destroyed
-};
+vector<string> military_blank_grn_tex_names;
+vector<string> military_blank_red_tex_names;
+vector<string> military_object_grn_tex_names;
+vector<string> military_object_red_tex_names;
+vector<string> military_biped_crusader_grn_tex_names;
+vector<string> military_biped_crusader_red_tex_names;
+vector<Ogre::Real> dmg_level_flashing;
+vector<real_pair> dmg_level_colour_values;
 
 MFDViewDamageDiagram::MFDViewDamageDiagram(hud_part_design_t& a_hud_part_design)
     : MFDView(a_hud_part_design), diagram(mfd_view::biped_crusader), flashing_accumulator(0)
 {
+    //this is pretty much the bottom level of the MFD,
+    //stuff here is specific to one hud - the military hud, it's pretty much hardcoded
+    //I did my best to make it a modular slot in so it's not tied to anything and can be easily
+    //replaced with a different view - I'm just running out of time and need to get the hud working
+
+    military_blank_grn_tex_names.push_back("mfd_dmg_grn_blank");
+
+    military_blank_red_tex_names.push_back("mfd_dmg_red_blank");
+
+    military_object_grn_tex_names.push_back("mfd_dmg_grn_object");
+
+    military_object_red_tex_names.push_back("mfd_dmg_red_object");
+
+    military_biped_crusader_grn_tex_names.push_back("mfd_dmg_grn_tc");
+    military_biped_crusader_grn_tex_names.push_back("mfd_dmg_grn_tr");
+    military_biped_crusader_grn_tex_names.push_back("mfd_dmg_grn_tl");
+    military_biped_crusader_grn_tex_names.push_back("mfd_dmg_grn_ar");
+    military_biped_crusader_grn_tex_names.push_back("mfd_dmg_grn_al");
+    military_biped_crusader_grn_tex_names.push_back("mfd_dmg_grn_lr");
+    military_biped_crusader_grn_tex_names.push_back("mfd_dmg_grn_ll");
+    military_biped_crusader_grn_tex_names.push_back("mfd_dmg_grn_tcb");
+    military_biped_crusader_grn_tex_names.push_back("mfd_dmg_grn_trb");
+    military_biped_crusader_grn_tex_names.push_back("mfd_dmg_grn_tlb");
+
+    military_biped_crusader_red_tex_names.push_back("mfd_dmg_red_tc");
+    military_biped_crusader_red_tex_names.push_back("mfd_dmg_red_tr");
+    military_biped_crusader_red_tex_names.push_back("mfd_dmg_red_tl");
+    military_biped_crusader_red_tex_names.push_back("mfd_dmg_red_ar");
+    military_biped_crusader_red_tex_names.push_back("mfd_dmg_red_al");
+    military_biped_crusader_red_tex_names.push_back("mfd_dmg_red_lr");
+    military_biped_crusader_red_tex_names.push_back("mfd_dmg_red_ll");
+    military_biped_crusader_red_tex_names.push_back("mfd_dmg_red_tcb");
+    military_biped_crusader_red_tex_names.push_back("mfd_dmg_red_trb");
+    military_biped_crusader_red_tex_names.push_back("mfd_dmg_red_tlb");
+
+    dmg_level_flashing.push_back(0.1);
+    dmg_level_flashing.push_back(0.5);
+    dmg_level_flashing.push_back(0);
+    dmg_level_flashing.push_back(0);
+    dmg_level_flashing.push_back(0);
+    dmg_level_flashing.push_back(0); //destroyed
+
+    dmg_level_colour_values.push_back(make_pair(0, 1));        //<0.2
+    dmg_level_colour_values.push_back(make_pair(0.25, 1));     //<0.4
+    dmg_level_colour_values.push_back(make_pair(0.25, 1));     //<0.6
+    dmg_level_colour_values.push_back(make_pair(1, 0.75));     //<0.8
+    dmg_level_colour_values.push_back(make_pair(1, 0));        //<1.0
+    dmg_level_colour_values.push_back(make_pair(0, 0.25));     //=destroyed
+
+    //visual parts creation starts here
     Ogre::OverlayManager* overlay_mngr = Ogre::OverlayManager::getSingletonPtr();
 
     //for positioning pics

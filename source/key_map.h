@@ -5,11 +5,20 @@
 
 #include "main.h"
 #include "input_event.h"
-#include <OIS/OISEvents.h>
-#include <OIS/OISInputManager.h>
-#include <OIS/OISMouse.h>
-#include <OIS/OISKeyboard.h>
-#include <OIS/OISJoyStick.h>
+
+#ifdef PLATFORM_WIN32
+    #include <OISEvents.h>
+    #include <OISInputManager.h>
+    #include <OISMouse.h>
+    #include <OISKeyboard.h>
+    #include <OISJoyStick.h>
+#else
+    #include <OIS/OISEvents.h>
+    #include <OIS/OISInputManager.h>
+    #include <OIS/OISMouse.h>
+    #include <OIS/OISKeyboard.h>
+    #include <OIS/OISJoyStick.h>
+#endif
 
 class KeyMap
 {

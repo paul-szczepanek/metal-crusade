@@ -69,8 +69,18 @@ void Game::init()
     ogre = new Ogre::Root("", data_dir+config_dir+"graphics", "ogre.log");
 
     //load the OpenGL render system
-    ogre->loadPlugin("/usr/local/lib/OGRE/RenderSystem_GL");
-    ogre->loadPlugin("/usr/local/lib/OGRE/Plugin_ParticleFX");
+    #ifdef PLATFORM_WIN32
+        #ifdef PLATFORM_DEBUG
+            ogre->loadPlugin("RenderSystem_GL_d.dll");
+            ogre->loadPlugin("Plugin_ParticleFX_d.dll");
+        #else
+            ogre->loadPlugin("RenderSystem_GL.dll");
+            ogre->loadPlugin("Plugin_ParticleFX.dll");
+        #endif
+    #else
+        ogre->loadPlugin("/usr/local/lib/OGRE/RenderSystem_GL");
+        ogre->loadPlugin("/usr/local/lib/OGRE/Plugin_ParticleFX");
+    #endif
 
     if(ogre->restoreConfig() || ogre->showConfigDialog()) {
         //DO NOT change order of creation! you might upset the zen of the feng-shui layout
@@ -219,13 +229,21 @@ void Game::limitFPS()
     //get actual ticks
     ulint new_real_time = ogre->getTimer()->getMilliseconds();
 
-    //limit the fps to 64 ticks for stable step
-    if (new_real_time - real_time < fps_interval) {
-        timespec sleep_time;
-        sleep_time.tv_sec = 0;
-        sleep_time.tv_nsec = (fps_interval - (new_real_time - real_time)) * 1000;
-        nanosleep(&sleep_time, &sleep_time);
-    }
+    #ifdef PLATFORM_WIN32
+        //limit the fps to 64 ticks for stable step
+        if (new_real_time - real_time < fps_interval) {
+            DWORD sleep_time = (fps_interval - (new_real_time - real_time)) * 1000;
+            Sleep(sleep_time);
+        }
+    #else
+        //limit the fps to 64 ticks for stable step
+        if (new_real_time - real_time < fps_interval) {
+            timespec sleep_time;
+            sleep_time.tv_sec = 0;
+            sleep_time.tv_nsec = (fps_interval - (new_real_time - real_time)) * 1000;
+            nanosleep(&sleep_time, &sleep_time);
+        }
+    #endif
 }
 
 /** @brief calculates fps

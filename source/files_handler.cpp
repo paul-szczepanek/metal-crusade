@@ -709,7 +709,7 @@ OIS::KeyCode FilesHandler::translateKeycode(const string& id)
         return OIS::KC_UNASSIGNED;
 
     } else {
-        return keys.at(id);
+        return keys[id];
     }
 }
 
@@ -733,7 +733,7 @@ OIS::MouseButtonID FilesHandler::translateMouse(const string& id)
         return OIS::MB_Button7;
 
     } else {
-        return mouse.at(id);
+        return mouse[id];
     }
 }
 

@@ -25,7 +25,7 @@
 void Crusader::positionWeapons(vector<Ogre::Vector3>& panel_positions, vector<usint>& slots_used)
 {
     //fake - position should be read from mesh
-    Ogre::Vector3 positions[chasis.num_of_parts];
+    vector<Ogre::Vector3> positions(chasis.num_of_parts, Ogre::Vector3(0, 0, 0));
     positions[0] = (Ogre::Vector3(0, -0.9, 3));
     positions[1] = (Ogre::Vector3(2, -0.9, 3));
     positions[2] = (Ogre::Vector3(-2, -0.9, 3));
@@ -33,8 +33,8 @@ void Crusader::positionWeapons(vector<Ogre::Vector3>& panel_positions, vector<us
     positions[4] = (Ogre::Vector3(-3.8, -0.9, 3));
     positions[5] = (Ogre::Vector3(3.8, -0.9, 3));
     positions[6] = (Ogre::Vector3(-3.8, -0.9, 3));
-    positions[7] = (Ogre::Vector3(3.8, -1.9, 3)); //legs unused for now at least
-    positions[8] = (Ogre::Vector3(-3.8, -1.9, 3));
+    //positions[7] = (Ogre::Vector3(3.8, -1.9, 3)); //legs unused for now at least
+    //positions[8] = (Ogre::Vector3(-3.8, -1.9, 3));
 
     //translate panel positions to weapon positions
     usint k = 0;
@@ -68,7 +68,7 @@ Crusader::Crusader(Ogre::Vector3 a_pos_xyz, const string& a_unit_name,
                    Ogre::SceneNode* a_scene_node, Ogre::Quaternion a_orientation,
                    crusader_design_t a_design, crusader_engine_t a_engine,
                    crusader_drive_t a_drive, crusader_chasis_t a_chasis)
-    : Unit::Unit(a_pos_xyz, a_unit_name, a_scene_node, a_orientation), //chain constructors
+    : Unit(a_pos_xyz, a_unit_name, a_scene_node, a_orientation), //chain constructors
     weapons_operational(false), current_group(0), current_weapon(0),
     shock_damage_old(Ogre::Vector3::ZERO), shock_damage_new(Ogre::Vector3::ZERO),
     design(a_design), engine(a_engine), drive(a_drive), chasis(a_chasis),

@@ -17,7 +17,7 @@ public:
     void update(Ogre::Real a_dt);
 
     //set target(s) to follow
-    void follow(Corpus* a_corpus, short int a_slot = 1);
+    void follow(Corpus* a_corpus);
 
     //called on screen resize
     void resize(int a_width, int a_height);

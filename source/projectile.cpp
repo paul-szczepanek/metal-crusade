@@ -19,7 +19,7 @@ const Ogre::Real grace_period = 10;
 Projectile::Projectile(Ogre::Vector3 a_pos_xyz, const string& a_unit_name,
                        Ogre::SceneNode* a_scene_node, Ogre::Quaternion a_orientation,
                        Weapon* a_weapon, Corpus* a_owner)
-    : Mobilis::Mobilis(a_pos_xyz, a_unit_name, a_scene_node, a_orientation),
+    : Mobilis(a_pos_xyz, a_unit_name, a_scene_node, a_orientation),
     owner(a_owner), weapon(a_weapon), lifetime(0), exploading(false), coverage(1),
     velocity_dmg_multiplier(1)
 {

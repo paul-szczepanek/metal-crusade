@@ -74,6 +74,7 @@ Crusader* UnitFactory::spawnCrusader(Ogre::Vector3 a_pos_xyz, const string& a_na
     //get unique string from id
     string id_string = getUniqueID()+'_'+chasis.mesh; //append unique id to name
 
+
     //create entities
     Ogre::Entity* drive_mesh = Game::scene->createEntity(id_string+"_drive",
                                                                  drive.mesh+"_drive.mesh");

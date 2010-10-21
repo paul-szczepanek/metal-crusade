@@ -7,8 +7,14 @@
 #include "input_event.h"
 #include "collision_type.h"
 #include "sphere.h"
-#include <OIS/OISMouse.h>
-#include <OIS/OISKeyboard.h>
+
+#ifdef PLATFORM_WIN32
+    #include <OISMouse.h>
+    #include <OISKeyboard.h>
+#else
+    #include <OIS/OISMouse.h>
+    #include <OIS/OISKeyboard.h>
+#endif
 
 struct weapon_design_t;
 struct crusader_design_t;

@@ -6,8 +6,13 @@
 #include <stdlib.h>
 #include <iostream>
 #include <fstream>
-#include <cstdint>
-#include <OGRE/Ogre.h>
+
+#ifdef PLATFORM_WIN32
+    #include <Ogre.h>
+#else
+    #include <OGRE/Ogre.h>
+#endif
+
 
 //this it a global include inlcuded by all files
 

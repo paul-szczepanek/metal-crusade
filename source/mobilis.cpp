@@ -7,7 +7,7 @@
 
 Mobilis::Mobilis(Ogre::Vector3 a_pos_xyz, const string& a_unit_name,
                              Ogre::SceneNode* a_scene_node, Ogre::Quaternion a_orientation)
-    : Corpus::Corpus(a_pos_xyz, a_unit_name, a_scene_node, a_orientation),
+    : Corpus(a_pos_xyz, a_unit_name, a_scene_node, a_orientation),
     velocity(Ogre::Vector3(0, 0, 0)), move(Ogre::Vector3(0, 0, 0)), corrected_velocity_scalar(0),
     out_of_bounds(false), registered(false), core_integrity(1), target(NULL)
 {

@@ -4,7 +4,13 @@
 #define GAME_H_INCLUDED
 
 #include "main.h"
-#include <OGRE/OgreFrameListener.h>
+
+#ifdef PLATFORM_WIN32
+    #include <OgreFrameListener.h>
+#else
+    #include <OGRE/OgreFrameListener.h>
+#endif
+
 #include "game_state.h"
 
 class InputHandler;

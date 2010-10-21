@@ -610,12 +610,12 @@ bool InputHandler::keyReleased(const OIS::KeyEvent& evt)
 {
     //stop turning unless already turning in the other direction
     if (key_map->keys[input_event_left] == evt.key) {
-        if (keyboard->isKeyDown(key_map->keys.at(input_event_right)))
+        if (keyboard->isKeyDown(key_map->keys[input_event_right]))
             game_controller->setTurn(1.0);
         else
             game_controller->setTurn(0.0);
     } else if (key_map->keys[input_event_right] == evt.key) {
-        if (keyboard->isKeyDown(key_map->keys.at(input_event_left)))
+        if (keyboard->isKeyDown(key_map->keys[input_event_left]))
             game_controller->setTurn(-1.0);
         else
             game_controller->setTurn(0.0);
