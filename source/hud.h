@@ -36,6 +36,9 @@ public:
     //main loop
     void update(Ogre::Real a_dt);
 
+    //shows the pause screen
+    void pause();
+
     //called by input manager when the window resizes
     void resize(unsigned int a_screen_width, unsigned int a_screen_height);
 
@@ -85,6 +88,10 @@ private:
     Ogre::OverlayContainer* hud_areas[hud_num_of_areas];
     Ogre::Overlay* hud_overlays[hud_num_of_areas];
     Ogre::Overlay* hud_overlay_3d;
+
+    //special temp containers for pause
+    Ogre::OverlayContainer* centre_container;
+    Ogre::Overlay* centre_overlay;
 
     //hud size and position
     bool active;

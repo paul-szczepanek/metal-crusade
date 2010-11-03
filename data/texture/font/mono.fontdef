@@ -2,6 +2,6 @@ mono
 {
     type         truetype
     source       mono.ttf
-    size         13
+    size         16
     resolution   72
 }

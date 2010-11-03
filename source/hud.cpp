@@ -82,6 +82,13 @@ void Hud::activate(bool a_toggle)
     }
 }
 
+/** @brief shows the pause screen
+  */
+void Hud::pause()
+{
+    centre_overlay->show();
+}
+
 /** @brief actually loads the hud with all the textures dependent on the name
   * all assets are later fried up when the hud is killed as they are big textures
   */
@@ -141,6 +148,29 @@ void Hud::loadHud(Unit* a_player_unit)
         hud_overlays[i]->add2D(hud_areas[i]);
         hud_overlays[i]->setZOrder(400);
     }
+
+    //create the special centre container for pause
+    centre_overlay = overlay_mngr->create("centre_overlay");
+
+    //create materials for the hud areas
+    createOverlayMaterial("controls");
+
+    //create the top container
+    centre_container = (static_cast<Ogre::OverlayContainer*>
+                        (overlay_mngr->createOverlayElement("Panel", "centre_container")));
+
+    //apply meterial with texture from design
+    centre_container->setMaterialName("controls");
+
+    //set size and position
+    centre_container->setMetricsMode(Ogre::GMM_PIXELS);
+    centre_container->setDimensions(1024, 512);
+    centre_container->setPosition(0, 0);
+
+    //add to the overlay
+    centre_overlay->add2D(centre_container);
+    centre_overlay->setZOrder(420);
+    centre_overlay->hide();
 
     //overlay for 3d objects
     hud_overlay_3d = overlay_mngr->create("3doverlay");
@@ -229,6 +259,9 @@ void Hud::offsetUpdate(Ogre::Real a_dt, hud_area a_hud_area, bool a_alternative)
 void Hud::update(Ogre::Real a_dt)
 {
     if (active) {
+        //hide the paused screen
+        centre_overlay->hide();
+
         //interface modes
         if (controller->control_block.communication_interface) {
             hud_mode = interface_mode::communication;
@@ -317,6 +350,13 @@ void Hud::resize(unsigned int a_screen_width, unsigned int a_screen_height)
 
         hud_overlays[i]->setScroll(x, -y);
     }
+
+    //reposition the pause overlay
+    centre_overlay->setScale(scale, scale);
+    Ogre::Real x = positionHorizontal(1024, horizontal::centre, 0);
+    Ogre::Real y = positionVertical(512, vertical::centre, 0);
+
+    centre_overlay->setScroll(x, -y);
 
     //rescale and reposition all the 3d elements in hud parts
     for (usint i = 0, for_size = hud_parts.size(); i < for_size; ++i) {

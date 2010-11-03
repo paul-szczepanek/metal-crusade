@@ -649,7 +649,7 @@ bool InputHandler::keyReleased(const OIS::KeyEvent& evt)
     }
 
     //emergency kill game
-    if (OIS::KC_F12 == evt.key) {
+    if (OIS::KC_ESCAPE == evt.key) {
         Game::instance()->end();
     }
 

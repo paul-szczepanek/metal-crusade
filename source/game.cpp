@@ -144,7 +144,7 @@ void Game::init()
         //load map and start main loop
         if (arena->loadArena("test_arena") == 0) {
             ogre->addFrameListener(this); //gets frameRenderingQueued called every frame
-            state = game_state_playing;
+            state = game_state_pause;
             Game::hud->activate(true);
             ogre->startRendering(); //hands over main loop to ogre
         }
@@ -166,6 +166,8 @@ bool Game::frameRenderingQueued(const Ogre::FrameEvent &evt)
 {
     fpsCalc();
 
+    input();
+
     if (state == game_state_playing) {
         //use internal clock
         new_time = timer->getTicks();
@@ -173,12 +175,12 @@ bool Game::frameRenderingQueued(const Ogre::FrameEvent &evt)
         last_time = new_time;
 
         //main game loop
-        input();
         logic(d_ticks);
         debug();
 
     } else if (state == game_state_pause) {
         timer->pause();
+        hud->pause();
 
     } else if (state == game_state_closing) {
         return false;
@@ -232,7 +234,7 @@ void Game::limitFPS()
     #ifdef PLATFORM_WIN32
         //limit the fps to 64 ticks for stable step
         if (new_real_time - real_time < fps_interval) {
-            DWORD sleep_time = (fps_interval - (new_real_time - real_time)) * 1000;
+            DWORD sleep_time = (fps_interval - (new_real_time - real_time));
             Sleep(sleep_time);
         }
     #else

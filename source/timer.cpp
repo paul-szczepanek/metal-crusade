@@ -2,6 +2,7 @@
 
 #include "timer.h"
 #include "game.h"
+#include "game_state.h"
 
 Timer::Timer(Ogre::Timer* a_ogre_timer) : time_warp(false), ogre_timer(a_ogre_timer)
 {
@@ -12,6 +13,7 @@ Timer::Timer(Ogre::Timer* a_ogre_timer) : time_warp(false), ogre_timer(a_ogre_ti
   */
 void Timer::pause()
 {
+    Game::instance()->setGameState(game_state_pause);
     time_warp = true;
     rate = 0;
 }
@@ -20,6 +22,7 @@ void Timer::pause()
   */
 void Timer::unpause()
 {
+    Game::instance()->setGameState(game_state_playing);
     time_warp = false;
     rate = 1.0;
 }

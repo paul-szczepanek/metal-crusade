@@ -83,8 +83,8 @@ Crusader::Crusader(Ogre::Vector3 a_pos_xyz, const string& a_unit_name,
     engine_temperature = surface_temperature;
 
     //resize vectors to fit the num of parts and areas
-    structure.reserve(chasis.num_of_parts);
-    armour.reserve(chasis.num_of_areas);
+    structure.resize(chasis.num_of_parts, 0);
+    armour.resize(chasis.num_of_areas, 0);
 
     torso_orientation = orientation; //at start align torso with drive
     torso_direction = orientation * torso_orientation * Ogre::Vector3(0, 0, 1);
@@ -203,7 +203,7 @@ int Crusader::handleCollision(Collision* a_collision)
     }
 
     //translate bodyset into a vector of enum body area
-    for (usint i = 0; i < num_of_body_areas && body_areas_bitset.any(); ++i) {
+    for (usint i = 0; (i < num_of_body_areas) && body_areas_bitset.any(); ++i) {
         if (body_areas_bitset[i]) {
             body_areas_bitset[i] = 0;
             body_areas_hit.push_back(static_cast<crusader_area::body_area>(i));
@@ -262,12 +262,36 @@ int Crusader::handleCollision(Collision* a_collision)
 
         //all the rest goes to structure
         damage -= armour_damage;
-        structure[body_areas_hit[i]] -= damage;
 
-        //if goes below 0 move the damage to integrity //TODO: destroying limbs
-        if (structure[body_areas_hit[i]] < 0) {
-            core_integrity += structure[body_areas_hit[i]] / chasis.weight; //scale from weight
-            structure[body_areas_hit[i]] = 0;
+        //if damage was greater than what armour could stop
+        if (damage > 0) {
+            //translate body area into body part
+            crusader_area::body_area area_hit = body_areas_hit[i];
+            crusader_part::body_part part_hit;
+
+            //areas at the back translated to the same part as the front
+            if (area_hit == crusader_area::torso_back) {
+                part_hit = crusader_part::torso;
+
+            } else if (area_hit == crusader_area::torso_left_back) {
+                part_hit = crusader_part::torso_left;
+
+            } else if (area_hit == crusader_area::torso_right_back) {
+                part_hit = crusader_part::torso_right;
+
+            } else {
+                part_hit = static_cast<crusader_part::body_part>(area_hit);
+            }
+
+            //damage the part's structure
+            structure[part_hit] -= damage;
+
+            //if goes below 0 move the damage to integrity //TODO: destroying limbs
+            if (structure[part_hit] < 0) {
+                //subtract negative structure from core integrity
+                core_integrity += structure[part_hit] / chasis.weight; //scale from weight
+                structure[part_hit] = 0;
+            }
         }
 
         //counts it up to get and average

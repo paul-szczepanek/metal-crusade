@@ -96,14 +96,14 @@ squad_tactic
 [hud_design.parts.0]
 hud_mfd1 #area
 hud_mfd1 #name
-mfd_military;(12) #type
+mfd_military;(11) #type
 mfd #function
 0;75 #position
 140;180 #size
 [hud_design.parts.1]
 hud_mfd1 #area
 hud_mfd1_aux #name
-mfd_aux_military;(12) #type
+mfd_aux_military;(11) #type
 mfd_aux #function
 147;180 #position
 74;72 #size
@@ -111,14 +111,14 @@ mfd_aux #function
 [hud_design.parts.2]
 hud_mfd2 #area
 hud_mfd2 #name
-mfd_military;(12) #type
+mfd_military;(11) #type
 mfd #function
 115;75 #position
 140;180 #size
 [hud_design.parts.3]
 hud_mfd2 #area
 hud_mfd2_aux #name
-mfd_aux_military;(12) #type
+mfd_aux_military;(11) #type
 mfd_aux #function
 5;180 #position
 74;72 #size
@@ -168,14 +168,14 @@ torso_direction #function
 [hud_design.parts.10]
 hud_radar #area
 hud_clock #name
-text;(13) #type
+text;(12) #type
 clock #function
 6;204 #position
 100;22 #size
 [hud_design.parts.11]
 hud_radar #area
 hud_radar_range #name
-text;(14) #type
+text;(13) #type
 radar_range #function
 188;89 #position
 20;20 #size
@@ -204,7 +204,7 @@ weapon_auto #function
 [hud_design.parts.15]
 hud_weapon #area
 hud_weapon_tab #name
-weapon_tab;(13) #type
+weapon_tab;(12) #type
 weapons #function
 128;0 #position
 128;16 #size (per tab, unlimited tabs)
@@ -212,7 +212,7 @@ weapons #function
 [hud_design.parts.16]
 hud_log #area
 hud_log #name
-log_printer;(12) #type
+log_printer;(11) #type
 log #function
 64;0 #position
 384;122 #size
@@ -271,7 +271,7 @@ temperature_engine #function
 [hud_design.parts.24]
 hud_status #area
 hud_status #name
-status_display;(12) #type
+status_display;(11) #type
 status #function
 60;0 #position
 392;120 #size
