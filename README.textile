@@ -23,3 +23,4 @@ The design doc is still being written but roughly:
 * story mode
 * ...and lastly, networked co-op (ha, maybe in 2012)
 
+h3. Project's website at "metalcrusade.com":http://metalcrusade.com
