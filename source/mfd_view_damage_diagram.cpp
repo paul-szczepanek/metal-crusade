@@ -68,7 +68,7 @@ MFDViewDamageDiagram::MFDViewDamageDiagram(hud_part_design_t& a_hud_part_design)
     dmg_level_colour_values.push_back(make_pair(0, 1));        //<0.2
     dmg_level_colour_values.push_back(make_pair(0.25, 1));     //<0.4
     dmg_level_colour_values.push_back(make_pair(0.25, 1));     //<0.6
-    dmg_level_colour_values.push_back(make_pair(1, 0.75));     //<0.8
+    dmg_level_colour_values.push_back(make_pair(1, 0.5));     //<0.8
     dmg_level_colour_values.push_back(make_pair(1, 0));        //<1.0
     dmg_level_colour_values.push_back(make_pair(0, 0.25));     //=destroyed
 

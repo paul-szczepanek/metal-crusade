@@ -124,7 +124,7 @@ int Arena::loadArena(const string& arena_name)
     //TODO: read form file obviously
     gravity = 10; //m/s^2
 
-    terrain_name = "mars";
+    terrain_name = "venus";
 
     //load the terrain from files
     loadTerrain();
@@ -148,7 +148,9 @@ int Arena::loadArena(const string& arena_name)
     Game::corpus_factory->spawnSceneryBuidling(Ogre::Vector3(630, getHeight(630, 650), 650),
                                                "building_test_01");
 
-    Game::corpus_factory->spawnSceneryBuidling(Ogre::Vector3(570, getHeight(630, 650), 650),
+    Game::corpus_factory->spawnSceneryBuidling(Ogre::Vector3(570, getHeight(570, 650), 650),
+                                               "building_test_02");
+    Game::corpus_factory->spawnSceneryBuidling(Ogre::Vector3(520, getHeight(520, 690), 690),
                                                "building_test_02");
 
     //fake game startup from code - ought to be read from file
@@ -162,10 +164,12 @@ int Arena::loadArena(const string& arena_name)
     Game::hud->loadHud(static_cast<Unit*>(player_unit));
 
     //create enemies
-    Crusader* enemy_unit2 = Game::unit_factory->spawnCrusader(Ogre::Vector3(780, 0, 680),
-                           "base_husar_cavalry_red");
     Crusader* enemy_unit = Game::unit_factory->spawnCrusader(Ogre::Vector3(600, 0, 700),
                             "base_husar_cavalry_red");
+    Crusader* enemy_unit2 = Game::unit_factory->spawnCrusader(Ogre::Vector3(780, 0, 680),
+                           "base_husar_cavalry_red");
+    Crusader* enemy_unit3 = Game::unit_factory->spawnCrusader(Ogre::Vector3(720, 0, 600),
+                           "base_husar_cavalry_red");
 
 
     //create an enemy controller
@@ -182,6 +186,14 @@ int Arena::loadArena(const string& arena_name)
     ai->bindController(ai_game_controllers.back()); //assign the controller to the ai
     ai->activate(true);
     enemy_unit2->assignController(ai_game_controllers.back()); //give the unit to the ai controller
+    allied_formation->joinFormation(ai_game_controllers.back());
+
+    //second enemy
+    ai_game_controllers.push_back(new GameController("dummy ai"));
+    ai = Game::ai_factory->createCrusaderAI(enemy_unit3);
+    ai->bindController(ai_game_controllers.back()); //assign the controller to the ai
+    ai->activate(true);
+    enemy_unit3->assignController(ai_game_controllers.back()); //give the unit to the ai controller
     allied_formation->joinFormation(ai_game_controllers.back());
 
     //and tell the camera to follow the players unit
