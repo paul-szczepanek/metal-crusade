@@ -9,7 +9,6 @@
 #include "radar_computer.h"
 #include "text_store.h"
 
-//this is a massive clusterfuck of parsing and fudging and will only get worse over time
 //TODO: look into replacing some of the building blocks with boost?
 
 const string game_text_file = "game_text";

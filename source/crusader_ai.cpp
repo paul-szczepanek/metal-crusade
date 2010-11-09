@@ -56,7 +56,7 @@ void CrusaderAI::update()
         }
 
         if (hitting) {
-            //fire less often nasty as fuck
+            //fire less often nasty as hell
             if (Ogre::Math::UnitRandom() > 0.99 && direction_to_enemy.length() < 80) {
                 game_controller->control_block.fire = true;
 

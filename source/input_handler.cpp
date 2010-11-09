@@ -345,7 +345,7 @@ bool InputHandler::mouseReleased(const OIS::MouseEvent& evt, OIS::MouseButtonID 
 
 /** @brief transalte key presses into input events for the controller
   * this is going to be a nightmare to maintain
-  * TODO: optimise this clusterfuck - put pointers to functions in a table indexed by input_event?
+  * TODO: optimise this - put pointers to functions in a table indexed by input_event?
   */
 bool InputHandler::keyPressed(const OIS::KeyEvent& evt)
 {

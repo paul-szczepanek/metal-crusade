@@ -468,7 +468,7 @@ void Hud::parseColours(const string& message, usint a_length,
 }
 
 /** @brief translate positions given in enums into OGRE relative coords
-  * overlays in OGRE are fucked up and the documentation is utterly misleading
+  * overlays in OGRE are messed up and the documentation is utterly misleading
   * the moving is x,-y not x,y and bizzarely the screen size is <0,2> and not <0,1>
   * scaling is done after movement against the point 1,-1 not 0.5,0.5
   */
