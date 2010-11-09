@@ -7,6 +7,7 @@ This is a computer game - a tactical military mecha simulator. The game uses *OG
 
 The game lets you pilot giant military robots (eponymous *crusaders*) with a third-person overhead view with stress put on tactics, both individual and group, and designing or customising your crusaders.
 
+h3. Project's website at "metalcrusade.com":http://metalcrusade.com
 
 h2. Project Status
 
@@ -23,4 +24,3 @@ The design doc is still being written but roughly:
 * story mode
 * ...and lastly, networked co-op (ha, maybe in 2012)
 
-h3. Project's website at "metalcrusade.com":http://metalcrusade.com

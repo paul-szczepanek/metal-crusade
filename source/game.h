@@ -51,7 +51,6 @@ public:
     //TODO: this is temp!!
     GameController* getGameController(const string& a_name) { return game_controllers.at(0); };
 
-    //becuase I am a lazy fuck and because it saves on the singleton call overhead
     //I'm going to piggy back on this singleton to globally scope these:
     static Ogre::Root* ogre;
     static Ogre::Viewport* viewport;
