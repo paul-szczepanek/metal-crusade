@@ -18,7 +18,6 @@ void MFDViewDamageDiagramTarget::update(Ogre::Real a_dt)
             if (diagram != mfd_view::blank) {
                 switchDiagrams(mfd_view::blank);
             }
-
         } else {
             updateDiagramElements(a_dt, Game::hud->player_unit->getTarget());
         }

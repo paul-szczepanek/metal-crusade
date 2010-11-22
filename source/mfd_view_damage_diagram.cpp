@@ -28,6 +28,17 @@ MFDViewDamageDiagram::MFDViewDamageDiagram(hud_part_design_t& a_hud_part_design)
     //I did my best to make it a modular slot in so it's not tied to anything and can be easily
     //replaced with a different view - I'm just running out of time and need to get the hud working
 
+
+    //this is a workaround for visual studio compiler not supporting new c++0x features :,-(
+    military_blank_grn_tex_names.clear();
+    military_blank_red_tex_names.clear();
+    military_object_grn_tex_names.clear();
+    military_object_red_tex_names.clear();
+    military_biped_crusader_grn_tex_names.clear();
+    military_biped_crusader_red_tex_names.clear();
+    dmg_level_flashing.clear();
+    dmg_level_colour_values.clear();
+
     military_blank_grn_tex_names.push_back("mfd_dmg_grn_blank");
 
     military_blank_red_tex_names.push_back("mfd_dmg_red_blank");
@@ -62,7 +73,7 @@ MFDViewDamageDiagram::MFDViewDamageDiagram(hud_part_design_t& a_hud_part_design)
     dmg_level_flashing.push_back(0.5);
     dmg_level_flashing.push_back(0);
     dmg_level_flashing.push_back(0);
-    dmg_level_flashing.push_back(0.5);
+    dmg_level_flashing.push_back(0);
     dmg_level_flashing.push_back(0); //destroyed
 
     dmg_level_colour_values.push_back(make_pair(0, 1));        //<0.2
@@ -71,6 +82,8 @@ MFDViewDamageDiagram::MFDViewDamageDiagram(hud_part_design_t& a_hud_part_design)
     dmg_level_colour_values.push_back(make_pair(1, 0.75));     //<0.8
     dmg_level_colour_values.push_back(make_pair(1, 0));        //<1.0
     dmg_level_colour_values.push_back(make_pair(0, 0.25));     //=destroyed
+    //end of workaround
+
 
     //visual parts creation starts here
     Ogre::OverlayManager* overlay_mngr = Ogre::OverlayManager::getSingletonPtr();
@@ -203,7 +216,7 @@ void MFDViewDamageDiagram::createDiagram(mfd_view::diagram_type a_diagram_type,
         materials_red.push_back(material->getTechnique(0)->getPass(0)->getTextureUnitState(0));
 
         //creat the overlay elemnt to apply it to
-        createPanel(id, id, offset_x, offset_x, dmg_pic_w, dmg_pic_w,
+        createPanel(id, id, offset_x+1, offset_x, dmg_pic_w, dmg_pic_w,
                     diagrams[a_diagram_type]);
     }
 
