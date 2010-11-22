@@ -52,6 +52,7 @@ public:
 
     //hooking up MFDs to their displays
     MFDComputer* getMFD() { return mfds.back(); };
+    int getMFDNumber() { return mfds.size(); };
 
     //helper functions
     static Ogre::MaterialPtr createOverlayMaterial(const string& a_name,

@@ -13,17 +13,17 @@ ParticleEffectExplosion::ParticleEffectExplosion(Ogre::SceneNode* particle_node,
     explosion = Game::scene->createParticleSystem(10, "particles");
     explosion->setSortingEnabled(true);
     explosion->setMaterialName("explosion");
-    explosion->setParameter("particle_width", "10");
+    explosion->setParameter("particle_width", "6");
     explosion->setParameter("particle_height", "1");
 
     //scale up
     Ogre::ParticleAffector* explosion_scaler = explosion->addAffector("Scaler");
-    explosion_scaler->setParameter("rate", Game::realIntoString(a_size / (a_time * 2)));
+    explosion_scaler->setParameter("rate", Game::realIntoString(a_size / (a_time * 1.25)));
 
     //rotate
     Ogre::ParticleAffector* explosion_rotator = explosion->addAffector("Rotator");
-    explosion_rotator->setParameter("rotation_speed_range_start", "0");
-    explosion_rotator->setParameter("rotation_speed_range_end", "360");
+    explosion_rotator->setParameter("rotation_speed_range_start", "-180");
+    explosion_rotator->setParameter("rotation_speed_range_end", "180");
     explosion_rotator->setParameter("rotation_range_start", "0");
     explosion_rotator->setParameter("rotation_range_end", "360");
 
@@ -33,7 +33,7 @@ ParticleEffectExplosion::ParticleEffectExplosion(Ogre::SceneNode* particle_node,
     explosion_emitter->setParameter("height", "4");
     explosion_emitter->setParameter("depth", "4");
     explosion_emitter->setAngle(Ogre::Radian(pi));
-    explosion_emitter->setEmissionRate(a_ferocity);
+    explosion_emitter->setEmissionRate(a_ferocity * 2);
     explosion_emitter->setMinParticleVelocity(1);
     explosion_emitter->setMaxParticleVelocity(4);
     explosion_emitter->setTimeToLive(a_time);

@@ -66,7 +66,7 @@ private:
     pair<Ogre::OverlayElement*, Ogre::OverlayElement*> ico_electronics;
 
     //flashing
-    Ogre::Real flashing_accumulator;
+    vector<Ogre::Real> flashing_accumulator;
 
     //bits to help position the pics - should be read from files really
     int offset_x;

@@ -273,5 +273,5 @@ hud_status #area
 hud_status #name
 status_display;(11) #type
 status #function
-60;0 #position
+60;8 #position
 392;120 #size

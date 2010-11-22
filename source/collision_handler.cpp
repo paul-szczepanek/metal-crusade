@@ -60,7 +60,7 @@ void CollisionHandler::updatePotentialCollisions()
             list<Corpus*>& corpus_list = Game::arena->getCorpusCell(cell_indices[i]);
 
             //if there's anything in the cell go trhough the list
-            if (unit_list.size() > 0) {
+            if (true) {
                 list<Unit*>::iterator it2 = unit_list.begin();
                 list<Unit*>::iterator it2_end = unit_list.end();
 
@@ -85,7 +85,7 @@ void CollisionHandler::updatePotentialCollisions()
                 }
             }
 
-            if (mobilis_list.size() > 0) {
+            if (true) {
                 list<Mobilis*>::iterator it2 = mobilis_list.begin();
                 list<Mobilis*>::iterator it2_end = mobilis_list.end();
 
@@ -110,7 +110,7 @@ void CollisionHandler::updatePotentialCollisions()
                 }
             }
 
-            if (corpus_list.size() > 0) {
+            if (true) {
                 list<Corpus*>::iterator it2 = corpus_list.begin();
                 list<Corpus*>::iterator it2_end = corpus_list.end();
 

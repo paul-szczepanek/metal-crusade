@@ -11,7 +11,7 @@ weapon_type_cannon
 [weapon_design.multi_fire]
 3
 [weapon_design.multi_fire_timout]
-0.15
+0.2
 [weapon_design.spread]
 0.01
 [weapon_design.weight]
@@ -25,13 +25,13 @@ weapon_type_cannon
 [weapon_design.heat_generated]
 20 #C
 [weapon_design.muzzle_velocity]
-1800 #m/s
+2200 #m/s
 [weapon_design.heat_dmg]
 0
 [weapon_design.ballistic_dmg]
-0.25
+0.5
 [weapon_design.penetration]
-0.1 #armour penetration multiplier
+0.25 #armour penetration multiplier
 [weapon_design.energy_dmg]
 0
 [weapon_design.splash_range]
@@ -49,6 +49,6 @@ bullet
 [weapon_design.lock_on_time]
 0
 [weapon_design.ammo_per_slot]
-30
+32
 [weapon_design.range]
 80

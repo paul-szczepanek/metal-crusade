@@ -2,13 +2,14 @@ material explosion {
   receive_shadows off
   technique {
     pass {
-      scene_blend add
+      scene_blend alpha_blend
+      diffuse 1 1 1 0.6
       texture_unit {
-        scene_blend alpha_blend
+        colour_op alpha_blend
         tex_address_mode clamp
-        emissive 1 1 1 1
         texture explosion_01.dds
       }
     }
   }
 }
+

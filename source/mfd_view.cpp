@@ -16,11 +16,11 @@ MFDView::MFDView(hud_part_design_t& a_hud_part_design)
 void MFDView::activate(bool a_toggle)
 {
     active = a_toggle;
-    if (active == false) {
-        //hide everything when deactivated
-        container->hide();
+    if (active) {
+        container->show();
 
     } else {
-        container->show();
+        //hide everything when deactivated
+        container->hide();
     }
 }

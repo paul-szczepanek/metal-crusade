@@ -53,7 +53,8 @@ HudMFDDisplay::HudMFDDisplay(hud_part_design_t& a_hud_part_design)
     }
 
     //set initial view
-    changeView(Game::hud->hud_design.mfd_views[0]);
+    current_view = Game::hud->hud_design.mfd_views[1];
+    changeView(Game::hud->hud_design.mfd_views[current_view]);
 }
 
 HudMFDDisplay::~HudMFDDisplay()
@@ -88,9 +89,12 @@ void HudMFDDisplay::update(Ogre::Real a_dt)
 
 void HudMFDDisplay::changeView(mfd_view::view_type a_view)
 {
+    views[current_view]->activate(false);
     current_view = a_view;
-    for (usint i = 0, for_size = views.size(); i < for_size; ++i) {
+    views[current_view]->activate(true);
+
+    //for (usint i = 0, for_size = views.size(); i < for_size; ++i) {
         //activate selected view, deactivate all the rest
-        views[i]->activate(current_view == i);
-    }
+      //  views[i]->activate(current_view == i);
+    //}
 }

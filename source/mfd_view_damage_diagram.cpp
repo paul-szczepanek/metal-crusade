@@ -21,7 +21,7 @@ vector<Ogre::Real> dmg_level_flashing;
 vector<real_pair> dmg_level_colour_values;
 
 MFDViewDamageDiagram::MFDViewDamageDiagram(hud_part_design_t& a_hud_part_design)
-    : MFDView(a_hud_part_design), diagram(mfd_view::biped_crusader), flashing_accumulator(0)
+    : MFDView(a_hud_part_design), diagram(mfd_view::biped_crusader)
 {
     //this is pretty much the bottom level of the MFD,
     //stuff here is specific to one hud - the military hud, it's pretty much hardcoded
@@ -62,7 +62,7 @@ MFDViewDamageDiagram::MFDViewDamageDiagram(hud_part_design_t& a_hud_part_design)
     dmg_level_flashing.push_back(0.5);
     dmg_level_flashing.push_back(0);
     dmg_level_flashing.push_back(0);
-    dmg_level_flashing.push_back(0);
+    dmg_level_flashing.push_back(0.5);
     dmg_level_flashing.push_back(0); //destroyed
 
     dmg_level_colour_values.push_back(make_pair(0, 1));        //<0.2
@@ -156,13 +156,15 @@ MFDViewDamageDiagram::MFDViewDamageDiagram(hud_part_design_t& a_hud_part_design)
                   military_biped_crusader_red_tex_names, material_biped_crusader_grns,
                   material_biped_crusader_reds);
 
+    flashing_accumulator.resize(military_biped_crusader_red_tex_names.size(), 0);
+
     //set initial diagram on
     switchDiagrams(diagram);
     //deactivate
     activate(false);
 }
 
-/** @brief creates a vectot of texture states of a damage pic to use to change alpha blending
+/** @brief creates a vector of texture states of a damage pic to use to change alpha blending
   */
 void MFDViewDamageDiagram::createDiagram(mfd_view::diagram_type a_diagram_type,
                                          const vector<string>& grn_names,
@@ -217,7 +219,7 @@ void MFDViewDamageDiagram::switchDiagrams(mfd_view::diagram_type a_new_diagram)
     diagram = a_new_diagram;
 
     for (usint i = 0; i < mfd_view::num_of_diagram_types; ++i) {
-        if (i == diagram) {
+        if (i == static_cast<usint>(diagram)) {
             //show the container with the selected view
             diagrams[i]->show();
 
@@ -279,12 +281,12 @@ void MFDViewDamageDiagram::updateDiagramElements(Ogre::Real a_dt, Mobilis* a_tar
             //if damage at a certain level start flashing
             if (dmg_level_flashing[damage_index] > 0) {
                 //use flashing_accumulator to keep track of flashing
-                flashing_accumulator += a_dt;
+                flashing_accumulator[i] += a_dt;
 
                 //after the same interval reset the flashing process
-                if (flashing_accumulator > 2 * dmg_level_flashing[damage_index]) {
-                    flashing_accumulator = 0;
-                } else if (flashing_accumulator > dmg_level_flashing[damage_index]) {
+                if (flashing_accumulator[i] > 2 * dmg_level_flashing[damage_index]) {
+                    flashing_accumulator[i] = 0;
+                } else if (flashing_accumulator[i] > dmg_level_flashing[damage_index]) {
                     //if larger then the set interval hide the flashing red element
                     damage_index = num_of_damage_levels;
                 }

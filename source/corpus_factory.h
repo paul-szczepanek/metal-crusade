@@ -15,6 +15,8 @@ public:
 
     Corpus* spawnSceneryBuidling(Ogre::Vector3 a_pos_xyz, const string& a_name,
                                  Ogre::Quaternion a_orientation = Ogre::Quaternion(1, 0, 0, 0));
+    Corpus* spawnSceneryBuidling(Ogre::Real a_x, Ogre::Real a_y, const string& a_name,
+                                 Ogre::Quaternion a_orientation = Ogre::Quaternion(1, 0, 0, 0));
 
 protected:
     list<Corpus*> corpus;

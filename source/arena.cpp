@@ -18,6 +18,7 @@
 #include "hud.h"
 #include "faction.h"
 #include "formation.h"
+#include "nav_point.h"
 
 //1pixel = 8 metres
 const Ogre::Real metres_per_pixel = 8;
@@ -145,16 +146,22 @@ int Arena::loadArena(const string& arena_name)
                                                                            faction_mercenary);
 
     //temp buildings
-    Game::corpus_factory->spawnSceneryBuidling(Ogre::Vector3(630, getHeight(630, 650), 650),
-                                               "building_test_01");
+    Game::corpus_factory->spawnSceneryBuidling(320, 280, "building_test_01");
+    Game::corpus_factory->spawnSceneryBuidling(280, 300, "building_test_02");
+    Game::corpus_factory->spawnSceneryBuidling(350, 270, "building_test_02");
+    Game::corpus_factory->spawnSceneryBuidling(310, 380, "building_test_01");
+    Game::corpus_factory->spawnSceneryBuidling(210, 240, "building_test_02");
+    Game::corpus_factory->spawnSceneryBuidling(300, 260, "building_test_02");
 
-    Game::corpus_factory->spawnSceneryBuidling(Ogre::Vector3(570, getHeight(570, 650), 650),
-                                               "building_test_02");
-    Game::corpus_factory->spawnSceneryBuidling(Ogre::Vector3(520, getHeight(520, 690), 690),
-                                               "building_test_02");
+    Game::corpus_factory->spawnSceneryBuidling(1320, 1580, "building_test_01");
+    Game::corpus_factory->spawnSceneryBuidling(1880, 1600, "building_test_02");
+    Game::corpus_factory->spawnSceneryBuidling(1950, 1570, "building_test_02");
+    Game::corpus_factory->spawnSceneryBuidling(1310, 1680, "building_test_01");
+    Game::corpus_factory->spawnSceneryBuidling(1110, 1740, "building_test_02");
+    Game::corpus_factory->spawnSceneryBuidling(1300, 1860, "building_test_02");
 
     //fake game startup from code - ought to be read from file
-    Crusader* player_unit = Game::unit_factory->spawnCrusader(Ogre::Vector3(600, 0, 600),
+    Crusader* player_unit = Game::unit_factory->spawnCrusader(Ogre::Vector3(310, 0, 310),
                             "base_husar_cavalry");
     //set player unit controller to local input
     player_unit->assignController(Game::instance()->getGameController(0));
@@ -163,21 +170,26 @@ int Arena::loadArena(const string& arena_name)
     //create the hud according to the unit you're in - HUD NEEDS THE CONTROLLER to be assigned!
     Game::hud->loadHud(static_cast<Unit*>(player_unit));
 
+    //create ally
+    Crusader* ally_unit = Game::unit_factory->spawnCrusader(Ogre::Vector3(340, 0, 300),
+                            "base_husar_cavalry");
+
     //create enemies
-    Crusader* enemy_unit = Game::unit_factory->spawnCrusader(Ogre::Vector3(600, 0, 700),
-                            "base_husar_cavalry_red");
-    Crusader* enemy_unit2 = Game::unit_factory->spawnCrusader(Ogre::Vector3(780, 0, 680),
+    Crusader* enemy_unit2 = Game::unit_factory->spawnCrusader(Ogre::Vector3(200, 0, 600),
                            "base_husar_cavalry_red");
-    Crusader* enemy_unit3 = Game::unit_factory->spawnCrusader(Ogre::Vector3(720, 0, 600),
+    Crusader* enemy_unit3 = Game::unit_factory->spawnCrusader(Ogre::Vector3(1200, 0, 200),
                            "base_husar_cavalry_red");
 
+    NavPoint* nav_point_a = new NavPoint(Ogre::Vector3(3600, 0, 3600));
 
     //create an enemy controller
     ai_game_controllers.push_back(new GameController("dummy ai"));
-    CrusaderAI* ai = Game::ai_factory->createCrusaderAI(enemy_unit);
+    CrusaderAI* ai = Game::ai_factory->createCrusaderAI(ally_unit);
     ai->bindController(ai_game_controllers.back()); //assign the controller to the ai
-    ai->activate(false);
-    enemy_unit->assignController(ai_game_controllers.back()); //give the unit to the ai controller
+    ai->activate(true);
+    ai->setEnemy(NULL);
+    ai->setGoal(nav_point_a);
+    ally_unit->assignController(ai_game_controllers.back()); //give the unit to the ai controller
     enemy_formation->joinFormation(ai_game_controllers.back());
 
     //second enemy
@@ -193,6 +205,7 @@ int Arena::loadArena(const string& arena_name)
     ai = Game::ai_factory->createCrusaderAI(enemy_unit3);
     ai->bindController(ai_game_controllers.back()); //assign the controller to the ai
     ai->activate(true);
+    ai->setEnemy(ally_unit);
     enemy_unit3->assignController(ai_game_controllers.back()); //give the unit to the ai controller
     allied_formation->joinFormation(ai_game_controllers.back());
 
@@ -290,14 +303,14 @@ void Arena::createTerrain()
     pass->setVertexColourTracking(Ogre::TVC_DIFFUSE);
 
     //base detail texture 0
-    pass->createTextureUnitState()->setTextureName("sand_01.dds");
+    pass->createTextureUnitState()->setTextureName("rock_01.dds");
     pass->getTextureUnitState(0)->setTextureCoordSet(1);
     pass->getTextureUnitState(0)->setColourOperationEx(Ogre::LBX_SOURCE1,
                                                        Ogre::LBS_TEXTURE,
                                                        Ogre::LBS_CURRENT);
 
     //detail texture 1
-    pass->createTextureUnitState()->setTextureName("rock_01.dds");
+    pass->createTextureUnitState()->setTextureName("sand_01.dds");
     pass->getTextureUnitState(1)->setTextureCoordSet(1);
     pass->getTextureUnitState(1)->setColourOperationEx(Ogre::LBX_BLEND_DIFFUSE_ALPHA,
                                                        Ogre::LBS_TEXTURE,
@@ -497,30 +510,30 @@ void Arena::getCellIndicesWithinRadius(const uint_pair a_index, vector<uint_pair
     //this goes in a spriral way putting in indices closer to first and further away last
     //every time it checks if the index is valid
     for (int r = 1; r <= cell_radius; ++r) {
-        if (c_i + r >= 0 && c_i + r <= num_of_arena_cells) {
+        if (c_i + r >= 0 && c_i + r < num_of_arena_cells) {
             for (int i = -r; i <= r; ++i) {
-                if (c_j + i >= 0 && c_j + i <= num_of_arena_cells) {
+                if (c_j + i >= 0 && c_j + i < num_of_arena_cells) {
                     indices.push_back(make_pair(c_i + r, c_j + i));
                 }
             }
         }
-        if (c_i - r >= 0 && c_i - r <= num_of_arena_cells) {
+        if (c_i - r >= 0 && c_i - r < num_of_arena_cells) {
             for (int i = -r; i <= r; ++i) {
-                if (c_j + i >= 0 && c_j + i <= num_of_arena_cells) {
+                if (c_j + i >= 0 && c_j + i < num_of_arena_cells) {
                     indices.push_back(make_pair(c_i - r, c_j + i));
                 }
             }
         }
-        if (c_j + r >= 0 && c_j + r <= num_of_arena_cells) {
+        if (c_j + r >= 0 && c_j + r < num_of_arena_cells) {
             for (int i = -(r - 1); i <= (r - 1); ++i) {
-                if (c_i + i >= 0 && c_i + i <= num_of_arena_cells) {
+                if (c_i + i >= 0 && c_i + i < num_of_arena_cells) {
                     indices.push_back(make_pair(c_i + i, c_j + r));
                 }
             }
         }
-        if (c_j - r >= 0 && c_j - r <= num_of_arena_cells) {
+        if (c_j - r >= 0 && c_j - r < num_of_arena_cells) {
             for (int i = -(r - 1); i <= (r - 1); ++i) {
-                if (c_i + i >= 0 && c_i + i <= num_of_arena_cells) {
+                if (c_i + i >= 0 && c_i + i < num_of_arena_cells) {
                     indices.push_back(make_pair(c_i + i, c_j - r));
                 }
             }

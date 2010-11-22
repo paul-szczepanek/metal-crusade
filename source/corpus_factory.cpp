@@ -51,3 +51,12 @@ Corpus* CorpusFactory::spawnSceneryBuidling(Ogre::Vector3 a_pos_xyz, const strin
 
     return corpus.back();
 }
+
+/** @brief creates static buildings with automatic height
+  */
+Corpus* CorpusFactory::spawnSceneryBuidling(Ogre::Real a_x, Ogre::Real a_y, const string& a_name,
+                                            Ogre::Quaternion a_orientation)
+{
+    return spawnSceneryBuidling(Ogre::Vector3(a_x, Game::arena->getHeight(a_x, a_y), a_y),
+                                a_name, a_orientation);
+}

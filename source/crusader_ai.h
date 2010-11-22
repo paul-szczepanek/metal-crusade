@@ -5,6 +5,7 @@
 
 class Crusader;
 class Corpus;
+class Imaginarius;
 
 #include "unit_ai.h"
 
@@ -17,9 +18,13 @@ public:
     //main loop
     void update();
 
+    void setGoal(Imaginarius* a_goal);
+    void setEnemy(Crusader* a_enemy);
+
 private:
     Corpus* enemy;
     Crusader* self;
+    Imaginarius* goal;
 };
 
 #endif // CRUSADERAI_H

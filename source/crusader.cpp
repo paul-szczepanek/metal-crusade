@@ -805,7 +805,17 @@ int Crusader::updateController()
             } else {
                 Game::hud->status->setLine(string("$a"), 1, 6, 54);
             }
+            Game::hud->status->setLine(string("$rpos x: ")+Game::realIntoString(pos_xyz.x)+" y: "
+                                       +Game::intIntoString(pos_xyz.z), 0, 20, 0);
+
+            Game::hud->status->setLine(string("integrity: ")+Game::realIntoString(core_integrity),
+                                       0, 20, 21);
         }
+    } else if (core_integrity < -1) { //temp!!!
+        core_integrity = 0;
+        Game::particle_factory->createExplosion(pos_xyz, 10, 2, 3);
+    } else {
+        core_integrity -= dt;
     }
 
     if (Game::arena->isOutOfBounds(pos_xyz)) {

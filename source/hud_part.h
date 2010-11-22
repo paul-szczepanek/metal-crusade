@@ -48,7 +48,7 @@ inline string HudPart::getUniqueID()
     //get unique string from id
     string id_string;
     stringstream stream;
-    stream << setfill('0') << setw(3) << ++unique_id; //format id string to 001
+    stream << setfill('0') << setw(4) << ++unique_id; //format id string to 001
     stream >> id_string;
     return id_string;
 }

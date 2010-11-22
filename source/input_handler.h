@@ -62,6 +62,10 @@ private:
     //keyconfig
     KeyMap* key_map;
 
+    //sticky keys!
+    bool sticky_left_shift;
+    bool sticky_left_control;
+
     //local controller
     GameController* game_controller;
 

@@ -24,7 +24,13 @@ MFDComputer::MFDComputer()
     //set initial view
     if (num_of_views < 1)
         Game::kill("No MFD views defined yet and an mfd exists - how do you expect that to work!?");
-    selected_view = Game::hud->hud_design.mfd_views[selected_view_index];
+
+    //each mfd gets different starting view
+    if (Game::hud->getMFDNumber() < Game::hud->hud_design.mfd_views.size()) {
+        selected_view = Game::hud->hud_design.mfd_views[Game::hud->getMFDNumber()];
+    } else {
+        selected_view = Game::hud->hud_design.mfd_views[0];
+    }
 }
 
 /** @brief marks the mfd as selected so that it starts processing input

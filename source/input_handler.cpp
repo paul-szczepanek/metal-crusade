@@ -10,7 +10,7 @@
 #include "timer.h"
 #include "game_controller.h"
 
-InputHandler::InputHandler()
+InputHandler::InputHandler() : sticky_left_shift(false), sticky_left_control(false)
 {
     //OIS configuration
     OIS::ParamList param_list;
@@ -282,6 +282,9 @@ bool InputHandler::mousePressed(const OIS::MouseEvent& evt, OIS::MouseButtonID b
 {
     if (key_map->buttons[input_event_fire] == btn) {
         game_controller->control_block.fire = true;
+        if (Game::instance()->getTimer()->getRate() == 0) {
+            Game::instance()->getTimer()->unpause();
+        }
     } else if (key_map->buttons[input_event_turn_to_pointer] == btn) {
         game_controller->control_block.turn_to_pointer = true;
     } else //if else chain continues below .v.
@@ -349,6 +352,13 @@ bool InputHandler::mouseReleased(const OIS::MouseEvent& evt, OIS::MouseButtonID 
   */
 bool InputHandler::keyPressed(const OIS::KeyEvent& evt)
 {
+    //sticky keys!
+    if (OIS::KC_LSHIFT == evt.key) {
+        sticky_left_shift = true;
+    } else if (OIS::KC_LCONTROL == evt.key) {
+        sticky_left_shift = true;
+    }
+
     //set throttle full speed in reverse unless moving forward, in that case stop
     if (key_map->keys[input_event_down] == evt.key) {
         Ogre::Real throttle = game_controller->getThrottle();
@@ -608,6 +618,13 @@ bool InputHandler::keyPressed(const OIS::KeyEvent& evt)
 
 bool InputHandler::keyReleased(const OIS::KeyEvent& evt)
 {
+    //sticky keys!
+    if (OIS::KC_LSHIFT == evt.key) {
+        sticky_left_shift = false;
+    } else if (OIS::KC_LCONTROL == evt.key) {
+        sticky_left_shift = false;
+    }
+
     //stop turning unless already turning in the other direction
     if (key_map->keys[input_event_left] == evt.key) {
         if (keyboard->isKeyDown(key_map->keys[input_event_right]))
@@ -649,7 +666,7 @@ bool InputHandler::keyReleased(const OIS::KeyEvent& evt)
     }
 
     //emergency kill game
-    if (OIS::KC_ESCAPE == evt.key) {
+    if ((OIS::KC_ESCAPE == evt.key) && !sticky_left_shift && !sticky_left_control) {
         Game::instance()->end();
     }
 

@@ -8,10 +8,10 @@ husar_red
 200mm_rfc_3 #2
 200mm_rfc_3 #3
 [design.weapons_extra_ammo]
-0
-0
-2
-2
+1
+1
+4
+4
 [design.hud]
 military
 [design.equipment]
