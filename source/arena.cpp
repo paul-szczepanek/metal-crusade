@@ -174,40 +174,33 @@ int Arena::loadArena(const string& arena_name)
     Crusader* ally_unit = Game::unit_factory->spawnCrusader(Ogre::Vector3(340, 0, 300),
                             "base_husar_cavalry");
 
-    //create enemies
-    Crusader* enemy_unit2 = Game::unit_factory->spawnCrusader(Ogre::Vector3(200, 0, 600),
-                           "base_husar_cavalry_red");
-    Crusader* enemy_unit3 = Game::unit_factory->spawnCrusader(Ogre::Vector3(1200, 0, 200),
-                           "base_husar_cavalry_red");
-
     NavPoint* nav_point_a = new NavPoint(Ogre::Vector3(3600, 0, 3600));
 
-    //create an enemy controller
-    ai_game_controllers.push_back(new GameController("dummy ai"));
-    CrusaderAI* ai = Game::ai_factory->createCrusaderAI(ally_unit);
-    ai->bindController(ai_game_controllers.back()); //assign the controller to the ai
-    ai->activate(true);
-    ai->setEnemy(NULL);
+    //give it an ai and have to go to navpoint a
+    CrusaderAI* ai = activateUnit(ally_unit, allied_formation);
     ai->setGoal(nav_point_a);
-    ally_unit->assignController(ai_game_controllers.back()); //give the unit to the ai controller
-    enemy_formation->joinFormation(ai_game_controllers.back());
 
-    //second enemy
-    ai_game_controllers.push_back(new GameController("dummy ai"));
-    ai = Game::ai_factory->createCrusaderAI(enemy_unit2);
-    ai->bindController(ai_game_controllers.back()); //assign the controller to the ai
-    ai->activate(true);
-    enemy_unit2->assignController(ai_game_controllers.back()); //give the unit to the ai controller
-    allied_formation->joinFormation(ai_game_controllers.back());
+    //create crusaders for enemies
+    Crusader* enemy_unit1 = Game::unit_factory->spawnCrusader(Ogre::Vector3(200, 0, 600),
+                           "base_husar_cavalry_red");
+    Crusader* enemy_unit2 = Game::unit_factory->spawnCrusader(Ogre::Vector3(1200, 0, 200),
+                           "base_husar_cavalry_red");
+    Crusader* enemy_unit3 = Game::unit_factory->spawnCrusader(Ogre::Vector3(3200, 0, 1600),
+                           "base_husar_cavalry_red");
+    Crusader* enemy_unit4 = Game::unit_factory->spawnCrusader(Ogre::Vector3(1200, 0, 3200),
+                           "base_husar_cavalry_red");
+    Crusader* enemy_unit5 = Game::unit_factory->spawnCrusader(Ogre::Vector3(4000, 0, 3200),
+                           "base_husar_cavalry_red");
+    Crusader* enemy_unit6 = Game::unit_factory->spawnCrusader(Ogre::Vector3(4000, 0, 100),
+                           "base_husar_cavalry_red");
 
-    //second enemy
-    ai_game_controllers.push_back(new GameController("dummy ai"));
-    ai = Game::ai_factory->createCrusaderAI(enemy_unit3);
-    ai->bindController(ai_game_controllers.back()); //assign the controller to the ai
-    ai->activate(true);
-    ai->setEnemy(ally_unit);
-    enemy_unit3->assignController(ai_game_controllers.back()); //give the unit to the ai controller
-    allied_formation->joinFormation(ai_game_controllers.back());
+    //create enemies
+    activateUnit(enemy_unit1, enemy_formation)->setEnemy(player_unit);
+    activateUnit(enemy_unit2, enemy_formation)->setEnemy(ally_unit);
+    activateUnit(enemy_unit3, enemy_formation)->setEnemy(player_unit);
+    activateUnit(enemy_unit4, enemy_formation)->setEnemy(ally_unit);
+    activateUnit(enemy_unit5, enemy_formation)->setEnemy(player_unit);
+    activateUnit(enemy_unit6, enemy_formation)->setEnemy(ally_unit);
 
     //and tell the camera to follow the players unit
     Game::camera->follow(player_unit);
@@ -219,6 +212,28 @@ int Arena::loadArena(const string& arena_name)
     updateLights();
 
     return 0;
+}
+
+/** @brief creates an AI and hooks it up to the crusader
+  * @todo: add personality enum parameter
+  */
+CrusaderAI* Arena::activateUnit(Crusader* a_unit, Formation* a_formation)
+{
+    //create a new controller for the ai to use
+    ai_game_controllers.push_back(new GameController("crusader ai"));
+    //join the formation
+    a_formation->joinFormation(ai_game_controllers.back());
+
+    //create the ai and give it the controller
+    CrusaderAI* ai = Game::ai_factory->createCrusaderAI(a_unit);
+    //assign the controller to the ai
+    ai->bindController(ai_game_controllers.back());
+    ai->activate(true);
+
+    //give unit the controller
+    a_unit->assignController(ai_game_controllers.back());
+
+    return ai;
 }
 
 void Arena::partitionArena()

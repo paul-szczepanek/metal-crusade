@@ -596,6 +596,14 @@ void Crusader::moveCrusader()
     Ogre::Real ground_resistance = 0.1; //FAKE
     Ogre::Real kinematic_resistance = 0;
 
+    //temp! get the gradient of the slope
+    Ogre::Real height = Game::arena->getHeight(pos_xyz.x, pos_xyz.z);
+    Ogre::Real height_ahead = Game::arena->getHeight(pos_xyz.x + direction.x,
+                                                     pos_xyz.z + direction.z);
+    Ogre::Real gradient = height_ahead - height;
+    gradient *= gradient;
+    if (gradient > 1) gradient = 0;
+
     //get throttle from controller which is in <-1,1> range
     throttle = controller->getThrottle();
 
@@ -642,6 +650,9 @@ void Crusader::moveCrusader()
     }
 
     Ogre::Vector3 acceleration = traction * acceleration_scalar * direction;
+
+    //TEMP!!! quick fix for slowing down on slopes
+    acceleration -= direction * gradient * corrected_velocity_scalar;
 
     //new velocity and position
     velocity = velocity - velocity * kinematic_resistance + acceleration * dt;

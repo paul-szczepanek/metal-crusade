@@ -37,7 +37,7 @@ husar
 [chasis.mesh]
 husar
 [chasis.weight]
-40
+20
 [chasis.max_weight]
 100
 [chasis.heat_dissipation_base]

@@ -258,6 +258,7 @@ void Game::fpsCalc()
     fps = 0.8 * fps + 0.2 * (Ogre::Real(1000) / Ogre::Real(new_real_time - real_time));
     real_time = new_real_time;
 
+    //temp, show the fps
     Game::hud->status->setLine(string("$eFPS: ")+Game::intIntoString(fps), 0, 20, 50);
 }
 

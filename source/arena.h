@@ -15,6 +15,9 @@ class GameController;
 class Corpus;
 class Mobilis;
 class Unit;
+class CrusaderAI;
+class Crusader;
+class Formation;
 
 class Arena
 {
@@ -69,6 +72,9 @@ private:
 
     //prepares the cells of the arena
     void partitionArena();
+
+    //create ais for units
+    CrusaderAI* activateUnit(Crusader* a_unit, Formation* a_formation);
 
     //all the objects in the arena segregated into cells
     vector<vector<list<Corpus*> > > corpus_cells;

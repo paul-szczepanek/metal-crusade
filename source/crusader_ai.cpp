@@ -12,7 +12,6 @@
 CrusaderAI::CrusaderAI(Crusader* a_self) : enemy(a_self), self(a_self), goal(NULL)
 {
     //fake and temp
-    enemy = Game::unit_factory->getUnit(0);
 }
 
 //temp!!
