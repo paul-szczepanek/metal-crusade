@@ -55,6 +55,7 @@ void CrusaderAI::update()
             }
         } else {
             if (direction_to_enemy.length() < 40) {
+                game_controller->setThrottle(0.75);
                 //turn sideways to the enemy
                 if (self->getDriveDirection().dotProduct(direction_to_enemy) > 0.1) {
                     if (self->getDriveDirection().crossProduct(direction_to_enemy).y > 0)
@@ -72,6 +73,7 @@ void CrusaderAI::update()
                         game_controller->setTurn(1.0);
                 }
             } else { //if too far away home in on enemy
+                game_controller->setThrottle(1);
                 if (self->getDriveDirection().crossProduct(direction_to_enemy).y > 0) {
                     game_controller->setTurn(-1.0);
 
@@ -89,7 +91,7 @@ void CrusaderAI::update()
                     game_controller->control_block.fire = false;
                 }
 
-                game_controller->setThrottle(1.0);
+
 
             } else {
                 game_controller->control_block.fire = false;
@@ -121,12 +123,12 @@ void CrusaderAI::update()
             }
         } else { //home in
             if (hitting) {
-                //if on target full speed ahead
-                game_controller->setThrottle(0.65);
+                //if on target half speed ahead so others can catch up
+                game_controller->setThrottle(0.45);
                 game_controller->setTurn(0.0);
 
             } else {
-                game_controller->setThrottle(0.45);
+                game_controller->setThrottle(0.7);
 
                 if (self->getDriveDirection().crossProduct(direction_to_goal).y > 0) {
                     game_controller->setTurn(-1.0);

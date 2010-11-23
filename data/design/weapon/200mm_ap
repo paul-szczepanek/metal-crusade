@@ -1,0 +1,54 @@
+[weapon_design.text_name]
+200mm_ap_name
+[weapon_design.text_description]
+200mm_ap_description
+[weapon_design.text_list_name]
+200mm_ap_list_name
+[weapon_design.model]
+C-RDM-RC083
+[weapon_design.type]
+weapon_type_cannon
+[weapon_design.multi_fire]
+1
+[weapon_design.multi_fire_timout]
+0
+[weapon_design.spread]
+0
+[weapon_design.weight]
+2
+[weapon_design.internal]
+2
+[weapon_design.panels]
+1
+[weapon_design.recharge_time]
+4
+[weapon_design.heat_generated]
+80 #C
+[weapon_design.muzzle_velocity]
+4000 #m/s
+[weapon_design.heat_dmg]
+0
+[weapon_design.ballistic_dmg]
+10
+[weapon_design.penetration]
+1 #armour penetration multiplier
+[weapon_design.energy_dmg]
+0
+[weapon_design.splash_range]
+0
+[weapon_design.splash_velocity]
+0 #m/s
+[weapon_design.projectile]
+bullet
+[weapon_design.projectile_weight]
+0.1
+[weapon_design.fuel]
+0
+[weapon_design.homing]
+0
+[weapon_design.lock_on_time]
+0
+[weapon_design.ammo_per_slot]
+8
+[weapon_design.range]
+140

@@ -24,9 +24,9 @@ Corpus::Corpus(Ogre::Vector3 a_pos_xyz, const string& a_unit_name, Ogre::SceneNo
     es_invalid.set();
     cs_invalid.set();
 
-    //make sure it's within bounds
+    //make sure it's within bounds, complain but don't kill the game
     if (Game::arena->isOutOfBounds(pos_xyz)) {
-        Game::kill(unit_name+" is out of bounds, possibly garbled arena definition");
+        cout << unit_name+" is out of bounds, possibly garbled arena definition" << endl;
     }
 }
 

@@ -17,6 +17,7 @@
 #include "hud.h"
 #include "game_controller.h"
 #include "camera.h"
+#include "status_computer.h"
 
 //define static members
 CorpusFactory* Game::corpus_factory;
@@ -133,7 +134,6 @@ void Game::init()
 
         //game time init
         timer = new Timer(ogre->getTimer());
-        debug_time = timer->getTicks();
         last_time = timer->getTicks();
         real_time = 0;
 
@@ -176,7 +176,6 @@ bool Game::frameRenderingQueued(const Ogre::FrameEvent &evt)
 
         //main game loop
         logic(d_ticks);
-        debug();
 
     } else if (state == game_state_pause) {
         timer->pause();
@@ -258,6 +257,8 @@ void Game::fpsCalc()
     //smooth displayed fps over time
     fps = 0.8 * fps + 0.2 * (Ogre::Real(1000) / Ogre::Real(new_real_time - real_time));
     real_time = new_real_time;
+
+    Game::hud->status->setLine(string("$eFPS: ")+Game::intIntoString(fps), 0, 20, 50);
 }
 
 /** @brief terminal error - die
@@ -274,27 +275,4 @@ void Game::end(string a_goodbye)
 {
     state = game_state_closing;
     cout << a_goodbye << endl;
-}
-
-/** TEMP!
-  * prints the contents an array to the console for quick and dirty debugging
-  */
-void Game::debug()
-{
-    if (last_time - debug_time > 100) {
-        debug_time = last_time;
-        system("clear");
-        stringstream debug_s;
-        debug_s << setw(12) << debug_time << " at " << setw(2) << setprecision(2) << fps << " FPS";
-        debug_lines[0] = debug_s.str();
-        for (int i = 0; i < 20; ++i) {
-            cout << debug_lines[i] << endl;
-        }
-        /*
-        //debug print
-        stringstream string_dbg;
-        string_dbg << "label: " << acceleration.length();
-        Game::instance()->debug_lines[1] = string_dbg.str();
-        */
-    }
 }

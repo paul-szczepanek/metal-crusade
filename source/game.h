@@ -84,13 +84,9 @@ public:
     void end(string a_goodbye = "Terminated");
     static void kill(string a_goodbye = "O, untimely death!");
 
-    //temp debug
-    void debug();
-    vector<string> debug_lines;
-
 private:
     //singleton
-    Game() : debug_lines(20), game_controllers(16), fps(0) { };
+    Game() : game_controllers(16), fps(0) { };
     static Game* inst;
 
     //main loop
@@ -106,7 +102,6 @@ private:
 
     //time
     Timer* timer;
-    ulint debug_time;
     ulint new_time;
     ulint last_time;
     ulint real_time;

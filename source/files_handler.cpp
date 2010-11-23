@@ -288,7 +288,7 @@ int FilesHandler::getEnum(const string& a_string)
         enum_int = 1;
     else if (a_string == "oscilating")
         enum_int = 2;
-    else //if all fails pring for debug
+    else //if all fails print for debug
         cout << "malformed enum: " << a_string << endl;
 
     assert(enum_int > -1);

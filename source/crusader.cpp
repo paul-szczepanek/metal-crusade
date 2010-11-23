@@ -562,16 +562,17 @@ void Crusader::pumpHeat()
         }
     }
 
-    //apply heatsinks
-    if (core_temperature > ambient_temperature) {
-        core_temperature -= dt * heatsinks;
-    }
-
     //pump surface to core - mother nature and father science weep
     Ogre::Real difference = armour_conductivity * dt
                             * (core_temperature - surface_temperature) * 0.5;
     surface_temperature += difference;
     core_temperature -= difference;
+
+    //apply heatsinks
+    if (core_temperature > ambient_temperature) {
+        core_temperature -= dt * heatsinks;
+        surface_temperature -= dt * heatsinks; //this is worng but necessary
+    }
 }
 
 /** @brief move the crusader
@@ -805,15 +806,18 @@ int Crusader::updateController()
             } else {
                 Game::hud->status->setLine(string("$a"), 1, 6, 54);
             }
-            Game::hud->status->setLine(string("$rpos x: ")+Game::realIntoString(pos_xyz.x)+" y: "
+            Game::hud->status->setLine(string("$rpos x: ")+Game::intIntoString(pos_xyz.x)+" y: "
                                        +Game::intIntoString(pos_xyz.z), 0, 20, 0);
 
-            Game::hud->status->setLine(string("integrity: ")+Game::realIntoString(core_integrity),
+            Game::hud->status->setLine(string("integrity: ")+Game::intIntoString(core_integrity),
                                        0, 20, 21);
         }
     } else if (core_integrity < -1) { //temp!!!
         core_integrity = 0;
         Game::particle_factory->createExplosion(pos_xyz, 10, 2, 3);
+        if (hud_attached) {
+            Game::hud->log->addLine("your crusader has been destroyed - $eGAME OVER");
+        }
     } else {
         core_integrity -= dt;
     }

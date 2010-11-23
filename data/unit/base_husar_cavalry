@@ -7,12 +7,10 @@ husar
 200mm_rfc_e #1
 200mm_rfc_3 #2
 200mm_rfc_3 #3
-200mm_rfc_3 #2
-200mm_rfc_3 #3
+200mm_ap #2
 [design.weapons_extra_ammo]
 3
 3
-2
 2
 2
 2
@@ -53,7 +51,6 @@ arm_left
 torso_right
 torso_left
 arm_right
-arm_left
 [design.internals]
 internal_type_heatsink
 internal_type_heatsink
@@ -83,9 +80,6 @@ leg_left
 2
 3
 [design.weapon_groups.2]
-2
-3
 4
-5
 [design.weapon_groups.3]
 [design.weapon_groups.4]

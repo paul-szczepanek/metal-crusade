@@ -146,7 +146,7 @@ int Arena::loadArena(const string& arena_name)
                                                                            faction_mercenary);
 
     //temp buildings
-    Game::corpus_factory->spawnSceneryBuidling(320, 280, "building_test_01");
+    Game::corpus_factory->spawnSceneryBuidling(120, 280, "building_test_01");
     Game::corpus_factory->spawnSceneryBuidling(280, 300, "building_test_02");
     Game::corpus_factory->spawnSceneryBuidling(350, 270, "building_test_02");
     Game::corpus_factory->spawnSceneryBuidling(310, 380, "building_test_01");
