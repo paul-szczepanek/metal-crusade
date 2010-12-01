@@ -1,7 +1,7 @@
 [chasis.name]
 husar_name
 [chasis.model]
-A-RDM-HS11A #this is just for show type-manufacturer-modelyearvariant
+C-RDM-HS11A #this is just for show type-manufacturer-modelyearvariant
 [chasis.type]
 crusader_type_assault
 [drive.type]

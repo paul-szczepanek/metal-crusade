@@ -60,11 +60,11 @@ United Nations
 #----------weapons
 
 [200mm_ap_name]
-200mm High Powered Cannon
+Precission Rifle
 [200mm_ap_list_name] #max 12 chars
-200mm HP
+Precission
 [200mm_ap_description]
-200mm HP Cannon description, description, description, description, description, description, description, description, description, description, description, description, description, description, description, description, description, description, description, description, description.
+Precission Rifle Cannon description, description, description, description, description, description, description, description, description, description, description, description, description, description, description, description, description, description, description, description, description.
 
 [200mm_rfc_3_name]
 200mm Rapid Chain-Fire Cannon

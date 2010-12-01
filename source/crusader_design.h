@@ -68,7 +68,9 @@ enum crusader_type {
     crusader_type_recon,
     crusader_type_infantry,
     crusader_type_assault,
-    crusader_type_goliath
+    crusader_type_goliath,
+    crusader_type_cavarly,
+    crusader_type_messanger,
 };
 
 //crusader blueprint

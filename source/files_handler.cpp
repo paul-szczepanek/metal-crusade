@@ -120,6 +120,10 @@ int FilesHandler::getEnum(const string& a_string)
         enum_int = 2;
     else if (a_string == "crusader_type_goliath")
         enum_int = 3;
+    else if (a_string == "crusader_type_cavarly")
+        enum_int = 4;
+    else if (a_string == "crusader_type_messanger")
+        enum_int = 5;
     else if (a_string == "weapon_type_cannon") //weapon_type
         enum_int = 0;
     else if (a_string == "weapon_type_launcher_missile")
