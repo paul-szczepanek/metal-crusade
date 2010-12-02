@@ -16,6 +16,7 @@
 \font_tt_scale 100
 
 \graphics default
+\float_placement h
 \paperfontsize default
 \spacing single
 \use_hyperref false
@@ -1356,7 +1357,7 @@ Finishing missions gets you XP points.
 placement h
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Tabular
@@ -2283,7 +2284,7 @@ status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename /home/paul/.VirtualBox/shared/odin.png
+	filename odin.png
 	width 2cm
 
 \end_inset
@@ -2336,7 +2337,7 @@ table below is based on an old table with different metrics
 \begin_inset Float table
 wide false
 sideways true
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Tabular
@@ -6938,7 +6939,7 @@ Research
 Facility provides improvements to tech.
 \end_layout
 
-\begin_layout Section
+\begin_layout Part
 Assets
 \end_layout
 
@@ -6974,7 +6975,7 @@ status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename classes.png
+	filename classes.svg
 	height 8cm
 
 \end_inset
