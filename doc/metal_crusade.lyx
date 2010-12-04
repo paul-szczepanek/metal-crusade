@@ -343,8 +343,24 @@ shutting down systems
 autopilot
 \end_layout
 
+\begin_layout Standard
+Operated with the cursor keys like the MFD and all other interfaces.
+\end_layout
+
 \begin_layout Subsubsection
 Using the communication menu
+\end_layout
+
+\begin_layout Standard
+This should be primarliy used to access the order stacks that need manual
+ release for certain orders or skipping some order.
+ Secondly to access comms of each group, and each crusader if needed to
+ micromanage but if you have to do it like that then you must've skipped
+ the planning phase.
+\end_layout
+
+\begin_layout Standard
+Communication menu operated like the MFDs with the cursor keys.
 \end_layout
 
 \begin_layout Subsubsection
@@ -368,7 +384,7 @@ forest foliage provides visual cover
 \end_layout
 
 \begin_layout Description
-marsh/rubble slows down, expecially wheeled drives
+marsh/rubble slows down, especially wheeled drives
 \end_layout
 
 \begin_layout Description
@@ -401,7 +417,7 @@ Precipitation aids the cooling process
 \end_layout
 
 \begin_layout Description
-Storm visial impairment
+Storm visual impairment
 \end_layout
 
 \begin_layout Description
@@ -453,7 +469,7 @@ Moving around the planet map
 The map shows the world with a hex grid overlay.
  Each hes can have one of many terrain types.
  It can be claimed by one party.
- It can have a strucutre on it.
+ It can have a structure on it.
  At any point it can have any number of units on it.
 \end_layout
 
@@ -526,7 +542,7 @@ split up your forces or join groups.
 \end_layout
 
 \begin_layout Itemize
-leave a garisson at a structure or set-up a patrol.
+leave a garrison at a structure or set-up a patrol.
 \end_layout
 
 \begin_layout Itemize
@@ -547,7 +563,7 @@ Moving
 
 \begin_layout Standard
 Moving your units or your convoy is done on hexes.
- Depending on terrrain type and other factors you can move more then one
+ Depending on terrain type and other factors you can move more then one
  hex at a time.
  Moving in convoys or by dropships greatly speeds up travel but may not
  be available.
@@ -564,7 +580,7 @@ Foot Unless you carry spare fuel rods the range of travelling on foot is
 
 \begin_layout Description
 Wheeled_Drive If all your crusaders have wheel drives your range is greatly
- estended but not all terrain is suitable for wheeled drive.
+ extended but not all terrain is suitable for wheeled drive.
 \end_layout
 
 \begin_layout Description
@@ -583,7 +599,7 @@ By
 \begin_inset space ~
 \end_inset
 
-Air Tranported freely on helicopters between arbitrary points.
+Air Transported freely on helicopters between arbitrary points.
  Same as convoy except flying.
  Limited range but greatest possible speed except for transport by drop-ship.
 \end_layout
@@ -616,16 +632,16 @@ rough
 \end_layout
 
 \begin_layout Description
-Plain terrain without major tranpsort limitations.
+Plain terrain without major transport limitations.
 \end_layout
 
 \begin_layout Description
 Rough either hilly, derelict urban, swamps, or anything else that impairs
- tranport.
+ transport.
 \end_layout
 
 \begin_layout Description
-Mountains mostly unappsable except when via a road system or on foot or
+Mountains mostly impassable except when via a road system or on foot or
  by air.
  Can also be any other extreme form of terrain like shallow water or lava.
 \end_layout
@@ -907,7 +923,7 @@ Ground Movement Cost
 \begin_layout Standard
 Each tile may also have additional qualities like a road system, a river
  etc.
- some of which affect the speed and accessibilty.
+ some of which affect the speed and accessibility.
  A road systems makes any tile an urban tile for purposes of travel.
  Aircraft travel at cost of 1 per hex regardless of terrain.
  Sea vessels travel at cost of 3 per hex of sea.
@@ -927,12 +943,69 @@ Customising your crusaders and running your company
 Buying gear
 \end_layout
 
+\begin_layout Standard
+You can sell and buy gear from the free market which has limited supplies.
+ Supplies depend on the manufacturing capability on the planet or the trade
+ links and are specific to planets.
+ You can always order from the merchants guild for things to be shipped
+ in the next few turns but that costs almost as much as jumping to a different
+ planet yourself.
+ Prices are dependent on supply.
+ If there's a manufacturing plant on the planet that creates flamers then
+ they are cheap as dirt, destroy the factory and after a while they cost
+ more.
+ Trade links robustness depends on how big the planets population is.
+ Pillaging cities will make the planet less attractive for trade.
+\end_layout
+
 \begin_layout Subsubsection
 Customising Crusaders
 \end_layout
 
 \begin_layout Subsubsection
 Hiring staff
+\end_layout
+
+\begin_layout Standard
+Some gear requires staff.
+ Staff is generic, unless a plot character and cannot die.
+ Loosing gear, the convoy, etc.
+ doesn't kill the staff.
+ Payroll is done every-turn, contracts are signed for 100turns.
+ Failing to pay doesn't immediately cause dismissal.
+ It damages your reputation.
+ Low enough reputation causes actual dismissal.
+ You cannot hire new people until you settle debts.
+\end_layout
+
+\begin_layout Standard
+For simplicity drivers, convoy staff and pilots come bundled with the vehicles
+ and their salary is part of operation costs of the vehicle.
+ Miscellaneous staff at the base are also part of the operation costs.
+\end_layout
+
+\begin_layout Description
+Mechanics all repairs and customisations cost time and money, both are affected
+ by the number of mechanics you have
+\end_layout
+
+\begin_layout Description
+Crusader
+\begin_inset space ~
+\end_inset
+
+Pilots each with a rank, promotions can be made after they get enough XP
+ and cause a salary increase, pilots never die but they can leave, especially
+ if you refuse a promotion for too long, they might be available for hire
+ later but with a higher rank.
+ By refusing promotions you can keep a certain number of pilots of each
+ rank and keep them rotated automatically.
+\end_layout
+
+\begin_layout Description
+Soldiers ground troops, hired in self replenishing groups, as long as not
+ all get killed they restock, used for taking over bases, can be moved in
+ APCs or trucks
 \end_layout
 
 \begin_layout Subsubsection
@@ -1221,7 +1294,7 @@ order
 \end_inset
 
 stack once you skip an order it is either failed or accomplished and you
- move onto the next, only the current place in stack is being continously
+ move onto the next, only the current place in stack is being continuously
  evaluated for launch, succeed or fail conditions
 \end_layout
 
@@ -1320,7 +1393,7 @@ Nav point destroyed
 \end_layout
 
 \begin_layout Itemize
-Group destoyed
+Group destroyed
 \end_layout
 
 \begin_layout Itemize
@@ -1334,9 +1407,10 @@ Game progression and ranks
 \begin_layout Standard
 Game, story mode or not, starts of with you working for a mercenary company,
  getting paid per mission.
- After missions you can get promoted.
+ Missions get you XPs and those get you promoted.
  Promotions get you more privileges.
- At any point you can setup a company - you need to pay for the license.
+ At any point you can setup a company which will fast track your promotion
+ - you need to pay for the license.
 \end_layout
 
 \begin_layout Subsection
@@ -1651,6 +1725,13 @@ Ranks
 
 \end_layout
 
+\begin_layout Standard
+This also applies to people you hire.
+ You need a major in each internal group, you need a colonel to create a
+ party.
+ Captains can also form groups but are limited to one wingman.
+\end_layout
+
 \begin_layout Section
 Game world
 \end_layout
@@ -1695,6 +1776,10 @@ Nations a special coming together of mediocrity and ineptitude, kind of
  Easily fills the void left by other nations because cities are unlikely
  to refuse incorporation.
  Culturally a incomprehensible mix of every culture out there.
+\end_layout
+
+\begin_layout Standard
+There are also local factions.
 \end_layout
 
 \begin_layout Subsection
@@ -1755,8 +1840,8 @@ Chassis
 \end_layout
 
 \begin_layout Standard
-Chasis are the outer shell, they can be customised internally and some allow
- for changing the drive type.
+Chassis are the outer shell, they can be customised internally and some
+ allow for changing the drive type.
  Each faction has its own colours but the designs are freely available on
  the market.
  Some faction favour certain designs and produce more of them but they are
@@ -1771,17 +1856,17 @@ Serial numbers meaning: type-manufacturer-modelyearvariant, format: U-VVV-XXYYZ.
 \begin_inset Float table
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset Tabular
 <lyxtabular version="3" rows="7" columns="5">
 <features>
 <column alignment="center" valignment="top" width="2cm">
-<column alignment="center" valignment="top" width="2cm">
-<column alignment="center" valignment="top" width="50line%">
-<column alignment="center" valignment="top" width="3cm">
-<column alignment="center" valignment="top" width="3cm">
+<column alignment="center" valignment="top" width="1.5cm">
+<column alignment="center" valignment="top" width="55line%">
+<column alignment="center" valignment="top" width="1.5cm">
+<column alignment="center" valignment="top" width="1cm">
 <row>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -1834,7 +1919,7 @@ Code
 \begin_inset Text
 
 \begin_layout Plain Layout
-messanger
+messenger
 \end_layout
 
 \end_inset
@@ -1853,7 +1938,7 @@ messanger
 
 \begin_layout Plain Layout
 specialised unit for surgical strikes at single targets with few slots and
- panels, cheap hardware, almost no armour or wepoans, usually carrying explosive
+ panels, cheap hardware, almost no armour or weapons, usually carrying explosive
 s or self-destructing upon reaching the target
 \end_layout
 
@@ -1910,7 +1995,7 @@ recon
 \begin_inset Text
 
 \begin_layout Plain Layout
-light crusaders, used for recon, patrol, and flanking maneouvres
+light crusaders, used for recon, patrol, and flanking manoeuvres
 \end_layout
 
 \end_inset
@@ -2072,8 +2157,8 @@ assault
 \begin_inset Text
 
 \begin_layout Plain Layout
-used as part of bigger groups, can be easily outmaneovred, just as well
- they are usally used to attack immovable targets or for defence
+used as part of bigger groups, can be easily outmanoeuvred, just as well
+ they are usually used to attack immovable targets or for defence
 \end_layout
 
 \end_inset
@@ -2337,29 +2422,29 @@ table below is based on an old table with different metrics
 \begin_inset Float table
 wide false
 sideways true
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset Tabular
 <lyxtabular version="3" rows="28" columns="17">
 <features>
-<column alignment="center" valignment="top" width="2.5cm">
+<column alignment="center" valignment="top" width="2.8cm">
 <column alignment="center" valignment="top" width="4cm">
-<column alignment="center" valignment="top" width="0">
-<column alignment="center" valignment="top" width="0">
-<column alignment="center" valignment="top" width="0">
-<column alignment="center" valignment="top" width="0">
-<column alignment="center" valignment="top" width="0">
-<column alignment="center" valignment="top" width="0">
-<column alignment="center" valignment="top" width="0">
-<column alignment="center" valignment="top" width="0">
-<column alignment="center" valignment="top" width="0">
-<column alignment="center" valignment="top" width="0">
-<column alignment="center" valignment="top" width="0">
-<column alignment="center" valignment="top" width="0">
-<column alignment="center" valignment="top" width="0">
-<column alignment="center" valignment="top" width="0">
-<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="1cm">
+<column alignment="center" valignment="top" width="1cm">
+<column alignment="center" valignment="top" width="1cm">
+<column alignment="center" valignment="top" width="1cm">
+<column alignment="center" valignment="top" width="1cm">
+<column alignment="center" valignment="top" width="1cm">
+<column alignment="center" valignment="top" width="1cm">
+<column alignment="center" valignment="top" width="1cm">
+<column alignment="center" valignment="top" width="1cm">
+<column alignment="center" valignment="top" width="1cm">
+<column alignment="center" valignment="top" width="1cm">
+<column alignment="center" valignment="top" width="1cm">
+<column alignment="center" valignment="top" width="1cm">
+<column alignment="center" valignment="top" width="1cm">
+<column alignment="center" valignment="top" width="2.8cm">
 <row>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -3450,7 +3535,7 @@ H Flamer
 \begin_inset Text
 
 \begin_layout Plain Layout
-Mircowave
+Microwave
 \end_layout
 
 \end_inset
@@ -3594,7 +3679,7 @@ Microwave
 \begin_inset Text
 
 \begin_layout Plain Layout
-Mircowave
+Microwave
 \end_layout
 
 \end_inset
@@ -4535,7 +4620,7 @@ Machine Gun
 \begin_inset Text
 
 \begin_layout Plain Layout
-Precission
+Precision
 \end_layout
 
 \end_inset
@@ -4544,7 +4629,7 @@ Precission
 \begin_inset Text
 
 \begin_layout Plain Layout
-Precission Rifle
+Precision Rifle
 \end_layout
 
 \end_inset
@@ -4679,7 +4764,7 @@ Precission Rifle
 \begin_inset Text
 
 \begin_layout Plain Layout
-Precission
+Precision
 \end_layout
 
 \end_inset
@@ -6737,7 +6822,7 @@ Transport
 \end_layout
 
 \begin_layout Standard
-You can always travel on foot (wheel or wahtever's your crusader drive).
+You can always travel on foot (wheel or whatever's your crusader drive).
  This has a limited range and is generally slow.
  You can buy or rent transport.
 \end_layout
@@ -6843,10 +6928,10 @@ Any structure that does not contain non-military buildings is considered
  an outpost, otherwise it's a city.
  Non-military buildings and housing is built by private corporations and
  only on some maps where people live.
- They cannot be built by the player but the player can encourage such strucutres
+ They cannot be built by the player but the player can encourage such structures
  by providing security.
  Some private companies also come with their own militia.
- In return they can extend your reasearch and manufacturing capacity and
+ In return they can extend your research and manufacturing capacity and
  provide income depending on the contract.
 \end_layout
 
@@ -6855,7 +6940,7 @@ Military
 \end_layout
 
 \begin_layout Description
-Airfield houses and provides maintainece for aircraft.
+Airfield houses and provides maintenance for aircraft.
 \end_layout
 
 \begin_layout Description
@@ -6863,7 +6948,7 @@ Military
 \begin_inset space ~
 \end_inset
 
-Depot houses and provides maintanence for crusaders.
+Depot houses and provides maintenance for crusaders.
 \end_layout
 
 \begin_layout Description
