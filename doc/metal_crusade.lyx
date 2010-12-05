@@ -35,7 +35,7 @@
 \headsep 0.1cm
 \footskip 0.5cm
 \secnumdepth 3
-\tocdepth 3
+\tocdepth 2
 \paragraph_separation indent
 \defskip medskip
 \quotes_language english
@@ -982,6 +982,7 @@ Some gear requires staff.
 For simplicity drivers, convoy staff and pilots come bundled with the vehicles
  and their salary is part of operation costs of the vehicle.
  Miscellaneous staff at the base are also part of the operation costs.
+ Same goes for staff working in buildings.
 \end_layout
 
 \begin_layout Description
@@ -1010,6 +1011,89 @@ Soldiers ground troops, hired in self replenishing groups, as long as not
 
 \begin_layout Subsubsection
 Contracts
+\end_layout
+
+\begin_layout Standard
+When you run a mercenary company the only sustainable way to earn money
+ is to take contracts.
+ You can go rogue but at some point you will attract enough attention to
+ warrant a contact being drawn up on you.
+ Hostile actions cause your infamy to raise but also the relations with
+ whoever you're attacking to fall.
+\end_layout
+
+\begin_layout Standard
+Contract may be offered to you personally by the interested party or you
+ may take one from the bulletin board.
+ The bulletin board is global but jumping systems is expensive and unless
+ the contract is really lucrative you're stuck with missions from the planet
+ you are on.
+ Contracts are offered by global factions or local authorities or individual
+ people.
+ After picking a contract you may still be refused if the employer doesn't
+ think you're up for the job (this is to stop players from trying to fluke
+ a well paid mission beyond their scope).
+\end_layout
+
+\begin_layout Paragraph
+Common contract variables include:
+\end_layout
+
+\begin_layout Description
+employer the person issuing the contract
+\end_layout
+
+\begin_layout Description
+area where the mission takes place, a group involved
+\end_layout
+
+\begin_layout Description
+allied
+\begin_inset space ~
+\end_inset
+
+faction the faction that will gain from this contract successful completion,
+ not necesarily employers faction
+\end_layout
+
+\begin_layout Description
+enemy
+\begin_inset space ~
+\end_inset
+
+faction faction that will bear a grudge (not always the case, you might
+ not be detected etc.)
+\end_layout
+
+\begin_layout Description
+time
+\begin_inset space ~
+\end_inset
+
+limit may be based on time or other factors, like a unit reaching its destinatio
+n or other failing condition etc.
+ 
+\end_layout
+
+\begin_layout Description
+objectives doing these will get you paid the contract sum
+\end_layout
+
+\begin_layout Description
+secondary
+\begin_inset space ~
+\end_inset
+
+objectives extra pay but not mandatory, often only paid on mission success
+\end_layout
+
+\begin_layout Description
+pay including secondary objectives and salvage rights
+\end_layout
+
+\begin_layout Description
+type the template for the mission or another requirement like a number of
+ bases sacked, damage dealt etc.
 \end_layout
 
 \begin_layout Subsubsection
@@ -1131,7 +1215,7 @@ Patrol
 \begin_inset space ~
 \end_inset
 
-Recon,
+Patrol,
 \begin_inset space ~
 \end_inset
 
@@ -1147,19 +1231,8 @@ Base,
 \begin_inset space ~
 \end_inset
 
-Nothing)
-\end_layout
-
-\begin_layout Description
-Recon
-\begin_inset space ~
-\end_inset
-
-(rec.
-\begin_inset space ~
-\end_inset
-
-Patrol)
+Nothing) the bread and butter of starting out mercenaries, list of navpoints,
+ possibly time constraints, engagement rules
 \end_layout
 
 \begin_layout Description
@@ -1200,7 +1273,8 @@ Duel
 \begin_inset space ~
 \end_inset
 
-Duel) one on one combat
+Duel) this covers tournaments and other challenges, list of enemies, possible
+ crusader requirements
 \end_layout
 
 \begin_layout Description
@@ -1245,6 +1319,13 @@ Attack
 \end_inset
 
 Base)
+\end_layout
+
+\begin_layout Standard
+You can instigate missions yourself.
+ You can attack a convoy, ransack base etc.
+ regardless of your relationship with either.
+ You can't attack your own units (let's draw a line at this madness).
 \end_layout
 
 \begin_layout Subsubsection
@@ -1353,7 +1434,7 @@ Actions to choose from (time might be zero, which means infinite):
 \end_layout
 
 \begin_layout Itemize
-Wait for time
+Wait (duration)
 \end_layout
 
 \begin_layout Itemize
@@ -1361,15 +1442,15 @@ Move to nav point
 \end_layout
 
 \begin_layout Itemize
-Defend nav point for time
+Defend nav point (duration)
 \end_layout
 
 \begin_layout Itemize
-Attack nav point for time
+Attack nav point (duration)
 \end_layout
 
 \begin_layout Itemize
-Support group for time
+Support group (duration)
 \end_layout
 
 \begin_layout Itemize
@@ -1856,7 +1937,7 @@ Serial numbers meaning: type-manufacturer-modelyearvariant, format: U-VVV-XXYYZ.
 \begin_inset Float table
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Tabular
@@ -2422,7 +2503,7 @@ table below is based on an old table with different metrics
 \begin_inset Float table
 wide false
 sideways true
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Tabular
@@ -7042,14 +7123,7 @@ Classes for physical objects
 
 \begin_layout Standard
 All physical objects existing in the world with a position and a collision
- mesh are part of the master class hierarchy (see 
-\begin_inset CommandInset ref
-LatexCommand prettyref
-reference "fig:Master-Class-hierachy"
-
-\end_inset
-
-).
+ mesh are part of the master class hierarchy.
 \end_layout
 
 \begin_layout Standard
