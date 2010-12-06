@@ -352,10 +352,10 @@ Using the communication menu
 \end_layout
 
 \begin_layout Standard
-This should be primarliy used to access the order stacks that need manual
+This should be primarily used to access the order stacks that need manual
  release for certain orders or skipping some order.
  Secondly to access comms of each group, and each crusader if needed to
- micromanage but if you have to do it like that then you must've skipped
+ micromanage but if you have to do it like that then you must have skipped
  the planning phase.
 \end_layout
 
@@ -962,6 +962,13 @@ You can sell and buy gear from the free market which has limited supplies.
 Customising Crusaders
 \end_layout
 
+\begin_layout Standard
+Costs money, can be done at base or mobile base.
+ Can be customising weapons and armour or changing internal structure.
+ Depending on the number of mechanics (place the work at may have a modifier
+ too) available it takes different amounts of time.
+\end_layout
+
 \begin_layout Subsubsection
 Hiring staff
 \end_layout
@@ -1009,6 +1016,11 @@ Soldiers ground troops, hired in self replenishing groups, as long as not
  APCs or trucks
 \end_layout
 
+\begin_layout Standard
+You can find special characters that will boost everyone's performance in
+ their group, like a master mechanic, charismatic leader etc.
+\end_layout
+
 \begin_layout Subsubsection
 Contracts
 \end_layout
@@ -1053,7 +1065,7 @@ allied
 \end_inset
 
 faction the faction that will gain from this contract successful completion,
- not necesarily employers faction
+ not necessarily employers faction
 \end_layout
 
 \begin_layout Description
@@ -1323,9 +1335,9 @@ Base)
 
 \begin_layout Standard
 You can instigate missions yourself.
- You can attack a convoy, ransack base etc.
+ You can attack a convoy, ransack bases etc.
  regardless of your relationship with either.
- You can't attack your own units (let's draw a line at this madness).
+ You can't attack your own units (let's draw a line at this kind of madness).
 \end_layout
 
 \begin_layout Subsubsection
@@ -1930,7 +1942,8 @@ Chassis are the outer shell, they can be customised internally and some
 \end_layout
 
 \begin_layout Standard
-Serial numbers meaning: type-manufacturer-modelyearvariant, format: U-VVV-XXYYZ.
+Serial numbers meaning: type-manufacturer-modelyearvariant-drive, format:
+ U-VVV-WWXXY-Z.
 \end_layout
 
 \begin_layout Standard
@@ -2354,7 +2367,7 @@ Peon
 \begin_inset space ~
 \end_inset
 
-(R-RDM-PN12A)
+(R-RDM-PN12A-B)
 \end_layout
 
 \begin_layout Standard
@@ -2362,7 +2375,7 @@ Templar
 \begin_inset space ~
 \end_inset
 
-(A-RDM-TM08A)
+(A-RDM-TM08A-B)
 \end_layout
 
 \begin_layout Standard
@@ -2370,7 +2383,7 @@ Husar
 \begin_inset space ~
 \end_inset
 
-(C-RDM-HS11A)
+(C-RDM-HS11A-B)
 \end_layout
 
 \begin_layout Standard
@@ -2378,7 +2391,7 @@ Catapult
 \begin_inset space ~
 \end_inset
 
-(G-RDM-CT01A)
+(G-RDM-CT01A-T)
 \end_layout
 
 \begin_layout Paragraph
@@ -2410,7 +2423,7 @@ sed
 \begin_inset space ~
 \end_inset
 
-(M-VIC-SE01A)
+(M-VIC-SE01A-B)
 \end_layout
 
 \begin_layout Standard
@@ -2418,7 +2431,7 @@ awk
 \begin_inset space ~
 \end_inset
 
-(R-VIC-AK01A)
+(R-VIC-AK01A-T)
 \end_layout
 
 \begin_layout Standard
@@ -2426,7 +2439,7 @@ tail
 \begin_inset space ~
 \end_inset
 
-(C-RDM-TL01A)
+(C-RDM-TL01A-B)
 \end_layout
 
 \begin_layout Standard
@@ -2434,7 +2447,7 @@ tex
 \begin_inset space ~
 \end_inset
 
-(A-RDM-TX01A)
+(A-RDM-TX01A-Q)
 \end_layout
 
 \begin_layout Paragraph
@@ -2489,6 +2502,123 @@ Odin Logo
 
 \begin_layout Standard
 (G-ODN-)
+\end_layout
+
+\begin_layout Paragraph
+Parameters:
+\end_layout
+
+\begin_layout Itemize
+weight
+\end_layout
+
+\begin_layout Itemize
+max weight
+\end_layout
+
+\begin_layout Itemize
+heat dissipation base
+\end_layout
+
+\begin_layout Itemize
+heat dissipation rate
+\end_layout
+
+\begin_layout Itemize
+structure base
+\end_layout
+
+\begin_layout Itemize
+internals
+\end_layout
+
+\begin_layout Itemize
+panels
+\end_layout
+
+\begin_layout Itemize
+torso arc
+\end_layout
+
+\begin_layout Itemize
+torso turn speed
+\end_layout
+
+\begin_layout Subsubsection
+Drives
+\end_layout
+
+\begin_layout Standard
+Chasis have different variants with different drives.
+ Not all possible combinations exist.
+\end_layout
+
+\begin_layout Description
+biped B
+\end_layout
+
+\begin_layout Description
+quadruped Q
+\end_layout
+
+\begin_layout Description
+multiped M
+\end_layout
+
+\begin_layout Description
+tracks T
+\end_layout
+
+\begin_layout Description
+multiwheel W
+\end_layout
+
+\begin_layout Paragraph
+Drive parameters:
+\end_layout
+
+\begin_layout Itemize
+weight
+\end_layout
+
+\begin_layout Itemize
+kinetic resistance (reverse)
+\end_layout
+
+\begin_layout Itemize
+turn speed
+\end_layout
+
+\begin_layout Itemize
+traction
+\end_layout
+
+\begin_layout Itemize
+max speed (reverse)
+\end_layout
+
+\begin_layout Subsubsection
+Engines
+\end_layout
+
+\begin_layout Paragraph
+Parameters:
+\end_layout
+
+\begin_layout Itemize
+engine rating
+\end_layout
+
+\begin_layout Itemize
+heat production
+\end_layout
+
+\begin_layout Itemize
+weight
+\end_layout
+
+\begin_layout Itemize
+size
 \end_layout
 
 \begin_layout Subsubsection
@@ -6891,11 +7021,167 @@ Weapons
 \end_layout
 
 \begin_layout Subsubsection
+Armour
+\end_layout
+
+\begin_layout Paragraph
+Armour types:
+\end_layout
+
+\begin_layout Description
+composite
+\end_layout
+
+\begin_layout Description
+reactive creates heat
+\end_layout
+
+\begin_layout Description
+plastic
+\end_layout
+
+\begin_layout Description
+ceramic
+\end_layout
+
+\begin_layout Description
+tesla creates heat
+\end_layout
+
+\begin_layout Paragraph
+Armour parameters:
+\end_layout
+
+\begin_layout Itemize
+structure per ton
+\end_layout
+
+\begin_layout Itemize
+ballistic per ton
+\end_layout
+
+\begin_layout Itemize
+conductivity
+\end_layout
+
+\begin_layout Itemize
+generated heat
+\end_layout
+
+\begin_layout Subsubsection
+Internals
+\end_layout
+
+\begin_layout Description
+struts no weight
+\end_layout
+
+\begin_layout Description
+structure provides damage resistance
+\end_layout
+
+\begin_layout Description
+heatsink
+\end_layout
+
+\begin_layout Description
+actuator more weight carry, increase max speed if in legs
+\end_layout
+
+\begin_layout Description
+gyro stability
+\end_layout
+
+\begin_layout Description
+coolant extra coolant capacity
+\end_layout
+
+\begin_layout Description
+ultra
+\begin_inset space ~
+\end_inset
+
+gyro generates heat
+\end_layout
+
+\begin_layout Description
+capacitor
+\end_layout
+
+\begin_layout Subsubsection
+Radar
+\end_layout
+
+\begin_layout Paragraph
+Parameters:
+\end_layout
+
+\begin_layout Itemize
+active
+\end_layout
+
+\begin_layout Itemize
+max power output
+\end_layout
+
+\begin_layout Itemize
+heat sensitivity
+\end_layout
+
+\begin_layout Itemize
+electromagnetic sensitivity
+\end_layout
+
+\begin_layout Itemize
+weight
+\end_layout
+
+\begin_layout Itemize
+sweep type
+\end_layout
+
+\begin_layout Itemize
+cone angle
+\end_layout
+
+\begin_layout Itemize
+heads
+\end_layout
+
+\begin_layout Subsubsection
+On-board computer
+\end_layout
+
+\begin_layout Standard
+This is part of the personal shell and moves with the pilot.
+ Different HUDs offer different quality of information but also differ in
+ resistance to electronics damage.
+ Not each company makes one but they are cross-compatible.
+ They're not much different, it's mostly aesthetics.
+\end_layout
+
+\begin_layout Description
+RADOM spartan but resistant
+\end_layout
+
+\begin_layout Description
+Lynx high-tech and sophisticated, finicky as hell
+\end_layout
+
+\begin_layout Description
+Vi high tech but simple, average in reliability and resistance
+\end_layout
+
+\begin_layout Subsubsection
 Equipment
 \end_layout
 
 \begin_layout Standard
 WARRAD
+\end_layout
+
+\begin_layout Subsubsection
+Damage model
 \end_layout
 
 \begin_layout Subsection
@@ -7107,6 +7393,22 @@ Facility provides improvements to tech.
 
 \begin_layout Part
 Assets
+\end_layout
+
+\begin_layout Section
+Models
+\end_layout
+
+\begin_layout Section
+Maps
+\end_layout
+
+\begin_layout Section
+HUD and UI elements
+\end_layout
+
+\begin_layout Section
+Characters and cinematics
 \end_layout
 
 \begin_layout Part
