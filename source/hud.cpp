@@ -390,7 +390,7 @@ Ogre::MaterialPtr Hud::createOverlayMaterial(const string& a_name, texture_addre
         pass->createTextureUnitState()->setTextureName(a_texture_name+".dds");
 
         //enable alpha blending
-        pass->setSceneBlending(Ogre::SceneBlendType::SBT_TRANSPARENT_ALPHA);
+        pass->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);
         //crucial bit for the hud - enable clamping by default
         pass->getTextureUnitState(0)->setTextureAddressingMode(a_addressing);
         //get them a bit crisper
