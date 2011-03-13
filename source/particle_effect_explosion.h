@@ -5,6 +5,7 @@
 
 #include "particle_effect.h"
 
+
 class ParticleEffectExplosion : public ParticleEffect
 {
 public:

@@ -4,7 +4,7 @@
 #include "game.h"
 
 ParticleEffectExplosion::ParticleEffectExplosion(Ogre::SceneNode* particle_node, Ogre::Real a_size,
-                                                 Ogre::Real a_time, Ogre::Real a_ferocity)
+        Ogre::Real a_time, Ogre::Real a_ferocity)
 {
     scene_node = particle_node;
     lifetime = 0;

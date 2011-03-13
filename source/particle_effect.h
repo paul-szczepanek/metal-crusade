@@ -5,6 +5,15 @@
 
 #include "main.h"
 
+namespace fx_type {
+    enum explosion_type {
+        explosion_blast,
+        explosion_petrol,
+        explosion_smoke,
+        explosion_water,
+    };
+};
+
 class ParticleEffect
 {
 public:

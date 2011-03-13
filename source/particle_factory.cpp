@@ -3,6 +3,7 @@
 #include "particle_factory.h"
 #include "particle_effect.h"
 #include "particle_effect_explosion.h"
+#include "particle_effect_flipbook.h"
 #include "particle_effect_step_dust.h"
 #include "game.h"
 
@@ -44,7 +45,10 @@ ParticleEffect* ParticleFactory::createExplosion(Ogre::Vector3 a_position, Ogre:
     Ogre::SceneNode* particle_node = Game::scene->getRootSceneNode()->createChildSceneNode();
     particle_node->setPosition(a_position);
 
-    effects.push_back(new ParticleEffectExplosion(particle_node, a_size, a_time, a_ferocity));
+    //effects.push_back(new ParticleEffectExplosion(particle_node, a_size, a_time, a_ferocity));
+    //temp
+    effects.push_back(new ParticleEffectFlipbook(particle_node, a_size,
+                                                 a_ferocity, fx_anim::petrol));
 
     return effects.back();
 }
