@@ -2,6 +2,8 @@ material explosion_petrol {
   receive_shadows off
   technique {
     pass {
+      depth_write off
+      depth_check on
       scene_blend alpha_blend
       diffuse 1 1 1 0.5
       texture_unit {

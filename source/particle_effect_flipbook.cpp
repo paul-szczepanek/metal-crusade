@@ -19,7 +19,6 @@ ParticleEffectFlipbook::ParticleEffectFlipbook(Ogre::SceneNode* a_scene_node, Og
             num_frames = 8;
             lifetime_limit = 1.f / num_frames;
 
-            //set->setSortingEnabled(true);
             set->setMaterialName("explosion_petrol");
             set->setTextureStacksAndSlices(2, 4);
 

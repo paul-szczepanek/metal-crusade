@@ -26,16 +26,27 @@ Ogre::Quaternion Unit::getBallisticAngle(const Ogre::Vector3& a_position)
     pointer_direction.y = 0;
 
     //get the real direction confined to the torso angle
-    pointer_direction = getDirection() * pointer_direction.length();
-    //get the point the vector is pointing at
+    Ogre::Real distance = pointer_direction.length();
+    pointer_direction = getDirection() * distance;
+    //get the point the vector is pointing at from the perspective of the weapon
     pointer_position = pointer_direction + a_position;
+
+    //we need to apply the offset so that the angles converge from the weapons mounted on the sides
+    Ogre::Vector3 weapon_offset = pos_xyz - a_position;
+    //the angle must be limited otherwise you could fire sideways - this limits it to 5 degrees
+    Ogre::Real limit = distance / 11.4300523;
+    if (limit < weapon_offset.length()) {
+        weapon_offset.normalise();
+        weapon_offset *= limit;
+    }
+    pointer_position += weapon_offset;
 
     //check if the real target is within the arena
     Game::arena->isOutOfArena(pointer_position);
     //get the height at this point
     Ogre::Real height = Game::arena->getHeight(pointer_position.x, pointer_position.z);
 
-    //adjutst by the target mode
+    //adjust by the target mode
     if (controller->control_block.target_high) {
         pointer_position.y = height + target_high_offset;
     } else if (controller->control_block.target_air) {

@@ -54,7 +54,7 @@ void ProjectileFactory::fireProjectile(Ogre::Vector3 a_pos_xyz, Ogre::Quaternion
     string mesh = "bullet"; //temp
 
     //get unique string from id
-    string id_string = getUniqueID()+mesh; //append unique id to name
+    string id_string = getUniqueID()+mesh;
 
     //create mesh for the projectile
     Ogre::Entity* projectile_mesh = Game::scene->createEntity(id_string, mesh+".mesh");
@@ -63,14 +63,6 @@ void ProjectileFactory::fireProjectile(Ogre::Vector3 a_pos_xyz, Ogre::Quaternion
     Ogre::SceneNode* projectile_node = Game::scene->getRootSceneNode()->createChildSceneNode();
     projectile_node->attachObject(projectile_mesh); //attach mesh
     projectile_mesh->setQueryFlags(query_mask_projectiles); //mask as projectile
-
-    //create variation to the angle of firing
-    Ogre::Radian angle_of_spread(Ogre::Math::RangeRandom(-a_weapon->weapon_design.spread,
-                                 a_weapon->weapon_design.spread));
-    Ogre::Quaternion firing_cone = Ogre::Quaternion(angle_of_spread, Ogre::Vector3::UNIT_Y);
-
-    //TODO: the spread needs to be in a cone, not in a plane
-    a_orientation = firing_cone * a_orientation;
 
     //put the projectile on the list
     projectile_list.push_back(new Projectile(a_pos_xyz, mesh, projectile_node,

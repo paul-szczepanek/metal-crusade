@@ -40,6 +40,15 @@ void Weapon::update(Ogre::Real a_dt)
             //get the ballistic angle to hit the target
             Ogre::Quaternion weapon_orientation = unit->getBallisticAngle(weapon_position);
 
+            //add variation to the angle of firing
+            Ogre::Radian angle_of_spread(Ogre::Math::RangeRandom(-weapon_design.spread,
+                                         weapon_design.spread));
+            Ogre::Quaternion firing_cone = Ogre::Quaternion(angle_of_spread, Ogre::Vector3::UNIT_Y);
+
+            //TODO: the spread needs to be in a cone, not in a plane
+            //also make sure the spred slice is a circle not a square
+            weapon_orientation = firing_cone * weapon_orientation;
+
             //create projectile
             Game::projectile_factory->fireProjectile(weapon_position, weapon_orientation,
                                                      this, unit);
