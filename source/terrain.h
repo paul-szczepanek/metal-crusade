@@ -90,11 +90,6 @@ inline void Terrain::setHeight(uint a_x, uint a_y, Ogre::Real a_height)
     terrain_height[a_x + a_y * size_w] = a_height;
 };
 
-inline void Terrain::setType(uint a_x, uint a_y, terrain::types a_type)
-{
-    terrain_height[a_x + a_y * size_w] = a_type;
-};
-
 inline real_pair Terrain::getAngle(Ogre::Real a_x, Ogre::Real a_y)
 {
     real_pair angle(0, 0);

@@ -71,6 +71,9 @@ Terrain* TerrainGenerator::generateTerrain(const string& terrain_name)
                         tile_name += '0';
                     }
                 }
+            } else {
+                //panic!
+                tile_name = terrain::tile_prefix[terrain::block_plain]+"0000";
             }
 
             //TODO:
@@ -92,7 +95,7 @@ Terrain* TerrainGenerator::generateTerrain(const string& terrain_name)
                     int ter_y = j * inner_block_size + t_j - block_blend_size;
 
                     //cut off the bleeds around the terrain as blend weights there will be wrong
-                    if (ter_x >= 0 && ter_x < terrain_w && ter_y >= 0 && ter_y < terrain_w) {
+                    if (ter_x >= 0 && ter_x < terrain_w && ter_y >= 0 && ter_y < terrain_h) {
                         //read the height on the block from the image
                         Ogre::Real vertex_h = colour.g * max_height;
                         //add the height of the whole block in the world
@@ -117,7 +120,7 @@ Terrain* TerrainGenerator::generateTerrain(const string& terrain_name)
                     int ter_y = j * inner_block_size + t_j - block_blend_size;
 
                     //cut off the bleeds around the terrain as blend weights there will be wrong
-                    if (ter_x > 0 && ter_x < terrain_w && ter_y > 0 && ter_y < terrain_w) {
+                    if (ter_x >= 0 && ter_x < terrain_w && ter_y >= 0 && ter_y < terrain_h) {
                         result->setType(ter_x, ter_y, terrain::plain);
                     }
                 }

@@ -15,3 +15,8 @@ void Terrain::blendHeight(uint a_x, uint a_y, Ogre::Real a_height, Ogre::Real a_
 {
     terrain_height[a_x + a_y * size_w] = terrain_height[a_x + a_y * size_w] + a_height * a_weight;
 }
+
+void Terrain::setType(uint a_x, uint a_y, terrain::types a_type)
+{
+    terrain_type[a_x + a_y * size_w] = a_type;
+}
