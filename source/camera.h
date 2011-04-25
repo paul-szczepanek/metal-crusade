@@ -42,6 +42,6 @@ private:
     Ogre::Vector3 look_at_offset;
 };
 
-const Ogre::Real camera_distance(1400); //to show a circle of 80m
+const Ogre::Real camera_distance(14000); //to show a circle of 80m
 
 #endif // CAMERA_H
