@@ -44,7 +44,7 @@ Ogre::Real FilesHandler::getReal(string a_string)
         }
     }
 
-    return Game::stringIntoReal(a_string);
+    return intoReal(a_string);
 }
 
 /** @brief true/false string to bool
@@ -320,7 +320,7 @@ void FilesHandler::getStringArray(vector<string>& string_array, string a_buffer)
             a_buffer = a_buffer.substr(end + 1);
 
         } else {
-            //take the whole buffer as the last value
+            //take the whole buffer as the lasttile_types value
             value = a_buffer;
             a_buffer.clear();
         }
@@ -331,6 +331,25 @@ void FilesHandler::getStringArray(vector<string>& string_array, string a_buffer)
         if (!value.empty()) {
             string_array.push_back(value);
         }
+    }
+}
+
+/** @brief fills the vector with chars from an array, basically ditches the \0, oh the idiocy
+  * this is planned to do some sanitasation later on
+  */
+void FilesHandler::getCharArray(vector<char>& char_array, string a_buffer)
+{
+    for (int i = 0, for_size = a_buffer.size(); i < for_size; ++i) {
+        char_array.push_back(a_buffer[i]);
+    }
+}
+
+/** @brief fills the vector with int but treats each character as an int so 82 is 8 and 2
+  */
+template <typename T> void FilesHandler::getDigitArray(vector<T>& int_array, string a_buffer)
+{
+    for (int i = 0, for_size = a_buffer.size(); i < for_size; ++i) {
+        int_array.push_back(static_cast<T>(intoInt(a_buffer[i])));
     }
 }
 
@@ -375,7 +394,7 @@ template <typename T> void FilesHandler::getIntArray(vector<T>& int_array, strin
 
         //insert values as you find them
         if (!value.empty()) {
-            int_array.push_back(Game::stringIntoInt(value));
+            int_array.push_back(intoInt(value));
         }
     }
 }
@@ -809,9 +828,9 @@ void FilesHandler::getIntPairArray(vector<int_pair>& int_pair_array, string a_bu
     //need two values in a pair
     for(unsigned int i = 0; i < string_array.size() - 1; ++i) {
         int_pair pair_of_ints;
-        pair_of_ints.first = Game::stringIntoInt(string_array[i]);
+        pair_of_ints.first = intoInt(string_array[i]);
         ++i;
-        pair_of_ints.second = Game::stringIntoInt(string_array[i]);
+        pair_of_ints.second = intoInt(string_array[i]);
 
         int_pair_array.push_back(pair_of_ints);
     }
@@ -853,11 +872,11 @@ void FilesHandler::getColourArray(vector<Ogre::ColourValue>& colour_array, strin
 
     //need three values for a colour
     for(unsigned int i = 0; i < string_array.size() - 2; ++i) {
-        Ogre::Real r = Game::stringIntoReal(string_array[i]) / 255;
+        Ogre::Real r = intoReal(string_array[i]) / 255;
         ++i;
-        Ogre::Real g = Game::stringIntoReal(string_array[i]) / 255;
+        Ogre::Real g = intoReal(string_array[i]) / 255;
         ++i;
-        Ogre::Real b = Game::stringIntoReal(string_array[i]) / 255;
+        Ogre::Real b = intoReal(string_array[i]) / 255;
 
         colour_array.push_back(Ogre::ColourValue(r, g, b));
     }
@@ -896,10 +915,10 @@ bool FilesHandler::getCollisionSpheres(const string& filename, Sphere& bounding_
     int i = 0;
 
     //check to see if a exclusion sphere with a consecutive id exists
-    while (pairs.find(string("es.")+Game::intIntoString(i)) != pairs.end() && i < max_num_es) {
+    while (pairs.find(string("es.")+intoString(i)) != pairs.end() && i < max_num_es) {
         //load the es definition string
         vector<string> es_sphere_string;
-        getStringArray(es_sphere_string, pairs["es."+Game::intIntoString(i)]);
+        getStringArray(es_sphere_string, pairs["es."+intoString(i)]);
 
         //makes sure the are enough values
         if (es_sphere_string.size() < 5) {
@@ -908,7 +927,7 @@ bool FilesHandler::getCollisionSpheres(const string& filename, Sphere& bounding_
         }
 
         //exclusion sphere area (to move the sphere when it moves)
-        es_areas.push_back(Game::stringIntoInt(es_sphere_string[1]));
+        es_areas.push_back(intoInt(es_sphere_string[1]));
 
         //read in the exclusion sphere
         sphere.centre = Ogre::Vector3(getReal(es_sphere_string[1]),
@@ -927,10 +946,10 @@ bool FilesHandler::getCollisionSpheres(const string& filename, Sphere& bounding_
     i = 0;
 
     //check to see if a collision sphere with a consecutive id exists
-    while (pairs.find(string("cs.")+Game::intIntoString(i)) != pairs.end() && i < max_num_cs) {
+    while (pairs.find(string("cs.")+intoString(i)) != pairs.end() && i < max_num_cs) {
         //load the cs definition string
         vector<string> cs_sphere_string;
-        getStringArray(cs_sphere_string, pairs["cs."+Game::intIntoString(i)]);
+        getStringArray(cs_sphere_string, pairs["cs."+intoString(i)]);
 
         //makes sure the are enough values
         if (cs_sphere_string.size() < 6) {
@@ -939,7 +958,7 @@ bool FilesHandler::getCollisionSpheres(const string& filename, Sphere& bounding_
         }
 
         //collision sphere area (to place hits)
-        cs_areas.push_back(Game::stringIntoInt(cs_sphere_string[0]));
+        cs_areas.push_back(intoInt(cs_sphere_string[0]));
 
         //set exclusion spheres' bitsets
         for (usint j = 0, for_size = exclusion_bitsets.size(); j < for_size; ++j) {
@@ -1092,10 +1111,10 @@ bool FilesHandler::getWeaponDesign(const string& filename, weapon_design_t& weap
     //dimensions
     weapon_design.type = weapon_type(getEnum(pairs["weapon_design.type"]));
     weapon_design.weight = getReal(pairs["weapon_design.weight"]);
-    weapon_design.internals = Game::stringIntoInt(pairs["weapon_design.internals"]);
-    weapon_design.panels = Game::stringIntoInt(pairs["weapon_design.panels"]);
+    weapon_design.internals = intoInt(pairs["weapon_design.internals"]);
+    weapon_design.panels = intoInt(pairs["weapon_design.panels"]);
     //multifire weapons
-    weapon_design.multi_fire = Game::stringIntoInt(pairs["weapon_design.multi_fire"]);
+    weapon_design.multi_fire = intoInt(pairs["weapon_design.multi_fire"]);
     weapon_design.multi_fire_timout = getReal(pairs["weapon_design.multi_fire_timout"]);
     //basic properties
     weapon_design.spread = getReal(pairs["weapon_design.spread"]) * pi;
@@ -1103,7 +1122,7 @@ bool FilesHandler::getWeaponDesign(const string& filename, weapon_design_t& weap
     weapon_design.heat_generated = getReal(pairs["weapon_design.heat_generated"]);
     weapon_design.muzzle_velocity = getReal(pairs["weapon_design.muzzle_velocity"]);
     weapon_design.range = getReal(pairs["weapon_design.range"]);
-    weapon_design.ammo_per_slot = Game::stringIntoInt(pairs["weapon_design.ammo_per_slot"]);
+    weapon_design.ammo_per_slot = intoInt(pairs["weapon_design.ammo_per_slot"]);
     //damage
     weapon_design.heat_dmg = getReal(pairs["weapon_design.heat_dmg"]);
     weapon_design.ballistic_dmg = getReal(pairs["weapon_design.ballistic_dmg"]);
@@ -1145,7 +1164,7 @@ bool FilesHandler::getRadarDesign(const string& filename, radar_design_t& radar_
     radar_design.active = getBool(pairs["radar_design.active"]);
     radar_design.sweep = radar::sweep_type(getEnum(pairs["radar_design.sweep"]));
     radar_design.cone_angle = Ogre::Radian(getReal(pairs["radar_design.cone_angle"]) * degree2rad);
-    radar_design.heads = Game::stringIntoInt(pairs["radar_design.heads"]);
+    radar_design.heads = intoInt(pairs["radar_design.heads"]);
     //radar parameters
     radar_design.power = getReal(pairs["radar_design.power"]);
     radar_design.heat_sensivity = getReal(pairs["radar_design.power"]);
@@ -1245,7 +1264,7 @@ bool FilesHandler::getCrusaderSpec(const string& filename, crusader_engine_t& en
     engine.rating_reverse = getReal(pairs["engine.rating_reverse"]); //effective[KN]
     engine.heat = getReal(pairs["engine.heat"]); //[MJ]
     engine.weight = getReal(pairs["engine.weight"]); //[t]
-    engine.size = Game::stringIntoInt(pairs["engine.size"]); //[m3]
+    engine.size = intoInt(pairs["engine.size"]); //[m3]
     drive.type = drive_type(getEnum(pairs["drive.type"]));
     drive.subtype = drive_subtype(getEnum(pairs["drive.subtype"]));
     drive.mesh = pairs["drive.mesh"];
@@ -1289,20 +1308,20 @@ bool FilesHandler::getCrusaderSpec(const string& filename, crusader_engine_t& en
     chasis.torso_turn_speed = getReal(pairs["chasis.torso_turn_speed"]) * pi; //[rad/s]
     chasis.arms_turn_speed = getReal(pairs["chasis.arms_turn_speed"]) * pi; //[rad/s]
     chasis.structure_base = getReal(pairs["chasis.structure_base"]); //[rad/s]
-    chasis.internals[torso] = Game::stringIntoInt(pairs["chasis.internals.torso"]); //[m3]
-    chasis.internals[torso_right] = Game::stringIntoInt(pairs["chasis.internals.torso_right"]);
-    chasis.internals[torso_left] = Game::stringIntoInt(pairs["chasis.internals.torso_left"]);
-    chasis.internals[arm_left] = Game::stringIntoInt(pairs["chasis.internals.arm_left"]);
-    chasis.internals[arm_right] = Game::stringIntoInt(pairs["chasis.internals.arm_right"]);
-    chasis.internals[leg_left] = Game::stringIntoInt(pairs["chasis.internals.leg_left"]);
-    chasis.internals[leg_right] = Game::stringIntoInt(pairs["chasis.internals.leg_right"]);
-    chasis.panels[torso] = Game::stringIntoInt(pairs["chasis.panels.torso"]);
-    chasis.panels[torso_right] = Game::stringIntoInt(pairs["chasis.panels.torso_right"]);
-    chasis.panels[torso_left] = Game::stringIntoInt(pairs["chasis.panels.torso_left"]);
-    chasis.panels[arm_right] = Game::stringIntoInt(pairs["chasis.panels.arm_right"]);
-    chasis.panels[arm_left] = Game::stringIntoInt(pairs["chasis.panels.arm_left"]);
-    chasis.panels[leg_right] = Game::stringIntoInt(pairs["chasis.panels.leg_right"]);
-    chasis.panels[leg_left] = Game::stringIntoInt(pairs["chasis.panels.leg_left"]);
+    chasis.internals[torso] = intoInt(pairs["chasis.internals.torso"]); //[m3]
+    chasis.internals[torso_right] = intoInt(pairs["chasis.internals.torso_right"]);
+    chasis.internals[torso_left] = intoInt(pairs["chasis.internals.torso_left"]);
+    chasis.internals[arm_left] = intoInt(pairs["chasis.internals.arm_left"]);
+    chasis.internals[arm_right] = intoInt(pairs["chasis.internals.arm_right"]);
+    chasis.internals[leg_left] = intoInt(pairs["chasis.internals.leg_left"]);
+    chasis.internals[leg_right] = intoInt(pairs["chasis.internals.leg_right"]);
+    chasis.panels[torso] = intoInt(pairs["chasis.panels.torso"]);
+    chasis.panels[torso_right] = intoInt(pairs["chasis.panels.torso_right"]);
+    chasis.panels[torso_left] = intoInt(pairs["chasis.panels.torso_left"]);
+    chasis.panels[arm_right] = intoInt(pairs["chasis.panels.arm_right"]);
+    chasis.panels[arm_left] = intoInt(pairs["chasis.panels.arm_left"]);
+    chasis.panels[leg_right] = intoInt(pairs["chasis.panels.leg_right"]);
+    chasis.panels[leg_left] = intoInt(pairs["chasis.panels.leg_left"]);
     chasis.surface_area[crusader_area::torso] =
         getReal(pairs["chasis.surface_area.torso"]);
     chasis.surface_area[crusader_area::torso_right] =
@@ -1323,6 +1342,47 @@ bool FilesHandler::getCrusaderSpec(const string& filename, crusader_engine_t& en
         getReal(pairs["chasis.surface_area.torso_right_back"]);
     chasis.surface_area[crusader_area::torso_left_back] =
         getReal(pairs["chasis.surface_area.torso_left_back"]);
+
+    return true;
+}
+
+/** @brief this gets the deifinition of a premade map of tiles
+  */
+bool FilesHandler::getTerrain(const string& filename, vector<usint>& block_height,
+                              vector<terrain::block_types>& block_type, uint& width, uint& height)
+{
+    //prepare map to read tile data into
+    map<string, string> pairs;
+    if (!getPairs(filename+ext_terrain, terrain_dir, pairs)) //insert data from file into pairs
+        return false;
+
+    width = intoInt(pairs["width"]);
+    height = intoInt(pairs["height"]);
+
+    vector<char> tile_type_codes;
+
+    getDigitArray(block_height, pairs["terrain_height"]);
+    getCharArray(tile_type_codes, pairs["terrain_type"]);
+
+    //converting a character code array into an terrain tile type enum array
+    for (int i = 0, for_size = tile_type_codes.size(); i < for_size; ++i) {
+        terrain::block_types type;
+
+        if (tile_type_codes[i] == 'p')
+            type = terrain::block_plain;
+        else if (tile_type_codes[i] == 'h')
+            type = terrain::block_hills;
+        else if (tile_type_codes[i] == 'm')
+            type = terrain::block_mountains;
+        else if (tile_type_codes[i] == 'w')
+            type = terrain::block_cliff;
+        else if (tile_type_codes[i] == 'c')
+            type = terrain::block_coast;
+        else if (tile_type_codes[i] == 'r')
+            type = terrain::block_river;
+
+        block_type.push_back(type);
+    }
 
     return true;
 }
@@ -1355,12 +1415,12 @@ bool FilesHandler::getHudDesign(const string& filename, hud_design_t& hud_design
     usint i = 0;
 
     //check to see if a part with a consecutive tag exists
-    while (pairs.find(string("hud_design.parts.")+Game::intIntoString(i)) != pairs.end()) {
+    while (pairs.find(string("hud_design.parts.")+intoString(i)) != pairs.end()) {
         //load design of each part
         hud_part_design_t hud_part_design;
         vector<string> hud_part_design_string;
         getStringArray(hud_part_design_string,
-                       pairs[string("hud_design.parts.")+Game::intIntoString(i)]);
+                       pairs[string("hud_design.parts.")+intoString(i)]);
 
         //makes sure the are enough values to fill the design
         if (hud_part_design_string.size() < 9) {
@@ -1373,10 +1433,10 @@ bool FilesHandler::getHudDesign(const string& filename, hud_design_t& hud_design
         hud_part_design.type = hud_part_enum::type(getEnum(hud_part_design_string[2]));
         getRealSeries(hud_part_design.parameters, hud_part_design_string[3]);
         hud_part_design.function = hud_part_enum::function(getEnum(hud_part_design_string[4]));
-        hud_part_design.position.first = Game::stringIntoInt(hud_part_design_string[5]);
-        hud_part_design.position.second = Game::stringIntoInt(hud_part_design_string[6]);
-        hud_part_design.size.first = Game::stringIntoInt(hud_part_design_string[7]);
-        hud_part_design.size.second = Game::stringIntoInt(hud_part_design_string[8]);
+        hud_part_design.position.first = intoInt(hud_part_design_string[5]);
+        hud_part_design.position.second = intoInt(hud_part_design_string[6]);
+        hud_part_design.size.first = intoInt(hud_part_design_string[7]);
+        hud_part_design.size.second = intoInt(hud_part_design_string[8]);
         hud_design.parts.push_back(hud_part_design);
 
         ++i;

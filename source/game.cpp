@@ -259,7 +259,7 @@ void Game::fpsCalc()
     real_time = new_real_time;
 
     //temp, show the fps
-    Game::hud->status->setLine(string("$eFPS: ")+Game::intIntoString(fps), 0, 20, 50);
+    Game::hud->status->setLine(string("$eFPS: ")+intoString(fps), 0, 20, 50);
 }
 
 /** @brief terminal error - die

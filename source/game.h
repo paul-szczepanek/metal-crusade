@@ -73,13 +73,6 @@ public:
     //since they're not using singleton calls for reason exaplained above
     //(they are all integral but portioned into files for ease of editing)
 
-    //helper functions
-    static int stringIntoInt(string& a_string);
-    static Ogre::Real stringIntoReal(string& a_string);
-    static string intIntoString(int a_integer);
-    static string realIntoString(Ogre::Real a_real, usint a_precision = 3);
-    bool static take(bool& do_once);
-
     //terminate game
     void end(string a_goodbye = "Terminated");
     static void kill(string a_goodbye = "O, untimely death!");
@@ -107,50 +100,5 @@ private:
     ulint real_time;
     Ogre::Real fps;
 };
-
-inline bool Game::take(bool& do_once)
-{
-    if (do_once) {
-        do_once = false;
-        return true;
-    }
-    return false;
-}
-
-inline int Game::stringIntoInt(string& a_string)
-{
-    stringstream stream;
-    int integer;
-    stream << a_string;
-    stream >> integer;
-    return integer;
-}
-
-inline string Game::intIntoString(int a_integer)
-{
-    stringstream stream;
-    string converted_string;
-    stream << a_integer;
-    stream >> converted_string;
-    return converted_string;
-}
-
-inline Ogre::Real Game::stringIntoReal(string& a_string)
-{
-    stringstream stream;
-    Ogre::Real real;
-    stream << a_string;
-    stream >> real;
-    return real;
-}
-
-inline string Game::realIntoString(Ogre::Real a_real, usint a_precision)
-{
-    stringstream stream;
-    string converted_string;
-    stream << setprecision(a_precision) << a_real;
-    stream >> converted_string;
-    return converted_string;
-}
 
 #endif // GAME_H_INCLUDED

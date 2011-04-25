@@ -279,14 +279,14 @@ void Hud::update(Ogre::Real a_dt)
         //mfd mode
         if (hud_mode == interface_mode::mfd) {
             //mfd selection
-            if (Game::take(Game::hud->controller->control_block.mfd1_select)) {
+            if (take(Game::hud->controller->control_block.mfd1_select)) {
                 //select previous mfd
                 mfds[selected_mfd]->activate(false);
                 --selected_mfd;
                 if (selected_mfd > mfds.size()) {
                     selected_mfd = 0;
                 }
-            } else if (Game::take(Game::hud->controller->control_block.mfd2_select)) {
+            } else if (take(Game::hud->controller->control_block.mfd2_select)) {
                 //select next mfd
                 mfds[selected_mfd]->activate(false);
                 ++selected_mfd;

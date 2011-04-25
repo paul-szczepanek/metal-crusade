@@ -42,7 +42,7 @@ void MFDComputer::activate(bool a_toggle)
     //reset the state if deselected
     if (!selected) {
         selecting_view = false;
-        Game::take(Game::hud->controller->control_block.mfd_toggle);
+        take(Game::hud->controller->control_block.mfd_toggle);
     }
 }
 
@@ -51,13 +51,13 @@ void MFDComputer::activate(bool a_toggle)
 void MFDComputer::selectView()
 {
     //change page of views - PgUp, PgDn
-    if (Game::take(Game::hud->controller->control_block.mfd_left)) {
+    if (take(Game::hud->controller->control_block.mfd_left)) {
         if (selected_view_index > view_types_per_page - 1) {
             //previous page
             selected_view_index -= view_types_per_page;
             selected_view = Game::hud->hud_design.mfd_views[selected_view_index];
         }
-    } else if (Game::take(Game::hud->controller->control_block.mfd_right)) {
+    } else if (take(Game::hud->controller->control_block.mfd_right)) {
         if (selected_view < num_of_views - view_types_per_page) {
             //next page page
             selected_view_index += view_types_per_page;
@@ -66,12 +66,12 @@ void MFDComputer::selectView()
     }
 
     //select views - up, down
-    if (Game::take(Game::hud->controller->control_block.mfd_up)) {
+    if (take(Game::hud->controller->control_block.mfd_up)) {
         if (selected_view_index > 0) {
             //previous view
             selected_view = Game::hud->hud_design.mfd_views[--selected_view_index];
         }
-    } else if (Game::take(Game::hud->controller->control_block.mfd_down)) {
+    } else if (take(Game::hud->controller->control_block.mfd_down)) {
         if (selected_view_index < num_of_views - 1) {
             //next view
             selected_view = Game::hud->hud_design.mfd_views[++selected_view_index];
@@ -81,8 +81,8 @@ void MFDComputer::selectView()
     //show the page containing the selected view
     selected_page = selected_view_index / view_types_per_page;
 
-    string page = Game::intIntoString(selected_page + 1)
-                    +"/"+Game::intIntoString(num_of_views / view_types_per_page);
+    string page = intoString(selected_page + 1)
+                    +"/"+intoString(num_of_views / view_types_per_page);
 
     //set the label at the top:
     setLine(string("$a")+Game::text->getText(internal_string::select_view_type)+" "+page, 0);
@@ -109,7 +109,7 @@ void MFDComputer::selectView()
     }
 
     //close the selecting mode if toggle pressed again
-    if (Game::take(Game::hud->controller->control_block.mfd_toggle)) {
+    if (take(Game::hud->controller->control_block.mfd_toggle)) {
         selecting_view = false;
     }
 }
@@ -125,7 +125,7 @@ void MFDComputer::update(Ogre::Real a_dt)
     } else {
         if (selected) {
             //take input if selected
-            if (Game::take(Game::hud->controller->control_block.mfd_toggle)) {
+            if (take(Game::hud->controller->control_block.mfd_toggle)) {
                 selecting_view = true;
             }
 

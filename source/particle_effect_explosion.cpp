@@ -18,7 +18,7 @@ ParticleEffectExplosion::ParticleEffectExplosion(Ogre::SceneNode* particle_node,
 
     //scale up
     Ogre::ParticleAffector* explosion_scaler = explosion->addAffector("Scaler");
-    explosion_scaler->setParameter("rate", Game::realIntoString(a_size / (a_time * 1.25)));
+    explosion_scaler->setParameter("rate", realIntoString(a_size / (a_time * 1.25)));
 
     //rotate
     Ogre::ParticleAffector* explosion_rotator = explosion->addAffector("Rotator");

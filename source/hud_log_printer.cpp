@@ -46,7 +46,7 @@ HudLogPrinter::HudLogPrinter(hud_part_design_t& a_hud_part_design)
     for (usint i = 0; i < hud_num_of_colours; ++i) {
         for (usint j = 0; j < hud_num_of_log_lines; ++j) {
             //create text elements to display the lines - one for each colour
-            id = a_hud_part_design.name+"_text_"+Game::intIntoString(i)+"_"+Game::intIntoString(j);
+            id = a_hud_part_design.name+"_text_"+intoString(i)+"_"+intoString(j);
             log_text_elements[i][j] = createTextArea(id, "", font_size,
                                       Game::hud->hud_design.log_colours[i],
                                       0, (size.second - (j + 1) * line_height),

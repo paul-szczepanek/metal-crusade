@@ -70,4 +70,60 @@ typedef unsigned int uint;
 typedef unsigned char uchar;
 typedef Ogre::TextureUnitState::TextureAddressingMode texture_addressing;
 
+template <typename T> inline void clamp(T& value, const T& min, const T& max)
+{
+  value = value < min? min : (value > max? max : value);
+}
+
+template <typename T> inline void clampZero(T& value, const T& max)
+{
+  value = value < 0? 0 : (value > max? max : value);
+}
+
+template <typename T> inline void clampZeroOne(T& value)
+{
+  value = value < 0? 0 : (value > 1? 1 : value);
+}
+
+template <typename T> inline string intoString(const T& a_thing)
+{
+    stringstream stream;
+    stream << a_thing;
+    return stream.str();
+}
+
+template <typename T> inline Ogre::Real intoReal(const T& a_thing)
+{
+    stringstream stream;
+    Ogre::Real real;
+    stream << a_thing;
+    stream >> real;
+    return real;
+}
+
+template <typename T> inline int intoInt(const T& a_thing)
+{
+    stringstream stream;
+    int integer;
+    stream << a_thing;
+    stream >> integer;
+    return integer;
+}
+
+inline string realIntoString(const Ogre::Real a_real, const usint a_precision = 3)
+{
+    stringstream stream;
+    stream << setprecision(a_precision) << a_real;
+    return stream.str();
+}
+
+inline bool take(bool& do_once)
+{
+    if (do_once) {
+        do_once = false;
+        return true;
+    }
+    return false;
+}
+
 #endif // MAIN_H_INCLUDED

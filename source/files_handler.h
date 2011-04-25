@@ -7,6 +7,7 @@
 #include "input_event.h"
 #include "collision_type.h"
 #include "sphere.h"
+#include "terrain.h"
 
 #ifdef PLATFORM_WIN32
     #include <OISMouse.h>
@@ -31,6 +32,10 @@ public:
     //singleton
     static void instantiate();
     static FilesHandler* instance();
+
+    //read terrain tile
+    static bool getTerrain(const string& filename, vector<usint>& block_height,
+                           vector<terrain::block_types>& block_type, uint& width, uint& height);
 
     //read key config from file
     static bool getKeyConfig(const string& filename, map<input_event, OIS::KeyCode>& key_map,
@@ -85,6 +90,8 @@ private:
     static void getEnumPairArray(vector<pair<T1, T2> >& position_pair_array, string a_buffer);
     static void getRealSeries(vector<Ogre::Real>& real_array, string a_buffer);
     static void getColourArray(vector<Ogre::ColourValue>& colour_array, string a_buffer);
+    static void getCharArray(vector<char>& char_array, string a_buffer);
+    template <typename T> static void getDigitArray(vector<T>& int_array, string a_buffer);
 
     //repeats the last colour to pad out the missing colours
     static void padHudColours(vector<Ogre::ColourValue>& colour_array);
@@ -102,5 +109,7 @@ const string radar_dir = "design/radar/";
 const string unit_dir = "unit/";
 const string text_dir = "text/";
 const string model_dir = "model/";
+const string terrain_dir = "terrain/";
+const string ext_terrain = ".terrain";
 
 #endif // FILESHANDLER_H

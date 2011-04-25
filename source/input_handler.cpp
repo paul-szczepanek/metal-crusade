@@ -138,6 +138,7 @@ void InputHandler::updateMousePointer()
             while (position.y < Game::arena->getHeight(position.x, position.z)) {
                 top_distance -= step;
                 position = mouse_ray->getPoint(top_distance);
+                Game::arena->isOutOfBounds(position); //inefficient fix, but what can you do
             }
             bottom_distance = top_distance - step;
         } else {
@@ -147,6 +148,7 @@ void InputHandler::updateMousePointer()
             while (position.y > Game::arena->getHeight(position.x, position.z)) {
                 bottom_distance += step;
                 position = mouse_ray->getPoint(bottom_distance);
+                Game::arena->isOutOfBounds(position); //inefficient fix
             }
             top_distance = bottom_distance + step;
         }

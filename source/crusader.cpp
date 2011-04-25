@@ -349,7 +349,7 @@ void Crusader::shockDamage()
         //notify the log of the damage
         if (hud_attached) {
             Game::hud->log->addLine(Game::text->getText(internal_string::shock_damage_sustained)
-                                    +" $e"+Game::realIntoString(kinetic_damage * 100, 2)+"$r%");
+                                    +" $e"+realIntoString(kinetic_damage * 100, 2)+"$r%");
         }
     }
 }
@@ -406,24 +406,24 @@ void Crusader::recalculateWeight()
 void Crusader::fireWeapons()
 {
     //fire individual groups
-    if (Game::take(controller->control_block.fire_group_1))
+    if (take(controller->control_block.fire_group_1))
         fireGroup(0);
-    if (Game::take(controller->control_block.fire_group_2))
+    if (take(controller->control_block.fire_group_2))
         fireGroup(1);
-    if (Game::take(controller->control_block.fire_group_3))
+    if (take(controller->control_block.fire_group_3))
         fireGroup(2);
-    if (Game::take(controller->control_block.fire_group_4))
+    if (take(controller->control_block.fire_group_4))
         fireGroup(3);
-    if (Game::take(controller->control_block.fire_group_5))
+    if (take(controller->control_block.fire_group_5))
         fireGroup(4);
-    if (Game::take(controller->control_block.fire_group_all)) {
+    if (take(controller->control_block.fire_group_all)) {
         for (usint i = 0; i < num_of_weapon_groups; ++i) {
             fireGroup(i);
         }
     }
 
     //fire selected weapon or group
-    if (Game::take(controller->control_block.fire)) {
+    if (take(controller->control_block.fire)) {
         if (controller->control_block.fire_mode_group) {
             //group fire
             if (fireGroup(current_group)) {
@@ -443,11 +443,11 @@ void Crusader::fireWeapons()
     }
 
     //cycling groups manually
-    if (Game::take(controller->control_block.cycle_group))
+    if (take(controller->control_block.cycle_group))
         cycleGroup();
 
     //cycling weapons manually
-    if (Game::take(controller->control_block.cycle_weapon)) {
+    if (take(controller->control_block.cycle_weapon)) {
         //if group fire cycle group instead
         if (controller->control_block.fire_mode_group) {
             cycleGroup();
@@ -804,9 +804,9 @@ int Crusader::updateController()
         //temp
         if (hud_attached) {
             Game::hud->status->setLine(string("current group$e ")
-                                       +Game::intIntoString(current_group), 1, 20);
+                                       +intoString(current_group), 1, 20);
             Game::hud->status->setLine(string("current weapon$e ")
-                                       +Game::intIntoString(current_weapon), 1, 20, 21);
+                                       +intoString(current_weapon), 1, 20, 21);
             if (controller->control_block.fire_mode_group) {
                 Game::hud->status->setLine(string("$egroup$x mode"), 1, 11, 41);
             } else {
@@ -817,10 +817,10 @@ int Crusader::updateController()
             } else {
                 Game::hud->status->setLine(string("$a"), 1, 6, 54);
             }
-            Game::hud->status->setLine(string("$rpos x: ")+Game::intIntoString(pos_xyz.x)+" y: "
-                                       +Game::intIntoString(pos_xyz.z), 0, 20, 0);
+            Game::hud->status->setLine(string("$rpos x: ")+intoString(pos_xyz.x)+" y: "
+                                       +intoString(pos_xyz.z), 0, 20, 0);
 
-            Game::hud->status->setLine(string("integrity: ")+Game::intIntoString(core_integrity),
+            Game::hud->status->setLine(string("integrity: ")+intoString(core_integrity),
                                        0, 20, 21);
         }
     } else if (core_integrity < -1) { //temp!!!

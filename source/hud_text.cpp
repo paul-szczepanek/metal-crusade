@@ -16,7 +16,7 @@ HudText::HudText(hud_part_design_t& a_hud_part_design)
     font_size = a_hud_part_design.parameters[0]; //read the size of the status font
 
     //create the text element
-    string id = a_hud_part_design.name+"_text_area_"+Game::intIntoString(function);
+    string id = a_hud_part_design.name+"_text_area_"+intoString(function);
     text_element = createTextArea(id, text, font_size, Game::hud->hud_design.display_colours[0],
                                   0, 0, size.first, size.second, container);
 
@@ -108,7 +108,7 @@ string HudText::getTextClock()
 
 string HudText::getTextRadarRange()
 {
-    return Game::realIntoString(Game::hud->radar->getRadarRange(), 3);
+    return realIntoString(Game::hud->radar->getRadarRange(), 3);
 }
 
 string HudText::getTextRadarPower()

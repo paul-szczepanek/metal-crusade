@@ -153,7 +153,7 @@ MFDViewDamageDiagram::MFDViewDamageDiagram(hud_part_design_t& a_hud_part_design)
     for (usint i = 0; i < mfd_view::num_of_diagram_types; ++i) {
         diagrams.push_back(static_cast<Ogre::OverlayContainer*>
                     (overlay_mngr->createOverlayElement("Panel", a_hud_part_design.name+"_cont_"
-                                                        +Game::intIntoString(i)+getUniqueID())));
+                                                        +intoString(i)+getUniqueID())));
         diagrams.back()->setMetricsMode(Ogre::GMM_PIXELS);
         container->addChild(diagrams.back());
     }

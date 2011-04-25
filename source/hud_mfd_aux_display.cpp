@@ -19,7 +19,7 @@ HudMFDAuxDisplay::HudMFDAuxDisplay(hud_part_design_t& a_hud_part_design)
     //create the OGRE text elements to show the mfd aux lines
     for (usint i = 0; i < hud_num_of_colours; ++i) { //element for each colour
         for (usint j = 0; j < hud_num_of_mfd_aux_lines; ++j) { //and each line
-            string id = a_hud_part_design.name+"_"+Game::intIntoString(i)+Game::intIntoString(j);
+            string id = a_hud_part_design.name+"_"+intoString(i)+intoString(j);
             mfd_aux_text_elements[i][j]
                 = createTextArea(id, "", font_size, Game::hud->hud_design.mfd_colours[i],
                                  0, (j * line_height), size.first, size.second, container);

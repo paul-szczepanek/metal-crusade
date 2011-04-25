@@ -46,7 +46,7 @@ HudWeaponTab::HudWeaponTab(hud_part_design_t& a_hud_part_design)
     //for each weapon create a tab with lights and text and ammo
     for (usint i = 0, for_size = weapons.size(); i < for_size; ++i) {
         //create the baground tab
-        string id = a_hud_part_design.name+"_tab_bg_"+Game::intIntoString(i);
+        string id = a_hud_part_design.name+"_tab_bg_"+intoString(i);
         createPanel(id, a_hud_part_design.name,
                     0, size.second * i, size.first, size.second, container);
 
@@ -55,17 +55,17 @@ HudWeaponTab::HudWeaponTab(hud_part_design_t& a_hud_part_design)
         for (usint j = 0; j < number_of_lights; ++j) {
             //create element for each light colour
             //green
-            id = a_hud_part_design.name+"_grn_"+Game::intIntoString(i)+"_"+Game::intIntoString(j);
+            id = a_hud_part_design.name+"_grn_"+intoString(i)+"_"+intoString(j);
             lights.green[j] = createPanel(id, a_hud_part_design.name+"_green",
                                           offset + step * (0.5 + j) - width / 2, size.second * i,
                                           width, size.second, lights_container);
             //yellow
-            id = a_hud_part_design.name+"_ylw_"+Game::intIntoString(i)+"_"+Game::intIntoString(j);
+            id = a_hud_part_design.name+"_ylw_"+intoString(i)+"_"+intoString(j);
             lights.yellow[j] = createPanel(id, a_hud_part_design.name+"_yellow",
                                            offset + step * (0.5 + j) - width / 2 + 1,
                                            size.second * i, width, size.second, lights_container);
             //red
-            id = a_hud_part_design.name+"_red_"+Game::intIntoString(i)+"_"+Game::intIntoString(j);
+            id = a_hud_part_design.name+"_red_"+intoString(i)+"_"+intoString(j);
             lights.red[j] = createPanel(id, a_hud_part_design.name+"_red",
                                         offset + step * (0.5 + j) - width / 2 - 1, size.second * i,
                                           width, size.second, lights_container);
@@ -76,7 +76,7 @@ HudWeaponTab::HudWeaponTab(hud_part_design_t& a_hud_part_design)
         //text for diasplaying weapon names
         //get the weapon shortened name
         string weapon_name = Game::text->getText(weapons[i]->weapon_design.text_list_name);
-        id = a_hud_part_design.name+"_name_text_"+Game::intIntoString(i); //unique id
+        id = a_hud_part_design.name+"_name_text_"+intoString(i); //unique id
         tab_name_elements.push_back(createTextArea(id, weapon_name, font_size,
                                                    Game::hud->hud_design.display_colours[0],
                                                    offset + 1, size.second * i + 3,
@@ -84,7 +84,7 @@ HudWeaponTab::HudWeaponTab(hud_part_design_t& a_hud_part_design)
                                                    text_container));
 
         //text for diasplaying ammo number
-        id = a_hud_part_design.name+"_ammo_text_"+Game::intIntoString(i); //unique id
+        id = a_hud_part_design.name+"_ammo_text_"+intoString(i); //unique id
         tab_ammo_elements.push_back(createTextArea(id, "000", font_size,
                                                    Game::hud->hud_design.display_colours[0],
                                                    11, size.second * i + 3, offset,

@@ -64,7 +64,7 @@ Ogre::Quaternion Unit::getBallisticAngle(const Ogre::Vector3& a_position)
 
 void Unit::updateTargets()
 {
-    if (Game::take(controller->control_block.target_pointer)) {
+    if (take(controller->control_block.target_pointer)) {
         getUnitAtPointer();
     }
 }

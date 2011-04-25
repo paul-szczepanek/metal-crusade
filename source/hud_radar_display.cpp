@@ -26,7 +26,7 @@ HudRadarDisplay::HudRadarDisplay(hud_part_design_t& a_hud_part_design)
     dot_red = Hud::createOverlayMaterial(dot_red_name);
 
     for (usint i = 0; i < num_of_initial_dots; ++i) {
-        string id = string("radar_dot_")+Game::intIntoString(i);
+        string id = string("radar_dot_")+intoString(i);
         dot_elements.push_back(createPanel(id, dot_green_name,
                                            0, 0, 8, 8, container));
         dot_elements.back()->hide();
@@ -53,14 +53,14 @@ void HudRadarDisplay::update(Ogre::Real a_dt)
 
     if(active) {
         //radar radius change
-        if (Game::take(Game::hud->controller->control_block.radar_zoom_in)) {
+        if (take(Game::hud->controller->control_block.radar_zoom_in)) {
             //see smaller area
             if (range_index > 0) --range_index;
 
             //adjust radar sphere
             Game::hud->radar->setRadarRange(radar_ranges[range_index]);
 
-        } else if (Game::take(Game::hud->controller->control_block.radar_zoom_out)) {
+        } else if (take(Game::hud->controller->control_block.radar_zoom_out)) {
             //see larger area
             if (++range_index == num_of_radar_ranges) --range_index;
 
@@ -75,7 +75,7 @@ void HudRadarDisplay::update(Ogre::Real a_dt)
         //grow number of dots if needed
         if (dot_elements.size() < num_of_dots) {
             for (uint i = 0, for_size = num_of_dots - dot_elements.size(); i < for_size; ++i) {
-                string id = string("radar_dot_")+Game::intIntoString(dot_elements.size());
+                string id = string("radar_dot_")+intoString(dot_elements.size());
                 dot_elements.push_back(createPanel(id, dot_green_name,
                                                    0, 0, 8, 8, container));
                 dot_elements.back()->hide();

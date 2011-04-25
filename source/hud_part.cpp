@@ -68,7 +68,7 @@ Ogre::OverlayElement* HudPart::createTextArea(const string& a_id, const string& 
 
     //text elements
     element->setParameter("font_name", Game::hud->hud_design.font_name);
-    element->setParameter("char_height", Game::intIntoString(a_font_size));
+    element->setParameter("char_height", intoString(a_font_size));
     element->setColour(a_colour);
     element->setCaption(a_text);
 

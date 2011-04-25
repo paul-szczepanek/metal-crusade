@@ -17,8 +17,8 @@ HudSet::HudSet(hud_part_design_t& a_hud_part_design)
 
     //create an overlay element for each item
     for (usint i = 0; i < items_in_set; ++i) {
-        string id = string("set_")+Game::intIntoString(function)+"_"+Game::intIntoString(i);
-        items.push_back(createPanel(id, a_hud_part_design.name+"_"+Game::intIntoString(i),
+        string id = string("set_")+intoString(function)+"_"+intoString(i);
+        items.push_back(createPanel(id, a_hud_part_design.name+"_"+intoString(i),
         0, 0, size.first, size.second, container));
     }
 
