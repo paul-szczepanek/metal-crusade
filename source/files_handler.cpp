@@ -349,7 +349,12 @@ void FilesHandler::getCharArray(vector<char>& char_array, string a_buffer)
 template <typename T> void FilesHandler::getDigitArray(vector<T>& int_array, string a_buffer)
 {
     for (int i = 0, for_size = a_buffer.size(); i < for_size; ++i) {
-        int_array.push_back(static_cast<T>(intoInt(a_buffer[i])));
+        //this will fail for ";" so check for them since this might be multiline buffer
+        if (a_buffer[i] != ';') {
+            int integer = static_cast<T>(intoInt(a_buffer[i]));
+            int_array.push_back(integer);
+        }
+
     }
 }
 

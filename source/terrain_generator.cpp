@@ -31,10 +31,10 @@ Terrain* TerrainGenerator::generateTerrain(const string& terrain_name)
     Terrain* result = new Terrain(terrain_w, terrain_h);
 
     //analyse the hights and convert to a set of tile tile_rows types
-    for (uint i = 0; i < tile_rows; ++i) {
-        for (uint j = 0; j < tile_columns; ++j) {
+    for (uint i = 0; i < tile_columns; ++i) {
+        for (uint j = 0; j < tile_rows; ++j) {
             //this is the tile we are creating
-            int index = i * tile_rows + j;
+            uint index = i + j * tile_columns;
 
             //read the type and tile_rows for this tile
             const terrain::block_types& block_type = block_types[index];
@@ -54,15 +54,31 @@ Terrain* TerrainGenerator::generateTerrain(const string& terrain_name)
                 index_adj[2] = index + tile_columns - 1; //bottom left
                 index_adj[3] = index - tile_columns - 1; //top left
 
+                //repeat terrain for the edges
+                if (index % tile_columns == tile_columns - 1) {
+                    //right edge
+                    index_adj[0] -= 1;
+                    index_adj[1] -= 1;
+                } else if (index % tile_columns == 0) {
+                    //left edge
+                    index_adj[2] += 1;
+                    index_adj[3] += 1;
+                }
+
+                if (index < tile_columns) {
+                    //top edge
+                    index_adj[0] += tile_columns;
+                    index_adj[3] += tile_columns;
+                } else if (index >= tile_columns * tile_rows - tile_columns) {
+                    //bottom edge
+                    index_adj[1] -= tile_columns;
+                    index_adj[2] -= tile_columns;
+                }
+
                 //create a name of the image that defines a tile that fits prefix_0000
                 tile_name = terrain::tile_prefix[block_type];
 
-                //clamping will have the same effect as having the terrain repeat the edge
-                int clamp_max = tile_columns * tile_rows;
-
                 for (uint i_block = 0; i_block < 4; ++i_block) {
-                    clampZero(index_adj[i_block], clamp_max);
-
                     //ternary operators are neat but also annoying when debugging, so there
                     if ((block_heights[index_adj[i_block]] > block_heights[index])) {
                         tile_name += '1';
@@ -113,7 +129,7 @@ Terrain* TerrainGenerator::generateTerrain(const string& terrain_name)
             //temp types
             for (uint t_i = 0; t_i < block_size; ++t_i) {
                 for (uint t_j = 0; t_j < block_size; ++t_j) {
-                    Ogre::ColourValue colour = tile->getColourAt(t_i, t_j, 0);
+                    //Ogre::ColourValue colour = tile->getColourAt(t_i, t_j, 0);
 
                     //translate local tile coords into global terrain coords
                     int ter_x = i * inner_block_size + t_i - block_blend_size;
@@ -149,7 +165,7 @@ Ogre::Real TerrainGenerator::getBlendWeight(uint a_i, uint a_j)
     Ogre::Real weight_i = Ogre::Real(a_i) / Ogre::Real(block_blend_size);
     clampZeroOne(weight_i);
 
-    Ogre::Real weight_j = Ogre::Real(a_i) / Ogre::Real(block_blend_size);
+    Ogre::Real weight_j = Ogre::Real(a_j) / Ogre::Real(block_blend_size);
     clampZeroOne(weight_j);
 
     return (weight_i * weight_j);
