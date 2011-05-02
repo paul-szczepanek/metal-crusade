@@ -8,6 +8,8 @@
 const usint block_size = 32;
 const int block_blend_size = 8; //each side
 const int inner_block_size = block_size - 2 * block_blend_size;
+//max height needs to be adjusted so that it covers the inner size of the block
+const Ogre::Real effective_height = Ogre::Real(block_size) / Ogre::Real(inner_block_size);
 
 /** @brief generate a terrain from a terrain file
   * @todo: pick a random terrain file from a set of ones or randomise the read data a bit
@@ -113,7 +115,7 @@ Terrain* TerrainGenerator::generateTerrain(const string& terrain_name)
                     //cut off the bleeds around the terrain as blend weights there will be wrong
                     if (ter_x >= 0 && ter_x < terrain_w && ter_y >= 0 && ter_y < terrain_h) {
                         //read the height on the block from the image
-                        Ogre::Real vertex_h = colour.g * max_height;
+                        Ogre::Real vertex_h = colour.g * max_height * effective_height;
                         //add the height of the whole block in the world
                         vertex_h += block_heights[index] * terrain::min_block_height;
 
@@ -159,13 +161,13 @@ Ogre::Real TerrainGenerator::getBlendWeight(uint a_i, uint a_j)
     }
 
     if (a_j > block_size * 0.5) {
-        a_j = block_size - a_i;
+        a_j = block_size - a_j;
     }
 
-    Ogre::Real weight_i = Ogre::Real(a_i) / Ogre::Real(block_blend_size);
+    Ogre::Real weight_i = Ogre::Real(a_i) / Ogre::Real(2*block_blend_size);
     clampZeroOne(weight_i);
 
-    Ogre::Real weight_j = Ogre::Real(a_j) / Ogre::Real(block_blend_size);
+    Ogre::Real weight_j = Ogre::Real(a_j) / Ogre::Real(2*block_blend_size);
     clampZeroOne(weight_j);
 
     return (weight_i * weight_j);

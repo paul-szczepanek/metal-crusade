@@ -3,10 +3,10 @@
 [height]
 4
 [terrain_height]
-01122100
-01112111
-11012222
-01112332
+11111122
+11111122
+22111111
+22111111
 [terrain_type]
 pppppppp
 pppppppp
@@ -20,5 +20,9 @@ pppppppp
 #coast C 2:1
 #river R 1:0 (flat)
 #sea S 1:0 (flat)
+#01122100
+#01112111
+#11012222
+#01112332
 
 

@@ -300,7 +300,7 @@ void Arena::createTerrainModel()
     pass->setVertexColourTracking(Ogre::TVC_DIFFUSE);
 
     //base detail texture 0
-    pass->createTextureUnitState()->setTextureName("rock_01.dds");
+    pass->createTextureUnitState()->setTextureName("test_grid_128.dds");
     pass->getTextureUnitState(0)->setTextureCoordSet(1);
     pass->getTextureUnitState(0)->setColourOperationEx(Ogre::LBX_SOURCE1,
                                                        Ogre::LBS_TEXTURE,
