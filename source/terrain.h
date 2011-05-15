@@ -43,9 +43,9 @@ namespace terrain {
         types_max
     };
 
-    const string tile_prefix[block_types_max] = {
+    const string block_prefix[block_types_max] = {
         "ht_p_",
-        "ht_h_",
+        "ht_p_",//temp should be _h_
         "ht_m_",
         "ht_w_",
         "ht_c_",

@@ -5,7 +5,7 @@
 #include "files_handler.h"
 #include "terrain.h"
 
-const usint block_size = 32;
+const usint block_size = terrain::block_size;
 const int block_blend_size = 8; //each side
 const int inner_block_size = block_size - 2 * block_blend_size;
 //max height needs to be adjusted so that it covers the inner size of the block
@@ -78,7 +78,7 @@ Terrain* TerrainGenerator::generateTerrain(const string& terrain_name)
                 }
 
                 //create a name of the image that defines a tile that fits prefix_0000
-                tile_name = terrain::tile_prefix[block_type];
+                tile_name = terrain::block_prefix[block_type];
 
                 for (uint i_block = 0; i_block < 4; ++i_block) {
                     //ternary operators are neat but also annoying when debugging, so there
@@ -91,7 +91,7 @@ Terrain* TerrainGenerator::generateTerrain(const string& terrain_name)
                 }
             } else {
                 //panic!
-                tile_name = terrain::tile_prefix[terrain::block_plain]+"0000";
+                tile_name = terrain::block_prefix[terrain::block_plain]+"0000";
             }
 
             //TODO:

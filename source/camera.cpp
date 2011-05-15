@@ -57,8 +57,13 @@ void Camera::resize(int a_width, int a_height)
     }
 
     //position the camera according to the angle and distance
-    camera_offset = Ogre::Vector3(0, cos(camera_angle) * camera_distance * aspect_ratio_inverse,
-                                  -sin(camera_angle) * camera_distance * aspect_ratio_inverse);
+    //temp sideways camera
+    //camera_offset = Ogre::Vector3(-sin(camera_angle) * camera_distance *5* aspect_ratio_inverse,
+    //                              cos(camera_angle) * camera_distance *5* aspect_ratio_inverse,
+    //                              0);
+
+    camera_offset = Ogre::Vector3(0, cos(camera_angle) * camera_distance *5* aspect_ratio_inverse,
+                                  sin(camera_angle) * camera_distance *15* aspect_ratio_inverse);
 
     //height of camera target depends on angle
     look_at_offset = Ogre::Vector3(0, -5 * (camera_angle / (0.5 * pi)), 0);

@@ -1,17 +1,21 @@
 [width]
-8
+10
 [height]
-4
+6
 [terrain_height]
-11111122
-11111122
-22111111
-22111111
+1111111111
+1113578911
+1111734111
+1117135411
+1113311122
+1111111123
 [terrain_type]
-pppppppp
-pppppppp
-pppppppp
-pppppppp
+hhhhhhhhhh
+hhhhhhhhhh
+hhhhhhhhhh
+hhhhhhhhhh
+hhhhhhhhhh
+hhhhhhhhhh
 
 #name, code, width to height ratio
 #plain P 2:1 (~26 degrees)
