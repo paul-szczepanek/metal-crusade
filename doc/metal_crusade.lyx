@@ -1,21 +1,29 @@
-#LyX 1.6.7 created this file. For more info see http://www.lyx.org/
-\lyxformat 345
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
 \begin_document
 \begin_header
 \textclass scrartcl
 \use_default_options true
+\maintain_unincluded_children false
 \language british
+\language_package default
 \inputencoding auto
+\fontencoding global
 \font_roman default
 \font_sans default
 \font_typewriter default
 \font_default_family default
+\use_non_tex_fonts false
 \font_sc false
 \font_osf false
 \font_sf_scale 100
 \font_tt_scale 100
 
 \graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
 \float_placement h
 \paperfontsize default
 \spacing single
@@ -24,9 +32,18 @@
 \use_geometry true
 \use_amsmath 1
 \use_esint 1
+\use_mhchem 1
+\use_mathdots 1
 \cite_engine basic
 \use_bibtopic false
+\use_indices false
 \paperorientation portrait
+\suppress_date false
+\use_refstyle 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
 \leftmargin 1cm
 \topmargin 1cm
 \rightmargin 1cm
@@ -37,15 +54,16 @@
 \secnumdepth 3
 \tocdepth 2
 \paragraph_separation indent
-\defskip medskip
+\paragraph_indentation default
 \quotes_language english
 \papercolumns 1
 \papersides 1
 \paperpagestyle default
 \tracking_changes false
 \output_changes false
-\author "" 
-\author "" 
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
 \end_header
 
 \begin_body
@@ -97,15 +115,15 @@ Throttle Set the throttle as the desired fraction of maximum speed either
  and backwards keys in increments of 1/4 for forward drive and 1/2 for reverse.
  When the speeds hits a certain level (0.75 for most) the crusaders starts
  to use the alternative walking mode - running, where applicable.
- Running mechs can be thrown off-balance and tripped.
+ Running crusaders can be thrown off-balance and tripped.
  There is a dedicated button to stopping and to reversing the throttle.
  Generally, crusaders walk backwards more slowly - depends on the type of
  the drive.
 \end_layout
 
 \begin_layout Description
-Steering Most mechs have the torso connected to the drive (legs) by a rotational
- joint.
+Steering Most crusaders have the torso connected to the drive (legs) by
+ a rotational joint.
  The arc and speed of rotation depends on the model and parts used.
  Steering the drive is perfectly straightforward left and right affair with
  the turning arc dependant on speed.
@@ -208,7 +226,7 @@ Radar Can be turned on and off, set its operating mode to active if available
 \end_layout
 
 \begin_layout Description
-Navigating You can cycle between nav-points and turn on the autopilot to
+Navigating You can cycle between navpoints and turn on the autopilot to
  move between points.
 \end_layout
 
@@ -269,7 +287,7 @@ target
 \begin_inset space ~
 \end_inset
 
-view show the enemy closeup
+view show the enemy close-up
 \end_layout
 
 \begin_layout Description
@@ -467,7 +485,7 @@ Moving around the planet map
 
 \begin_layout Standard
 The map shows the world with a hex grid overlay.
- Each hes can have one of many terrain types.
+ Each hex can have one of many terrain types.
  It can be claimed by one party.
  It can have a structure on it.
  At any point it can have any number of units on it.
@@ -619,7 +637,6 @@ terrain types on the overhead map
 \begin_layout Standard
 Many graphical sets exits - may be visually different but the qualities
  remain the same across them.
- Each turn you have
 \end_layout
 
 \begin_layout Description
@@ -659,7 +676,7 @@ status collapsed
 \begin_layout Plain Layout
 \begin_inset Tabular
 <lyxtabular version="3" rows="6" columns="4">
-<features>
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="0">
 <column alignment="center" valignment="top" width="0">
 <column alignment="center" valignment="top" width="0">
@@ -1502,7 +1519,7 @@ Game, story mode or not, starts of with you working for a mercenary company,
  getting paid per mission.
  Missions get you XPs and those get you promoted.
  Promotions get you more privileges.
- At any point you can setup a company which will fast track your promotion
+ At any point you can set up a company which will fast track your promotion
  - you need to pay for the license.
 \end_layout
 
@@ -1524,12 +1541,12 @@ Finishing missions gets you XP points.
 placement h
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset Tabular
 <lyxtabular version="3" rows="9" columns="3">
-<features>
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="0">
 <column alignment="center" valignment="top" width="0">
 <column alignment="center" valignment="top" width="0">
@@ -1672,7 +1689,7 @@ Captain
 \begin_inset Text
 
 \begin_layout Plain Layout
-Command wing-men
+Command up to two wingmen
 \end_layout
 
 \end_inset
@@ -1701,7 +1718,7 @@ Major
 \begin_inset Text
 
 \begin_layout Plain Layout
-customise other crusaders
+customise other crusaders, no wingmen limit
 \end_layout
 
 \end_inset
@@ -1822,7 +1839,7 @@ Ranks
 This also applies to people you hire.
  You need a major in each internal group, you need a colonel to create a
  party.
- Captains can also form groups but are limited to one wingman.
+ Captains can also form groups but are limited to two wingmen.
 \end_layout
 
 \begin_layout Section
@@ -1834,7 +1851,7 @@ Factions
 \end_layout
 
 \begin_layout Standard
-Factions mirror to an extent current cultures.
+Factions based on archetypes based on current/recent real-world entities.
  Highly original, I know.
  Bite me.
 \end_layout
@@ -1871,8 +1888,80 @@ Nations a special coming together of mediocrity and ineptitude, kind of
  Culturally a incomprehensible mix of every culture out there.
 \end_layout
 
+\begin_layout Description
+Local
+\begin_inset space ~
+\end_inset
+
+Authorities another non-faction, all independent cities and other local
+ entities are designated as such and do not share global reputations
+\end_layout
+
 \begin_layout Standard
-There are also local factions.
+Note on local and mercs: they cannot form group opinions of someone, mercenaries
+ cannot hate nomads for example, but other groups can form opinions of them,
+ so nomads can hate mercs, and United
+\begin_inset space ~
+\end_inset
+
+Nations can like Local Authorities.
+ When a city is taken over it is no longer a independent and takes on the
+ conquering factions flag.
+\end_layout
+
+\begin_layout Subsection
+Formation and Factions hierarchies
+\end_layout
+
+\begin_layout Standard
+Each unit is part of a formation.
+ These may be hierarchical and relate to actual unit groups and are created
+ ad-hoc for each mission.
+ Formations in turn belong to a faction.
+ Factions have hierarchies too and a global faction (or faction type) from
+ listed above.
+ Factions carry reputations.
+\end_layout
+
+\begin_layout Standard
+When two formations meet, each actions is based on the relationship between
+ the factions.
+ Relations with the parent faction are inherited straightforwardly.
+ If a faction hates the factions parent it will also hate it's child.
+ Changing relationships is less straightforward.
+\end_layout
+
+\begin_layout Standard
+Any direct action of one faction against another immediately changes the
+ relationship between the two but not between it's parents.
+ One minor faction attacking another minor faction will not necessarily
+ trigger a massive war between its parent nations.
+\end_layout
+
+\begin_layout Standard
+How the parent faction reacts depends on on what it is.
+ For example: local authorities are independent and have no hierarchy.
+ Mercs don't care, otherwise they wouldn't be mercs.
+ United Nations will always try to defend it's child factions.
+ Imperium will only change it's global policy based on it's aims.
+ Nomads will immediately change it's opinion but not necessarily act on
+ it in a global manner.
+ These are just ideas.
+ Diplomatic policy is part of faction definition.
+\end_layout
+
+\begin_layout Standard
+This means even if you change parent factions, if you directly harmed someone
+ he will still bear a grudge towards your faction, even if your new parent
+ faction is their ally.
+\end_layout
+
+\begin_layout Standard
+In practical terms the player always belongs to his own faction which can
+ join different factions.
+ You can't quit your faction and thus lose your reputations.
+ You can join a faction as a child faction and inherit their reputations
+ on top - you will lose them again when you quit.
 \end_layout
 
 \begin_layout Subsection
@@ -1895,7 +1984,7 @@ status open
 \begin_layout Plain Layout
 \begin_inset Tabular
 <lyxtabular version="3" rows="9" columns="5">
-<features>
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="0">
 <column alignment="center" valignment="top" width="0">
 <column alignment="center" valignment="top" width="0">
@@ -2358,6 +2447,13 @@ Generally planets and environments are divided into two categories: resource
  In these people form cities and the private sector is more present.
  It also means that factions have the things divided pretty tightly amongst
  themselves.
+ On mining outposts most of the areas us no man's land and some factions
+ might not even be present at all.
+\end_layout
+
+\begin_layout Standard
+Active core planets have strong electromagnetic and thermal interference,
+ limiting sensor effectiveness and aerial presence.
 \end_layout
 
 \begin_layout Description
@@ -2427,7 +2523,7 @@ status collapsed
 \begin_layout Plain Layout
 \begin_inset Tabular
 <lyxtabular version="3" rows="7" columns="5">
-<features>
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="2cm">
 <column alignment="center" valignment="top" width="1.5cm">
 <column alignment="center" valignment="top" width="55line%">
@@ -3110,7 +3206,7 @@ status collapsed
 \begin_layout Plain Layout
 \begin_inset Tabular
 <lyxtabular version="3" rows="28" columns="17">
-<features>
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="2.8cm">
 <column alignment="center" valignment="top" width="4cm">
 <column alignment="center" valignment="top" width="1cm">
@@ -8413,7 +8509,7 @@ Each object's mesh is contained within a bounding sphere.
  Each collision sphere can be a child of multiple exclusion spheres.
  
 \begin_inset CommandInset ref
-LatexCommand prettyref
+LatexCommand formatted
 reference "fig:Collision-spheres-used"
 
 \end_inset
