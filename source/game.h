@@ -23,6 +23,7 @@ class CorpusFactory;
 class ParticleFactory;
 class ProjectileFactory;
 class FormationFactory;
+class FactionFactory;
 class CollisionHandler;
 class GameController;
 class Hud;
@@ -63,6 +64,7 @@ public:
     static CorpusFactory* corpus_factory;
     static ParticleFactory* particle_factory;
     static ProjectileFactory* projectile_factory;
+    static FactionFactory* faction_factory;
     static FormationFactory* formation_factory;
     static UnitFactory* unit_factory;
     static AIFactory* ai_factory;

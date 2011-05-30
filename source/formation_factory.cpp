@@ -2,7 +2,9 @@
 
 #include "formation_factory.h"
 #include "formation.h"
-#include "faction.h"
+#include "text_store.h"
+#include "internal_string.h"
+#include "game.h"
 
 //struct for stl to use for comparison against formation name
 struct FormationEqualsName {
@@ -17,7 +19,7 @@ struct FormationEqualsName {
 
 FormationFactory::FormationFactory()
 {
-  //TODO: read formation from a file?
+    //ctor
 }
 
 FormationFactory::~FormationFactory()
@@ -29,11 +31,27 @@ FormationFactory::~FormationFactory()
   */
 Formation* FormationFactory::createFormation(const string& name, Faction* a_faction)
 {
-    //create a new formation
-    formations.push_back(new Formation(name));
+    //guarantee name uniqueness
+    string unique_name = name;
 
-    //formation join the faction
-    a_faction->joinFaction(formations.back());
+    //keep trying suffixes until the name is unique
+    for (uint i = internal_string::suffix1; i < internal_string::suffix24; ++i)
+    {
+    	if (getFormation(unique_name)) {
+            unique_name = name+" "
+                            +Game::text->getText(static_cast<internal_string::string_index>(i));
+
+    	} else {
+            break;
+    	}
+    }
+
+    //fallback, shouldn't really happen
+    while (getFormation(unique_name)) {
+        unique_name += "_";
+    }
+
+    formations.push_back(new Formation(unique_name, a_faction));
 
     return formations.back();
 }
@@ -52,7 +70,6 @@ Formation* FormationFactory::getFormation(const string& name)
         return (*it);
 
     } else {
-        //otherwise create a fomration of that name and default to new mercs - this is wrong TODO
-        return createFormation(name, new Faction(global_faction::mercenary));
+        return NULL;
     }
 }

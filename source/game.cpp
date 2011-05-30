@@ -12,6 +12,7 @@
 #include "particle_factory.h"
 #include "projectile_factory.h"
 #include "formation_factory.h"
+#include "faction_factory.h"
 #include "timer.h"
 #include "text_store.h"
 #include "hud.h"
@@ -25,6 +26,7 @@ ParticleFactory* Game::particle_factory;
 ProjectileFactory* Game::projectile_factory;
 UnitFactory* Game::unit_factory;
 FormationFactory* Game::formation_factory;
+FactionFactory* Game::faction_factory;
 AIFactory* Game::ai_factory;
 Ogre::Root* Game::ogre;
 Ogre::Viewport* Game::viewport;
@@ -139,6 +141,7 @@ void Game::init()
 
         //create the world and objects
         formation_factory = new FormationFactory();
+        faction_factory = new FactionFactory();
         arena = new Arena();
 
         //load map and start main loop

@@ -52,6 +52,57 @@ Imperium
 [faction_un]
 United Nations
 
+#-----------suffixes to make names unique
+
+[suffix1]
+Alpha
+[suffix2]
+Beta
+[suffix3]
+Gamma
+[suffix4]
+Delta
+[suffix5]
+Epsilon
+[suffix6]
+Zeta
+[suffix7]
+Eta
+[suffix8]
+Theta
+[suffix9]
+Iota
+[suffix10]
+Kappa
+[suffix11]
+Lambda
+[suffix12]
+Mu
+[suffix13]
+Nu
+[suffix14]
+Xi
+[suffix15]
+Omicron
+[suffix16]
+Pi
+[suffix17]
+Rho
+[suffix18]
+Sigma
+[suffix19]
+Tau
+[suffix20]
+Upsilon
+[suffix21]
+Phi
+[suffix22]
+Chi
+[suffix23]
+Psi
+[suffix24]
+Omega
+
 #**********end of onternal strings**********
 
 

@@ -8,6 +8,7 @@
 #include "projectile_factory.h"
 #include "particle_factory.h"
 #include "formation_factory.h"
+#include "faction_factory.h"
 #include "ai_factory.h"
 #include "crusader_ai.h"
 #include "crusader.h"
@@ -152,8 +153,10 @@ int Arena::loadArena(const string& arena_name)
 
     //TODO: read faction from game state file (save file) outside of the arena
     //factions
-    Faction* faction_imperium = new Faction(global_faction::imperium);
-    Faction* faction_mercenary = new Faction(global_faction::mercenary);
+    Faction* faction_imperium =
+        Game::faction_factory->createFaction("Imperium", global_faction::imperium);
+    Faction* faction_mercenary
+        = Game::faction_factory->createFaction("Mercenary", global_faction::mercenary);
     //formations
     Formation* enemy_formation = Game::formation_factory->createFormation("enemies",
                                                                           faction_imperium);

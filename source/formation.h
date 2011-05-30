@@ -8,28 +8,26 @@
 class Faction;
 class GameController;
 
+//this represents the group of actual units at a location
 class Formation
 {
 public:
-    Formation(const string& a_name);
+    Formation(const string& a_name, Faction* a_faction);
     virtual ~Formation();
 
     //faction
-    Faction* getFaction() { return faction; };
-    void setFaction(Faction* a_faction) { faction = a_faction; };
+    Faction* getFaction() const { return faction; };
+    void setFaction(Faction* a_faction);
 
     //name
     string& getName() { return name; };
-    void setName(const string& a_name) { name = a_name; };
+    void setName(const string a_name) { name = a_name; };
 
     //units joining and leaving the formation
     void joinFormation(GameController* a_controller);
     void leaveFormation(GameController* a_controller);
 
 private:
-    Formation* parent;
-    list<Formation*> children;
-
     string name;
     Faction* faction;
 

@@ -6,16 +6,17 @@
 #include "internal_string.h"
 
 namespace global_faction {
-    const usint number = 4;
 
     enum faction {
         mercenary,
         nomads,
         imperium,
-        un
+        un,
+        local,
+        faction_max
     };
 
-    const internal_string::string_index faction_names[number] = {
+    const internal_string::string_index faction_names[faction_max] = {
         internal_string::faction_mercenary,
         internal_string::faction_nomads,
         internal_string::faction_imperium,

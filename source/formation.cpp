@@ -1,16 +1,33 @@
 //Copyright 2010 Paul Szczepanek. Code released under GPL Version 3.
 
 #include "formation.h"
+#include "faction.h"
 #include "game_controller.h"
 
-Formation::Formation(const string& a_name) : parent(NULL), name(a_name), faction(NULL)
+Formation::Formation(const string& a_name, Faction* a_faction) : name(a_name), faction(a_faction)
 {
-    //ctor
+    faction->joinFaction(this);
 }
 
 Formation::~Formation()
 {
-    //dtor
+    for (list<GameController*>::iterator it = controllers.begin(); it != controllers.end(); ++it) {
+        (*it)->setFormation(NULL);
+    }
+
+    controllers.clear();
+
+    faction->leaveFaction(this);
+}
+
+/** @brief a controller (which represents the unit's pilot) joins a formation
+  * automatically leaves any old one
+  */
+void Formation::setFaction(Faction* a_faction)
+{
+    faction = a_faction;
+    faction->leaveFaction(this);
+    faction->joinFaction(this);
 }
 
 /** @brief a controller (which represents the unit's pilot) joins a formation
