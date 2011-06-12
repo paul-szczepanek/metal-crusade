@@ -15,11 +15,14 @@ public:
     FactionFactory();
     virtual ~FactionFactory();
 
+    void Update(float delta);
+
     Faction* createFaction(const string& name,
                            global_faction::faction a_faction = global_faction::mercenary);
 
     Faction* getFaction(const string& name);
 
+    // add or subrtact from relation
     ulint attack(Faction* a_attacker, Faction* a_defender, Ogre::Real a_damage);
     void updatePolicy(Faction* a_from, Faction* a_to);
 

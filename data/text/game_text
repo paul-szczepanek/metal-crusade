@@ -44,13 +44,15 @@ $rCore damaged from $eshock$r by
 #----------faction names
 
 [faction_mercenary]
-mercenary
+Mercenaries
 [faction_nomads]
 The Nomads
 [faction_imperium]
 Imperium
 [faction_un]
 United Nations
+[faction_local]
+Local Authorities
 
 #-----------suffixes to make names unique
 

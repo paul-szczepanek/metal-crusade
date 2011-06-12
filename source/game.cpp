@@ -210,6 +210,8 @@ void Game::logic(int a_d_ticks)
         unit_factory->update(dt);
         projectile_factory->update(dt);
         particle_factory->update(dt);
+        faction_factory->update(dt);
+        formation_factory->update(dt);
 
         //move camera
         camera->update(dt);

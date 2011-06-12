@@ -27,6 +27,11 @@ FormationFactory::~FormationFactory()
     //dtor
 }
 
+void FormationFactory::Update(float delta)
+{
+    //this will update formations
+}
+
 /** @brief creates a formation and adds it to the list
   */
 Formation* FormationFactory::createFormation(const string& name, Faction* a_faction)

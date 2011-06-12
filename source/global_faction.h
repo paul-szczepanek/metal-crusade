@@ -7,6 +7,9 @@
 
 namespace global_faction {
 
+    //global factions are archetypes and need to be part of the code because they behave differently
+    //and run different code
+    //they can have several top factions that are parameterising the code for each of these
     enum faction {
         mercenary,
         nomads,
@@ -20,7 +23,8 @@ namespace global_faction {
         internal_string::faction_mercenary,
         internal_string::faction_nomads,
         internal_string::faction_imperium,
-        internal_string::faction_un
+        internal_string::faction_un,
+        internal_string::faction_local
     };
 };
 

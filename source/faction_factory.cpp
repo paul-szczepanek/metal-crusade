@@ -79,6 +79,7 @@ Faction* FactionFactory::getFaction(const string& name)
 }
 
 /** @brief updates relations and if none exist creats them
+  * returns the relation after adding the damage
   * crazy silly std way of mappings maps
   */
 ulint FactionFactory::attack(Faction* a_attacker, Faction* a_defender, Ogre::Real a_damage)
@@ -129,11 +130,19 @@ Ogre::Real FactionFactory::getRelation(Faction* a_from, Faction* a_to)
     return 0;
 }
 
+void FactionFactory::Update(float delta)
+{
+    //this will update policies when needed with cooldowns
+}
+
+/** @brief creates a policy from relations that can be acted upon without evaluting every frame
+  * this is really expensive and should be reevalutated very rarely
+  */
 void FactionFactory::updatePolicy(Faction* a_from, Faction* a_to)
 {
     //TODO: cooldown so policy is not re-examined to often
     // remember to register a update is required even if during cooldown so that another update
-    // will happen at the end of cooldown - tricky, need a cron
+    // will happen at the end of cooldown - tricky, need a cron or an update func
 
     //start with direct relation
     Ogre::Real common_relation = getRelation(a_from, a_to);
