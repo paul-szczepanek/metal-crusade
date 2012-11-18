@@ -24,7 +24,7 @@ namespace global_faction {
         internal_string::faction_nomads,
         internal_string::faction_imperium,
         internal_string::faction_un,
-        internal_string::faction_local
+        //internal_string::faction_local
     };
 };
 

@@ -1,3 +1,11 @@
+h1. Defunct
+
+This is a corpse but feel free to poke it with a stick.
+
+This is well beyond my capability for a hobby project. I moved to a project that has a more realistic scope so I can actually release 1.0 without having to quit my day job.
+
+I wish it weren't so but this one's suspended indefinitely.
+
 h1. Metal Crusade
 
 _Paul Szczepanek_

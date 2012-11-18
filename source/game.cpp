@@ -81,8 +81,8 @@ void Game::init()
             ogre->loadPlugin("Plugin_ParticleFX.dll");
         #endif
     #else
-        ogre->loadPlugin("/usr/local/lib/OGRE/RenderSystem_GL");
-        ogre->loadPlugin("/usr/local/lib/OGRE/Plugin_ParticleFX");
+        ogre->loadPlugin("./OGRE/RenderSystem_GL");
+        ogre->loadPlugin("./OGRE/Plugin_ParticleFX");
     #endif
 
     if(ogre->restoreConfig() || ogre->showConfigDialog()) {
@@ -210,8 +210,8 @@ void Game::logic(int a_d_ticks)
         unit_factory->update(dt);
         projectile_factory->update(dt);
         particle_factory->update(dt);
-        faction_factory->update(dt);
-        formation_factory->update(dt);
+        //faction_factory->update(dt);
+        //formation_factory->update(dt);
 
         //move camera
         camera->update(dt);
