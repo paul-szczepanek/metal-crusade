@@ -17,10 +17,6 @@ The game lets you pilot giant military robots (eponymous *crusaders*) with a thi
 
 h3. Project's website at "metalcrusade.com":http://metalcrusade.com
 
-h2. Project Status
-
-The project is in its extremely early stage. The ground level section of the game is being developed - the one where you actually pilot the crusader. The art assets are all placeholders.
-
 
 h2. Project Goals
 
@@ -29,6 +25,3 @@ The design doc is still being written but roughly:
 * pilot the crusader and command your squad on the ground level map
 * travel on a planet map and capture structures - involving global strategy and diplomacy, managing your gear and personnel
 * design, build and customise crusaders for you and your squad to use
-* story mode
-* ...and lastly, networked co-op (ha, maybe in 2012)
-
