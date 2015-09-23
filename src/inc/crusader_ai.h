@@ -9,11 +9,13 @@ class Imaginarius;
 
 #include "unit_ai.h"
 
-class CrusaderAI : public UnitAI
+class CrusaderAI
+  : public UnitAI
 {
 public:
   CrusaderAI(Crusader* a_self);
-  virtual ~CrusaderAI() { };
+  virtual ~CrusaderAI() {
+  }
 
   // main loop
   void update();

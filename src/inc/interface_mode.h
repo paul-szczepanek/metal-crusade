@@ -12,6 +12,7 @@ enum modes {
   computer,
   communication
 };
+
 };
 
 #endif // INTERFACE_MODE_H_INCLUDED

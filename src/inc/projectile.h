@@ -6,49 +6,46 @@
 class Weapon;
 class Collision;
 
-#include "mobilis.h"
+#include "corpus.h"
 
-class Projectile : public Corpus
+class Projectile
+  : public ArenaEntity
 {
 public:
-  Projectile(Ogre::Vector3 a_pos_xyz, const string& a_unit_name, Ogre::SceneNode* a_scene_node,
-             Ogre::Quaternion a_orientation, Weapon* a_weapon, Corpus* a_owner);
-  ~Projectile() { };
+  Projectile(Vector3          a_pos_xyz,
+             const string&    a_unit_name,
+             Ogre::SceneNode* a_scene_node,
+             Quaternion       a_orientation,
+             Weapon*          a_weapon,
+             Corpus*          a_owner);
+  ~Projectile() {
+  }
 
   // main loop
-  int updateController();
-
-  // resolves collision
-  int handleCollision(Collision* a_collision);
-
-  // damage
-  Ogre::Real getBallisticDmg();
-  Ogre::Real getEnergyDmg();
-  Ogre::Real getHeatDmg();
-
-  // radar
-  bool isDetectable() { return false; };
+  int update();
 
   // handle collision
-  bool validateCollision(Corpus* a_collision);
-  bool revertMove(Ogre::Vector3 a_move);
+  virtual bool validateCollision(Corpus* a_collision);
+  virtual int handleCollision(Collision* a_collision);
 
 private:
   // start the explosion if it has splash damage
   void explode();
 
-  Corpus* owner;
+public:
   Weapon* weapon;
+  size_t NumCorpuses;
 
-  // how far has it travelled
-  Ogre::Real lifetime;
+  // how far has it traveled
+  Real lifetime;
 
   // for splash damage
-  bool exploading;
-  Ogre::Real coverage;
+  Real coverage;
 
   // madness
-  Ogre::Real velocity_dmg_multiplier;
+  Real velocity_dmg_multiplier
+
+  bool exploading;
 };
 
 #endif // PROJECTILE_H_INCLUDED

@@ -10,16 +10,20 @@ namespace fx_anim
 enum anims {
   petrol,
 };
+
 };
 
-class ParticleEffectFlipbook : public ParticleEffect
+class ParticleEffectFlipbook
+  : public ParticleEffect
 {
 public:
-  ParticleEffectFlipbook(Ogre::SceneNode* a_scene_node, Ogre::Real a_size, Ogre::Real a_ferocity,
-                         fx_anim::anims a_animation);
+  ParticleEffectFlipbook(Ogre::SceneNode* a_scene_node,
+                         Real             a_size,
+                         Real             a_ferocity,
+                         fx_anim::anims   a_animation);
   ~ParticleEffectFlipbook();
 
-  int update(Ogre::Real a_dt);
+  int update(Real a_dt);
 
 private:
   Ogre::BillboardSet* set;

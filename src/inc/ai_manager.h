@@ -11,18 +11,22 @@ class Crusader;
 class TankAI;
 class Tank;
 class Formation;
+class GameController;
 
 class AIManager
 {
 public:
-  AIManager() { };
+  AIManager() {
+  }
+
   ~AIManager();
 
   // main loop
   void update();
 
   // create ais for units
-  CrusaderAI* activateUnit(Crusader* a_unit, Formation* a_formation);
+  CrusaderAI* activateUnit(Crusader*  a_unit,
+                           Formation* a_formation);
 
   // ai creation
   CrusaderAI* createCrusaderAI(Crusader* a_self);

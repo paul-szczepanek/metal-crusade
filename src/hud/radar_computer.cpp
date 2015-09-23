@@ -7,11 +7,12 @@
 #include "game_controller.h"
 #include "unit.h"
 
-const Ogre::Real bs_to_dot_size = 1 / root_of_2;
+const Real bs_to_dot_size = 1 / root_of_2;
 
-RadarComputer::RadarComputer(const string& filename, Unit* a_unit)
+RadarComputer::RadarComputer(const string& filename,
+                             Unit*         a_unit)
   : active(true), unit(a_unit), active_radar(false), units_refresh_interval(1),
-    units_refresh_accumulator(0)
+  units_refresh_accumulator(0)
 {
   if (FilesHandler::getRadarDesign(filename, radar_design) == false) {
     Game::kill(filename + " radar spec garbled! Oh, dear.");
@@ -22,8 +23,8 @@ RadarComputer::RadarComputer(const string& filename, Unit* a_unit)
 }
 
 /** @brief main loop
-  */
-void RadarComputer::update(Ogre::Real a_dt)
+ */
+void RadarComputer::update(Real a_dt)
 {
   if (active) {
     // potential units list doesn't need to be updated every frame
@@ -37,17 +38,17 @@ void RadarComputer::update(Ogre::Real a_dt)
   }
 }
 
-void RadarComputer::setRadarRange(Ogre::Real a_range)
+void RadarComputer::setRadarRange(Real a_range)
 {
   radar_sphere.radius = a_range;
   updateObjectsWithinRadius();
 }
 
 /** @brief adjust the data representing the units and buildings on the map
-  * TODO: don't refresh all every frame - do a sweep according to radar spec
-  * TODO: detection mechanic - range, power, heat, electronics, ray not obstructed etc.
-  * TODO: obviously simplify mechanic for ais
-  */
+ * TODO: don't refresh all every frame - do a sweep according to radar spec
+ * TODO: detection mechanic - range, power, heat, electronics, ray not obstructed etc.
+ * TODO: obviously simplify mechanic for ais
+ */
 void RadarComputer::updateRadarData()
 {
   // do the units
@@ -61,11 +62,11 @@ void RadarComputer::updateRadarData()
 }
 
 /** @brief refreshes the list of potential units to be detected by the radar
-  * it's very conservative so it doesn't need to be done often.
-  * TODO: stagger these updates across units and possibly half the rate for ai
-  * TODO: sort them according to radar type so that you can access them
-  * in sequence when doing the sweep
-  */
+ * it's very conservative so it doesn't need to be done often.
+ * TODO: stagger these updates across units and possibly half the rate for ai
+ * TODO: sort them according to radar type so that you can access them
+ * in sequence when doing the sweep
+ */
 void RadarComputer::updateObjectsWithinRadius()
 {
   // adjust the position of the radar sphere
@@ -96,7 +97,7 @@ void RadarComputer::updateObjectsWithinRadius()
       for (; it != it_end; ++it) {
         // if it's within the radar sphere add to the list for processing
         if (radar_sphere.contains((*it)->getPosition())) {
-          Ogre::Real size = (*it)->getBoundingSphere().radius * bs_to_dot_size;
+          Real size = (*it)->getBoundingSphere().radius * bs_to_dot_size;
           corpus_dots.push_back(radar::CorpusDot((*it), size, (*it)->getPosition()));
         }
       }
@@ -113,7 +114,7 @@ void RadarComputer::updateObjectsWithinRadius()
         if (radar_sphere.contains((*it)->getPosition())) {
           // get rid of tiny projectiles and things you're not able to target
           if ((*it)->isDetectable()) {
-            Ogre::Real size = (*it)->getBoundingSphere().radius * bs_to_dot_size;
+            Real size = (*it)->getBoundingSphere().radius * bs_to_dot_size;
             mobilis_dots.push_back(radar::CorpusDot((*it), size));
           }
         }
@@ -129,7 +130,7 @@ void RadarComputer::updateObjectsWithinRadius()
       for (; it != it_end; ++it) {
         // if it's within the radar sphere add to the list for processing
         if (radar_sphere.contains((*it)->getPosition())) {
-          Ogre::Real size = (*it)->getBoundingSphere().radius * bs_to_dot_size;
+          Real size = (*it)->getBoundingSphere().radius * bs_to_dot_size;
           mobilis_dots.push_back(radar::CorpusDot((*it), size));
         }
       }

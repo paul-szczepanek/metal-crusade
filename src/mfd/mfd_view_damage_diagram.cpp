@@ -17,7 +17,7 @@ vector<string> military_object_grn_tex_names;
 vector<string> military_object_red_tex_names;
 vector<string> military_biped_crusader_grn_tex_names;
 vector<string> military_biped_crusader_red_tex_names;
-vector<Ogre::Real> dmg_level_flashing;
+vector<Real> dmg_level_flashing;
 vector<real_pair> dmg_level_colour_values;
 
 MFDViewDamageDiagram::MFDViewDamageDiagram(hud_part_design_t& a_hud_part_design)
@@ -27,7 +27,6 @@ MFDViewDamageDiagram::MFDViewDamageDiagram(hud_part_design_t& a_hud_part_design)
   // stuff here is specific to one hud - the military hud, it's pretty much hardcoded
   // I did my best to make it a modular slot in so it's not tied to anything and can be easily
   // replaced with a different view - I'm just running out of time and need to get the hud working
-
 
   // this is a workaround for visual studio compiler not supporting new c++0x features :,-(
   military_blank_grn_tex_names.clear();
@@ -84,7 +83,6 @@ MFDViewDamageDiagram::MFDViewDamageDiagram(hud_part_design_t& a_hud_part_design)
   dmg_level_colour_values.push_back(make_pair(0, 0.25));     // =destroyed
   // end of workaround
 
-
   // visual parts creation starts here
   Ogre::OverlayManager* overlay_mngr = Ogre::OverlayManager::getSingletonPtr();
 
@@ -95,55 +93,59 @@ MFDViewDamageDiagram::MFDViewDamageDiagram(hud_part_design_t& a_hud_part_design)
   // creates a container icons
   icons = static_cast<Ogre::OverlayContainer*>
           (overlay_mngr->createOverlayElement("Panel", a_hud_part_design.name
-              + "_icons_cont_" + getUniqueID()));
+                                              + "_icons_cont_" + Game::getUniqueID()));
   icons->setMetricsMode(Ogre::GMM_PIXELS);
   container->addChild(icons);
 
   // creates a container the heat gauge
   heat_gauge = static_cast<Ogre::OverlayContainer*>
                (overlay_mngr->createOverlayElement("Panel", a_hud_part_design.name
-                   + "_heat_cont_" + getUniqueID()));
+                                                   + "_heat_cont_" + Game::getUniqueID()));
   heat_gauge->setMetricsMode(Ogre::GMM_PIXELS);
   container->addChild(heat_gauge);
 
   // icons overlay elements
   string id = "mfd_dmg_grn_electronics";
-  ico_electronics.first = createPanel(id + getUniqueID(), id,
+  ico_electronics.first = createPanel(id + Game::getUniqueID(), id,
                                       offset_x + dmg_ico_w * 0.5, ico_offset_y,
                                       dmg_ico_w, dmg_ico_w, icons);
 
   id = "mfd_dmg_red_electronics";
-  ico_electronics.second = createPanel(id + getUniqueID(), id,
+  ico_electronics.second = createPanel(id + Game::getUniqueID(), id,
                                        offset_x + dmg_ico_w * 0.5, ico_offset_y,
                                        dmg_ico_w, dmg_ico_w, icons);
 
   id = "mfd_dmg_grn_engine";
-  ico_engine.first = createPanel(id + getUniqueID(), id, offset_x + dmg_ico_w * 0.5, ico_offset_y,
-                                 dmg_ico_w, dmg_ico_w, icons);
+  ico_engine.first = createPanel(
+    id + Game::getUniqueID(), id, offset_x + dmg_ico_w * 0.5, ico_offset_y,
+    dmg_ico_w, dmg_ico_w, icons);
 
   id = "mfd_dmg_red_engine";
-  ico_engine.second = createPanel(id + getUniqueID(), id, offset_x + dmg_ico_w * 0.5, ico_offset_y,
-                                  dmg_ico_w, dmg_ico_w, icons);
+  ico_engine.second = createPanel(
+    id + Game::getUniqueID(), id, offset_x + dmg_ico_w * 0.5, ico_offset_y,
+    dmg_ico_w, dmg_ico_w, icons);
 
   id = "mfd_dmg_grn_lock";
-  ico_lock_in.first = createPanel(id + getUniqueID(), id, offset_x + dmg_ico_w * 1, ico_offset_y,
-                                  dmg_ico_w, dmg_ico_w, icons);
+  ico_lock_in.first = createPanel(
+    id + Game::getUniqueID(), id, offset_x + dmg_ico_w * 1, ico_offset_y,
+    dmg_ico_w, dmg_ico_w, icons);
 
   id = "mfd_dmg_red_lock";
-  ico_lock_in.second = createPanel(id + getUniqueID(), id, offset_x + dmg_ico_w * 1, ico_offset_y,
-                                   dmg_ico_w, dmg_ico_w, icons);
+  ico_lock_in.second = createPanel(
+    id + Game::getUniqueID(), id, offset_x + dmg_ico_w * 1, ico_offset_y,
+    dmg_ico_w, dmg_ico_w, icons);
 
   // heat bar overlay elements
   id = "mfd_dmg_heat";
-  heat = createPanel(id + getUniqueID(), id, offset_x, ico_offset_y,
+  heat = createPanel(id + Game::getUniqueID(), id, offset_x, ico_offset_y,
                      dmg_ico_w * 0.5, dmg_ico_w, heat_gauge);
 
-  id = "mfd_dmg_heat_bar" + getUniqueID();
+  id = "mfd_dmg_heat_bar" + Game::getUniqueID();
   string tex_name = "mfd_dmg_heat_bar";
 
   // get the material to scale the bar later
   heat_bar_material = Game::hud->createOverlayMaterial(id, Ogre::TextureUnitState::TAM_CLAMP,
-                      tex_name)->getTechnique(0)->getPass(0)
+                                                       tex_name)->getTechnique(0)->getPass(0)
                       ->getTextureUnitState(0);
 
   heat_bar = createPanel(id, id, offset_x, ico_offset_y,
@@ -152,8 +154,9 @@ MFDViewDamageDiagram::MFDViewDamageDiagram(hud_part_design_t& a_hud_part_design)
   // creates containers for diagram types
   for (usint i = 0; i < mfd_view::num_of_diagram_types; ++i) {
     diagrams.push_back(static_cast<Ogre::OverlayContainer*>
-                       (overlay_mngr->createOverlayElement("Panel", a_hud_part_design.name + "_cont_"
-                           + intoString(i) + getUniqueID())));
+                       (overlay_mngr->createOverlayElement("Panel", a_hud_part_design.name +
+                                                           "_cont_"
+                                                           + intoString(i) + Game::getUniqueID())));
     diagrams.back()->setMetricsMode(Ogre::GMM_PIXELS);
     container->addChild(diagrams.back());
   }
@@ -178,12 +181,12 @@ MFDViewDamageDiagram::MFDViewDamageDiagram(hud_part_design_t& a_hud_part_design)
 }
 
 /** @brief creates a vector of texture states of a damage pic to use to change alpha blending
-  */
-void MFDViewDamageDiagram::createDiagram(mfd_view::diagram_type a_diagram_type,
-    const vector<string>& grn_names,
-    const vector<string>& red_names,
-    vector<Ogre::TextureUnitState*>& materials_grn,
-    vector<Ogre::TextureUnitState*>& materials_red)
+ */
+void MFDViewDamageDiagram::createDiagram(mfd_view::diagram_type           a_diagram_type,
+                                         const vector<string>&            grn_names,
+                                         const vector<string>&            red_names,
+                                         vector<Ogre::TextureUnitState*>& materials_grn,
+                                         vector<Ogre::TextureUnitState*>& materials_red)
 {
   Ogre::MaterialPtr material;
 
@@ -191,11 +194,11 @@ void MFDViewDamageDiagram::createDiagram(mfd_view::diagram_type a_diagram_type,
   for (usint i = 0, for_size = grn_names.size(); i < for_size; ++i) {
     // get uniqe id and the texture from the design vector
     string tex_name = grn_names[i];
-    string id = grn_names[i] + getUniqueID();
+    string id = grn_names[i] + Game::getUniqueID();
 
     // create a material witha a unique names but the texture name from the mfd_view diagram
     material = Game::hud->createOverlayMaterial(id, Ogre::TextureUnitState::TAM_CLAMP,
-               tex_name);
+                                                tex_name);
 
     // put the texture unit state in the vector for later use with alpha blending
     materials_grn.push_back(material->getTechnique(0)->getPass(0)->getTextureUnitState(0));
@@ -206,11 +209,11 @@ void MFDViewDamageDiagram::createDiagram(mfd_view::diagram_type a_diagram_type,
 
     // get uniqe id and the texture from the design vector
     tex_name = red_names[i];
-    id = red_names[i] + getUniqueID();
+    id = red_names[i] + Game::getUniqueID();
 
     // create a material witha a unique names but the texture name from the mfd_view diagram
     material = Game::hud->createOverlayMaterial(id, Ogre::TextureUnitState::TAM_CLAMP,
-               tex_name);
+                                                tex_name);
 
     // put the texture unit state in the vector for later use with alpha blending
     materials_red.push_back(material->getTechnique(0)->getPass(0)->getTextureUnitState(0));
@@ -226,7 +229,7 @@ void MFDViewDamageDiagram::createDiagram(mfd_view::diagram_type a_diagram_type,
 }
 
 /** @brief change the damage diagram picture to suite the object type
-  */
+ */
 void MFDViewDamageDiagram::switchDiagrams(mfd_view::diagram_type a_new_diagram)
 {
   diagram = a_new_diagram;
@@ -253,14 +256,15 @@ void MFDViewDamageDiagram::switchDiagrams(mfd_view::diagram_type a_new_diagram)
   }
 }
 
-void MFDViewDamageDiagram::update(Ogre::Real a_dt)
+void MFDViewDamageDiagram::update(Real a_dt)
 {
   if (active) {
     updateDiagramElements(a_dt, Game::hud->player_unit);
   }
 }
 
-void MFDViewDamageDiagram::updateDiagramElements(Ogre::Real a_dt, Corpus* a_target)
+void MFDViewDamageDiagram::updateDiagramElements(Real    a_dt,
+                                                 Corpus* a_target)
 {
   mfd_view::diagram_type new_diagram = a_target->getDiagramType();
 
@@ -268,11 +272,11 @@ void MFDViewDamageDiagram::updateDiagramElements(Ogre::Real a_dt, Corpus* a_targ
   if (new_diagram != diagram) { switchDiagrams(new_diagram); }
 
   // heat guage
-  Ogre::Real temperature = a_target->getSurfaceTemperature() / 1000;
+  Real temperature = a_target->getSurfaceTemperature() / 1000;
   if (temperature > 1) { temperature = 1; } // cap at 1
 
   // scale the height of the heat gauge
-  Ogre::Real heat_height = dmg_ico_w * temperature;
+  Real heat_height = dmg_ico_w * temperature;
   heat_bar->setHeight(heat_height);
   heat_bar->setPosition(offset_x, ico_offset_y + dmg_ico_w - heat_height);
 
@@ -282,7 +286,7 @@ void MFDViewDamageDiagram::updateDiagramElements(Ogre::Real a_dt, Corpus* a_targ
 
   for (usint i = 0, for_size = mfd_view::num_of_diagram_elements[diagram]; i < for_size; ++i) {
     // get the damage for each area corresponding to the diagam elemnt
-    Ogre::Real damage = a_target->getDamage(i);
+    Real damage = a_target->getDamage(i);
 
     // special case - part has been destroyed if damage < 0
     usint damage_index = num_of_damage_levels;
@@ -308,10 +312,12 @@ void MFDViewDamageDiagram::updateDiagramElements(Ogre::Real a_dt, Corpus* a_targ
 
     // apply alpha values to the green elements
     (*materials_grns[diagram])[i]->setAlphaOperation(Ogre::LBX_MODULATE, Ogre::LBS_MANUAL,
-        Ogre::LBS_TEXTURE, dmg_level_colour_values[damage_index].first);
+                                                     Ogre::LBS_TEXTURE,
+                                                     dmg_level_colour_values[damage_index].first);
 
     // apply alpha values to the red elements
     (*materials_reds[diagram])[i]->setAlphaOperation(Ogre::LBX_MODULATE, Ogre::LBS_MANUAL,
-        Ogre::LBS_TEXTURE, dmg_level_colour_values[damage_index].second);
+                                                     Ogre::LBS_TEXTURE,
+                                                     dmg_level_colour_values[damage_index].second);
   }
 }

@@ -42,7 +42,7 @@ HudSet::HudSet(hud_part_design_t& a_hud_part_design)
   switchItems(item_to_show);
 }
 
-void HudSet::update(Ogre::Real a_dt)
+void HudSet::update(Real a_dt)
 {
   // get item to show depending on funciton
   usint new_item_to_show = getItemToShow();

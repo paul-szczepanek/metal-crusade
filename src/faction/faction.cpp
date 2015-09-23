@@ -5,7 +5,9 @@
 #include "game.h"
 #include "faction_manager.h"
 
-Faction::Faction(const string& a_name, const global_faction::faction a_faction, const ulint a_uid)
+Faction::Faction(const string&                 a_name,
+                 const global_faction::faction a_faction,
+                 const ulint                   a_uid)
   : faction_type(a_faction), uid(a_uid), name(a_name)
 {
   // ctor
@@ -26,9 +28,8 @@ void Faction::leaveFaction(Formation* a_formation)
   formations.remove(a_formation);
 }
 
-void Faction::attack(Faction* a_faction, Ogre::Real a_damage)
+void Faction::attack(Faction* a_faction,
+                     Real     a_damage)
 {
   Game::Faction->attack(this, a_faction, a_damage);
 }
-
-

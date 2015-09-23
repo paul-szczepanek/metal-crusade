@@ -5,15 +5,16 @@
 
 #include "particle_effect.h"
 
-class ParticleEffectStepDust : public ParticleEffect
+class ParticleEffectStepDust
+  : public ParticleEffect
 {
 public:
   ParticleEffectStepDust(Ogre::SceneNode* scene_node);
   ~ParticleEffectStepDust();
 
-  int update(Ogre::Real a_dt);
+  int update(Real a_dt);
 
-  void setRate(Ogre::Real a_rate);
+  void setRate(Real a_rate);
 
 private:
   Ogre::ParticleSystem* dust;

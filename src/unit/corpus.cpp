@@ -7,45 +7,44 @@
 #include "entity.h"
 // #include "game_arena.h"
 
-Corpus::Corpus(Ogre::Vector3 a_posXyz,
-               Ogre::Quaternion a_orientation,
-               Ogre::SceneNode* a_sceneNode,
-               const string& a_collisionName,
-               ArenaEntity* a_owner)
-  : Owner(a_owner),
-    BoundingSphereInvalid(true),
-    ESInvalid(0),
-    CSInvalid(0),
-    Dt(0),
-    PosXyz(a_posXyz),
-    Orientation(a_orientation),
-    SceneNode(a_sceneNode),
-    CollisionType(collision_type_blocking),
-    Penetration(0),
-    Friction(0.5),
-    Conductivity(1),
-    CellIndex(make_pair(0, 0)),
-    DisplayCollisionDebug(false),
-    velocity(Ogre::Vector3(0, 0, 0)),
-    move(Ogre::Vector3(0, 0, 0)),
-    corrected_velocity_scalar(0),
-    out_of_bounds(false),
-    registered(false),
-    core_integrity(1),
-    target(NULL)
+Corpus::Corpus()
+  : Owner(NULL),
+  BoundingSphereInvalid(true),
+  ESInvalid(0),
+  CSInvalid(0),
+  PosXyz(a_posXyz),
+  SceneNode(NULL),
+  CollisionType(collision_type_blocking),
+  Penetration(0),
+  Friction(0.5),
+  Conductivity(1),
+  CellIndex(make_pair(0, 0)),
+  DisplayCollisionDebug(false),
+  velocity(Vector3(0, 0, 0)),
+  move(Vector3(0, 0, 0)),
+  corrected_velocity_scalar(0),
+  out_of_bounds(false),
+  registered(false),
+  core_integrity(1),
+  target(NULL)
 {
-  // SurfaceTemperature = Game::Arena->getAmbientTemperature(a_posXyz);
+
   //Orientation = scene_node->getOrientation();
-  Direction = Orientation * Ogre::Vector3::UNIT_Z;
-  loadCollisionSpheres(a_collisionName);
 
   ESInvalid.set();
   CSInvalid.set();
+}
 
-  // make sure it's within bounds, complain but don't kill the game
-  if (Game::Arena->isOutOfBounds(PosXyz)) {
-    cout << unit_name + " is out of bounds, possibly garbled arena definition" << endl;
-  }
+void Corpus::setOrientation(Quaternion a_orientation){
+  Direction = Orientation * Vector3::UNIT_Z;
+}
+
+void Corpus::setSceneNode(Ogre::SceneNode* a_scene_node){
+  SceneNode = a_scene_node;
+}
+
+void Corpus::setOwner(ArenaEntity* a_owner){
+  Owner = a_owner;
 }
 
 Corpus::~Corpus()
@@ -57,7 +56,7 @@ Corpus::~Corpus()
 }
 
 /** @brief get bounding sphere and update it's position
-  */
+ */
 inline Sphere Corpus::getBoundingSphere()
 {
   if (BoundingSphereInvalid) { // if object moved last frame offset sphere
@@ -69,7 +68,7 @@ inline Sphere Corpus::getBoundingSphere()
 }
 
 /** @brief get exclusion spheres based on the passed in sphere
-  */
+ */
 bitset<MAX_NUM_ES> Corpus::getExclusionSpheres(Sphere& a_sphere)
 {
   // by default return no spheres
@@ -94,7 +93,7 @@ bitset<MAX_NUM_ES> Corpus::getExclusionSpheres(Sphere& a_sphere)
 }
 
 /** @brief get collision spheres without excluding any - just update
-  */
+ */
 bitset<MAX_NUM_CS> Corpus::getCollisionSpheres(Sphere& a_sphere)
 {
   bitset<MAX_NUM_ES> es_bitset;
@@ -106,9 +105,9 @@ bitset<MAX_NUM_CS> Corpus::getCollisionSpheres(Sphere& a_sphere)
 }
 
 /** @brief gets collision spheres but doesn't check the ones excluded by es_bitset
-  *        and updates their positions based on object position
-  */
-bitset<MAX_NUM_CS> Corpus::getCollisionSpheres(Sphere& a_sphere,
+ *        and updates their positions based on object position
+ */
+bitset<MAX_NUM_CS> Corpus::getCollisionSpheres(Sphere&            a_sphere,
                                                bitset<MAX_NUM_ES> es_bitset)
 {
   bitset<MAX_NUM_CS> cs_bitset;
@@ -160,12 +159,12 @@ bitset<MAX_NUM_CS> Corpus::getCollisionSpheres(Sphere& a_sphere,
 }
 
 /** @brief loads collision spheres from a file based on mesh name
-  */
+ */
 void Corpus::loadCollisionSpheres(const string& a_collision_name)
 {
   // TEMP!!! fake, only works for crusaders for now
   if (a_collision_name == "bullet") {
-    RelBSPosition = Ogre::Vector3::ZERO;
+    RelBSPosition = Vector3::ZERO;
     BoundingSphere = Sphere(RelBSPosition, 2);
 
   } else {
@@ -192,7 +191,7 @@ void Corpus::loadCollisionSpheres(const string& a_collision_name)
 }
 
 /** @brief loads collision spheres from a file
-  */
+ */
 bool Corpus::getCollisionSpheres(const string& a_filename)
 {
   map<string, string> pairs;
@@ -209,9 +208,9 @@ bool Corpus::getCollisionSpheres(const string& a_filename)
   }
 
   // read in the bounding sphere
-  BoundingSphere.Centre = Ogre::Vector3(FS::getReal(bs_sphere_string[0]),
-                                        FS::getReal(bs_sphere_string[1]),
-                                        FS::getReal(bs_sphere_string[2]));
+  BoundingSphere.Centre = Vector3(FS::getReal(bs_sphere_string[0]),
+                                  FS::getReal(bs_sphere_string[1]),
+                                  FS::getReal(bs_sphere_string[2]));
   BoundingSphere.Radius = FS::getReal(bs_sphere_string[3]);
 
   Sphere sphere;
@@ -233,9 +232,9 @@ bool Corpus::getCollisionSpheres(const string& a_filename)
     ESAreas.push_back(intoInt(es_sphere_string[1]));
 
     // read in the exclusion sphere
-    sphere.Centre = Ogre::Vector3(FS::getReal(es_sphere_string[1]),
-                                  FS::getReal(es_sphere_string[2]),
-                                  FS::getReal(es_sphere_string[3]));
+    sphere.Centre = Vector3(FS::getReal(es_sphere_string[1]),
+                            FS::getReal(es_sphere_string[2]),
+                            FS::getReal(es_sphere_string[3]));
     sphere.Radius = FS::getReal(es_sphere_string[4]);
     // put the sphere in the vector
     ExclusionSpheres.push_back(sphere);
@@ -272,9 +271,9 @@ bool Corpus::getCollisionSpheres(const string& a_filename)
     }
 
     // read in the collision sphere
-    sphere.Centre = Ogre::Vector3(FS::getReal(cs_sphere_string[2]),
-                                  FS::getReal(cs_sphere_string[3]),
-                                  FS::getReal(cs_sphere_string[4]));
+    sphere.Centre = Vector3(FS::getReal(cs_sphere_string[2]),
+                            FS::getReal(cs_sphere_string[3]),
+                            FS::getReal(cs_sphere_string[4]));
     sphere.Radius = FS::getReal(cs_sphere_string[5]);
     // put the sphere in the vector
     CollisionSpheres.push_back(sphere);
@@ -286,8 +285,8 @@ bool Corpus::getCollisionSpheres(const string& a_filename)
 }
 
 /** @brief debug spheres create and destroy
-  * not safe to call false unless you call true first
-  */
+ * not safe to call false unless you call true first
+ */
 void Corpus::displayCollision(bool a_toggle)
 {
   DisplayCollisionDebug = a_toggle;
@@ -297,7 +296,7 @@ void Corpus::displayCollision(bool a_toggle)
     // bounding sphere
     DebugBSNode = Game::OgreScene->getRootSceneNode()->createChildSceneNode();
     DebugBSEntity = Game::OgreScene->createEntity(id_string + "_debug_sphere",
-                    "sphere2.mesh");
+                                                  "sphere2.mesh");
     DebugBSEntity->setCastShadows(false);
 
     // attach meshes
@@ -310,7 +309,7 @@ void Corpus::displayCollision(bool a_toggle)
       id_string = Game::getUniqueID();
       DebugCSNodes.push_back(Game::OgreScene->getRootSceneNode()->createChildSceneNode());
       DebugCSEntities.push_back(Game::OgreScene->createEntity(id_string + "_debug_sphere",
-                                "sphere.mesh"));
+                                                              "sphere.mesh"));
       DebugCSEntities.back()->setCastShadows(false);
       DebugCSNodes.back()->attachObject(DebugCSEntities.back()); // attach meshes
       DebugCSEntities.back()->setQueryFlags(query_mask_ignore);
@@ -334,8 +333,8 @@ void Corpus::displayCollision(bool a_toggle)
 }
 
 /** @brief debug spheres update to current positions
-  * as above - don't use unless spheres exist
-  */
+ * as above - don't use unless spheres exist
+ */
 void Corpus::displayCollisionUpdate()
 {
   DebugBSNode->setPosition(BoundingSphere.Centre);
@@ -344,23 +343,23 @@ void Corpus::displayCollisionUpdate()
   }
 }
 
-Ogre::Vector3 Corpus::getDirection()
+Vector3 Corpus::getDirection()
 {
   return Direction;
 }
 
 /** @brief handleCollision
-  * @todo: use this to react graphically to a collision
-  */
+ * @todo: use this to react graphically to a collision
+ */
 int Corpus::handleCollision(Collision* a_collision)
 {
-  scene_node->showBoundingBox(true);// temp
+  scene_node->showBoundingBox(true); // temp
 
   return 0;
 }
 
 /** @brief called by an object which holds this as a target to tell it that it no longer targets it
-  */
+ */
 void Corpus::releaseAsTarget(Corpus* a_targeted_by)
 {
   if (target_holders.size() > 0) {
@@ -373,8 +372,8 @@ void Corpus::releaseAsTarget(Corpus* a_targeted_by)
 }
 
 /** @brief called by other object to try and acquire this as a target
-  * return false if target can't be acquired
-  */
+ * return false if target can't be acquired
+ */
 bool Corpus::acquireAsTarget(Corpus* a_targeted_by)
 {
   target_holders.push_back(a_targeted_by);
@@ -382,58 +381,19 @@ bool Corpus::acquireAsTarget(Corpus* a_targeted_by)
   return true;
 }
 
-/** @brief called by targeted object that requires this to relinquish its current target
-  * TODO: relinquish criteria
-  */
-bool Corpus::loseTarget(Corpus* a_targeted_by,
-                        bool a_forced)
-{
-  if (a_forced) {
-    target = NULL;
-    return true;
-
-  } else {
-    // temp!
-    target = NULL;
-    return true;
-  }
-}
-
-void Corpus::clearFromTargets()
-{
-  // stop other objects targeting this object
-  for (usint i = 0, for_size = target_holders.size(); i < for_size; ++i) {
-    target_holders[i]->loseTarget(this , true);
-  }
-
-  target_holders.clear();
-
-  // release the target held by this object
-  if (target != NULL) {
-    target->releaseAsTarget(this);
-    target = NULL;
-  }
-}
-
 /** @brief reverts an illegal move
-  * @todo: replace by something less painfully simplistic
-  */
-bool Corpus::revertMove(Ogre::Vector3 a_move)
+ * @todo: replace by something less painfully simplistic
+ */
+bool Corpus::revertMove(Vector3 a_move)
 {
-  pos_xyz -= a_move;// haha only serious
+  pos_xyz -= a_move; // haha only serious
 
   return true;
 }
 
-int Corpus::updateController()
-{
-  return 0;
-}
-
-
 /** @brief game logic, physics and control
-  */
-int Corpus::update(Ogre::Real a_dt)
+ */
+int Corpus::update(Real a_dt)
 {
   Dt = a_dt;
   updateCellIndex();
@@ -475,12 +435,11 @@ int Corpus::update(Ogre::Real a_dt)
 }
 
 /** @brief puts the object on the arean and in the correct array and in the correct cell index
-  * updates the cell index and position if out of bounds
-  * by the magic of virtual tables it knows which array to use
-  */
+ * updates the cell index and position if out of bounds
+ * by the magic of virtual tables it knows which array to use
+ */
 void Corpus::updateCellIndex()
 {
   // check the position in the arena and update the arena cells if necessary
   out_of_bounds = Game::Arena->updateCellIndex(cell_index, pos_xyz, this);
 }
-

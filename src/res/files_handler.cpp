@@ -11,8 +11,8 @@ void FilesHandler::init()
 }
 
 /** @brief string to float with additional sanitation
-  */
-Ogre::Real FilesHandler::getReal(string a_string)
+ */
+Real FilesHandler::getReal(string a_string)
 {
   // basic sanitation, strip non numbers
   for(uint b = 0, for_size = a_string.size(); b < for_size; ++b) {
@@ -25,16 +25,16 @@ Ogre::Real FilesHandler::getReal(string a_string)
 }
 
 /** @brief true/false string to bool
-  */
+ */
 bool FilesHandler::getBool(string a_string)
 {
   return (a_string == "true");
 }
 
 /** @brief string to int later to be cast into an enum,
-  * I know it's a bit ugly if it gets too long it can be seperated into seperate enums
-  * TODO: it's getting long, if you start using it outside of files ffs split it up
-  */
+ * I know it's a bit ugly if it gets too long it can be seperated into seperate enums
+ * TODO: it's getting long, if you start using it outside of files ffs split it up
+ */
 int FilesHandler::getEnum(const string& a_string)
 {
   int enum_int = -1;
@@ -266,9 +266,10 @@ int FilesHandler::getEnum(const string& a_string)
 }
 
 /** @brief fills the vector with chars from an array, basically ditches the \0, oh the idiocy
-  * this is planned to do some sanitasation later on
-  */
-void FilesHandler::getCharArray(vector<char>& char_array, string a_buffer)
+ * this is planned to do some sanitasation later on
+ */
+void FilesHandler::getCharArray(vector<char>& char_array,
+                                string        a_buffer)
 {
   for(int i = 0, for_size = a_buffer.size(); i < for_size; ++i) {
     char_array.push_back(a_buffer[i]);
@@ -276,8 +277,9 @@ void FilesHandler::getCharArray(vector<char>& char_array, string a_buffer)
 }
 
 /** @brief fills structs with strings read from a file
-  */
-void FilesHandler::getStringArray(vector<string>& string_array, string a_buffer)
+ */
+void FilesHandler::getStringArray(vector<string>& string_array,
+                                  string          a_buffer)
 {
   uint end = 0;
   string value;
@@ -310,8 +312,9 @@ void FilesHandler::getStringArray(vector<string>& string_array, string a_buffer)
 }
 
 /** @brief fills structs with ints read from a file and casts them to enum
-  */
-template <typename T> void FilesHandler::getEnumArray(vector<T>& enum_array, string a_buffer)
+ */
+template <typename T> void FilesHandler::getEnumArray(vector<T>& enum_array,
+                                                      string     a_buffer)
 {
   vector<string> string_array;
 
@@ -325,8 +328,9 @@ template <typename T> void FilesHandler::getEnumArray(vector<T>& enum_array, str
 }
 
 /** @brief fills structs with ints read from a file
-  */
-template <typename T> void FilesHandler::getIntArray(vector<T>& int_array, string a_buffer)
+ */
+template <typename T> void FilesHandler::getIntArray(vector<T>& int_array,
+                                                     string     a_buffer)
 {
   uint end = 0;
   string value;
@@ -356,12 +360,14 @@ template <typename T> void FilesHandler::getIntArray(vector<T>& int_array, strin
 }
 
 /** @brief get pairs of strings form a file
-  * it's the workhorse of parsing files into a map for most functions - parses file of a format:
-  * [key] #comments
-  * value #comments
-  * and returns pairs of strings
-  */
-bool FilesHandler::getPairs(const string& filename, const string& dir, map<string, string>& pairs)
+ * it's the workhorse of parsing files into a map for most functions - parses file of a format:
+ * [key] #comments
+ * value #comments
+ * and returns pairs of strings
+ */
+bool FilesHandler::getPairs(const string& filename,
+                            const string& dir,
+                            map<string, string>& pairs)
 {
   string buffer;
   string key; // [key] ignore whatver is after ]
@@ -376,7 +382,7 @@ bool FilesHandler::getPairs(const string& filename, const string& dir, map<strin
     uint begin;
     uint end;
 
-    while(! spec_file.eof()) {
+    while(!spec_file.eof()) {
       getline(spec_file, buffer);  // get line
 
       // and check if it's a key - is it insde []
@@ -437,8 +443,8 @@ bool FilesHandler::getPairs(const string& filename, const string& dir, map<strin
 }
 
 /** @brief get the string from the file
-  * parses for comments, doesn't strip whitespace, returns an empty string if no file found
-  */
+ * parses for comments, doesn't strip whitespace, returns an empty string if no file found
+ */
 string FilesHandler::getStringFromFile(const string& filename)
 {
   string buffer;
@@ -451,7 +457,7 @@ string FilesHandler::getStringFromFile(const string& filename)
   if(string_file.is_open()) {
     uint end;
 
-    while(! string_file.eof()) {
+    while(!string_file.eof()) {
       getline(string_file, buffer);  // get line
 
       // ignore comments
@@ -479,7 +485,7 @@ string FilesHandler::getStringFromFile(const string& filename)
 }
 
 /** @brief strips leading and trailing spaces
-  */
+ */
 void FilesHandler::stripWhitespace(string& a_string)
 {
   if(!a_string.empty()) {
@@ -490,9 +496,10 @@ void FilesHandler::stripWhitespace(string& a_string)
 }
 
 /** @brief reads in parameters into an array of reals
-  * from a format (1,1,1,1)
-  */
-void FilesHandler::getRealSeries(vector<Ogre::Real>& real_array, string a_buffer)
+ * from a format (1,1,1,1)
+ */
+void FilesHandler::getRealSeries(vector<Real>& real_array,
+                                 string        a_buffer)
 {
   uint end = 0;
   string value;
@@ -534,8 +541,9 @@ void FilesHandler::getRealSeries(vector<Ogre::Real>& real_array, string a_buffer
 }
 
 /** @brief stick pairs of ints in an array
-  */
-void FilesHandler::getIntPairArray(vector<int_pair>& int_pair_array, string a_buffer)
+ */
+void FilesHandler::getIntPairArray(vector<int_pair>& int_pair_array,
+                                   string            a_buffer)
 {
   vector<string> string_array;
 
@@ -556,9 +564,10 @@ void FilesHandler::getIntPairArray(vector<int_pair>& int_pair_array, string a_bu
 }
 
 /** @brief put pairs of position enums into an array
-  */
+ */
 template <class T1, class T2>
-void FilesHandler::getEnumPairArray(vector<pair<T1, T2> >& position_pair_array, string a_buffer)
+void FilesHandler::getEnumPairArray(vector<pair<T1, T2> >& position_pair_array,
+                                    string a_buffer)
 {
   vector<string> string_array;
 
@@ -579,8 +588,9 @@ void FilesHandler::getEnumPairArray(vector<pair<T1, T2> >& position_pair_array, 
 }
 
 /** @brief put r,b,g colours into a table (alpha = 1)
-  */
-void FilesHandler::getColourArray(vector<Ogre::ColourValue>& colour_array, string a_buffer)
+ */
+void FilesHandler::getColourArray(vector<Ogre::ColourValue>& colour_array,
+                                  string                     a_buffer)
 {
   vector<string> string_array;
 
@@ -589,11 +599,11 @@ void FilesHandler::getColourArray(vector<Ogre::ColourValue>& colour_array, strin
 
   // need three values for a colour
   for(uint i = 0; i < string_array.size() - 2; ++i) {
-    Ogre::Real r = intoReal(string_array[i]) / 255;
+    Real r = intoReal(string_array[i]) / 255;
     ++i;
-    Ogre::Real g = intoReal(string_array[i]) / 255;
+    Real g = intoReal(string_array[i]) / 255;
     ++i;
-    Ogre::Real b = intoReal(string_array[i]) / 255;
+    Real b = intoReal(string_array[i]) / 255;
 
     colour_array.push_back(Ogre::ColourValue(r, g, b));
   }

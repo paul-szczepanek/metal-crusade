@@ -3,7 +3,13 @@
 #include "factory.h"
 #include "game.h"
 
-ulint Factory::id = 0; // unieque id for each object in the game
+Factory::Factory()
+{
+}
+
+Factory::~Factory()
+{
+}
 
 /** @brief clears the Ogre objects for a projectile
  */

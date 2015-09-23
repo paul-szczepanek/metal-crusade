@@ -4,7 +4,8 @@
 #include "hud.h"
 #include "game.h"
 
-LogComputer::LogComputer() : current_log_line(0)
+LogComputer::LogComputer()
+  : current_log_line(0)
 {
   for (usint i = 0; i < hud_num_of_colours; ++i) {
     // init char tables for log lines
@@ -19,7 +20,7 @@ LogComputer::LogComputer() : current_log_line(0)
 }
 
 /** @brief adds a log message - parses the colours and pads with spaces to max length
-  */
+ */
 void LogComputer::addLine(const string& a_message)
 {
   // advance log
@@ -30,7 +31,7 @@ void LogComputer::addLine(const string& a_message)
 }
 
 /** @brief overwrites last message in the log
-  */
+ */
 void LogComputer::changeLine(const string& a_message)
 {
   // keep the log on the same line

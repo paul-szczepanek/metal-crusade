@@ -1,8 +1,15 @@
-#include "entity.h"
+#include "arena_entity.h"
 #include "game.h"
 
-ArenaEntity::ArenaEntity(const string& a_name) : Name(a_name)
+ArenaEntity::ArenaEntity()
 {
-
 }
 
+ArenaEntity::ArenaEntity(const string& a_name)
+  : Name(a_name)
+{
+}
+
+ArenaEntity::~ArenaEntity()
+{
+}

@@ -23,6 +23,7 @@ enum modes {
   computer,
   communication
 };
+
 };
 
 class Hud
@@ -35,33 +36,45 @@ public:
   void activate(bool a_toggle);
 
   // main loop
-  void update(Ogre::Real a_dt);
+  void update(Real a_dt);
 
   // shows the pause screen
   void pause();
 
   // called by input manager when the window resizes
-  void resize(uint a_screen_width, uint a_screen_height);
+  void resize(uint a_screen_width,
+              uint a_screen_height);
 
   // hookup for hud parts
-  void addContainer(hud_area a_hud_area, Ogre::OverlayContainer* a_container);
+  void addContainer(hud_area                a_hud_area,
+                    Ogre::OverlayContainer* a_container);
   void addElement(Ogre::SceneNode* a_scene_node);
 
   // parsing colour codes in a string into monocolour lines
-  void parseColours(const string& message, usint a_length,
-                    char* line1, char* line2, char* line3);
+  void parseColours(const string& message,
+                    usint         a_length,
+                    char*         line1,
+                    char*         line2,
+                    char*         line3);
 
   // hooking up MFDs to their displays
-  MFDComputer* getMFD() { return mfds.back(); };
-  uint getMFDNumber() { return mfds.size(); };
+  MFDComputer* getMFD() {
+    return mfds.back();
+  }
+
+  uint getMFDNumber() {
+    return mfds.size();
+  }
 
   // helper functions
-  static Ogre::MaterialPtr createOverlayMaterial(const string& a_name,
-      texture_addressing a_addressing
+  static Ogre::MaterialPtr createOverlayMaterial(
+    const string&               a_name,
+    texture_addressing          a_addressing
       = Ogre::TextureUnitState::TAM_CLAMP,
-      string a_texture_name = string(""));
-  Ogre::Real getHudAreaOriginX(hud_area a_hud_area);
-  Ogre::Real getHudAreaOriginY(hud_area a_hud_area);
+    string                      a_texture_name =
+      string(""));
+  Real getHudAreaOriginX(hud_area a_hud_area);
+  Real getHudAreaOriginY(hud_area a_hud_area);
 
   // log and status display
   LogComputer* log;
@@ -80,11 +93,15 @@ public:
 
 private:
   // positioning
-  void offsetUpdate(Ogre::Real a_dt, hud_area a_hud_area, bool a_alternative);
-  Ogre::Real positionHorizontal(int a_width, horizontal::position a_position,
-                                Ogre::Real a_offset);
-  Ogre::Real positionVertical(int a_height, vertical::position a_position,
-                              Ogre::Real a_offset);
+  void offsetUpdate(Real     a_dt,
+                    hud_area a_hud_area,
+                    bool     a_alternative);
+  Real positionHorizontal(int                  a_width,
+                          horizontal::position a_position,
+                          Real                 a_offset);
+  Real positionVertical(int                a_height,
+                        vertical::position a_position,
+                        Real               a_offset);
 
   // hud areas
   Ogre::OverlayContainer* hud_areas[hud_num_of_areas];
@@ -97,11 +114,11 @@ private:
 
   // hud size and position
   bool active;
-  Ogre::Real hud_width;
-  Ogre::Real hud_height;
-  Ogre::Real scale;
-  Ogre::Real scale_w;
-  Ogre::Real scale_h;
+  Real hud_width;
+  Real hud_height;
+  Real scale;
+  Real scale_w;
+  Real scale_h;
   int_pair area_offsets[hud_num_of_areas];
 
   // all the individual hud parts
@@ -115,7 +132,8 @@ private:
   interface_mode::modes hud_mode;
 };
 
-inline void Hud::addContainer(hud_area a_hud_area, Ogre::OverlayContainer* a_container)
+inline void Hud::addContainer(hud_area                a_hud_area,
+                              Ogre::OverlayContainer* a_container)
 {
   hud_overlays[a_hud_area]->add2D(a_container);
 }

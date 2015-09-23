@@ -12,7 +12,7 @@ MFDView::MFDView(hud_part_design_t& a_hud_part_design)
 }
 
 /** @brief hides the whole container when the view is not selected and vice versa
-  */
+ */
 void MFDView::activate(bool a_toggle)
 {
   active = a_toggle;

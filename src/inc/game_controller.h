@@ -61,37 +61,61 @@ class GameController
 {
 public:
   GameController(const string& a_name);
-  ~GameController() { };
+  ~GameController() {
+  }
 
   // throttle
-  void setThrottle(Ogre::Real a_throttle);
-  Ogre::Real getThrottle() { return throttle; };
+  void setThrottle(Real a_throttle);
+  Real getThrottle() {
+    return throttle;
+  }
 
   // turning the body
-  void setTurn(Ogre::Real a_turn_speed) { turn_speed = a_turn_speed; };
-  Ogre::Real getTurnSpeed() { return turn_speed; };
+  void setTurn(Real a_turn_speed) {
+    turn_speed = a_turn_speed;
+  }
+
+  Real getTurnSpeed() {
+    return turn_speed;
+  }
 
   // 3d pointer
-  void setPointerPos(Ogre::Vector3 a_pointer_pos) { pointer_pos = a_pointer_pos; };
-  Ogre::Vector3 getPointerPos() { return pointer_pos; };
-  Ogre::Vector2 getPointerPosXZ() { return Ogre::Vector2(pointer_pos.x, pointer_pos.z); };
+  void setPointerPos(Vector3 a_pointer_pos) {
+    pointer_pos = a_pointer_pos;
+  }
 
-  string getName() { return name; };
+  Vector3 getPointerPos() {
+    return pointer_pos;
+  }
+
+  Vector2 getPointerPosXZ() {
+    return Vector2(pointer_pos.x, pointer_pos.z);
+  }
+
+  string getName() {
+    return name;
+  }
 
   // formation (and thus faction) affiliation
-  Formation* getFormation() { return formation; };
-  void setFormation(Formation* a_formation) { formation = a_formation; };
+  Formation* getFormation() {
+    return formation;
+  }
+
+  void setFormation(Formation* a_formation) {
+    formation = a_formation;
+  }
+
   void setFormation(string a_formation_name);
 
   control_block_t control_block;
 
 private:
   // speed
-  Ogre::Real turn_speed;
-  Ogre::Real throttle;
+  Real turn_speed;
+  Real throttle;
 
   // pinter
-  Ogre::Vector3 pointer_pos;
+  Vector3 pointer_pos;
 
   // controller name being the actual player name
   string name;
@@ -103,8 +127,8 @@ private:
   bool InvertTurnToPointer;
 };
 
-const Ogre::Real target_air_offset = 64;
-const Ogre::Real target_high_offset = 10;
-const Ogre::Real target_low_offset = 4;
+const Real target_air_offset = 64;
+const Real target_high_offset = 10;
+const Real target_low_offset = 4;
 
 #endif // GAMECONTROLLER_H

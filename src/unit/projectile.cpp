@@ -8,20 +8,26 @@
 #include "collision.h"
 #include "weapon.h"
 
-// how muc slower the bullet moves visually
-const Ogre::Real velocity_scale = 0.1;
-const Ogre::Real inverse_velocity_scale = 10;
-// when the air resistance start to become negligable (for gameplay purposes, not in real life)
-const Ogre::Real air_resistance_cutoff = 400 * velocity_scale;
+// how much slower the bullet moves visually
+const Real velocity_scale = 0.1;
+const Real inverse_velocity_scale = 10;
+// when the air resistance start to become negligible (for gameplay purposes, not in real life)
+const Real air_resistance_cutoff = 400 * velocity_scale;
 // grace time for projectiles after spawning so that they don't explode in the owner crusader
-const Ogre::Real grace_period = 10;
+const Real grace_period = 10;
 
-Projectile::Projectile(Ogre::Vector3 a_pos_xyz, const string& a_unit_name,
-                       Ogre::SceneNode* a_scene_node, Ogre::Quaternion a_orientation,
-                       Weapon* a_weapon, Corpus* a_owner)
-  : Corpus(a_pos_xyz, a_unit_name, a_scene_node, a_orientation),
-    owner(a_owner), weapon(a_weapon), lifetime(0), exploading(false), coverage(1),
-    velocity_dmg_multiplier(1)
+Projectile::Projectile(Vector3          a_pos_xyz,
+                       const string&    a_unit_name,
+                       Ogre::SceneNode* a_scene_node,
+                       Quaternion       a_orientation,
+                       Weapon*          a_weapon,
+                       Corpus*          a_owner)
+  : weapon(a_weapon),
+  NumCorpuses(0),
+  lifetime(0),
+  exploading(false),
+  coverage(1),
+  velocity_dmg_multiplier(1)
 {
   // read properties from weapon spec
   penetration = weapon->weapon_design.penetration;
@@ -37,32 +43,25 @@ Projectile::Projectile(Ogre::Vector3 a_pos_xyz, const string& a_unit_name,
   controller_active = true;
 }
 
-/** @brief ignores revert requests because it's allowed to penetrate objects
-  */
-bool Projectile::revertMove(Ogre::Vector3 a_move)
-{
-  return false;
-}
-
 /** @brief interface for collision resolution when the other object is taking damage
-  */
-Ogre::Real Projectile::getBallisticDmg()
+ */
+Real Projectile::getBallisticDmg()
 {
   return weapon->weapon_design.ballistic_dmg * coverage * velocity_dmg_multiplier;
 }
 
-Ogre::Real Projectile::getEnergyDmg()
+Real Projectile::getEnergyDmg()
 {
   return weapon->weapon_design.energy_dmg * coverage;
 }
 
-Ogre::Real Projectile::getHeatDmg()
+Real Projectile::getHeatDmg()
 {
   return weapon->weapon_design.heat_dmg * coverage;
 }
 
 /** @brief check if the collision can happen and prepares the projectile to handle it
-  */
+ */
 bool Projectile::validateCollision(Corpus* a_colliding_object)
 {
   // ignore other projectiles and ignore hits at close range
@@ -86,7 +85,7 @@ bool Projectile::validateCollision(Corpus* a_colliding_object)
 }
 
 /** @brief resolves collisions
-  */
+ */
 int Projectile::handleCollision(Collision* a_collision)
 {
   // explode and apply velocity
@@ -100,7 +99,7 @@ int Projectile::handleCollision(Collision* a_collision)
 }
 
 /** @brief sets the exploding state stopping motion and starts the explosion effect if needed
-  */
+ */
 void Projectile::explode()
 {
   exploading = true;
@@ -110,27 +109,29 @@ void Projectile::explode()
   if (weapon->weapon_design.splash_range > 0) {
     Game::particle_factory->createExplosion(pos_xyz, weapon->weapon_design.splash_range,
                                             weapon->weapon_design.splash_range
-                                            / (weapon->weapon_design.splash_velocity * velocity_scale),
+                                            / (weapon->weapon_design.splash_velocity *
+                                               velocity_scale),
                                             weapon->weapon_design.heat_dmg / 100.0);
   }
 }
 
-int Projectile::updateController()
+int Projectile::update()
 {
   // kill after terrain hit
   if (pos_xyz.y < Game::Arena->getHeight(pos_xyz.x, pos_xyz.z) // kill when ground hit
-      || lifetime > weapon->weapon_design.range) // kill after range exceeded
+      || lifetime > weapon->weapon_design.range) { // kill after range exceeded
     if (!exploading) {
       explode();
     }
+  }
   if (exploading) {
     // does the projectile explode causing splash damage
     if (weapon->weapon_design.splash_range > 0) {
       // stop projectile
-      velocity = Ogre::Vector3::ZERO;
+      velocity = Vector3::ZERO;
 
       // start splash expansion and degradation
-      Ogre::Real expansion = dt * weapon->weapon_design.splash_velocity * velocity_scale;
+      Real expansion = dt * weapon->weapon_design.splash_velocity * velocity_scale;
       // expand the bounding sphere
       bounding_sphere.radius += expansion;
 
@@ -146,7 +147,7 @@ int Projectile::updateController()
     }
   } else {
     // retard motion while the physics weep (air resistance should be velocity squared)
-    if (Ogre::Vector2(velocity.x, velocity.z).length() > air_resistance_cutoff) {
+    if (Vector2(velocity.x, velocity.z).length() > air_resistance_cutoff) {
       velocity -= direction * weapon->weapon_design.muzzle_velocity * velocity_scale * dt;
     }
     // intentionally wrong because we already retarded the downward motion

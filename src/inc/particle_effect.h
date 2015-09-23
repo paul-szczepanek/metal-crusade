@@ -13,6 +13,7 @@ enum explosion_type {
   explosion_smoke,
   explosion_water,
 };
+
 };
 
 class ParticleEffect
@@ -21,15 +22,15 @@ public:
   ParticleEffect();
   virtual ~ParticleEffect();
 
-  virtual int update(Ogre::Real a_dt) = 0;
+  virtual int update(Real a_dt) = 0;
 
 protected:
   void die();
 
   Ogre::SceneNode* scene_node;
 
-  Ogre::Real lifetime;
-  Ogre::Real lifetime_limit;
+  Real lifetime;
+  Real lifetime_limit;
 };
 
 #endif // PARTICLEEFFECT_H

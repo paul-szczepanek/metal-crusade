@@ -34,6 +34,7 @@ ParticleManager* Game::Particle = NULL;
 UnitFactory* Game::Unit = NULL;
 BuildingFactory* Game::Building = NULL;
 ProjectileFactory* Game::Projectile = NULL;
+CollisionHandler* Game::Collision = NULL;
 
 vector<GameController*> Game::Controllers;
 game_state Game::State;
@@ -41,7 +42,8 @@ Timer* Game::GameTimer = NULL;
 ulint Game::NewTime;
 ulint Game::LastTime;
 ulint Game::RealTime;
-Ogre::Real Game::Fps;
+Real Game::Delta;
+Real Game::Fps;
 size_t Game::UniqueId;
 bool Game::DebugMode;
 
@@ -61,7 +63,7 @@ const string& Game::getVersion()
 }
 
 /** accessor for files not defining extern gGame
-  */
+ */
 Game* Game::instance()
 {
   return gGame;
@@ -82,8 +84,8 @@ void Game::log(const string& aText)
 }
 
 /** @brief starts the game loop
-  * @todo: launch menu system instead of the game from the start
-  */
+ * @todo: launch menu system instead of the game from the start
+ */
 void Game::run()
 {
   // OGRE initialisation
@@ -173,8 +175,8 @@ void Game::enterArena()
   Game::Projectile = new ProjectileFactory();
   Game::Unit = new UnitFactory();
   Game::Particle = new ParticleManager();
+  Game::Collision = new CollisionHandler();
   //Game::hud = new Hud();
-  Game::collider = new CollisionHandler();
 }
 
 void Game::exitArena()
@@ -184,24 +186,24 @@ void Game::exitArena()
   delete Game::Projectile;
   delete Game::Unit;
   delete Game::Particle;
-  //delete Game::Hud;
   delete Game::Collider;
+  //delete Game::Hud;
 
   delete Arena;
   Arena = NULL;
 }
 
 /** @brief captures input from devices
-  * @todo: add support for more devices and later network goes here as well
-  */
+ * @todo: add support for more devices and later network goes here as well
+ */
 void Game::input()
 {
-  // input_handler->capture();
+  Input->capture();
 }
 
 /** @brief main loop is handled by OGRE and this gets called once every frame
-  * after the data is ready to be sent to to the GPU
-  */
+ * after the data is ready to be sent to to the GPU
+ */
 bool Game::frameRenderingQueued(const Ogre::FrameEvent& /*aEvt*/)
 {
   fpsCalc();
@@ -236,37 +238,32 @@ bool Game::frameRenderingQueued(const Ogre::FrameEvent& /*aEvt*/)
 }
 
 /** @brief physics and the rest of the simulation
-  */
+ */
 void Game::logic(int aDTicks)
 {
   if (aDTicks > 0) {  // don't update if paused
     // ticks to ticks per second
-    Ogre::Real dt = Ogre::Real(aDTicks) / Ogre::Real(1000);
+    Delta = Real(aDTicks) / Real(1000);
 
     // update game objects
-    // unit_factory->update(dt);
-    // projectile_factory->update(dt);
-    // particle_factory->update(dt);
-    // faction_factory->update(dt);
-    // formation_factory->update(dt);
-
-    // move camera
-    // camera->update(dt);
+    Arena->update(Delta);
+    Projectile->update(Delta);
+    Faction->update(Delta);
+    Formation->update(Delta);
+    camera->update(Delta);
 
     // show the overlays (2D hud)
-    // hud->update(dt);
+    // hud->update(Delta);
 
     // find and resolve collisions
-    // collider->update(dt);
+    Collision->update(Delta);
 
-    // ai_factory->update();
-    // ai called as the last thing in the frame
-    // so that I can later use it to pad the execution time with ai
+    AI->update(Delta);
   }
 }
 
 /** @brief limits the game (to 64 fps atm)
-  */
+ */
 void Game::limitFPS()
 {
   // get actual ticks
@@ -289,14 +286,14 @@ void Game::limitFPS()
 }
 
 /** @brief calculates fps
-  */
+ */
 void Game::fpsCalc()
 {
   // get actual ticks
   ulint new_real_time = OgreRoot->getTimer()->getMilliseconds();
 
   // smooth displayed fps over time
-  Fps = 0.8 * Fps + 0.2 * (Ogre::Real(1000) / Ogre::Real(new_real_time - RealTime));
+  Fps = 0.8 * Fps + 0.2 * (Real(1000) / Real(new_real_time - RealTime));
   RealTime = new_real_time;
 
   // temp, show the fps
@@ -304,7 +301,7 @@ void Game::fpsCalc()
 }
 
 /** @brief terminal error - die
-  */
+ */
 void Game::kill(string aGoodbye)
 {
   cout << aGoodbye << endl;

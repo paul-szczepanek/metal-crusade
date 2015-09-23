@@ -4,8 +4,6 @@
 #include "hud.h"
 #include "game.h"
 
-ulint HudPart::unique_id = 0; // unieque id for each hud part overlay container
-
 HudPart::HudPart(hud_part_design_t& a_hud_part_design)
 {
   // read the common design elements
@@ -16,7 +14,8 @@ HudPart::HudPart(hud_part_design_t& a_hud_part_design)
   // create the main container for the element
   container = static_cast<Ogre::OverlayContainer*>
               (Ogre::OverlayManager::getSingletonPtr()->createOverlayElement("Panel",
-                  a_hud_part_design.name + getUniqueID()));
+                                                                             a_hud_part_design.name
+                                                                             + Game::getUniqueID()));
 
   // position and resize container
   container->setMetricsMode(Ogre::GMM_PIXELS);
@@ -28,10 +27,14 @@ HudPart::HudPart(hud_part_design_t& a_hud_part_design)
 }
 
 /** @brief simplify creation of elements, returns the element already added to the container
-  */
-Ogre::OverlayElement* HudPart::createPanel(const string& a_id, const string& a_material_name,
-    int a_x, int a_y,  int a_w, int a_h,
-    Ogre::OverlayContainer* a_container)
+ */
+Ogre::OverlayElement* HudPart::createPanel(const string&           a_id,
+                                           const string&           a_material_name,
+                                           int                     a_x,
+                                           int                     a_y,
+                                           int                     a_w,
+                                           int                     a_h,
+                                           Ogre::OverlayContainer* a_container)
 {
   Ogre::OverlayElement* element
     = Ogre::OverlayManager::getSingletonPtr()->createOverlayElement("Panel", a_id);
@@ -52,11 +55,16 @@ Ogre::OverlayElement* HudPart::createPanel(const string& a_id, const string& a_m
 }
 
 /** @brief simplify creation of text elements, returns the element already added to the container
-  */
-Ogre::OverlayElement* HudPart::createTextArea(const string& a_id, const string& a_text,
-    int a_font_size, Ogre::ColourValue a_colour,
-    int a_x, int a_y,  int a_w, int a_h,
-    Ogre::OverlayContainer* a_container)
+ */
+Ogre::OverlayElement* HudPart::createTextArea(const string&           a_id,
+                                              const string&           a_text,
+                                              int                     a_font_size,
+                                              Ogre::ColourValue       a_colour,
+                                              int                     a_x,
+                                              int                     a_y,
+                                              int                     a_w,
+                                              int                     a_h,
+                                              Ogre::OverlayContainer* a_container)
 {
   Ogre::OverlayElement* element
     = Ogre::OverlayManager::getSingletonPtr()->createOverlayElement("TextArea", a_id);

@@ -28,37 +28,45 @@ enum dot_type {
 };
 
 struct CorpusDot {
-  CorpusDot(Corpus* a_object, Ogre::Real a_size, Ogre::Vector3 a_position)
-    : type(solid), size(a_size), position(a_position), detected(false), object(a_object) { }
+  CorpusDot(Corpus* a_object,
+            Real    a_size,
+            Vector3 a_position)
+    : type(solid), size(a_size), position(a_position), detected(false), object(a_object) {
+  }
+
   dot_type type;
-  Ogre::Real size;
-  Ogre::Vector3 position;
+  Real size;
+  Vector3 position;
   bool detected;
   Corpus* object;
 };
 
 struct CorpusDot {
-  CorpusDot(Corpus* a_object, Ogre::Real a_size)
-    : type(unknown), size(a_size), position(Ogre::Vector3::ZERO), detected(false),
-      object(a_object) { }
+  CorpusDot(Corpus* a_object,
+            Real    a_size)
+    : type(unknown), size(a_size), position(Vector3::ZERO), detected(false),
+    object(a_object) {
+  }
+
   dot_type type;
-  Ogre::Real size;
-  Ogre::Vector3 position;
+  Real size;
+  Vector3 position;
   bool detected;
   Corpus* object;
 };
+
 };
 
 struct radar_design_t {
   string filename;
   string model;
   bool active;
-  Ogre::Real power;
-  Ogre::Real heat_sensivity;
-  Ogre::Real electromagnetic_sensivity;
-  Ogre::Real weight;
+  Real power;
+  Real heat_sensivity;
+  Real electromagnetic_sensivity;
+  Real weight;
   radar::sweep_type sweep;
-  Ogre::Radian cone_angle;
+  Radian cone_angle;
   usint heads;
   // strings
   ulint text_name;
@@ -69,23 +77,38 @@ struct radar_design_t {
 class RadarComputer
 {
 public:
-  RadarComputer(const string& filename, Unit* a_unit);
-  ~RadarComputer() { };
+  RadarComputer(const string& filename,
+                Unit*         a_unit);
+  ~RadarComputer() {
+  }
 
   // main loop
-  void update(Ogre::Real a_dt);
+  void update(Real a_dt);
 
   // make active
-  void setActive(bool a_toggle) { active = a_toggle; };
-  bool getActive() { return active; };
+  void setActive(bool a_toggle) {
+    active = a_toggle;
+  }
+
+  bool getActive() {
+    return active;
+  }
 
   // toggle radar active of passive
-  void setActiveRadar(bool a_toggle) { active_radar = a_toggle; };
-  bool getActiveRadar() { return active_radar; };
+  void setActiveRadar(bool a_toggle) {
+    active_radar = a_toggle;
+  }
+
+  bool getActiveRadar() {
+    return active_radar;
+  }
 
   // radar range
-  Ogre::Real getRadarRange() { return radar_sphere.radius; };
-  void setRadarRange(Ogre::Real a_range);
+  Real getRadarRange() {
+    return radar_sphere.radius;
+  }
+
+  void setRadarRange(Real a_range);
 
   // objects within the radar's radius
   vector<radar::CorpusDot> corpus_dots;
@@ -111,9 +134,8 @@ private:
   Sphere radar_sphere;
 
   // for checking units only periodically
-  Ogre::Real units_refresh_interval;
-  Ogre::Real units_refresh_accumulator;
+  Real units_refresh_interval;
+  Real units_refresh_accumulator;
 };
 
 #endif // RADARCOMPUTER_H
-

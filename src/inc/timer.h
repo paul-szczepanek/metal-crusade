@@ -9,14 +9,17 @@ class Timer
 {
 public:
   Timer(Ogre::Timer* aOgreTimer);
-  ~Timer() { };
+  ~Timer() {
+  }
 
   // game time
   long lint getTicks();
 
   // how fast time flows
-  void setRate(Ogre::Real aRate);
-  Ogre::Real getRate() { return Rate; };
+  void setRate(Real aRate);
+  Real getRate() {
+    return Rate;
+  }
 
   void reset();
   void pause();
@@ -29,7 +32,7 @@ private:
   bool TimeWarp;
 
   // time flow rate
-  Ogre::Real Rate;
+  Real Rate;
   Ogre::Timer* OgreTimer;
 };
 

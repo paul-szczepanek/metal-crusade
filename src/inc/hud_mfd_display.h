@@ -8,14 +8,15 @@
 class MFDComputer;
 class MFDView;
 
-class HudMFDDisplay : public HudPart
+class HudMFDDisplay
+  : public HudPart
 {
 public:
   HudMFDDisplay(hud_part_design_t& a_hud_part_design);
   ~HudMFDDisplay();
 
   // main loop
-  void update(Ogre::Real a_dt);
+  void update(Real a_dt);
 
 private:
   void changeView(mfd_view::view_type a_view);
@@ -26,8 +27,8 @@ private:
   MFDComputer* mfd;
 
   // for lower fps
-  Ogre::Real hud_part_interval;
-  Ogre::Real hud_part_accumulator;
+  Real hud_part_interval;
+  Real hud_part_accumulator;
 
   // views
   vector<MFDView*> views;

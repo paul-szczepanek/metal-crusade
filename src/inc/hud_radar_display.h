@@ -5,14 +5,15 @@
 
 #include "hud_part.h"
 
-class HudRadarDisplay : public HudPart
+class HudRadarDisplay
+  : public HudPart
 {
 public:
   HudRadarDisplay(hud_part_design_t& a_hud_part_design);
   ~HudRadarDisplay();
 
   // main loop
-  void update(Ogre::Real a_dt);
+  void update(Real a_dt);
 
 private:
   // radar on/off

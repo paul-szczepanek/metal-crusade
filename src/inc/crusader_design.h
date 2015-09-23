@@ -13,33 +13,35 @@ namespace crusader_part
 {
 enum body_part { // for indexing arrays
   torso,      // 0
-  torso_right,// 1
+  torso_right, // 1
   torso_left, // 2
   arm_right,  // 3
   arm_left,   // 4
   leg_right,  // 5
   leg_left,   // 6
-  leg_right_back,// 7
-  leg_left_back// 8
+  leg_right_back, // 7
+  leg_left_back // 8
 };
+
 };
 
 namespace crusader_area
 {
 enum body_area { // for indexing arrays
   torso,      // 0
-  torso_right,// 1
+  torso_right, // 1
   torso_left, // 2
   arm_right,  // 3
   arm_left,   // 4
   leg_right,  // 5
   leg_left,   // 6
   torso_back, // 7
-  torso_right_back,// 8
-  torso_left_back,// 9
-  leg_right_back,// 10
-  leg_left_back// 11
+  torso_right_back, // 8
+  torso_left_back, // 9
+  leg_right_back, // 10
+  leg_left_back // 11
 };
+
 };
 
 enum drive_type {
@@ -87,7 +89,7 @@ struct crusader_design_t {
   vector<internal_type> internals;
   vector<crusader_part::body_part> internals_placement;
   armour_type armour;
-  vector<Ogre::Real> armour_placement;
+  vector<Real> armour_placement;
   vector<string> equipment;
   string radar;
   vector<usint> weapon_groups[num_of_weapon_groups];
@@ -101,38 +103,38 @@ struct crusader_chasis_t {
   string mesh;
   usint num_of_parts;
   usint num_of_areas;
-  Ogre::Real weight; // [t]
-  Ogre::Real max_weight; // [t]
-  Ogre::Real heat_dissipation_base; // [MJ]
-  Ogre::Real heat_dissipation_rate;
-  Ogre::Real structure_base;
+  Real weight; // [t]
+  Real max_weight; // [t]
+  Real heat_dissipation_base; // [MJ]
+  Real heat_dissipation_rate;
+  Real structure_base;
   vector<usint> internals;
   vector<usint> panels;
-  vector<Ogre::Real> surface_area;
-  Ogre::Radian torso_arc; // <rad, rad>
-  Ogre::Radian arms_arc; // <rad, rad>
-  Ogre::Radian torso_turn_speed; // [rad/s]
-  Ogre::Radian arms_turn_speed; // [rad/s]
+  vector<Real> surface_area;
+  Radian torso_arc; // <rad, rad>
+  Radian arms_arc; // <rad, rad>
+  Radian torso_turn_speed; // [rad/s]
+  Radian arms_turn_speed; // [rad/s]
 };
 
 struct crusader_drive_t {
   drive_type type;
   drive_subtype subtype;
-  Ogre::Real weight; // [t]
+  Real weight; // [t]
   string mesh;
-  Ogre::Real kinematic_resistance;
-  Ogre::Real kinematic_resistance_reverse;
-  Ogre::Radian turn_speed;
-  Ogre::Real traction; // - range (0, 1)
-  Ogre::Real max_speed; // [m/s] 1 km/h = 0.277777778 m/s
-  Ogre::Real max_speed_reverse; // [m/s]
+  Real kinematic_resistance;
+  Real kinematic_resistance_reverse;
+  Radian turn_speed;
+  Real traction; // - range (0, 1)
+  Real max_speed; // [m/s] 1 km/h = 0.277777778 m/s
+  Real max_speed_reverse; // [m/s]
 };
 
 struct crusader_engine_t {
-  Ogre::Real rating; // [MW]
-  Ogre::Real rating_reverse; // [MW]
-  Ogre::Real heat; // [MJ]
-  Ogre::Real weight; // [t]
+  Real rating; // [MW]
+  Real rating_reverse; // [MW]
+  Real heat; // [MJ]
+  Real weight; // [t]
   usint size; // [m3]
 };
 

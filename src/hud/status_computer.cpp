@@ -19,10 +19,12 @@ StatusComputer::StatusComputer()
 }
 
 /** @brief set status line
-  * this takes the line and parses the colours and pads the string to a_length with spaces
-  */
-void StatusComputer::setLine(const string& a_message, usint a_line,
-                             usint a_length, usint a_position)
+ * this takes the line and parses the colours and pads the string to a_length with spaces
+ */
+void StatusComputer::setLine(const string& a_message,
+                             usint         a_line,
+                             usint         a_length,
+                             usint         a_position)
 {
   if (a_position < hud_status_line_length) {
 

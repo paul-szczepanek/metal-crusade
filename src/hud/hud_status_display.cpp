@@ -29,8 +29,8 @@ HudStatusDisplay::HudStatusDisplay(hud_part_design_t& a_hud_part_design)
 }
 
 /** @brief main loop
-  */
-void HudStatusDisplay::update(Ogre::Real a_dt)
+ */
+void HudStatusDisplay::update(Real a_dt)
 {
   hud_part_accumulator += a_dt; // lower fps for digital parts
   if (hud_part_accumulator > hud_part_interval) { // use accumulator as dt
@@ -44,5 +44,3 @@ void HudStatusDisplay::update(Ogre::Real a_dt)
     hud_part_accumulator = 0;
   }
 }
-
-

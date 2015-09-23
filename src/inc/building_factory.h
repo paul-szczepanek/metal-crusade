@@ -6,21 +6,26 @@
 #include "factory.h"
 
 class Corpus;
+class ArenaEntity;
 
-class BuildingFactory : public Factory
+class BuildingFactory
+  : public Factory
 {
 public:
-  BuildingFactory() { };
+  BuildingFactory();
+
   ~BuildingFactory();
 
-  ArenaEntity* spawnSceneryBuidling(Ogre::Vector3 a_pos_xyz, const string& a_name,
-                                    Ogre::Quaternion a_orientation = Ogre::Quaternion(1, 0, 0, 0));
-  ArenaEntity* spawnSceneryBuidling(Ogre::Real a_x, Ogre::Real a_y, const string& a_name,
-                                    Ogre::Quaternion a_orientation = Ogre::Quaternion(1, 0, 0, 0));
+  ArenaEntity* spawnSceneryBuidling(Vector3 a_pos_xyz,
+                                    const string& a_name,
+                                    Quaternion a_orientation = Quaternion(1, 0, 0, 0));
+  ArenaEntity* spawnSceneryBuidling(Real a_x,
+                                    Real a_y,
+                                    const string& a_name,
+                                    Quaternion a_orientation = Quaternion(1, 0, 0, 0));
 
 protected:
   list<Corpus*> corpus;
 };
-
 
 #endif // CORPUSFACTORY_H

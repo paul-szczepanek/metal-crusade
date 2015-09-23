@@ -8,13 +8,18 @@
 
 // struct for stl to use for comparison against formation name
 struct FormationEqualsName {
-  FormationEqualsName (const string& name) : formation_name(name) { };
+  FormationEqualsName (const string& name)
+    : formation_name(name) {
+  }
 
   // name being looked for
   string formation_name;
 
   // comparison for stl find_if
-  bool operator() (Formation* formation) { return formation_name == formation->getName(); }
+  bool operator() (Formation* formation) {
+    return formation_name == formation->getName();
+  }
+
 };
 
 FormationManager::FormationManager()
@@ -33,8 +38,9 @@ void FormationManager::Update(float delta)
 }
 
 /** @brief creates a formation and adds it to the list
-  */
-Formation* FormationManager::createFormation(const string& name, Faction* a_faction)
+ */
+Formation* FormationManager::createFormation(const string& name,
+                                             Faction*      a_faction)
 {
   // guarantee name uniqueness
   string unique_name = name;
@@ -61,8 +67,8 @@ Formation* FormationManager::createFormation(const string& name, Faction* a_fact
 }
 
 /** @brief get's the formation based on its name
-  * TODO: deal with missing formation better
-  */
+ * TODO: deal with missing formation better
+ */
 Formation* FormationManager::getFormation(const string& name)
 {
   // find the formation if it's on the list

@@ -10,37 +10,47 @@
 
 struct Sphere {
   Sphere()
-    : Radius(1), Centre(Ogre::Vector3::ZERO) { };
-  Sphere(Ogre::Real aRadius)
-    : Radius(aRadius), Centre(Ogre::Vector3::ZERO) { };
-  Sphere(Ogre::Real aX, Ogre::Real aY, Ogre::Real aZ, Ogre::Real aRadius)
-    : Radius(aRadius), Centre(Ogre::Vector3(aX, aY, aZ)) { };
-  Sphere(const Ogre::Vector3& aCentre, Ogre::Real aRadius)
-    : Radius(aRadius), Centre(aCentre) { };
+    : Radius(1), Centre(Vector3::ZERO) {
+  }
+
+  Sphere(Real aRadius)
+    : Radius(aRadius), Centre(Vector3::ZERO) {
+  }
+
+  Sphere(Real aX,
+         Real aY,
+         Real aZ,
+         Real aRadius)
+    : Radius(aRadius), Centre(Vector3(aX, aY, aZ)) {
+  }
+
+  Sphere(const Vector3& aCentre,
+         Real           aRadius)
+    : Radius(aRadius), Centre(aCentre) {
+  }
 
   bool intersects(const Sphere& sphere) const
   {
     return ((sphere.Centre - Centre).length() <= sphere.Radius + Radius);
-  };
+  }
 
   bool contains(const Sphere& sphere) const
   {
     return ((sphere.Centre - Centre).length() + sphere.Radius <= Radius);
-  };
-  bool contains(const Ogre::Vector3& point) const
+  }
+
+  bool contains(const Vector3& point) const
   {
     return ((point - Centre).length() <= Radius);
-  };
+  }
 
-  Ogre::Real distanceToSurface(const Sphere& sphere) const
+  Real distanceToSurface(const Sphere& sphere) const
   {
     return ((sphere.Centre - Centre).length() - sphere.Radius - Radius);
-  };
+  }
 
-  Ogre::Real Radius;
-  Ogre::Vector3 Centre;
+  Real Radius;
+  Vector3 Centre;
 };
 
 #endif // SPHERE_H
-
-

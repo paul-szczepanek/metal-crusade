@@ -18,41 +18,43 @@ enum crusader { // for indexing arrays
   run,
   crouch
 };
+
 };
 
 class Animation
 {
 public:
   Animation(Ogre::SceneNode* a_scene_node);
-  ~Animation() { };
+  ~Animation() {
+  }
 
   // main loop
-  void update(Ogre::Real a_dt);
+  void update(Real a_dt);
 
   // setting the animation speed - type is set automatically
-  void walk(Ogre::Real a_speed);
+  void walk(Real a_speed);
   void crouch();
-  void turn(Ogre::Radian a_turning_speed);
+  void turn(Radian a_turning_speed);
 
 private:
   void extractAnimations(Ogre::SceneNode* a_scene_node);
-  bool switchAnimations(Ogre::Real a_time_to_add);
+  bool switchAnimations(Real a_time_to_add);
 
   // current status
   bool stopped;
-  Ogre::Real cycle_length;
-  Ogre::Real rate;
+  Real cycle_length;
+  Real rate;
   animation::crusader current_animation;
   animation::crusader target_animation;
-  Ogre::Real switching_progress;
+  Real switching_progress;
 
   // animation data
   vector<Ogre::AnimationState*> animations[num_of_animations];
-  Ogre::Real movement_speeds[num_of_movement_modes];
-  Ogre::Real movement_speed_limits[num_of_movement_modes];
-  Ogre::Real switch_points[2];
-  Ogre::Real stand_points[2];
-  // vector<Ogre::Real> footsteps; // when the mech hits the ground TODO
+  Real movement_speeds[num_of_movement_modes];
+  Real movement_speed_limits[num_of_movement_modes];
+  Real switch_points[2];
+  Real stand_points[2];
+  // vector<Real> footsteps; // when the mech hits the ground TODO
 };
 
 #endif // ANIMATION_H

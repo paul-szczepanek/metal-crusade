@@ -23,17 +23,24 @@ class FactionManager;
 class GameArena;
 class AIManager;
 class ParticleManager;
+class UnitFactory;
+class BuildingFactory;
+class ProjectileFactory;
+class CollisionHandler;
 
-class Game : public Ogre::FrameListener
+class Game
+  : public Ogre::FrameListener
 {
 public:
-  ~Game() { };
+  ~Game() {
+  }
+
   static int init(bool aDebugOn);
   static Game* instance();
   void run();
 
   static const string& getVersion();
-  static string getUniqueID();
+  static string Game::getUniqueID();
 
   // the main loop hook
   bool frameRenderingQueued(const Ogre::FrameEvent &aEvt);
@@ -85,6 +92,9 @@ public:
   static UnitFactory* Unit;
   static BuildingFactory* Building;
   static ProjectileFactory* Projectile;
+  static CollisionHandler* Collision;
+
+  static Real Delta;
 
 private:
   // game controllers - one for each active unit - this includes local and remote players
@@ -97,7 +107,7 @@ private:
   static ulint NewTime;
   static ulint LastTime;
   static ulint RealTime;
-  static Ogre::Real Fps;
+  static Real Fps;
 
   static size_t UniqueId;
 
@@ -106,7 +116,7 @@ public:
 };
 
 /** @brief quit the game gracefully
-  */
+ */
 inline void Game::end(string aGoodbye)
 {
   State = game_state_closing;

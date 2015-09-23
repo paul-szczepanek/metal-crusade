@@ -9,38 +9,16 @@
 
 UnitFactory::UnitFactory()
 {
-  // ctor
 }
 
 /** @brief destroys all units and ogre objects
-  */
+ */
 UnitFactory::~UnitFactory()
 {
   for (list<Unit*>::iterator it = units.begin(); it != units.end(); ++it) {
     delete *it;
   }
   units.clear();
-}
-
-void UnitFactory::update(Ogre::Real a_dt)
-{
-  // call update on every unit
-  for (list<Unit*>::iterator it = units.begin(); it != units.end(); ) {
-    // remove if expired
-    if ((*it)->update(a_dt) == 1) {
-      // destroy the Ogre part
-      destroyModel((*it)->scene_node);
-
-      // destroy the unit
-      delete *it;
-
-      // get the iterator to the next item after removal
-      it = units.erase(it);
-
-    } else {
-      ++it;
-    }
-  }
 }
 
 Unit* UnitFactory::getUnit(uint a_id)
@@ -54,9 +32,10 @@ Unit* UnitFactory::getUnit(uint a_id)
 }
 
 /** @brief creates units and add's them to a list
-  */
-Crusader* UnitFactory::spawnCrusader(Ogre::Vector3 a_pos_xyz, const string& a_name,
-                                     Ogre::Quaternion a_orientation)
+ */
+Crusader* UnitFactory::spawnCrusader(Vector3       a_pos_xyz,
+                                     const string& a_name,
+                                     Quaternion    a_orientation)
 {
   // structs for spec for crusader
   crusader_engine_t engine;
@@ -68,22 +47,21 @@ Crusader* UnitFactory::spawnCrusader(Ogre::Vector3 a_pos_xyz, const string& a_na
   FilesHandler::getCrusaderDesign(a_name, design, engine, drive, chasis);
 
   // get unique string from id
-  string id_string = getUniqueID() + '_' + chasis.mesh; // append unique id to name
-
+  string id_string = Game::getUniqueID() + '_' + chasis.mesh; // append unique id to name
 
   // create entities
   Ogre::Entity* drive_mesh = Game::scene->createEntity(id_string + "_drive",
-                             drive.mesh + "_drive.mesh");
+                                                       drive.mesh + "_drive.mesh");
   Ogre::Entity* chasis_mesh = Game::scene->createEntity(id_string + "_chasis",
-                              chasis.mesh + "_chasis.mesh");
+                                                        chasis.mesh + "_chasis.mesh");
   Ogre::Entity* arm_right_mesh = Game::scene->createEntity(id_string + "_arm_right",
-                                 chasis.mesh + "_arm_right.mesh");
+                                                           chasis.mesh + "_arm_right.mesh");
   Ogre::Entity* arm_left_mesh = Game::scene->createEntity(id_string + "_arm_left",
-                                chasis.mesh + "_arm_left.mesh");
+                                                          chasis.mesh + "_arm_left.mesh");
   Ogre::Entity* leg_right_mesh = Game::scene->createEntity(id_string + "_leg_right",
-                                 drive.mesh + "_leg_right.mesh");
+                                                           drive.mesh + "_leg_right.mesh");
   Ogre::Entity* leg_left_mesh = Game::scene->createEntity(id_string + "_leg_left",
-                                drive.mesh + "_leg_left.mesh");
+                                                          drive.mesh + "_leg_left.mesh");
   // assign materials
   drive_mesh->setMaterialName(design.material);
   chasis_mesh->setMaterialName(design.material);
@@ -123,5 +101,3 @@ Crusader* UnitFactory::spawnCrusader(Ogre::Vector3 a_pos_xyz, const string& a_na
 
   return spawn;
 }
-
-

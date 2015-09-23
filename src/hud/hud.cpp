@@ -24,19 +24,19 @@
 const string hud_textures_dir = "data/texture/hud/";
 
 // hud designs in pixel coords baselined at 1024x768
-const Ogre::Real base_width(1024);
-const Ogre::Real base_height(768);
+const Real base_width(1024);
+const Real base_height(768);
 
 Hud::Hud()
   : active(false), hud_width(base_width), hud_height(base_height),
-    scale(1), scale_w(1), scale_h(1), selected_mfd(0), hud_mode(interface_mode::mfd)
+  scale(1), scale_w(1), scale_h(1), selected_mfd(0), hud_mode(interface_mode::mfd)
 {
   log = new LogComputer();
   status = new StatusComputer();
 }
 
 /** @brief unloads the whole frontend when exiting the arena
-  */
+ */
 Hud::~Hud()
 {
   // destroy all the parts
@@ -57,7 +57,7 @@ Hud::~Hud()
 }
 
 /** @brief turns hud on/off
-  */
+ */
 void Hud::activate(bool a_toggle)
 {
   active = a_toggle;
@@ -83,15 +83,15 @@ void Hud::activate(bool a_toggle)
 }
 
 /** @brief shows the pause screen
-  */
+ */
 void Hud::pause()
 {
   centre_overlay->show();
 }
 
 /** @brief actually loads the hud with all the textures dependent on the name
-  * all assets are later fried up when the hud is killed as they are big textures
-  */
+ * all assets are later fried up when the hud is killed as they are big textures
+ */
 void Hud::loadHud(Unit* a_player_unit)
 {
   // hook up the hud to the unit
@@ -133,7 +133,7 @@ void Hud::loadHud(Unit* a_player_unit)
     // create the top container
     hud_areas[i] = (static_cast<Ogre::OverlayContainer*>
                     (overlay_mngr->createOverlayElement("Panel",
-                        hud_area_names[i] + "_hud_area")));
+                                                        hud_area_names[i] + "_hud_area")));
 
     // apply meterial with texture from design
     hud_areas[i]->setMaterialName(hud_design.area_textures[i]);
@@ -225,8 +225,10 @@ void Hud::loadHud(Unit* a_player_unit)
 }
 
 /** @brief slides overlays around smoothly to match their current offset
-  */
-void Hud::offsetUpdate(Ogre::Real a_dt, hud_area a_hud_area, bool a_alternative)
+ */
+void Hud::offsetUpdate(Real     a_dt,
+                       hud_area a_hud_area,
+                       bool     a_alternative)
 {
   // smoth transition bewteen offsets
   if (a_alternative) {
@@ -243,20 +245,20 @@ void Hud::offsetUpdate(Ogre::Real a_dt, hud_area a_hud_area, bool a_alternative)
   }
 
   // reposition
-  Ogre::Real x = positionHorizontal(hud_design.sizes[a_hud_area].first,
-                                    hud_design.positions[a_hud_area].first,
-                                    area_offsets[a_hud_area].first);
-  Ogre::Real y = positionVertical(hud_design.sizes[a_hud_area].second,
-                                  hud_design.positions[a_hud_area].second,
-                                  area_offsets[a_hud_area].second);
+  Real x = positionHorizontal(hud_design.sizes[a_hud_area].first,
+                              hud_design.positions[a_hud_area].first,
+                              area_offsets[a_hud_area].first);
+  Real y = positionVertical(hud_design.sizes[a_hud_area].second,
+                            hud_design.positions[a_hud_area].second,
+                            area_offsets[a_hud_area].second);
 
   hud_overlays[a_hud_area]->setScroll(x, -y);
 }
 
 /** @brief main loop - updates all parts and deals with mode selection and handles mfd selection
-  * the fps of each part is independent, each has an accumulator; digital parts can run at lower fps
-  */
-void Hud::update(Ogre::Real a_dt)
+ * the fps of each part is independent, each has an accumulator; digital parts can run at lower fps
+ */
+void Hud::update(Real a_dt)
 {
   if (active) {
     // hide the paused screen
@@ -324,8 +326,9 @@ void Hud::update(Ogre::Real a_dt)
 }
 
 /** @brief resizes and positions all the elements again to accomodate any sreens size
-  */
-void Hud::resize(uint a_screen_width, uint a_screen_height)
+ */
+void Hud::resize(uint a_screen_width,
+                 uint a_screen_height)
 {
   // get scale from the screen width and height
   hud_width = a_screen_width;
@@ -341,20 +344,20 @@ void Hud::resize(uint a_screen_width, uint a_screen_height)
   // reposition and rescale containers
   for (usint i = 0; i < hud_num_of_areas; ++i) {
     hud_overlays[i]->setScale(scale, scale);
-    Ogre::Real x = positionHorizontal(hud_design.sizes[i].first,
-                                      hud_design.positions[i].first,
-                                      area_offsets[i].first);
-    Ogre::Real y = positionVertical(hud_design.sizes[i].second,
-                                    hud_design.positions[i].second,
-                                    area_offsets[i].second);
+    Real x = positionHorizontal(hud_design.sizes[i].first,
+                                hud_design.positions[i].first,
+                                area_offsets[i].first);
+    Real y = positionVertical(hud_design.sizes[i].second,
+                              hud_design.positions[i].second,
+                              area_offsets[i].second);
 
     hud_overlays[i]->setScroll(x, -y);
   }
 
   // reposition the pause overlay
   centre_overlay->setScale(scale, scale);
-  Ogre::Real x = positionHorizontal(1024, horizontal::centre, 0);
-  Ogre::Real y = positionVertical(512, vertical::centre, 0);
+  Real x = positionHorizontal(1024, horizontal::centre, 0);
+  Real y = positionVertical(512, vertical::centre, 0);
 
   centre_overlay->setScroll(x, -y);
 
@@ -365,10 +368,11 @@ void Hud::resize(uint a_screen_width, uint a_screen_height)
 }
 
 /** @brief creates a metarial and apply a texture to it of the same name
-  * if there is already a material of same name it returns that instead
-  */
-Ogre::MaterialPtr Hud::createOverlayMaterial(const string& a_name, texture_addressing a_addressing,
-    string a_texture_name)
+ * if there is already a material of same name it returns that instead
+ */
+Ogre::MaterialPtr Hud::createOverlayMaterial(const string&      a_name,
+                                             texture_addressing a_addressing,
+                                             string             a_texture_name)
 {
   Ogre::MaterialPtr material;
 
@@ -401,12 +405,15 @@ Ogre::MaterialPtr Hud::createOverlayMaterial(const string& a_name, texture_addre
 }
 
 /** @brief parses a string and seperates it into three strings - one for each colour
-  * this makes the number of hud colours hardcoded at three - but this is the only cap
-  * this cap can be removed by making the function accept any number of lines
-  * but at a cost of complexity and more checking so I'll do that if I ever need more than 3 colours
-  */
-void Hud::parseColours(const string& message, usint a_length,
-                       char* line1, char* line2, char* line3)
+ * this makes the number of hud colours hardcoded at three - but this is the only cap
+ * this cap can be removed by making the function accept any number of lines
+ * but at a cost of complexity and more checking so I'll do that if I ever need more than 3 colours
+ */
+void Hud::parseColours(const string& message,
+                       usint         a_length,
+                       char*         line1,
+                       char*         line2,
+                       char*         line3)
 {
   usint colour = 0; // default colour
   usint last_colour = colour; // previously used colour
@@ -468,12 +475,13 @@ void Hud::parseColours(const string& message, usint a_length,
 }
 
 /** @brief translate positions given in enums into OGRE relative coords
-  * overlays in OGRE are messed up and the documentation is utterly misleading
-  * the moving is x,-y not x,y and bizzarely the screen size is <0,2> and not <0,1>
-  * scaling is done after movement against the point 1,-1 not 0.5,0.5
-  */
-Ogre::Real Hud::positionHorizontal(int a_width, horizontal::position a_position,
-                                   Ogre::Real a_offset)
+ * overlays in OGRE are messed up and the documentation is utterly misleading
+ * the moving is x,-y not x,y and bizzarely the screen size is <0,2> and not <0,1>
+ * scaling is done after movement against the point 1,-1 not 0.5,0.5
+ */
+Real Hud::positionHorizontal(int                  a_width,
+                             horizontal::position a_position,
+                             Real                 a_offset)
 {
   switch (a_position) {
 
@@ -484,7 +492,7 @@ Ogre::Real Hud::positionHorizontal(int a_width, horizontal::position a_position,
     return 1 - (1 - scale) - ((a_width + 2 * a_offset) * scale) / hud_width;
 
   case horizontal::right:
-    return 2 - (1 - scale) - (2 * (a_width + a_offset) * scale) / hud_width;// + (1 - scale);
+    return 2 - (1 - scale) - (2 * (a_width + a_offset) * scale) / hud_width; // + (1 - scale);
 
   default:
     return 0;
@@ -492,9 +500,11 @@ Ogre::Real Hud::positionHorizontal(int a_width, horizontal::position a_position,
 }
 
 /** @brief translate positions given in enums into OGRE relative coords
-  * see positionHorizontal above
-  */
-Ogre::Real Hud::positionVertical(int a_height, vertical::position a_position, Ogre::Real a_offset)
+ * see positionHorizontal above
+ */
+Real Hud::positionVertical(int                a_height,
+                           vertical::position a_position,
+                           Real               a_offset)
 {
   switch (a_position) {
 
@@ -506,7 +516,7 @@ Ogre::Real Hud::positionVertical(int a_height, vertical::position a_position, Og
     return 1 - (1 - scale) - ((a_height - a_offset) * scale) / hud_height;
 
   case vertical::bottom:
-    return 2 - (1 - scale) - (2 * (a_height - a_offset) * scale) / hud_height ;
+    return 2 - (1 - scale) - (2 * (a_height - a_offset) * scale) / hud_height;
 
   default:
     return 0;
@@ -514,8 +524,8 @@ Ogre::Real Hud::positionVertical(int a_height, vertical::position a_position, Og
 }
 
 /** @brief translate positions given in enums into pixel coords
-  */
-Ogre::Real Hud::getHudAreaOriginX(hud_area a_hud_area)
+ */
+Real Hud::getHudAreaOriginX(hud_area a_hud_area)
 {
 
   switch (hud_design.positions[a_hud_area].first) {
@@ -537,8 +547,8 @@ Ogre::Real Hud::getHudAreaOriginX(hud_area a_hud_area)
 }
 
 /** @brief translate positions given in enums into pixel coords
-  */
-Ogre::Real Hud::getHudAreaOriginY(hud_area a_hud_area)
+ */
+Real Hud::getHudAreaOriginY(hud_area a_hud_area)
 {
   switch (hud_design.positions[a_hud_area].second) {
 

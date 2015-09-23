@@ -7,14 +7,16 @@
 
 class GameController;
 
-class HudSet : public HudPart
+class HudSet
+  : public HudPart
 {
 public:
   HudSet(hud_part_design_t& a_hud_part_design);
-  ~HudSet() { };
+  ~HudSet() {
+  }
 
   // main loop
-  void update(Ogre::Real a_dt);
+  void update(Real a_dt);
 
 private:
   vector<Ogre::OverlayElement*> items;

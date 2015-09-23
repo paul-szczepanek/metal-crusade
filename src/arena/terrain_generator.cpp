@@ -9,17 +9,20 @@ const usint block_size = terrain::block_size;
 const int block_blend_size = 8; // each side
 const int inner_block_size = block_size - 2 * block_blend_size;
 // max height needs to be adjusted so that it covers the inner size of the block
-const Ogre::Real effective_height = Ogre::Real(block_size) / Ogre::Real(inner_block_size);
-
+const Real effective_height = Real(block_size) / Real(inner_block_size);
 
 /** @brief this gets the deifinition of a premade map of tiles
-  */
-bool TerrainGenerator::getTerrain(const string& filename, vector<usint>& block_height,
-                                  vector<terrain::block_types>& block_type, uint& width, uint& height)
+ */
+bool TerrainGenerator::getTerrain(const string&                 filename,
+                                  vector<usint>&                block_height,
+                                  vector<terrain::block_types>& block_type,
+                                  uint&                         width,
+                                  uint&                         height)
 {
   // prepare map to read tile data into
   map<string, string> pairs;
-  if (!FS::getPairs(filename + EXT_TERRAIN, TERRAIN_DIR, pairs)) { // insert data from file into pairs
+  if (!FS::getPairs(filename + EXT_TERRAIN, TERRAIN_DIR, pairs)) { // insert data from file into
+                                                                   // pairs
     return false;
   }
 
@@ -56,8 +59,8 @@ bool TerrainGenerator::getTerrain(const string& filename, vector<usint>& block_h
 }
 
 /** @brief generate a terrain from a terrain file
-  * @todo: pick a random terrain file from a set of ones or randomise the read data a bit
-  */
+ * @todo: pick a random terrain file from a set of ones or randomise the read data a bit
+ */
 Terrain* TerrainGenerator::generateTerrain(const string& terrain_name)
 {
   // this part deals with the big prefab tiles that are blended together to form the map
@@ -72,8 +75,8 @@ Terrain* TerrainGenerator::generateTerrain(const string& terrain_name)
   getTerrain(terrain_name, block_heights, block_types, tile_columns, tile_rows);
 
   // this is the actual per vertex terrain
-  Ogre::Real terrain_w = tile_columns * inner_block_size;
-  Ogre::Real terrain_h = tile_rows * inner_block_size;
+  Real terrain_w = tile_columns * inner_block_size;
+  Real terrain_h = tile_rows * inner_block_size;
   Terrain* result = new Terrain(terrain_w, terrain_h);
 
   // analyse the hights and convert to a set of tile tile_rows types
@@ -84,7 +87,7 @@ Terrain* TerrainGenerator::generateTerrain(const string& terrain_name)
 
       // read the type and tile_rows for this tile
       const terrain::block_types& block_type = block_types[index];
-      const Ogre::Real& max_height = terrain::max_tile_heights[block_type];
+      const Real& max_height = terrain::max_tile_heights[block_type];
 
       // the suffix will identify a tile definition, the type of suffix depends on tile type
       string tile_name;
@@ -159,12 +162,12 @@ Terrain* TerrainGenerator::generateTerrain(const string& terrain_name)
           // cut off the bleeds around the terrain as blend weights there will be wrong
           if (ter_x >= 0 && ter_x < terrain_w && ter_y >= 0 && ter_y < terrain_h) {
             // read the height on the block from the image
-            Ogre::Real vertex_h = colour.g * max_height * effective_height;
+            Real vertex_h = colour.g * max_height * effective_height;
             // add the height of the whole block in the world
             vertex_h += block_heights[index] * terrain::min_block_height;
 
             // blend in the height
-            Ogre::Real height_weight = getBlendWeight(t_i, t_j);
+            Real height_weight = getBlendWeight(t_i, t_j);
             result->blendHeight(ter_x, ter_y, vertex_h, height_weight);
           }
         }
@@ -195,9 +198,10 @@ Terrain* TerrainGenerator::generateTerrain(const string& terrain_name)
 }
 
 /** @brief gets the weight for a vertex height for blending tiles together
-  * @todo: experiment with non-linear blends
-  */
-Ogre::Real TerrainGenerator::getBlendWeight(uint a_i, uint a_j)
+ * @todo: experiment with non-linear blends
+ */
+Real TerrainGenerator::getBlendWeight(uint a_i,
+                                      uint a_j)
 {
   // get the shorter distance from any edge
   if (a_i > block_size * 0.5) {
@@ -208,10 +212,10 @@ Ogre::Real TerrainGenerator::getBlendWeight(uint a_i, uint a_j)
     a_j = block_size - a_j;
   }
 
-  Ogre::Real weight_i = Ogre::Real(a_i) / Ogre::Real(2 * block_blend_size);
+  Real weight_i = Real(a_i) / Real(2 * block_blend_size);
   clampZeroOne(weight_i);
 
-  Ogre::Real weight_j = Ogre::Real(a_j) / Ogre::Real(2 * block_blend_size);
+  Real weight_j = Real(a_j) / Real(2 * block_blend_size);
   clampZeroOne(weight_j);
 
   return (weight_i * weight_j);

@@ -7,14 +7,16 @@
 
 class MFDComputer;
 
-class HudMFDAuxDisplay : public HudPart
+class HudMFDAuxDisplay
+  : public HudPart
 {
 public:
   HudMFDAuxDisplay(hud_part_design_t& a_hud_part_design);
-  ~HudMFDAuxDisplay() { };
+  ~HudMFDAuxDisplay() {
+  }
 
   // main loop
-  void update(Ogre::Real a_dt);
+  void update(Real a_dt);
 
 private:
   usint font_size;
@@ -23,8 +25,8 @@ private:
   MFDComputer* mfd;
 
   // for lower fps
-  Ogre::Real hud_part_interval;
-  Ogre::Real hud_part_accumulator;
+  Real hud_part_interval;
+  Real hud_part_accumulator;
 
   // lines of text
   Ogre::OverlayElement* mfd_aux_text_elements[hud_num_of_colours][hud_num_of_mfd_aux_lines];

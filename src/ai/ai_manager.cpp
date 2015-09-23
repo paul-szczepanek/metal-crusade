@@ -4,6 +4,8 @@
 #include "unit_ai.h"
 #include "crusader_ai.h"
 #include "game_controller.h"
+#include "formation.h"
+#include "crusader.h"
 
 AIManager::~AIManager()
 {
@@ -14,8 +16,8 @@ AIManager::~AIManager()
 }
 
 /** @brief updates AIs
-  * @todo: pretty much everything
-  */
+ * @todo: pretty much everything
+ */
 void AIManager::update()
 {
   // call update on every unit
@@ -26,7 +28,7 @@ void AIManager::update()
 }
 
 /** @brief creates ais and add's them to a list
-  */
+ */
 CrusaderAI* AIManager::createCrusaderAI(Crusader* a_self)
 {
   CrusaderAI* ai = new CrusaderAI(a_self);
@@ -40,9 +42,10 @@ CrusaderAI* AIManager::createCrusaderAI(Crusader* a_self)
 }
 
 /** @brief creates an AI and hooks it up to the crusader
-  * @todo: add personality enum parameter
-  */
-CrusaderAI* AIManager::activateUnit(Crusader* a_unit, Formation* a_formation)
+ * @todo: add personality enum parameter
+ */
+CrusaderAI* AIManager::activateUnit(Crusader*  a_unit,
+                                    Formation* a_formation)
 {
   // create a new controller for the ai to use
   ai_game_controllers.push_back(new GameController("crusader ai"));
@@ -55,11 +58,8 @@ CrusaderAI* AIManager::activateUnit(Crusader* a_unit, Formation* a_formation)
   ai->bindController(ai_game_controllers.back());
   ai->activate(true);
 
-
   // give unit the controller
   a_unit->assignController(ai_game_controllers.back());
 
   return ai;
 }
-
-

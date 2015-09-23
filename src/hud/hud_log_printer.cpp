@@ -19,7 +19,7 @@ HudLogPrinter::HudLogPrinter(hud_part_design_t& a_hud_part_design)
   // create the paper background material that will scroll with the text
   // first create the material manually because it nneds to wrap
   Ogre::MaterialPtr material = Hud::createOverlayMaterial(a_hud_part_design.name + "_paper",
-                               Ogre::TextureUnitState::TAM_WRAP);
+                                                          Ogre::TextureUnitState::TAM_WRAP);
   // this material will wrap around whilst scrolling up and down
   paper_texture = material->getTechnique(0)->getPass(0)->getTextureUnitState(0);
   paper_texture->setTextureVScale(0.5); // tile it twice
@@ -29,17 +29,21 @@ HudLogPrinter::HudLogPrinter(hud_part_design_t& a_hud_part_design)
   createPanel(id, id, -10, 0, size.first + 20, size.second, container);
 
   // line height for positioning of the lines
-  Ogre::Real line_height = Ogre::Real(size.second) / hud_num_of_status_lines;
+  Real line_height = Real(size.second) / hud_num_of_status_lines;
 
   // create a container for the text elements to guarantee proper z-sorting
   Ogre::OverlayContainer* text_container = static_cast<Ogre::OverlayContainer*>
-      (overlay_mngr->createOverlayElement("Panel", a_hud_part_design.name + "text_cont"));
+                                           (overlay_mngr->createOverlayElement("Panel",
+                                                                               a_hud_part_design.
+                                                                               name + "text_cont"));
   text_container->setMetricsMode(Ogre::GMM_PIXELS);
   container->addChild(text_container); // add it to the main container so that text is on top
 
   // create a container for the head and bars to guarantee proper z-sorting
   Ogre::OverlayContainer* head_container = static_cast<Ogre::OverlayContainer*>
-      (overlay_mngr->createOverlayElement("Panel", a_hud_part_design.name + "head_cont"));
+                                           (overlay_mngr->createOverlayElement("Panel",
+                                                                               a_hud_part_design.
+                                                                               name + "head_cont"));
   head_container->setMetricsMode(Ogre::GMM_PIXELS);
   text_container->addChild(head_container); // add it to the text container so it's above the text
 
@@ -49,9 +53,9 @@ HudLogPrinter::HudLogPrinter(hud_part_design_t& a_hud_part_design)
       // create text elements to display the lines - one for each colour
       id = a_hud_part_design.name + "_text_" + intoString(i) + "_" + intoString(j);
       log_text_elements[i][j] = createTextArea(id, "", font_size,
-                                Game::hud->hud_design.log_colours[i],
-                                0, (size.second - (j + 1) * line_height),
-                                size.first, line_height, text_container);
+                                               Game::hud->hud_design.log_colours[i],
+                                               0, (size.second - (j + 1) * line_height),
+                                               size.first, line_height, text_container);
     }
   }
 
@@ -67,9 +71,9 @@ HudLogPrinter::HudLogPrinter(hud_part_design_t& a_hud_part_design)
 }
 
 /** @brief displays the text and moves the printer head
-  * TODO: move the paper under the text and the text itself smoothly
-  */
-void HudLogPrinter::update(Ogre::Real a_dt)
+ * TODO: move the paper under the text and the text itself smoothly
+ */
+void HudLogPrinter::update(Real a_dt)
 {
   timeout += a_dt;
 
@@ -109,7 +113,7 @@ void HudLogPrinter::update(Ogre::Real a_dt)
 
   } else if (timeout < line_print_timeout) {
     // printing finished start returning the head left
-    Ogre::Real returned = (timeout - line_print_time) / (line_print_timeout - line_print_time);
+    Real returned = (timeout - line_print_time) / (line_print_timeout - line_print_time);
     hud_log_head->setPosition(-24 + (1 - returned) * (size.first + 20), size.second - 20);
 
   } else if (printed_log_line != Game::hud->log->getCurrentLine()) { // new line is available
@@ -118,7 +122,7 @@ void HudLogPrinter::update(Ogre::Real a_dt)
     timeout = 0;
 
     // move paper
-    Ogre::Real current_v_scroll = paper_texture->getTextureVScroll();
+    Real current_v_scroll = paper_texture->getTextureVScroll();
     paper_texture->setTextureScroll(0, current_v_scroll
                                     - 1 / hud_num_of_status_lines);
 

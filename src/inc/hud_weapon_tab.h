@@ -16,21 +16,23 @@ struct weapon_tab_lights_t {
   Ogre::OverlayElement* red[number_of_lights];
 };
 
-class HudWeaponTab : public HudPart
+class HudWeaponTab
+  : public HudPart
 {
 public:
   HudWeaponTab(hud_part_design_t& a_hud_part_design);
-  ~HudWeaponTab() { };
+  ~HudWeaponTab() {
+  }
 
   // main loop
-  void update(Ogre::Real a_dt);
+  void update(Real a_dt);
 
 private:
   usint font_size;
 
   // for lower fps
-  Ogre::Real interval;
-  Ogre::Real accumulator;
+  Real interval;
+  Real accumulator;
 
   // alias for weapons
   vector<Weapon*> weapons;

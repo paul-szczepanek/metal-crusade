@@ -31,7 +31,7 @@ HudMFDAuxDisplay::HudMFDAuxDisplay(hud_part_design_t& a_hud_part_design)
   mfd = Game::hud->getMFD();
 }
 
-void HudMFDAuxDisplay::update(Ogre::Real a_dt)
+void HudMFDAuxDisplay::update(Real a_dt)
 {
   hud_part_accumulator += a_dt; // lower fps for digital parts
   if (hud_part_accumulator > hud_part_interval) { // use accumulator as dt
@@ -45,5 +45,3 @@ void HudMFDAuxDisplay::update(Ogre::Real a_dt)
     hud_part_accumulator = 0;
   }
 }
-
-

@@ -3,8 +3,10 @@
 #include "particle_effect_explosion.h"
 #include "game.h"
 
-ParticleEffectExplosion::ParticleEffectExplosion(Ogre::SceneNode* particle_node, Ogre::Real a_size,
-    Ogre::Real a_time, Ogre::Real a_ferocity)
+ParticleEffectExplosion::ParticleEffectExplosion(Ogre::SceneNode* particle_node,
+                                                 Real             a_size,
+                                                 Real             a_time,
+                                                 Real             a_ferocity)
 {
   scene_node = particle_node;
   lifetime = 0;
@@ -32,7 +34,7 @@ ParticleEffectExplosion::ParticleEffectExplosion(Ogre::SceneNode* particle_node,
   explosion_emitter->setParameter("width", "4");
   explosion_emitter->setParameter("height", "4");
   explosion_emitter->setParameter("depth", "4");
-  explosion_emitter->setAngle(Ogre::Radian(pi));
+  explosion_emitter->setAngle(Radian(pi));
   explosion_emitter->setEmissionRate(a_ferocity * 2);
   explosion_emitter->setMinParticleVelocity(1);
   explosion_emitter->setMaxParticleVelocity(4);
@@ -50,7 +52,7 @@ ParticleEffectExplosion::~ParticleEffectExplosion()
   die();
 }
 
-int ParticleEffectExplosion::update(Ogre::Real a_dt)
+int ParticleEffectExplosion::update(Real a_dt)
 {
   lifetime += a_dt;
 
@@ -61,4 +63,3 @@ int ParticleEffectExplosion::update(Ogre::Real a_dt)
 
   return 0;
 }
-

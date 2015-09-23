@@ -5,7 +5,8 @@
 #include "hud.h"
 #include "unit.h"
 
-HudDial::HudDial(hud_part_design_t& a_hud_part_design) : HudPart(a_hud_part_design)
+HudDial::HudDial(hud_part_design_t& a_hud_part_design)
+  : HudPart(a_hud_part_design)
 {
   // read params from design
   if (a_hud_part_design.parameters.size() < 4) { // kill the game if too few params
@@ -49,10 +50,10 @@ HudDial::HudDial(hud_part_design_t& a_hud_part_design) : HudPart(a_hud_part_desi
   }
 }
 
-void HudDial::update(Ogre::Real a_dt)
+void HudDial::update(Real a_dt)
 {
   // get approriate value dependiong on dial function
-  Ogre::Real new_value = getValue();
+  Real new_value = getValue();
   // smooth angle change // doesn't use dt to save on checking
   value = value * 0.9 + new_value * 0.1;
 
@@ -61,47 +62,47 @@ void HudDial::update(Ogre::Real a_dt)
   angle = min_angle + (max_angle - min_angle) * ((value - min_value) / (max_value - min_value));
 
   // rotate dial by rotating the texture UVs
-  dial_texture->setTextureRotate(-1 * Ogre::Radian(angle * (pi / 180)));
+  dial_texture->setTextureRotate(-1 * Radian(angle * (pi / 180)));
 }
 
 // functions to be used to get the value for the dial
 // bound to at creation to save on constant checking every frame
-Ogre::Real HudDial::getValueSpeed()
+Real HudDial::getValueSpeed()
 {
   return Game::hud->player_unit->getSpeed() * 3.6; // convert to km/h
 }
 
-Ogre::Real HudDial::getValuePressure()
+Real HudDial::getValuePressure()
 {
   return Game::hud->player_unit->getPressure() * 100;
 }
 
-Ogre::Real HudDial::getValueCoolant()
+Real HudDial::getValueCoolant()
 {
   return Game::hud->player_unit->getCoolant();
 }
 
-Ogre::Real HudDial::getValueEngineTemperature()
+Real HudDial::getValueEngineTemperature()
 {
   return Game::hud->player_unit->getEngineTemperature();
 }
 
-Ogre::Real HudDial::getValueCoreTemperature()
+Real HudDial::getValueCoreTemperature()
 {
   return Game::hud->player_unit->getCoreTemperature();
 }
 
-Ogre::Real HudDial::getValueExternalTemperature()
+Real HudDial::getValueExternalTemperature()
 {
   return Game::hud->player_unit->getSurfaceTemperature();
 }
 
-Ogre::Real HudDial::getValueThrottle()
+Real HudDial::getValueThrottle()
 {
   return Game::hud->player_unit->getThrottle() * 3.6; // convert to km/h
 }
 
-Ogre::Real HudDial::getValueZero()
+Real HudDial::getValueZero()
 {
   return 0;
 }

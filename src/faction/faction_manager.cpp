@@ -10,13 +10,18 @@ ulint FactionManager::uid = 0; // unieque id for each object in the game
 
 // struct for stl to use for comparison against formation name
 struct FactionEqualsName {
-  FactionEqualsName (const string& name) : faction_name(name) { };
+  FactionEqualsName (const string& name)
+    : faction_name(name) {
+  }
 
   // name being looked for
   string faction_name;
 
   // comparison for stl find_if
-  bool operator() (Faction* faction) { return faction_name == faction->getName(); }
+  bool operator() (Faction* faction) {
+    return faction_name == faction->getName();
+  }
+
 };
 
 FactionManager::FactionManager()
@@ -30,9 +35,10 @@ FactionManager::~FactionManager()
 }
 
 /** @brief creates a faction and adds it to the list
-  * if given existing name produces a unique one
-  */
-Faction* FactionManager::createFaction(const string& name, global_faction::faction a_faction)
+ * if given existing name produces a unique one
+ */
+Faction* FactionManager::createFaction(const string&           name,
+                                       global_faction::faction a_faction)
 {
   // guarantee name uniqueness
   string unique_name = name;
@@ -59,8 +65,8 @@ Faction* FactionManager::createFaction(const string& name, global_faction::facti
 }
 
 /** @brief get's the formation based on its name
-  * TODO: deal with missing formation better
-  */
+ * TODO: deal with missing formation better
+ */
 Faction* FactionManager::getFaction(const string& name)
 {
   // find the formation if it's on the list
@@ -78,16 +84,18 @@ Faction* FactionManager::getFaction(const string& name)
 }
 
 /** @brief updates relations and if none exist creats them
-  * returns the relation after adding the damage
-  * crazy silly std way of mappings maps
-  */
-ulint FactionManager::attack(Faction* a_attacker, Faction* a_defender, Ogre::Real a_damage)
+ * returns the relation after adding the damage
+ * crazy silly std way of mappings maps
+ */
+ulint FactionManager::attack(Faction* a_attacker,
+                             Faction* a_defender,
+                             Real     a_damage)
 {
-  map<ulint, map<ulint, Ogre::Real> >::iterator it = relations.find(a_defender->uid);
+  map<ulint, map<ulint, Real> >::iterator it = relations.find(a_defender->uid);
 
   // look for relations of this factions
   if (it != relations.end()) {
-    map<ulint, Ogre::Real>::iterator it2 = it->second.find(a_attacker->uid);
+    map<ulint, Real>::iterator it2 = it->second.find(a_attacker->uid);
 
     // if a relation to the attacker doesn't exist yet, create one
     if (it2 != it->second.end()) {
@@ -98,15 +106,15 @@ ulint FactionManager::attack(Faction* a_attacker, Faction* a_defender, Ogre::Rea
       return it2->second;
 
     } else {
-      it->second.insert(pair<ulint, Ogre::Real>(a_attacker->uid, a_damage));
+      it->second.insert(pair<ulint, Real>(a_attacker->uid, a_damage));
     }
   } else { // no relations exist yet
     // create the first one
-    map<ulint, Ogre::Real> relation;
-    relation.insert(pair<ulint, Ogre::Real>(a_attacker->uid, a_damage));
+    map<ulint, Real> relation;
+    relation.insert(pair<ulint, Real>(a_attacker->uid, a_damage));
 
     // crea the map for relations and insert the relation
-    relations.insert(pair<ulint, map<ulint, Ogre::Real> >(a_defender->uid, relation));
+    relations.insert(pair<ulint, map<ulint, Real> >(a_defender->uid, relation));
   }
 
   updatePolicy(a_defender, a_attacker);
@@ -114,12 +122,13 @@ ulint FactionManager::attack(Faction* a_attacker, Faction* a_defender, Ogre::Rea
   return a_damage;
 }
 
-Ogre::Real FactionManager::getRelation(Faction* a_from, Faction* a_to)
+Real FactionManager::getRelation(Faction* a_from,
+                                 Faction* a_to)
 {
-  map<ulint, map<ulint, Ogre::Real> >::iterator it = relations.find(a_from->uid);
+  map<ulint, map<ulint, Real> >::iterator it = relations.find(a_from->uid);
 
   if (it != relations.end()) {
-    map<ulint, Ogre::Real>::iterator it2 = it->second.find(a_to->uid);
+    map<ulint, Real>::iterator it2 = it->second.find(a_to->uid);
 
     if (it2 != it->second.end()) {
       return it2->second;
@@ -135,22 +144,23 @@ void FactionManager::Update(float delta)
 }
 
 /** @brief creates a policy from relations that can be acted upon without evaluting every frame
-  * this is really expensive and should be reevalutated very rarely
-  */
-void FactionManager::updatePolicy(Faction* a_from, Faction* a_to)
+ * this is really expensive and should be reevalutated very rarely
+ */
+void FactionManager::updatePolicy(Faction* a_from,
+                                  Faction* a_to)
 {
   // TODO: cooldown so policy is not re-examined to often
   // remember to register a update is required even if during cooldown so that another update
   // will happen at the end of cooldown - tricky, need a cron or an update func
 
   // start with direct relation
-  Ogre::Real common_relation = getRelation(a_from, a_to);
+  Real common_relation = getRelation(a_from, a_to);
 
   Faction* parent = a_from->getParent();
 
   // cap the relation based on parent felations
   while (parent != NULL) {
-    Ogre::Real relation = getRelation(parent, a_to);
+    Real relation = getRelation(parent, a_to);
 
     // half going up so the top relation accounts for 1/2 of the relation used for policy
     // this could be changed to be arbitrary decentralisation value

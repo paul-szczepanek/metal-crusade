@@ -5,15 +5,17 @@
 
 #include "particle_effect.h"
 
-
-class ParticleEffectExplosion : public ParticleEffect
+class ParticleEffectExplosion
+  : public ParticleEffect
 {
 public:
-  ParticleEffectExplosion(Ogre::SceneNode* scene_node, Ogre::Real a_size, Ogre::Real a_time,
-                          Ogre::Real a_ferocity);
+  ParticleEffectExplosion(Ogre::SceneNode* scene_node,
+                          Real             a_size,
+                          Real             a_time,
+                          Real             a_ferocity);
   ~ParticleEffectExplosion();
 
-  int update(Ogre::Real a_dt);
+  int update(Real a_dt);
 
 private:
   Ogre::ParticleSystem* explosion;

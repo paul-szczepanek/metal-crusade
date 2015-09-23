@@ -20,7 +20,7 @@ ParticleManager::~ParticleManager()
   effects.clear();
 }
 
-void ParticleManager::update(Ogre::Real a_dt)
+void ParticleManager::update(Real a_dt)
 {
   // call update on every unit
   for (list<ParticleEffect*>::iterator it = effects.begin(); it != effects.end(); ) {
@@ -37,8 +37,10 @@ void ParticleManager::update(Ogre::Real a_dt)
   }
 }
 
-ParticleEffect* ParticleManager::createExplosion(Ogre::Vector3 a_position, Ogre::Real a_size,
-    Ogre::Real a_time, usint a_ferocity)
+ParticleEffect* ParticleManager::createExplosion(Vector3 a_position,
+                                                 Real    a_size,
+                                                 Real    a_time,
+                                                 usint   a_ferocity)
 {
   Ogre::SceneNode* particle_node = Game::scene->getRootSceneNode()->createChildSceneNode();
   particle_node->setPosition(a_position);
@@ -46,13 +48,15 @@ ParticleEffect* ParticleManager::createExplosion(Ogre::Vector3 a_position, Ogre:
   // effects.push_back(new ParticleEffectExplosion(particle_node, a_size, a_time, a_ferocity));
   // temp
   effects.push_back(new ParticleEffectFlipbook(particle_node, a_size,
-                    a_ferocity, fx_anim::petrol));
+                                               a_ferocity, fx_anim::petrol));
 
   return effects.back();
 }
 
-ParticleEffect* ParticleManager::createExplosion(Ogre::SceneNode* scene_node, Ogre::Real a_size,
-    Ogre::Real a_time, usint a_ferocity)
+ParticleEffect* ParticleManager::createExplosion(Ogre::SceneNode* scene_node,
+                                                 Real             a_size,
+                                                 Real             a_time,
+                                                 usint            a_ferocity)
 {
   Ogre::SceneNode* particle_node = scene_node->createChildSceneNode();
 

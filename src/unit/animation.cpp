@@ -4,12 +4,12 @@
 #include "game.h"
 
 // speed at which you consider to be not moving
-const Ogre::Real crusader_stopping_speed = 0.001;
-const Ogre::Real switching_time = 1;
+const Real crusader_stopping_speed = 0.001;
+const Real switching_time = 1;
 
 Animation::Animation(Ogre::SceneNode* a_scene_node)
   : stopped(true), cycle_length(2), rate(0),
-    current_animation(animation::stand), target_animation(animation::stand), switching_progress(0)
+  current_animation(animation::stand), target_animation(animation::stand), switching_progress(0)
 {
   for (usint i = 0; i < num_of_movement_modes; ++i) {
     animations[0].reserve(num_of_animated_body_parts);
@@ -40,7 +40,7 @@ Animation::Animation(Ogre::SceneNode* a_scene_node)
 }
 
 /** @brief get all the crusaders animations and stick em in the vector for easier reference
-  */
+ */
 void Animation::extractAnimations(Ogre::SceneNode* a_scene_node)
 {
   // get animation states from all entities
@@ -68,11 +68,11 @@ void Animation::extractAnimations(Ogre::SceneNode* a_scene_node)
 }
 
 /** @brief move forward or backward
-  */
-void Animation::walk(Ogre::Real a_speed)
+ */
+void Animation::walk(Real a_speed)
 {
   // get speed forward or backward
-  Ogre::Real speed_abs = abs(a_speed);
+  Real speed_abs = abs(a_speed);
 
   if (speed_abs < crusader_stopping_speed) {
     // use standing animation for stopping
@@ -98,19 +98,19 @@ void Animation::walk(Ogre::Real a_speed)
 }
 
 /** @brief crouch, needs to stop first
-  */
+ */
 void Animation::crouch()
 {
   target_animation = animation::crouch;
 }
 
 /** @brief turn around, forces anim if standing in place
-  */
-void Animation::turn(Ogre::Radian a_turning_speed)
+ */
+void Animation::turn(Radian a_turning_speed)
 {
   if (current_animation == animation::stand) {
     // equivalent rate of animation for turning
-    Ogre::Real turning_rate = -10 * a_turning_speed.valueRadians();
+    Real turning_rate = -10 * a_turning_speed.valueRadians();
 
     // use turning rate or moving rate for anim - whichever is faster
     if (rate > 0) {
@@ -130,15 +130,15 @@ void Animation::turn(Ogre::Radian a_turning_speed)
 }
 
 /** @brief blends animations between different walking modes: stand, walk, run
-  * @todo: deal with crouch and collisions
-  * @todo: disable anim when not on screen
-  * @return whether the current_animation == target_animation
-  */
-bool Animation::switchAnimations(Ogre::Real a_time_to_add)
+ * @todo: deal with crouch and collisions
+ * @todo: disable anim when not on screen
+ * @return whether the current_animation == target_animation
+ */
+bool Animation::switchAnimations(Real a_time_to_add)
 {
   if (current_animation != target_animation || switching_progress > 0) {
     // get keyframe
-    Ogre::Real animation_time = animations[current_animation][0]->getTimePosition();
+    Real animation_time = animations[current_animation][0]->getTimePosition();
 
     // check if the time passed contains the switch point
     bool crossed_switch1 = (animation_time >= switch_points[0] &&
@@ -173,7 +173,7 @@ bool Animation::switchAnimations(Ogre::Real a_time_to_add)
       }
     } else {
       // apply wieghts to blend animations smoothly
-      Ogre::Real anim_weight = switching_progress / switching_time;
+      Real anim_weight = switching_progress / switching_time;
 
       for (usint i = 0, for_size = animations[current_animation].size(); i < for_size; ++i) {
         animations[target_animation][i]->setEnabled(true);
@@ -189,13 +189,13 @@ bool Animation::switchAnimations(Ogre::Real a_time_to_add)
 }
 
 /** @brief progresses the animation
-  */
-void Animation::update(Ogre::Real a_dt)
+ */
+void Animation::update(Real a_dt)
 {
   if (!stopped) {
     if (rate == 0) { // if trying to stop ignore the speed and keep animating
       // get keyframe
-      Ogre::Real animation_time = animations[current_animation][0]->getTimePosition();
+      Real animation_time = animations[current_animation][0]->getTimePosition();
 
       // did it cross the standing point
       bool crossed_stand1 = (animation_time >= stand_points[0] &&
@@ -221,7 +221,7 @@ void Animation::update(Ogre::Real a_dt)
       }
     } else {
       // if moving translate time passed to animation time
-      Ogre::Real time_to_add = a_dt * rate;
+      Real time_to_add = a_dt * rate;
 
       // add the time to animations
       for (usint i = 0, for_size = animations[current_animation].size(); i < for_size; ++i) {

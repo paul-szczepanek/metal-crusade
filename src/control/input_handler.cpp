@@ -9,7 +9,8 @@
 #include "game_controller.h"
 #include "game_arena.h"
 
-InputHandler::InputHandler() : sticky_left_shift(false), sticky_left_control(false)
+InputHandler::InputHandler()
+  : sticky_left_shift(false), sticky_left_control(false)
 {
   // OIS configuration
   OIS::ParamList param_list;
@@ -18,7 +19,7 @@ InputHandler::InputHandler() : sticky_left_shift(false), sticky_left_control(fal
   unsigned long window_handle;
   Game::OgreWindow->getCustomAttribute("WINDOW", &window_handle);
   param_list.insert(OIS::ParamList::value_type("WINDOW",
-                    Ogre::StringConverter::toString(window_handle)));
+                                               Ogre::StringConverter::toString(window_handle)));
 
   // to stop the mouse being trapped and keyboard madness
   param_list.insert(make_pair(string("x11_mouse_grab"), string("false")));
@@ -66,7 +67,7 @@ InputHandler::InputHandler() : sticky_left_shift(false), sticky_left_control(fal
   // create pointer mesh TODO: pointer mesh!
   Ogre::Entity* pointer_mesh = Game::OgreScene->createEntity("pointer", "target.mesh");
   Ogre::Entity* pointer_centre_mesh = Game::OgreScene->createEntity("pointer_centre",
-                                      "target_centre.mesh");
+                                                                    "target_centre.mesh");
   pointer_mesh->setMaterialName("target");
   pointer_mesh->setQueryFlags(query_mask_ignore);
   pointer_mesh->setCastShadows(false);
@@ -88,7 +89,7 @@ InputHandler::~InputHandler()
 }
 
 /** @brief get pointer position in the world
-  */
+ */
 void InputHandler::updateMousePointer()
 {
   // send a ray from camera to pointer position
@@ -102,7 +103,7 @@ void InputHandler::updateMousePointer()
 
   // iterate through results and find the nearest point
   Ogre::RaySceneQueryResult::iterator it;
-  Ogre::Real closestDistance = 10000; // search floor in case ray misses ecerything
+  Real closestDistance = 10000; // search floor in case ray misses ecerything
   for(it = result.begin(); it != result.end(); ++it ) {
     if (closestDistance > (*it).distance) {
       closestDistance = (*it).distance;
@@ -112,7 +113,7 @@ void InputHandler::updateMousePointer()
   // clear query
   mouse_ray_query->clearResults();
 
-  Ogre::Vector3 position;
+  Vector3 position;
 
   if (closestDistance < 10000) {
     // pointer hit something! how exciting
@@ -121,9 +122,9 @@ void InputHandler::updateMousePointer()
   } else {
     // nothing in the way - fing the point where the ray crosses the terrain
     // find the the segment first because we have a rough idea where it is
-    const Ogre::Real step = 128;
-    Ogre::Real top_distance = camera_distance + step;
-    Ogre::Real bottom_distance = camera_distance - step;
+    const Real step = 128;
+    Real top_distance = camera_distance + step;
+    Real bottom_distance = camera_distance - step;
     position = mouse_ray->getPoint(camera_distance);
 
     // check the position is within the arena to save on checking in the arena class
@@ -157,8 +158,8 @@ void InputHandler::updateMousePointer()
     // but I need the overhead like I need to amuse you with these comments
 
     // half slice my way through
-    Ogre::Real middle_distance;
-    Ogre::Real slice_size = step;
+    Real middle_distance;
+    Real slice_size = step;
     while (slice_size > 0.015625) {
       slice_size /= 2;
       middle_distance = top_distance + slice_size;
@@ -177,7 +178,7 @@ void InputHandler::updateMousePointer()
 
   // pinter centre always at target high
   pointer_centre_node->setPosition(position
-                                   + Ogre::Vector3(0, target_high_offset, 0));
+                                   + Vector3(0, target_high_offset, 0));
 
   // adjust by target mode
   if (game_controller->control_block.target_high) {
@@ -196,8 +197,8 @@ void InputHandler::updateMousePointer()
 }
 
 /** @brief called every frame
-  * @todo: add gamepad
-  */
+ * @todo: add gamepad
+ */
 void InputHandler::capture()
 {
   mouse->capture();
@@ -212,14 +213,14 @@ void InputHandler::capture()
 }
 
 /** @brief binds a controller it should hand over the input to
-  */
+ */
 void InputHandler::bindController(GameController* a_game_controller)
 {
   game_controller = a_game_controller;
 }
 
 /** @brief called by Ogre on window resize
-  */
+ */
 void InputHandler::windowResized(Ogre::RenderWindow* render_window)
 {
   screen_width = render_window->getWidth();
@@ -255,8 +256,8 @@ void InputHandler::windowResized(Ogre::RenderWindow* render_window)
 }
 
 /** @brief set mouse area
-  */
-void  InputHandler::resize()
+ */
+void InputHandler::resize()
 {
   const OIS::MouseState& mouse_state = mouse->getMouseState();
   mouse_state.width = screen_width;
@@ -264,7 +265,7 @@ void  InputHandler::resize()
 }
 
 /** @brief updates mouse position inside the window
-  */
+ */
 bool InputHandler::mouseMoved(const OIS::MouseEvent& evt)
 {
   // OIS mouse object
@@ -280,7 +281,8 @@ bool InputHandler::mouseMoved(const OIS::MouseEvent& evt)
   return true;
 }
 
-bool InputHandler::mousePressed(const OIS::MouseEvent& evt, OIS::MouseButtonID btn)
+bool InputHandler::mousePressed(const OIS::MouseEvent& evt,
+                                OIS::MouseButtonID     btn)
 {
   if (key_map->Buttons[input_event_fire] == btn) {
     game_controller->control_block.fire = true;
@@ -291,51 +293,52 @@ bool InputHandler::mousePressed(const OIS::MouseEvent& evt, OIS::MouseButtonID b
     game_controller->control_block.turn_to_pointer = true;
   } else // if else chain continues below .v.
 
-    // do once buttons
-    if (key_map->Buttons[input_event_cycle_group] == btn) {
-      game_controller->control_block.cycle_group = true;
-    } else if (key_map->Buttons[input_event_cycle_weapon] == btn) {
-      game_controller->control_block.cycle_weapon = true;
-    } else if (key_map->Buttons[input_event_nearest_enemy] == btn) {
-      game_controller->control_block.nearest_enemy = true;
-    } else if (key_map->Buttons[input_event_enemy] == btn) {
-      game_controller->control_block.enemy = true;
-    } else if (key_map->Buttons[input_event_enemy_back] == btn) {
-      game_controller->control_block.enemy_back = true;
-    } else if (key_map->Buttons[input_event_friendly] == btn) {
-      game_controller->control_block.friendly = true;
-    } else if (key_map->Buttons[input_event_friendly_back] == btn) {
-      game_controller->control_block.friendly_back = true;
-    } else if (key_map->Buttons[input_event_target_pointer] == btn) {
-      game_controller->control_block.target_pointer = true;
-    } else if (key_map->Buttons[input_event_nav_point] == btn) {
-      game_controller->control_block.nav_point = true;
-    } else if (key_map->Buttons[input_event_nav_point_back] == btn) {
-      game_controller->control_block.nav_point_back = true;
-    } else if (key_map->Buttons[input_event_inspect] == btn) {
-      game_controller->control_block.inspect = true;
-    } else if (key_map->Buttons[input_event_target_low] == btn) {
-      game_controller->control_block.target_low = true;
-    } else if (key_map->Buttons[input_event_target_high] == btn) {
-      game_controller->control_block.target_high = true;
-    } else if (key_map->Buttons[input_event_target_air] == btn) {
-      game_controller->control_block.target_air = true;
-    } else if (key_map->Buttons[input_event_zoom_in] == btn) {
-      game_controller->control_block.zoom_in = true;
-    } else if (key_map->Buttons[input_event_zoom_out] == btn) {
-      game_controller->control_block.zoom_out = true;
-    } else if (key_map->Buttons[input_event_zoom_target] == btn) {
-      game_controller->control_block.zoom_target = true;
-    } else if (key_map->Buttons[input_event_menu_interface] == btn) {
-      game_controller->control_block.menu_interface = true;
-    } else if (key_map->Buttons[input_event_communication_interface] == btn) {
-      game_controller->control_block.communication_interface = true;
-    }
+  // do once buttons
+  if (key_map->Buttons[input_event_cycle_group] == btn) {
+    game_controller->control_block.cycle_group = true;
+  } else if (key_map->Buttons[input_event_cycle_weapon] == btn) {
+    game_controller->control_block.cycle_weapon = true;
+  } else if (key_map->Buttons[input_event_nearest_enemy] == btn) {
+    game_controller->control_block.nearest_enemy = true;
+  } else if (key_map->Buttons[input_event_enemy] == btn) {
+    game_controller->control_block.enemy = true;
+  } else if (key_map->Buttons[input_event_enemy_back] == btn) {
+    game_controller->control_block.enemy_back = true;
+  } else if (key_map->Buttons[input_event_friendly] == btn) {
+    game_controller->control_block.friendly = true;
+  } else if (key_map->Buttons[input_event_friendly_back] == btn) {
+    game_controller->control_block.friendly_back = true;
+  } else if (key_map->Buttons[input_event_target_pointer] == btn) {
+    game_controller->control_block.target_pointer = true;
+  } else if (key_map->Buttons[input_event_nav_point] == btn) {
+    game_controller->control_block.nav_point = true;
+  } else if (key_map->Buttons[input_event_nav_point_back] == btn) {
+    game_controller->control_block.nav_point_back = true;
+  } else if (key_map->Buttons[input_event_inspect] == btn) {
+    game_controller->control_block.inspect = true;
+  } else if (key_map->Buttons[input_event_target_low] == btn) {
+    game_controller->control_block.target_low = true;
+  } else if (key_map->Buttons[input_event_target_high] == btn) {
+    game_controller->control_block.target_high = true;
+  } else if (key_map->Buttons[input_event_target_air] == btn) {
+    game_controller->control_block.target_air = true;
+  } else if (key_map->Buttons[input_event_zoom_in] == btn) {
+    game_controller->control_block.zoom_in = true;
+  } else if (key_map->Buttons[input_event_zoom_out] == btn) {
+    game_controller->control_block.zoom_out = true;
+  } else if (key_map->Buttons[input_event_zoom_target] == btn) {
+    game_controller->control_block.zoom_target = true;
+  } else if (key_map->Buttons[input_event_menu_interface] == btn) {
+    game_controller->control_block.menu_interface = true;
+  } else if (key_map->Buttons[input_event_communication_interface] == btn) {
+    game_controller->control_block.communication_interface = true;
+  }
 
   return true;
 }
 
-bool InputHandler::mouseReleased(const OIS::MouseEvent& evt, OIS::MouseButtonID btn)
+bool InputHandler::mouseReleased(const OIS::MouseEvent& evt,
+                                 OIS::MouseButtonID     btn)
 {
   if (key_map->Buttons[input_event_fire] == btn) {
     game_controller->control_block.fire = false;
@@ -349,9 +352,9 @@ bool InputHandler::mouseReleased(const OIS::MouseEvent& evt, OIS::MouseButtonID 
 }
 
 /** @brief transalte key presses into input events for the controller
-  * this is going to be a nightmare to maintain
-  * TODO: optimise this - put pointers to functions in a table indexed by input_event?
-  */
+ * this is going to be a nightmare to maintain
+ * TODO: optimise this - put pointers to functions in a table indexed by input_event?
+ */
 bool InputHandler::keyPressed(const OIS::KeyEvent& evt)
 {
   // sticky keys!
@@ -363,7 +366,7 @@ bool InputHandler::keyPressed(const OIS::KeyEvent& evt)
 
   // set throttle full speed in reverse unless moving forward, in that case stop
   if (key_map->Keys[input_event_down] == evt.key) {
-    Ogre::Real throttle = game_controller->getThrottle();
+    Real throttle = game_controller->getThrottle();
     if (throttle <= -0.5) {
       game_controller->setThrottle(-1);
     } else if (throttle <= 0) {
@@ -381,7 +384,7 @@ bool InputHandler::keyPressed(const OIS::KeyEvent& evt)
 
   // set throttle full speed ahead unless going backward, in that case stop
   if (key_map->Keys[input_event_up] == evt.key) {
-    Ogre::Real throttle = game_controller->getThrottle();
+    Real throttle = game_controller->getThrottle();
     if (throttle >= 0.75) {
       game_controller->setThrottle(1);
     } else if (throttle >= 0.5) {
@@ -689,5 +692,3 @@ bool InputHandler::keyReleased(const OIS::KeyEvent& evt)
 
   return true;
 }
-
-

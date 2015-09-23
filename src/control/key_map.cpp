@@ -4,14 +4,14 @@
 #include "files_handler.h"
 
 /** @brief sets the mappings
-  */
+ */
 KeyMap::KeyMap()
 {
   assert(getKeyConfig("controls"));
 }
 
 /** @brief loads the config from a file
-  */
+ */
 bool KeyMap::getKeyConfig(const string& filename)
 {
   // insert data from file into pairs
@@ -120,7 +120,7 @@ bool KeyMap::getKeyConfig(const string& filename)
 }
 
 /** @brief translates from human readable to OIS ids
-  */
+ */
 OIS::KeyCode KeyMap::translateKeycode(const string& id)
 {
   map<string, OIS::KeyCode> keys;
@@ -239,7 +239,7 @@ OIS::KeyCode KeyMap::translateKeycode(const string& id)
 }
 
 /** @brief translates from human readable to OIS ids
-  */
+ */
 OIS::MouseButtonID KeyMap::translateMouse(const string& id)
 {
   map<string, OIS::MouseButtonID> mouse;

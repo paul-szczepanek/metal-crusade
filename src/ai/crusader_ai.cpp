@@ -5,11 +5,11 @@
 #include "unit_factory.h"
 #include "crusader.h"
 #include "game_controller.h"
-#include "imaginarius.h"
 
 // to save myself typing - everything here is fake and temp!!!
 
-CrusaderAI::CrusaderAI(Crusader* a_self) : enemy(a_self), self(a_self), goal(NULL)
+CrusaderAI::CrusaderAI(Crusader* a_self)
+  : enemy(a_self), self(a_self), goal(NULL)
 {
   // fake and temp
 }
@@ -38,7 +38,7 @@ void CrusaderAI::update()
     game_controller->setPointerPos(enemy->getPosition());
 
     // stupid homing and cirlcing behaviour
-    Ogre::Vector3 direction_to_enemy = enemy->getPosition() - self->getPosition();
+    Vector3 direction_to_enemy = enemy->getPosition() - self->getPosition();
 
     // if it's at an angle that can hit the target
     bool hitting = (self->getDirection().dotProduct(direction_to_enemy) > 0.99);
@@ -92,8 +92,6 @@ void CrusaderAI::update()
           game_controller->control_block.fire = false;
         }
 
-
-
       } else {
         game_controller->control_block.fire = false;
         game_controller->setThrottle(0.25);
@@ -107,7 +105,7 @@ void CrusaderAI::update()
     game_controller->setPointerPos(goal->getPosition());
 
     // stupid homing
-    Ogre::Vector3 direction_to_goal = goal->getPosition() - self->getPosition();
+    Vector3 direction_to_goal = goal->getPosition() - self->getPosition();
     direction_to_goal.normalise();
 
     // if it's at an angle that can hit the target

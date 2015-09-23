@@ -5,14 +5,16 @@
 
 #include "hud_part.h"
 
-class HudText : public HudPart
+class HudText
+  : public HudPart
 {
 public:
   HudText(hud_part_design_t& a_hud_part_design);
-  ~HudText() { };
+  ~HudText() {
+  }
 
   // main loop
-  void update(Ogre::Real a_dt);
+  void update(Real a_dt);
 
 private:
   string text;
@@ -20,8 +22,8 @@ private:
   usint font_size;
 
   // lower fps
-  Ogre::Real hud_part_interval;
-  Ogre::Real hud_part_accumulator;
+  Real hud_part_interval;
+  Real hud_part_accumulator;
 
   // text functions
   static string getTextClock();

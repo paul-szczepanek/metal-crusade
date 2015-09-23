@@ -12,36 +12,38 @@
 // max_angle,
 // direction) // +1 is clockwise, -1 is counterclockwise
 
-class HudDial : public HudPart
+class HudDial
+  : public HudPart
 {
 public:
   HudDial(hud_part_design_t& a_hud_part_design);
-  ~HudDial() { };
+  ~HudDial() {
+  }
 
   // main loop
-  void update(Ogre::Real a_dt);
+  void update(Real a_dt);
 
 private:
   // dial specs
-  Ogre::Real min_value;
-  Ogre::Real max_value;
-  Ogre::Real min_angle;
-  Ogre::Real max_angle;
-  Ogre::Real value;
-  Ogre::Real angle;
+  Real min_value;
+  Real max_value;
+  Real min_angle;
+  Real max_angle;
+  Real value;
+  Real angle;
   Ogre::TextureUnitState* dial_texture;
 
   // dial functions
-  static Ogre::Real getValueSpeed();
-  static Ogre::Real getValuePressure();
-  static Ogre::Real getValueCoolant();
-  static Ogre::Real getValueEngineTemperature();
-  static Ogre::Real getValueCoreTemperature();
-  static Ogre::Real getValueExternalTemperature();
-  static Ogre::Real getValueThrottle();
-  static Ogre::Real getValueZero();
+  static Real getValueSpeed();
+  static Real getValuePressure();
+  static Real getValueCoolant();
+  static Real getValueEngineTemperature();
+  static Real getValueCoreTemperature();
+  static Real getValueExternalTemperature();
+  static Real getValueThrottle();
+  static Real getValueZero();
   // fucntion pointer bound to at creation
-  Ogre::Real (*getValue)();
+  Real (*getValue)();
 };
 
 #endif // HUD_DIAL_H

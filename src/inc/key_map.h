@@ -26,8 +26,13 @@ public:
   KeyMap();
   ~KeyMap();
 
-  OIS::KeyCode getKey(input_event a_evt) { return Keys[a_evt]; };
-  OIS::MouseButtonID getMouse(input_event a_evt) { return Buttons[a_evt]; };
+  OIS::KeyCode getKey(input_event a_evt) {
+    return Keys[a_evt];
+  }
+
+  OIS::MouseButtonID getMouse(input_event a_evt) {
+    return Buttons[a_evt];
+  }
 
   bool getKeyConfig(const string& filename);
   OIS::MouseButtonID translateMouse(const string& id);

@@ -6,7 +6,8 @@
 #include "unit.h"
 #include "camera.h"
 
-HudPointer::HudPointer(hud_part_design_t& a_hud_part_design) : HudPart(a_hud_part_design)
+HudPointer::HudPointer(hud_part_design_t& a_hud_part_design)
+  : HudPart(a_hud_part_design)
 {
   // create texture for the pointer
   Ogre::MaterialPtr material = Hud::createOverlayMaterial(a_hud_part_design.name);
@@ -31,7 +32,7 @@ HudPointer::HudPointer(hud_part_design_t& a_hud_part_design) : HudPart(a_hud_par
   }
 }
 
-void HudPointer::update(Ogre::Real a_dt)
+void HudPointer::update(Real a_dt)
 {
   // rotate the pointer by rotating the texture UVs
   pointer_texture->setTextureRotate(getAngle());
@@ -39,24 +40,24 @@ void HudPointer::update(Ogre::Real a_dt)
 
 // functions to be used to get the value for the dial
 // bound to at creation to save on constant checking every frame
-Ogre::Radian HudPointer::getAngleDirection()
+Radian HudPointer::getAngleDirection()
 {
   return Game::hud->player_unit->getMovingOrientation().getYaw()
          + getAngleCompass();
 }
 
-Ogre::Radian HudPointer::getAngleTorsoDirection()
+Radian HudPointer::getAngleTorsoDirection()
 {
   return Game::hud->player_unit->getLookingOrientation().getYaw()
          + getAngleCompass();
 }
 
-Ogre::Radian HudPointer::getAngleCompass()
+Radian HudPointer::getAngleCompass()
 {
-  return Ogre::Radian(pi) - Game::camera->getOrientation().getYaw();
+  return Radian(pi) - Game::camera->getOrientation().getYaw();
 }
 
-Ogre::Radian HudPointer::getAngleZero()
+Radian HudPointer::getAngleZero()
 {
-  return Ogre::Radian(0);
+  return Radian(0);
 }

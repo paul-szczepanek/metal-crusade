@@ -53,7 +53,7 @@ HudText::HudText(hud_part_design_t& a_hud_part_design)
   }
 }
 
-void HudText::update(Ogre::Real a_dt)
+void HudText::update(Real a_dt)
 {
   // lower fps for digital parts
   hud_part_accumulator += a_dt;

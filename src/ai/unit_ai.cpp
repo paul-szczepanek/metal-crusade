@@ -2,7 +2,8 @@
 
 #include "unit_ai.h"
 
-UnitAI::UnitAI() : active(false)
+UnitAI::UnitAI()
+  : active(false)
 {
   // ctor
 }

@@ -11,7 +11,8 @@ class UnitAI
 {
 public:
   UnitAI();
-  virtual ~UnitAI() { };
+  virtual ~UnitAI() {
+  }
 
   // main loop
   virtual void update() = 0;

@@ -10,20 +10,25 @@ class MFDComputer
 {
 public:
   MFDComputer();
-  ~MFDComputer() { };
+  ~MFDComputer() {
+  }
 
   // main loop
-  void update(Ogre::Real a_dt);
+  void update(Real a_dt);
 
   // make selected
   void activate(bool a_toggle);
 
   // communicate with mfd aux
-  void setLine(const string& a_message, usint a_line);
-  string getLine(usint a_i, usint a_j);
+  void setLine(const string& a_message,
+               usint         a_line);
+  string getLine(usint a_i,
+                 usint a_j);
 
   // get the view type
-  mfd_view::view_type getViewType() { return selected_view; };
+  mfd_view::view_type getViewType() {
+    return selected_view;
+  }
 
   // get values for the mfd
 
@@ -45,10 +50,10 @@ private:
   char mfd_aux_lines[hud_num_of_colours][hud_num_of_mfd_aux_lines][hud_mfd_aux_line_length + 1];
 };
 
-inline string MFDComputer::getLine(usint a_i, usint a_j)
+inline string MFDComputer::getLine(usint a_i,
+                                   usint a_j)
 {
   return mfd_aux_lines[a_i][a_j];
 }
 
 #endif // MFDCOMPUTER_H
-

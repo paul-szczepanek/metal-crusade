@@ -18,12 +18,13 @@ enum response {
   response_max
 }
 
-struct rules  {
-  Ogre::Real centralisation; // (0,1) how relations are propagated (0 ignores parents)
-  Ogre::Real aggression; // (0,1) how easy it is to anger (0 ignores you)
-  Ogre::Real protection; // (0,1) how much it cares for child factions (0 no help for children)
-  Ogre::Real grudge; // (0,) how quickly it forgets aggressions, pert turn (0 means instant)
-  Ogre::Real loyalty; // (0,) how quickly good relations deteriorate, per turn (0 - instant)
+struct rules {
+  Real centralisation; // (0,1) how relations are propagated (0 ignores parents)
+
+  Real aggression; // (0,1) how easy it is to anger (0 ignores you)
+  Real protection; // (0,1) how much it cares for child factions (0 no help for children)
+  Real grudge; // (0,) how quickly it forgets aggressions, pert turn (0 means instant)
+  Real loyalty; // (0,) how quickly good relations deteriorate, per turn (0 - instant)
 }
 
 rules defaults[global_faction::faction_max] {
@@ -38,7 +39,6 @@ rules defaults[global_faction::faction_max] {
   // local,
   { 1,    1,    1,     10,     1000 },
 }
-
 
 }
 

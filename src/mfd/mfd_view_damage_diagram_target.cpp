@@ -11,7 +11,7 @@ MFDViewDamageDiagramTarget::MFDViewDamageDiagramTarget(hud_part_design_t& a_hud_
   //
 }
 
-void MFDViewDamageDiagramTarget::update(Ogre::Real a_dt)
+void MFDViewDamageDiagramTarget::update(Real a_dt)
 {
   if (active) {
     if (Game::hud->player_unit->getTarget() == NULL) {

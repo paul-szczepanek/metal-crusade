@@ -8,8 +8,11 @@
 #include "game.h"
 #include "game_arena.h"
 
-Weapon::Weapon(const string& a_name, Unit* a_unit, Ogre::Vector3 a_position, usint a_extra_ammo)
-  : timeout(0), projecitles_primed(0), unit(a_unit), position(a_position)
+Weapon::Weapon(const string& a_name,
+               Unit*         a_unit,
+               Vector3       a_position,
+               usint         a_extra_ammo)
+  : timeout(0), projecitles_primed(0), Owner(a_unit), position(a_position)
 {
   // load spec from file
   if (FilesHandler::getWeaponDesign(a_name, weapon_design) == false) {
@@ -21,8 +24,8 @@ Weapon::Weapon(const string& a_name, Unit* a_unit, Ogre::Vector3 a_position, usi
 }
 
 /** @brief update the timeout and fire weapon if primed
-  */
-void Weapon::update(Ogre::Real a_dt)
+ */
+void Weapon::update(Real a_dt)
 {
   if (projecitles_primed > 0) {
     // this fires each time it passes the multi_fire_timout step
@@ -32,27 +35,27 @@ void Weapon::update(Ogre::Real a_dt)
 
       // calculate the next step
       timeout_step = weapon_design.recharge_time - (weapon_design.multi_fire
-                     - projecitles_primed) * weapon_design.multi_fire_timout;
+                                                    - projecitles_primed) *
+                     weapon_design.multi_fire_timout;
 
       // get the orientation of the torso for calulating the position of the projectile spawn
-      Ogre::Quaternion orientation = unit->getLookingOrientation();
+      Quaternion orientation = Owner->getLookingOrientation();
       // get current position of the weapon
-      Ogre::Vector3 weapon_position = unit->getPosition() + orientation * position;
+      Vector3 weapon_position = Owner->getPosition() + orientation * position;
       // get the ballistic angle to hit the target
-      Ogre::Quaternion weapon_orientation = unit->getBallisticAngle(weapon_position);
+      Quaternion weapon_orientation = Owner->getBallisticAngle(weapon_position);
 
       // add variation to the angle of firing
-      Ogre::Radian angle_of_spread(Ogre::Math::RangeRandom(-weapon_design.spread,
-                                   weapon_design.spread));
-      Ogre::Quaternion firing_cone = Ogre::Quaternion(angle_of_spread, Ogre::Vector3::UNIT_Y);
+      Radian angle_of_spread(Ogre::Math::RangeRandom(-weapon_design.spread,
+                                                     weapon_design.spread));
+      Quaternion firing_cone = Quaternion(angle_of_spread, Vector3::UNIT_Y);
 
       // TODO: the spread needs to be in a cone, not in a plane
       // also make sure the spred slice is a circle not a square
       weapon_orientation = firing_cone * weapon_orientation;
 
       // create projectile
-      Game::projectile_factory->fireProjectile(weapon_position, weapon_orientation,
-          this, unit);
+      Game::projectile_factory->fireProjectile(weapon_position, weapon_orientation, this);
     }
   }
 
@@ -63,8 +66,8 @@ void Weapon::update(Ogre::Real a_dt)
 }
 
 /** @brief fire the weapon
-  * returns true if the weapon can fire
-  */
+ * returns true if the weapon can fire
+ */
 bool Weapon::fire()
 {
   // only fire when previous cycle has finished and there is ammo
@@ -77,10 +80,11 @@ bool Weapon::fire()
 
     // calculate how long in between shots (for multifire waepons)
     timeout_step = weapon_design.recharge_time - (weapon_design.multi_fire
-                   - projecitles_primed) * weapon_design.multi_fire_timout;
+                                                  - projecitles_primed) *
+                   weapon_design.multi_fire_timout;
 
     // generate heat
-    unit->addHeat(weapon_design.heat_generated);
+    Owner->addHeat(weapon_design.heat_generated);
 
     // set the timeout before next fire
     timeout = weapon_design.recharge_time;

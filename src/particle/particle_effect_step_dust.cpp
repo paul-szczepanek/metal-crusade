@@ -40,7 +40,7 @@ ParticleEffectStepDust::ParticleEffectStepDust(Ogre::SceneNode* particle_node)
   dust_emitter->setParameter("width", "6");
   dust_emitter->setParameter("height", "0");
   dust_emitter->setParameter("depth", "2");
-  dust_emitter->setAngle(Ogre::Radian(pi));
+  dust_emitter->setAngle(Radian(pi));
   dust_emitter->setEmissionRate(0);
   dust_emitter->setMinParticleVelocity(0);
   dust_emitter->setMaxParticleVelocity(1);
@@ -57,12 +57,12 @@ ParticleEffectStepDust::~ParticleEffectStepDust()
   die();
 }
 
-int ParticleEffectStepDust::update(Ogre::Real a_dt)
+int ParticleEffectStepDust::update(Real a_dt)
 {
   return 0;
 }
 
-void ParticleEffectStepDust::setRate(Ogre::Real a_rate)
+void ParticleEffectStepDust::setRate(Real a_rate)
 {
   // the faster the crusader goes more dust gets upset
   dust_emitter->setEmissionRate(a_rate * a_rate * 0.025);

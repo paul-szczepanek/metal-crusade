@@ -3,21 +3,21 @@
 #include "mfd_view_error.h"
 
 const int error_pic_w = 128;
-const Ogre::Real flashing_interval = 0.5;
+const Real flashing_interval = 0.5;
 
 MFDViewError::MFDViewError(hud_part_design_t& a_hud_part_design)
   : MFDView(a_hud_part_design), flashing_accumulator(0), on_screen(false)
 {
   // al this view does is display the offline image
   string id = "mfd_red_offline";
-  createPanel(id + getUniqueID(), id, (size.first - error_pic_w) * 0.5,
+  createPanel(id + Game::getUniqueID(), id, (size.first - error_pic_w) * 0.5,
               (size.second - error_pic_w) * 0.5, error_pic_w, error_pic_w, container);
 
   // deactivate
   activate(false);
 }
 
-void MFDViewError::update(Ogre::Real a_dt)
+void MFDViewError::update(Real a_dt)
 {
   if (active) {
     // flash the img by alternative visble and not at flashing_interval
@@ -39,7 +39,7 @@ void MFDViewError::update(Ogre::Real a_dt)
 }
 
 /** @brief this actiavates it if only one positive call is made despite negative calls
-  */
+ */
 void MFDViewError::activate(bool a_toggle)
 {
   if (on_screen == false) {

@@ -17,14 +17,20 @@
 
 // this it a global include included by all files
 
-const Ogre::Real pi         = 3.14159265358979323846;
-const Ogre::Real root_of_2  = 1.41421356237309504880;
-const Ogre::Real c1o6       = 0.16666666666666666667;
-const Ogre::Real c1o3       = 0.33333333333333333333;
-const Ogre::Real c2o3       = 0.66666666666666666667;
-const Ogre::Real c2o9       = 0.22222222222222222222;
-const Ogre::Real c4o9       = 0.44444444444444444444;
-const Ogre::Real degree2rad = 0.01745329251994329576;
+using Ogre::Real;
+using Ogre::Quaternion;
+using Ogre::Vector2;
+using Ogre::Vector3;
+using Ogre::Radian;
+
+const Real pi         = 3.14159265358979323846;
+const Real root_of_2  = 1.41421356237309504880;
+const Real c1o6       = 0.16666666666666666667;
+const Real c1o3       = 0.33333333333333333333;
+const Real c2o3       = 0.66666666666666666667;
+const Real c2o9       = 0.22222222222222222222;
+const Real c4o9       = 0.44444444444444444444;
+const Real degree2rad = 0.01745329251994329576;
 
 using std::cout;
 using std::max;
@@ -71,16 +77,19 @@ typedef pair<int, int> int_pair;
 typedef pair<uint, uint> uint_pair;
 typedef pair<usint, usint> usint_pair;
 typedef pair<ulint, ulint> ulint_pair;
-typedef pair<Ogre::Real, Ogre::Real> real_pair;
+typedef pair<Real, Real> real_pair;
 
 typedef Ogre::TextureUnitState::TextureAddressingMode texture_addressing;
 
-template <typename T> inline void clamp(T& value, const T& min, const T& max)
+template <typename T> inline void clamp(T&       value,
+                                        const T& min,
+                                        const T& max)
 {
   value = value < min ? min : (value > max ? max : value);
 }
 
-template <typename T> inline void clampZero(T& value, const T& max)
+template <typename T> inline void clampZero(T&       value,
+                                            const T& max)
 {
   value = value < 0 ? 0 : (value > max ? max : value);
 }
@@ -97,10 +106,10 @@ template <typename T> inline string intoString(const T& a_thing)
   return stream.str();
 }
 
-template <typename T> inline Ogre::Real intoReal(const T& a_thing)
+template <typename T> inline Real intoReal(const T& a_thing)
 {
   stringstream stream;
-  Ogre::Real real;
+  Real real;
   stream << a_thing;
   stream >> real;
   return real;
@@ -115,7 +124,8 @@ template <typename T> inline int intoInt(const T& a_thing)
   return integer;
 }
 
-inline string realIntoString(const Ogre::Real a_real, const usint a_precision = 3)
+inline string realIntoString(const Real  a_real,
+                             const usint a_precision = 3)
 {
   stringstream stream;
   stream << setprecision(a_precision) << a_real;

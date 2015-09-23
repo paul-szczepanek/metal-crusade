@@ -9,21 +9,31 @@ class Projectile;
 class Weapon;
 class Unit;
 
-class ProjectileFactory : public Factory
+class ProjectileFactory
+  : public Factory
 {
 public:
-  ProjectileFactory() { };
+  ProjectileFactory();
+
   ~ProjectileFactory();
 
   // main loop
-  void update(Ogre::Real a_dt);
+  void update(Real a_dt);
+
+  Projectile* getFreeProjectile();
+  Corpus* getFreeCorpus();
 
   // object creation
-  void fireProjectile(Ogre::Vector3 a_pos_xyz, Ogre::Quaternion a_orientation,
-                      Weapon* a_weapon, Unit* a_owner);
+  void fireProjectile(Vector3    a_pos_xyz,
+                      Quaternion a_orientation,
+                      Weapon*    a_weapon);
 
 private:
-  list<Projectile*> projectile_list;
+  list<Corpus*> ActiveList;
+  vector<Projectile> Projectiles;
+  vector<Corpus> Corpuses;
+  size_t lastCorpusIdx = 0;
+  size_t lastProjectileIdx = 0;
 };
 
 #endif // PROJECTILEFACTORY_H

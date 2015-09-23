@@ -18,37 +18,52 @@ class FilesHandler
 {
 public:
   static void init();
-  ~FilesHandler() { };
+  ~FilesHandler() {
+  }
 
   // read file as string (still parses for comments)
   static string getStringFromFile(const string& filename);
 
   // helper funcitons for processing all the strings read from files into appropriate types
-  static Ogre::Real getReal(string a_string);
+  static Real getReal(string a_string);
   static bool getBool(string a_string);
   static int getEnum(const string& a_string);
-  static bool getPairs(const string& filename, const string& dir, map<string, string>& pairs);
-  static void getStringArray(vector<string>& string_array, string a_buffer);
-  template <typename T> static void getIntArray(vector<T>& int_array, string a_buffer);
-  template <typename T> static void getEnumArray(vector<T>& enum_array, string a_buffer);
-  static void getIntPairArray(vector<int_pair>& int_pair_array, string a_buffer);
+  static bool getPairs(const string& filename,
+                       const string& dir,
+                       map<string, string>& pairs);
+  static void getStringArray(vector<string>& string_array,
+                             string          a_buffer);
+  template <typename T> static void getIntArray(vector<T>& int_array,
+                                                string     a_buffer);
+  template <typename T> static void getEnumArray(vector<T>& enum_array,
+                                                 string     a_buffer);
+  static void getIntPairArray(vector<int_pair>& int_pair_array,
+                              string            a_buffer);
   template <class T1, class T2>
-  static void getEnumPairArray(vector<pair<T1, T2> >& position_pair_array, string a_buffer);
-  static void getRealSeries(vector<Ogre::Real>& real_array, string a_buffer);
-  static void getColourArray(vector<Ogre::ColourValue>& colour_array, string a_buffer);
-  static void getCharArray(vector<char>& char_array, string a_buffer);
-  template <typename T> static void getDigitArray(vector<T>& int_array, string a_buffer);
+  static void getEnumPairArray(vector<pair<T1, T2> >& position_pair_array,
+                               string a_buffer);
+  static void getRealSeries(vector<Real>& real_array,
+                            string        a_buffer);
+  static void getColourArray(vector<Ogre::ColourValue>& colour_array,
+                             string                     a_buffer);
+  static void getCharArray(vector<char>& char_array,
+                           string        a_buffer);
+  template <typename T> static void getDigitArray(vector<T>& int_array,
+                                                  string     a_buffer);
 
   // sanitation for strings
   static void stripWhitespace(string& a_string);
 
 private:
-  FilesHandler() { };
+  FilesHandler() {
+  }
+
 };
 
 /** @brief fills the vector with int but treats each character as an int so 82 is 8 and 2
-  */
-template <typename T> void FilesHandler::getDigitArray(vector<T>& int_array, string a_buffer)
+ */
+template <typename T> void FilesHandler::getDigitArray(vector<T>& int_array,
+                                                       string     a_buffer)
 {
   for(int i = 0, for_size = a_buffer.size(); i < for_size; ++i) {
     // this will fail for ";" so check for them since this might be multiline buffer

@@ -5,25 +5,27 @@
 
 #include "hud_part.h"
 
-class HudPointer : public HudPart
+class HudPointer
+  : public HudPart
 {
 public:
   HudPointer(hud_part_design_t& a_hud_part_design);
-  ~HudPointer() { };
+  ~HudPointer() {
+  }
 
   // main loop
-  void update(Ogre::Real a_dt);
+  void update(Real a_dt);
 
 private:
   Ogre::TextureUnitState* pointer_texture;
 
   // pointer functions
-  static Ogre::Radian getAngleDirection();
-  static Ogre::Radian getAngleTorsoDirection();
-  static Ogre::Radian getAngleCompass();
-  static Ogre::Radian getAngleZero();
+  static Radian getAngleDirection();
+  static Radian getAngleTorsoDirection();
+  static Radian getAngleCompass();
+  static Radian getAngleZero();
   // fucntion pointer bound to at creation
-  Ogre::Radian (*getAngle)();
+  Radian (*getAngle)();
 };
 
 #endif // HUD_POINTER_H

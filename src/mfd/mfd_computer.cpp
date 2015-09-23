@@ -8,7 +8,7 @@
 
 MFDComputer::MFDComputer()
   : selected(false), selected_page(0), selecting_view(false), selected_view_index(0),
-    num_of_views(Game::hud->hud_design.mfd_views.size())
+  num_of_views(Game::hud->hud_design.mfd_views.size())
 {
   // init the mfd aux lines
   for (usint i = 0; i < hud_num_of_colours; ++i) {
@@ -35,7 +35,7 @@ MFDComputer::MFDComputer()
 }
 
 /** @brief marks the mfd as selected so that it starts processing input
-  */
+ */
 void MFDComputer::activate(bool a_toggle)
 {
   selected = a_toggle;
@@ -48,7 +48,7 @@ void MFDComputer::activate(bool a_toggle)
 }
 
 /** @brief select the mfd view
-  */
+ */
 void MFDComputer::selectView()
 {
   // change page of views - PgUp, PgDn
@@ -116,8 +116,8 @@ void MFDComputer::selectView()
 }
 
 /** @brief main loop because MFDComputer needs input
-  */
-void MFDComputer::update(Ogre::Real a_dt)
+ */
+void MFDComputer::update(Real a_dt)
 {
   if (selecting_view) {
     // mfd aux special view for selecting views for the mfd
@@ -151,8 +151,9 @@ void MFDComputer::update(Ogre::Real a_dt)
 }
 
 /** @brief parse colours and set the lines
-  */
-void MFDComputer::setLine(const string& a_message, usint a_line)
+ */
+void MFDComputer::setLine(const string& a_message,
+                          usint         a_line)
 {
   if (a_line < hud_num_of_mfd_aux_lines) {
     // fill the lines with monocolour strings
@@ -160,4 +161,3 @@ void MFDComputer::setLine(const string& a_message, usint a_line)
                             mfd_aux_lines[1][a_line], mfd_aux_lines[2][a_line]);
   }
 }
-

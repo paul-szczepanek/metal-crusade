@@ -19,27 +19,27 @@ struct weapon_design_t {
   string model;
   weapon_type type;
   sint multi_fire;
-  Ogre::Real multi_fire_timout;
-  Ogre::Real spread;
-  Ogre::Real weight;
+  Real multi_fire_timout;
+  Real spread;
+  Real weight;
   sint internals;
   sint panels;
-  Ogre::Real recharge_time;
-  Ogre::Real heat_generated;
-  Ogre::Real muzzle_velocity;
-  Ogre::Real heat_dmg;
-  Ogre::Real ballistic_dmg;
-  Ogre::Real penetration;
-  Ogre::Real energy_dmg;
-  Ogre::Real splash_range;
-  Ogre::Real splash_velocity;
+  Real recharge_time;
+  Real heat_generated;
+  Real muzzle_velocity;
+  Real heat_dmg;
+  Real ballistic_dmg;
+  Real penetration;
+  Real energy_dmg;
+  Real splash_range;
+  Real splash_velocity;
   string projectile;
-  Ogre::Real projectile_weight;
-  Ogre::Real fuel;
-  Ogre::Real homing;
-  Ogre::Real lock_on_time;
+  Real projectile_weight;
+  Real fuel;
+  Real homing;
+  Real lock_on_time;
   uint ammo_per_slot;
-  Ogre::Real range;
+  Real range;
   // strings
   ulint text_name;
   ulint text_list_name;
@@ -49,34 +49,44 @@ struct weapon_design_t {
 class Weapon
 {
 public:
-  Weapon(const string& a_name, Unit* a_unit, Ogre::Vector3 a_position, usint a_extra_ammo);
-  virtual ~Weapon() { };
+  Weapon(const string& a_name,
+         Unit*         a_unit,
+         Vector3       a_position,
+         usint         a_extra_ammo);
+  virtual ~Weapon() {
+  }
 
   // main loop
-  void update(Ogre::Real a_dt);
+  void update(Real a_dt);
 
   bool fire();
 
   // for hud
-  ulint getAmmo() { return ammo / (weapon_design.multi_fire + 1); };
-  Ogre::Real getCharge() { return 1 - (timeout / weapon_design.recharge_time); };
-  bool isOperational() { return (ammo > 0); };
+  ulint getAmmo() {
+    return ammo / (weapon_design.multi_fire + 1);
+  }
+
+  Real getCharge() {
+    return 1 - (timeout / weapon_design.recharge_time);
+  }
+
+  bool isOperational() {
+    return (ammo > 0);
+  }
 
   weapon_design_t weapon_design;
 
+public:
+  // parent unit
+  Unit* Owner;
+
 private:
   ulint ammo;
-  Ogre::Real timeout;
+  Real timeout;
   uint projecitles_primed;
-  Ogre::Real timeout_step;
+  Real timeout_step;
 
-  // parent unit
-  Unit* unit;
-
-  // this is temp, this should create a scene node, attach it to the torso model
-  // and then use that position to determine the origin of projectiles.
-  Ogre::Vector3 position;
-
+  Vector3 position;
 };
 
 #endif // WEAPON_H

@@ -7,19 +7,24 @@
 
 class ParticleEffect;
 
-class ParticleManager : public Factory
+class ParticleManager
+  : public Factory
 {
 public:
   ParticleManager();
   virtual ~ParticleManager();
 
-  void update(Ogre::Real a_dt);
+  void update(Real a_dt);
 
   // create explosions
-  ParticleEffect* createExplosion(Ogre::SceneNode* scene_node, Ogre::Real a_size,
-                                  Ogre::Real a_time, usint a_ferocity = 1);
-  ParticleEffect* createExplosion(Ogre::Vector3 a_position, Ogre::Real a_size,
-                                  Ogre::Real a_time, usint a_ferocity = 1);
+  ParticleEffect* createExplosion(Ogre::SceneNode* scene_node,
+                                  Real             a_size,
+                                  Real             a_time,
+                                  usint            a_ferocity = 1);
+  ParticleEffect* createExplosion(Vector3 a_position,
+                                  Real    a_size,
+                                  Real    a_time,
+                                  usint   a_ferocity = 1);
   ParticleEffect* createStepDust(Ogre::SceneNode* scene_node);
 
 private:

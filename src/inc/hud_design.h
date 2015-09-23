@@ -100,6 +100,7 @@ enum type {
   dial,
   status_display,
 };
+
 };
 
 struct hud_part_design_t {
@@ -109,7 +110,7 @@ struct hud_part_design_t {
   hud_part_enum::function function;
   int_pair position;
   int_pair size;
-  vector<Ogre::Real> parameters;
+  vector<Real> parameters;
 };
 
 struct hud_design_t {

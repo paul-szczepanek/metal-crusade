@@ -65,7 +65,7 @@ HudMFDDisplay::~HudMFDDisplay()
   }
 }
 
-void HudMFDDisplay::update(Ogre::Real a_dt)
+void HudMFDDisplay::update(Real a_dt)
 {
   // use accumulator as dt
   hud_part_accumulator += a_dt;

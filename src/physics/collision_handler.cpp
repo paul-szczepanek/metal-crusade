@@ -20,21 +20,21 @@ CollisionHandler::~CollisionHandler()
 }
 
 /** @brief put the dynamic object into the collision system
-  */
+ */
 void CollisionHandler::registerObject(Corpus* a_corpus)
 {
   registered_objects.push_back(a_corpus);
 }
 
 /** @brief remove the dynamic object from the collision system
-  */
+ */
 void CollisionHandler::deregisterObject(Corpus* a_corpus)
 {
   registered_objects.remove(a_corpus);
 }
 
 /** @brief fills a list of potential collisions based on bounding spheres
-  */
+ */
 void CollisionHandler::updatePotentialCollisions()
 {
   // clear last frame collisions if any
@@ -76,7 +76,7 @@ void CollisionHandler::updatePotentialCollisions()
                 (*it2)->collideWith(*it);
                 // stick it in the list of potential collisions]
                 possible_collisions.push_back(collision_pair(*it,
-                                              static_cast<Corpus*>(*it2)));
+                                                             static_cast<Corpus*>(*it2)));
               }
             }
           }
@@ -87,9 +87,9 @@ void CollisionHandler::updatePotentialCollisions()
 }
 
 /** @brief check for collision based on individual spheres
-  * @todo: profile whether it pays off to use exclusion spheres
-  * though they are needed if I want to have flat surfaces
-  */
+ * @todo: profile whether it pays off to use exclusion spheres
+ * though they are needed if I want to have flat surfaces
+ */
 void CollisionHandler::evaluatePotentialCollisions()
 {
   // go through all list of potential collisions
@@ -127,7 +127,7 @@ void CollisionHandler::evaluatePotentialCollisions()
 
             // and use it to eliminate by exclusion from the other set
             bitset<MAX_NUM_CS> cs_bitset2 = object2->getCollisionSpheres(sphere1,
-                                            es_bitset2);
+                                                                         es_bitset2);
 
             for (usint k = 0; k < num_of_cs2; ++k) {
               if (cs_bitset2[k]) { // if it hasn't been excluded
@@ -187,8 +187,8 @@ void CollisionHandler::evaluatePotentialCollisions()
 }
 
 /** @brief produce collisions and evaluate them
-  */
-void CollisionHandler::update(Ogre::Real a_dt)
+ */
+void CollisionHandler::update(Real a_dt)
 {
   updatePotentialCollisions();
   evaluatePotentialCollisions();

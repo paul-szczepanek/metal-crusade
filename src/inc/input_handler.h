@@ -22,10 +22,10 @@ class GameController;
 #include <OIS/OISJoyStick.h>
 #endif
 
-
 #include "input_event.h"
 
-class InputHandler : public OIS::KeyListener,
+class InputHandler
+  : public OIS::KeyListener,
   public OIS::MouseListener,
   public Ogre::WindowEventListener
 {
@@ -43,8 +43,10 @@ public:
 
   // called by OIS on input
   bool mouseMoved(const OIS::MouseEvent& evt);
-  bool mousePressed(const OIS::MouseEvent& evt, OIS::MouseButtonID);
-  bool mouseReleased(const OIS::MouseEvent& evt, OIS::MouseButtonID);
+  bool mousePressed(const OIS::MouseEvent& evt,
+                    OIS::                  MouseButtonID);
+  bool mouseReleased(const OIS::MouseEvent& evt,
+                     OIS::                  MouseButtonID);
   bool keyPressed(const OIS::KeyEvent& evt);
   bool keyReleased(const OIS::KeyEvent& evt);
 
@@ -73,7 +75,7 @@ private:
   Ogre::Camera* OgreCamera;
   Ogre::RaySceneQuery* mouse_ray_query;
   Ogre::Ray* mouse_ray;
-  Ogre::Real pointer_x, pointer_y;
+  Real pointer_x, pointer_y;
 
   Ogre::SceneNode* pointer_node;
   Ogre::SceneNode* pointer_centre_node;

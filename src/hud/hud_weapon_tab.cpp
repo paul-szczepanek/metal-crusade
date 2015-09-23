@@ -26,21 +26,25 @@ HudWeaponTab::HudWeaponTab(hud_part_design_t& a_hud_part_design)
   font_size = a_hud_part_design.parameters[0]; // read the size of the status font
 
   // numbers for positioning the lights
-  Ogre::Real offset = Ogre::Real(size.first) * 0.3;
-  Ogre::Real step = (Ogre::Real(size.first - offset) * 0.94) / number_of_lights;
-  Ogre::Real width = step * 2.8;
+  Real offset = Real(size.first) * 0.3;
+  Real step = (Real(size.first - offset) * 0.94) / number_of_lights;
+  Real width = step * 2.8;
 
   // create a container for the lights to guarantee proper z-sorting
   Ogre::OverlayContainer* lights_container = static_cast<Ogre::OverlayContainer*>
-      (overlay_mngr->createOverlayElement("Panel",
-                                          a_hud_part_design.name + "lights_container"));
+                                             (overlay_mngr->createOverlayElement("Panel",
+                                                                                 a_hud_part_design.
+                                                                                 name +
+                                                                                 "lights_container"));
   lights_container->setMetricsMode(Ogre::GMM_PIXELS);
   container->addChild(lights_container); // add it to the main container
 
   // create a container for the text elements to guarantee proper z-sorting
   Ogre::OverlayContainer* text_container = static_cast<Ogre::OverlayContainer*>
-      (overlay_mngr->createOverlayElement("Panel",
-                                          a_hud_part_design.name + "text_container"));
+                                           (overlay_mngr->createOverlayElement("Panel",
+                                                                               a_hud_part_design.
+                                                                               name +
+                                                                               "text_container"));
   text_container->setMetricsMode(Ogre::GMM_PIXELS);
   lights_container->addChild(text_container); // add it to the lights container so text is on top
 
@@ -79,23 +83,23 @@ HudWeaponTab::HudWeaponTab(hud_part_design_t& a_hud_part_design)
     string weapon_name = Game::text->getText(weapons[i]->weapon_design.text_list_name);
     id = a_hud_part_design.name + "_name_text_" + intoString(i); // unique id
     tab_name_elements.push_back(createTextArea(id, weapon_name, font_size,
-                                Game::hud->hud_design.display_colours[0],
-                                offset + 1, size.second * i + 3,
-                                size.first - offset, size.second,
-                                text_container));
+                                               Game::hud->hud_design.display_colours[0],
+                                               offset + 1, size.second * i + 3,
+                                               size.first - offset, size.second,
+                                               text_container));
 
     // text for diasplaying ammo number
     id = a_hud_part_design.name + "_ammo_text_" + intoString(i); // unique id
     tab_ammo_elements.push_back(createTextArea(id, "000", font_size,
-                                Game::hud->hud_design.display_colours[0],
-                                11, size.second * i + 3, offset,
-                                size.second, text_container));
+                                               Game::hud->hud_design.display_colours[0],
+                                               11, size.second * i + 3, offset,
+                                               size.second, text_container));
   }
 }
 
 /** @brief displays weapons, their ammo, their charge status
-  */
-void HudWeaponTab::update(Ogre::Real a_dt)
+ */
+void HudWeaponTab::update(Real a_dt)
 {
   accumulator += a_dt;
   if (accumulator > interval) { // runs at 10fps
@@ -140,7 +144,7 @@ void HudWeaponTab::update(Ogre::Real a_dt)
       // light up functional weapons
       if (weapons[i]->isOperational()) { // is the weapon still capable of firing
         // determine how many lights to light to show the charging progress
-        Ogre::Real charged = weapons[i]->getCharge() * number_of_lights;
+        Real charged = weapons[i]->getCharge() * number_of_lights;
 
         // light up the tri-colour lights under the weapon name
         if (in_selected_group) {

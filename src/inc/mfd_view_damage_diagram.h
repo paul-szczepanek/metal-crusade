@@ -7,18 +7,21 @@
 
 class Corpus;
 
-class MFDViewDamageDiagram : public MFDView
+class MFDViewDamageDiagram
+  : public MFDView
 {
 public:
   MFDViewDamageDiagram(hud_part_design_t& a_hud_part_design);
-  virtual ~MFDViewDamageDiagram() { };
+  virtual ~MFDViewDamageDiagram() {
+  }
 
   // main loop
-  virtual void update(Ogre::Real a_dt);
+  virtual void update(Real a_dt);
 
 protected:
   // inner main loop
-  void updateDiagramElements(Ogre::Real a_dt, Corpus* a_object);
+  void updateDiagramElements(Real    a_dt,
+                             Corpus* a_object);
 
   // change diagram type to fit the target
   void switchDiagrams(mfd_view::diagram_type a_new_diagram);
@@ -28,9 +31,9 @@ protected:
 
 private:
   // creates the texture unit states for use with alpha blending control
-  void createDiagram(mfd_view::diagram_type a_diagram_type,
-                     const vector<string>& grn_names,
-                     const vector<string>& red_names,
+  void createDiagram(mfd_view::diagram_type           a_diagram_type,
+                     const vector<string>&            grn_names,
+                     const vector<string>&            red_names,
                      vector<Ogre::TextureUnitState*>& materials_grn,
                      vector<Ogre::TextureUnitState*>& materials_red);
 
@@ -66,7 +69,7 @@ private:
   pair<Ogre::OverlayElement*, Ogre::OverlayElement*> ico_electronics;
 
   // flashing
-  vector<Ogre::Real> flashing_accumulator;
+  vector<Real> flashing_accumulator;
 
   // bits to help position the pics - should be read from files really
   int offset_x;

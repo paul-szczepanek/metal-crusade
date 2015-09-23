@@ -12,15 +12,15 @@ enum armour_type {
 };
 
 // TODO: read from file
-const Ogre::Real armour_type_to_structure[] = {
+const Real armour_type_to_structure[] = {
   1,   // armour_type_composite
-  0.25,// armour_type_reactive
+  0.25, // armour_type_reactive
   2,   // armour_type_plastic
   1,   // armour_type_ceramic
   4,   // armour_type_tesla
 };
 
-const Ogre::Real armour_type_to_ballistic[] = {
+const Real armour_type_to_ballistic[] = {
   1,   // armour_type_composite
   8,   // armour_type_reactive
   1,   // armour_type_plastic
@@ -28,7 +28,7 @@ const Ogre::Real armour_type_to_ballistic[] = {
   4,   // armour_type_tesla
 };
 
-const Ogre::Real armour_type_to_conductivity[] = {
+const Real armour_type_to_conductivity[] = {
   1, // armour_type_composite
   0.8, // armour_type_reactive
   0.2, // armour_type_plastic
@@ -36,7 +36,7 @@ const Ogre::Real armour_type_to_conductivity[] = {
   0.5, // armour_type_tesla
 };
 
-const Ogre::Real armour_type_to_generated_heat[] = {
+const Real armour_type_to_generated_heat[] = {
   0,   // armour_type_composite
   0.5, // armour_type_reactive
   0,   // armour_type_plastic

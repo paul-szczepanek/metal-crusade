@@ -46,6 +46,7 @@ enum string_index {
   suffix23,
   suffix24,
 };
+
 };
 
 #endif // INTERNAL_STRING_H_INCLUDED

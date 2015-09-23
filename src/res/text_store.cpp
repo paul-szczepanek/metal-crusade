@@ -17,7 +17,7 @@ string& TextStore::getText(string& a_string)
 }
 
 /** @brief translate string key into int key
-  */
+ */
 size_t TextStore::getStringKey(const string& a_string)
 {
   size_t key = 0;
@@ -32,8 +32,8 @@ size_t TextStore::getStringKey(const string& a_string)
 }
 
 /** @brief fills the vector with game text
-  * whilst doing this also creates a map for matching strings to numerical keys used internally
-  */
+ * whilst doing this also creates a map for matching strings to numerical keys used internally
+ */
 bool TextStore::getGameText(vector<string>& GameText)
 {
   string buffer;
@@ -50,7 +50,7 @@ bool TextStore::getGameText(vector<string>& GameText)
     uint begin;
     uint end;
 
-    while(! spec_file.eof()) {
+    while(!spec_file.eof()) {
       // go line by line
       getline(spec_file, buffer);
 

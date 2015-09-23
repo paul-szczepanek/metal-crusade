@@ -3,8 +3,10 @@
 #include "particle_effect_flipbook.h"
 #include "game.h"
 
-ParticleEffectFlipbook::ParticleEffectFlipbook(Ogre::SceneNode* a_scene_node, Ogre::Real a_size,
-    Ogre::Real a_ferocity, fx_anim::anims a_animation)
+ParticleEffectFlipbook::ParticleEffectFlipbook(Ogre::SceneNode* a_scene_node,
+                                               Real             a_size,
+                                               Real             a_ferocity,
+                                               fx_anim::anims   a_animation)
   : current_frame(0)
 {
   lifetime = 0;
@@ -16,18 +18,17 @@ ParticleEffectFlipbook::ParticleEffectFlipbook(Ogre::SceneNode* a_scene_node, Og
 
   switch (a_animation) {
   default: {
-      num_frames = 8;
-      lifetime_limit = 1.f / num_frames;
+    num_frames = 8;
+    lifetime_limit = 1.f / num_frames;
 
-      set->setMaterialName("explosion_petrol");
-      set->setTextureStacksAndSlices(2, 4);
+    set->setMaterialName("explosion_petrol");
+    set->setTextureStacksAndSlices(2, 4);
 
-      set->setDefaultDimensions(0.32 * a_size, 0.64 * a_size);
+    set->setDefaultDimensions(0.32 * a_size, 0.64 * a_size);
 
-      billboard = set->createBillboard(Ogre::Vector3(0, 0.32 * a_size, 0));
-    }
+    billboard = set->createBillboard(Vector3(0, 0.32 * a_size, 0));
   }
-
+  }
 
 }
 
@@ -39,7 +40,7 @@ ParticleEffectFlipbook::~ParticleEffectFlipbook()
   Game::scene->destroyBillboardSet(set);
 }
 
-int ParticleEffectFlipbook::update(Ogre::Real a_dt)
+int ParticleEffectFlipbook::update(Real a_dt)
 {
   lifetime += a_dt;
 
@@ -64,4 +65,3 @@ int ParticleEffectFlipbook::update(Ogre::Real a_dt)
 
   return 0;
 }
-

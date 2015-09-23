@@ -9,8 +9,11 @@ class Corpus;
 class Collision;
 
 struct collision_pair {
-  collision_pair(Corpus* a_object1, Corpus* a_object2)
-    : object1(a_object1), object2(a_object2) { };
+  collision_pair(Corpus* a_object1,
+                 Corpus* a_object2)
+    : object1(a_object1), object2(a_object2) {
+  }
+
   Corpus* object1;
   Corpus* object2;
 };
@@ -22,7 +25,7 @@ public:
   ~CollisionHandler();
 
   // main loop
-  void update(Ogre::Real a_dt);
+  void update(Real a_dt);
 
   // functions hooking up objects into the system
   void registerObject(Corpus* a_corpus);
@@ -41,7 +44,7 @@ private:
   list<Corpus*> registered_objects;
 
   // temp
-  Ogre::Vector2 arena_size;
+  Vector2 arena_size;
 };
 
 #endif // COLLISIONHANDLER_H

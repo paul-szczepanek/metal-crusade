@@ -5,8 +5,8 @@
 #include "game.h"
 
 GameController::GameController(const string& a_name = "Player")
-  : turn_speed(0.0), throttle(0.0), pointer_pos(Ogre::Vector3(0, 0, 0)), name(a_name),
-    formation(NULL), InvertTurnToPointer(false)
+  : turn_speed(0.0), throttle(0.0), pointer_pos(Vector3(0, 0, 0)), name(a_name),
+  formation(NULL), InvertTurnToPointer(false)
 {
   control_block.fire = false;
   control_block.turn_to_pointer = false;
@@ -54,11 +54,11 @@ GameController::GameController(const string& a_name = "Player")
   control_block.mfd_right = false;
   control_block.mfd_toggle = false;
   control_block.log = false;
-};
+}
 
 /** @brief speeds up and slows down
-  */
-void GameController::setThrottle(Ogre::Real a_throttle)
+ */
+void GameController::setThrottle(Real a_throttle)
 {
   throttle = a_throttle;
 
@@ -68,11 +68,11 @@ void GameController::setThrottle(Ogre::Real a_throttle)
   } else if (throttle < -1) {
     throttle = -1;
   }
-};
+}
 
 /** @brief sets the formation the player belongs to by name
-  */
+ */
 void GameController::setFormation(string a_formation_name)
 {
   // setFormation(Game::formation_factory->getFormation(a_formation_name));
-};
+}

@@ -9,6 +9,7 @@ enum diagram_type {
   object,
   biped_crusader
 };
+
 }
 
 #endif // MFD_VIEW_DESIGN_H_INCLUDED

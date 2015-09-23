@@ -4,7 +4,9 @@
 #include "faction.h"
 #include "game_controller.h"
 
-Formation::Formation(const string& a_name, Faction* a_faction) : name(a_name), faction(a_faction)
+Formation::Formation(const string& a_name,
+                     Faction*      a_faction)
+  : name(a_name), faction(a_faction)
 {
   faction->joinFaction(this);
 }
@@ -21,8 +23,8 @@ Formation::~Formation()
 }
 
 /** @brief a controller (which represents the unit's pilot) joins a formation
-  * automatically leaves any old one
-  */
+ * automatically leaves any old one
+ */
 void Formation::setFaction(Faction* a_faction)
 {
   faction = a_faction;
@@ -31,8 +33,8 @@ void Formation::setFaction(Faction* a_faction)
 }
 
 /** @brief a controller (which represents the unit's pilot) joins a formation
-  * automatically leaves any old one
-  */
+ * automatically leaves any old one
+ */
 void Formation::joinFormation(GameController* a_controller)
 {
   // check old formation
@@ -50,8 +52,8 @@ void Formation::joinFormation(GameController* a_controller)
 }
 
 /** @brief a controller (which represents the unit's pilot) leaves the formation
-  * (used mostly internally)
-  */
+ * (used mostly internally)
+ */
 void Formation::leaveFormation(GameController* a_controller)
 {
   // take the unit out of the list
