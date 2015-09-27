@@ -5,7 +5,8 @@
 
 class Crusader;
 class Corpus;
-class Imaginarius;
+class ArenaEntity;
+class NavPoint;
 
 #include "unit_ai.h"
 
@@ -14,19 +15,17 @@ class CrusaderAI
 {
 public:
   CrusaderAI(Crusader* a_self);
-  virtual ~CrusaderAI() {
-  }
+  virtual ~CrusaderAI();
 
-  // main loop
-  void update();
+  void update(Real a_dt);
 
-  void setGoal(Imaginarius* a_goal);
+  void setGoal(NavPoint* a_goal);
   void setEnemy(Crusader* a_enemy);
 
 private:
-  Corpus* enemy;
+  ArenaEntity* enemy;
   Crusader* self;
-  Imaginarius* goal;
+  NavPoint* goal;
 };
 
 #endif // CRUSADERAI_H

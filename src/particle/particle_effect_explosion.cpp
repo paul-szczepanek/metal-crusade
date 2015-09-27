@@ -12,7 +12,7 @@ ParticleEffectExplosion::ParticleEffectExplosion(Ogre::SceneNode* particle_node,
   lifetime = 0;
   lifetime_limit = a_time + 0.25;
 
-  explosion = Game::scene->createParticleSystem(10, "particles");
+  explosion = Game::Scene->createParticleSystem(10, "particles");
   explosion->setSortingEnabled(true);
   explosion->setMaterialName("explosion");
   explosion->setParameter("particle_width", "6");
@@ -48,18 +48,18 @@ ParticleEffectExplosion::ParticleEffectExplosion(Ogre::SceneNode* particle_node,
 
 ParticleEffectExplosion::~ParticleEffectExplosion()
 {
-  Game::scene->destroyParticleSystem(explosion);
+  Game::Scene->destroyParticleSystem(explosion);
   die();
 }
 
-int ParticleEffectExplosion::update(Real a_dt)
+bool ParticleEffectExplosion::update(Real a_dt)
 {
   lifetime += a_dt;
 
   // kill after lifetime ends
   if (lifetime > lifetime_limit) {
-    return 1;
+    return false;
   }
 
-  return 0;
+  return true;
 }

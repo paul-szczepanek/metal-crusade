@@ -17,10 +17,10 @@ class HudDial
 {
 public:
   HudDial(hud_part_design_t& a_hud_part_design);
-  ~HudDial() {
+  ~HudDial()
+  {
   }
 
-  // main loop
   void update(Real a_dt);
 
 private:

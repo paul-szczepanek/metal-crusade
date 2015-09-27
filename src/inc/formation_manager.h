@@ -14,7 +14,7 @@ public:
   FormationManager();
   virtual ~FormationManager();
 
-  void Update(float delta);
+  void update(Real delta);
 
   Formation* createFormation(const string& name,
                              Faction*      a_faction);

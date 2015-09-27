@@ -21,31 +21,18 @@ enum sweep_type {
 
 enum dot_type {
   solid, // unmoving structures
-  solid_target, // enemies if they are targets and recignised as such
+  solid_target, // enemies if they are targets and recognised as such
   ally, // units responding to iff query
-  target, // enemies if they are targets and recignised as such
-  unknown // evertyhing that doesn't identify as ally
-};
-
-struct CorpusDot {
-  CorpusDot(Corpus* a_object,
-            Real    a_size,
-            Vector3 a_position)
-    : type(solid), size(a_size), position(a_position), detected(false), object(a_object) {
-  }
-
-  dot_type type;
-  Real size;
-  Vector3 position;
-  bool detected;
-  Corpus* object;
+  target, // enemies if they are targets and recognised as such
+  unknown // everything that doesn't identify as ally
 };
 
 struct CorpusDot {
   CorpusDot(Corpus* a_object,
             Real    a_size)
     : type(unknown), size(a_size), position(Vector3::ZERO), detected(false),
-    object(a_object) {
+    object(a_object)
+  {
   }
 
   dot_type type;
@@ -79,33 +66,38 @@ class RadarComputer
 public:
   RadarComputer(const string& filename,
                 Unit*         a_unit);
-  ~RadarComputer() {
+  ~RadarComputer()
+  {
   }
 
-  // main loop
   void update(Real a_dt);
 
   // make active
-  void setActive(bool a_toggle) {
+  void setActive(bool a_toggle)
+  {
     active = a_toggle;
   }
 
-  bool getActive() {
+  bool getActive()
+  {
     return active;
   }
 
   // toggle radar active of passive
-  void setActiveRadar(bool a_toggle) {
+  void setActiveRadar(bool a_toggle)
+  {
     active_radar = a_toggle;
   }
 
-  bool getActiveRadar() {
+  bool getActiveRadar()
+  {
     return active_radar;
   }
 
   // radar range
-  Real getRadarRange() {
-    return radar_sphere.radius;
+  Real getRadarRange()
+  {
+    return radar_sphere.Radius;
   }
 
   void setRadarRange(Real a_range);
@@ -115,7 +107,7 @@ public:
   vector<radar::CorpusDot> mobilis_dots;
 
 private:
-  // main loop
+
   void updateRadarData();
 
   // find potential objects to detect

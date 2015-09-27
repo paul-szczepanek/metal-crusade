@@ -50,6 +50,7 @@ using std::sqrt;
 using std::log10;
 using std::iterator;
 using std::vector;
+using std::set;
 using std::list;
 using std::string;
 using std::stringstream;
@@ -66,15 +67,14 @@ using std::make_pair;
 using std::find;
 using std::find_if;
 
-typedef short int sint;
-typedef long int lint;
-typedef unsigned short int usint;
-typedef unsigned int uint;
-typedef unsigned long int ulint;
+typedef int8_t sint;
+typedef int64_t lint;
+typedef uint8_t usint;
+typedef uint64_t ulint;
 typedef unsigned char uchar;
 
 typedef pair<int, int> int_pair;
-typedef pair<uint, uint> uint_pair;
+typedef pair<size_t, size_t> size_t_pair;
 typedef pair<usint, usint> usint_pair;
 typedef pair<ulint, ulint> ulint_pair;
 typedef pair<Real, Real> real_pair;
@@ -140,5 +140,26 @@ inline bool take(bool& do_once)
   }
   return false;
 }
+
+// TODO: TEMP put back in hud design
+
+// this is the minimum number of lines hud must implement to be usable
+const usint HUD_NUM_OF_LOG_LINES = 8;
+const usint hud_num_of_status_lines = 8;
+const usint hud_num_of_mfd_aux_lines = 5;
+// mfd
+const usint view_types_per_page = hud_num_of_mfd_aux_lines - 1; // one line is the label
+// text lines max length
+const usint HUD_LOG_LINE_LENGTH = 60;
+const usint hud_status_line_length = 60;
+// history size for the log TODO: write excess to file?
+const usint hud_max_HUD_NUM_OF_LOG_LINES = 40;
+const usint hud_mfd_aux_line_length = 16;
+// colour codes for text: regular, exclamation, alternative
+// huds can implement them however they want or not at all
+const usint hud_num_of_colours = 3; // this is now pretty much hardcoded in parseColours :(
+const char hud_colour_codes[hud_num_of_colours] = { 'r', 'e', 'a' };
+const char hud_escape_char = '$'; // to get the '$' char in a string type two like so "$$"
+const char hud_revert_colour_char = 'x'; // reverts to the last used colour in the line
 
 #endif // MAIN_H_INCLUDED

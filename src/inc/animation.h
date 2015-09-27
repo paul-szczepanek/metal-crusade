@@ -25,10 +25,10 @@ class Animation
 {
 public:
   Animation(Ogre::SceneNode* a_scene_node);
-  ~Animation() {
+  ~Animation()
+  {
   }
 
-  // main loop
   void update(Real a_dt);
 
   // setting the animation speed - type is set automatically

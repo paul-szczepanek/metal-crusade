@@ -9,15 +9,15 @@ class Timer
 {
 public:
   Timer(Ogre::Timer* aOgreTimer);
-  ~Timer() {
-  }
+  ~Timer();
 
   // game time
-  long lint getTicks();
+  ulint getTicks();
 
   // how fast time flows
   void setRate(Real aRate);
-  Real getRate() {
+  Real getRate()
+  {
     return Rate;
   }
 
@@ -26,8 +26,8 @@ public:
   void unpause();
 
 private:
-  long lint Start;
-  long lint Ticks;
+  ulint Start;
+  ulint Ticks;
 
   bool TimeWarp;
 

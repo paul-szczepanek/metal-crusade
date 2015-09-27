@@ -3,12 +3,11 @@
 #ifndef PARTICLEFACTORY_H
 #define PARTICLEFACTORY_H
 
-#include "factory.h"
+#include "main.h"
 
 class ParticleEffect;
 
 class ParticleManager
-  : public Factory
 {
 public:
   ParticleManager();

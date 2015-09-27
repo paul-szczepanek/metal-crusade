@@ -12,10 +12,10 @@ class MFDView
 {
 public:
   MFDView(hud_part_design_t& a_hud_part_design);
-  virtual ~MFDView() {
+  virtual ~MFDView()
+  {
   }
 
-  // main loop
   virtual void update(Real a_dt) = 0;
 
   // shows and hides the view and its overlay elements

@@ -10,10 +10,10 @@ class HudText
 {
 public:
   HudText(hud_part_design_t& a_hud_part_design);
-  ~HudText() {
+  ~HudText()
+  {
   }
 
-  // main loop
   void update(Real a_dt);
 
 private:

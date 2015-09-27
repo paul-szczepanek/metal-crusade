@@ -10,10 +10,10 @@ class HudStatusDisplay
 {
 public:
   HudStatusDisplay(hud_part_design_t& a_hud_part_design);
-  ~HudStatusDisplay() {
+  ~HudStatusDisplay()
+  {
   }
 
-  // main loop
   void update(Real a_dt);
 
 private:

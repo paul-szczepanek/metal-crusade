@@ -2,9 +2,9 @@
 
 NavPoint::NavPoint(Vector3 a_pos_xyz,
                    string  a_name)
-  : PosXyz(a_pos_xyz), name(a_name)
+  : ArenaEntity(a_name)
 {
-  // ctor
+  XYZ = a_pos_xyz;
 }
 
 NavPoint::~NavPoint()

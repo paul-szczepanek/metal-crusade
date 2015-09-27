@@ -8,7 +8,7 @@ ParticleEffectStepDust::ParticleEffectStepDust(Ogre::SceneNode* particle_node)
 {
   scene_node = particle_node;
 
-  dust = Game::scene->createParticleSystem(60, "particles");
+  dust = Game::Scene->createParticleSystem(60, "particles");
   dust->setSortingEnabled(true);
   dust->setMaterialName("dust");
   dust->setParameter("particle_width", "10");
@@ -53,13 +53,13 @@ ParticleEffectStepDust::ParticleEffectStepDust(Ogre::SceneNode* particle_node)
 
 ParticleEffectStepDust::~ParticleEffectStepDust()
 {
-  Game::scene->destroyParticleSystem(dust);
+  Game::Scene->destroyParticleSystem(dust);
   die();
 }
 
-int ParticleEffectStepDust::update(Real a_dt)
+bool ParticleEffectStepDust::update(Real a_dt)
 {
-  return 0;
+  return true;
 }
 
 void ParticleEffectStepDust::setRate(Real a_rate)

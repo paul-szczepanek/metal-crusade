@@ -11,11 +11,11 @@ class UnitAI
 {
 public:
   UnitAI();
-  virtual ~UnitAI() {
+  virtual ~UnitAI()
+  {
   }
 
-  // main loop
-  virtual void update() = 0;
+  virtual void update(Real a_dt) = 0;
 
   virtual void activate(bool a_toggle);
   void bindController(GameController* a_game_controller);

@@ -11,14 +11,16 @@ ulint FactionManager::uid = 0; // unieque id for each object in the game
 // struct for stl to use for comparison against formation name
 struct FactionEqualsName {
   FactionEqualsName (const string& name)
-    : faction_name(name) {
+    : faction_name(name)
+  {
   }
 
   // name being looked for
   string faction_name;
 
   // comparison for stl find_if
-  bool operator() (Faction* faction) {
+  bool operator() (Faction* faction)
+  {
     return faction_name == faction->getName();
   }
 
@@ -44,7 +46,7 @@ Faction* FactionManager::createFaction(const string&           name,
   string unique_name = name;
 
   // keep trying suffixes until the name is unique
-  for (uint i = internal_string::suffix1; i < internal_string::suffix24; ++i) {
+  for (size_t i = internal_string::suffix1; i < internal_string::suffix24; ++i) {
     if (getFaction(unique_name)) {
       unique_name = name + " "
                     + Game::Text->getText(static_cast<internal_string::string_index>(i));
@@ -138,7 +140,7 @@ Real FactionManager::getRelation(Faction* a_from,
   return 0;
 }
 
-void FactionManager::Update(float delta)
+void FactionManager::update(Real delta)
 {
   // this will update policies when needed with cooldowns
 }

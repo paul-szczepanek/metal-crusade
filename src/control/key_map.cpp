@@ -16,7 +16,7 @@ bool KeyMap::getKeyConfig(const string& filename)
 {
   // insert data from file into pairs
   map<string, string> pairs;
-  assert(FS::getPairs(filename, CONFIG_DIR, pairs));
+  assert(FilesHandler::getPairs(filename, CONFIG_DIR, pairs));
   map<input_event, string> enum_pairs;
 
   // create a map to translate enum to string which indexes the pairs from the file
@@ -86,7 +86,7 @@ bool KeyMap::getKeyConfig(const string& filename)
   enum_pairs.insert(make_pair(input_event_log, "input_event_log"));
 
   // iterate through all input enums and insert keycodes or mouseids to Keys and Buttons
-  for(uint i = 0, for_size = enum_pairs.size(); i < for_size; ++i) {
+  for(size_t i = 0, for_size = enum_pairs.size(); i < for_size; ++i) {
     // get OIS keycode
     OIS::KeyCode key = translateKeycode(pairs[enum_pairs[input_event(i)]]);
 

@@ -10,21 +10,21 @@ class HudLogPrinter
 {
 public:
   HudLogPrinter(hud_part_design_t& a_hud_part_design);
-  ~HudLogPrinter() {
+  ~HudLogPrinter()
+  {
   }
 
-  // main loop
   void update(Real a_dt);
 
 private:
   usint font_size;
 
   // position of the paper and printing head
-  uint printed_log_line;
+  size_t printed_log_line;
   Real timeout;
 
   // overlay elements
-  Ogre::OverlayElement* log_text_elements[hud_num_of_colours][hud_num_of_log_lines];
+  Ogre::OverlayElement* log_text_elements[hud_num_of_colours][HUD_NUM_OF_LOG_LINES];
   Ogre::TextureUnitState* paper_texture;
   Ogre::OverlayElement* hud_log_head;
 };

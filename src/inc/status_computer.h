@@ -4,13 +4,14 @@
 #define STATUSCOMPUTER_H
 
 #include "main.h"
-#include "hud_design.h"
+//#include "hud_design.h"
 
 class StatusComputer
 {
 public:
   StatusComputer();
-  ~StatusComputer() {
+  ~StatusComputer()
+  {
   }
 
   // communicate with the status line
@@ -19,7 +20,8 @@ public:
                usint         a_length = 0,
                usint         a_position = 0);
   string getLine(usint a_i,
-                 usint a_j) {
+                 usint a_j)
+  {
     return status_lines[a_i][a_j];
   }
 

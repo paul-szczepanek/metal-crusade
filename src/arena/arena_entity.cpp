@@ -13,3 +13,8 @@ ArenaEntity::ArenaEntity(const string& a_name)
 ArenaEntity::~ArenaEntity()
 {
 }
+
+bool ArenaEntity::handleCollision(Collision* a_collision)
+{
+  return true;
+}

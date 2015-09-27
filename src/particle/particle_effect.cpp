@@ -15,5 +15,5 @@ ParticleEffect::~ParticleEffect()
 
 void ParticleEffect::die()
 {
-  Game::scene->destroySceneNode(scene_node);
+  Game::Scene->destroySceneNode(scene_node);
 }

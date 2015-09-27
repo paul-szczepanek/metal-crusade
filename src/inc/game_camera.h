@@ -5,50 +5,50 @@
 
 #include "main.h"
 
-class Corpus;
+class Unit;
 
 class GameCamera
 {
 public:
   GameCamera();
-  ~GameCamera() {
-    delete OgreCamera;
-  }
+  ~GameCamera();
 
-  // main loop
-  void update(Real aDt);
+  void update(Real a_dt);
 
-  // set target(s) to follow
-  void follow(Corpus* aCorpus);
+  // set target(s) for the camera to follow
+  void follow(Unit* a_entity);
 
   // called on screen resize
-  void resize(int aWidth,
-              int aHeight);
+  void resize(int a_width,
+              int a_height);
 
-  // expose the ogre camera to appease the Ogre
-  Ogre::Camera* getOgreCamera() {
-    return OgreCamera;
-  }
-
-  Quaternion getOrientation() {
-    return OgreCamera->getOrientation();
-  }
+  Ogre::Camera* getOgreCamera();
+  Quaternion getOrientation();
 
 private:
   Ogre::Camera* OgreCamera;
 
   // objects kept within the camera frame
-  vector<Corpus*> FollowList;
+  vector<Unit*> FollowList;
 
   // camera positio and direction
   Vector3 CameraOffset;
   Vector3 Position;
   Vector3 LookAt;
-
   // this is a magic offset to compensate for the fact we're actually interested
   // in what is above ground not the ground itself
   Vector3 LookAtOffset;
 };
+
+Ogre::Camera* GameCamera::getOgreCamera()
+{
+  return OgreCamera;
+}
+
+Quaternion GameCamera::getOrientation()
+{
+  return OgreCamera->getOrientation();
+}
 
 const Real CAMERA_DIST(1400); // to show a circle of 80m
 

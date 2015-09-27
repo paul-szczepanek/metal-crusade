@@ -11,7 +11,7 @@ Animation::Animation(Ogre::SceneNode* a_scene_node)
   : stopped(true), cycle_length(2), rate(0),
   current_animation(animation::stand), target_animation(animation::stand), switching_progress(0)
 {
-  for (usint i = 0; i < num_of_movement_modes; ++i) {
+  for (size_t i = 0; i < num_of_movement_modes; ++i) {
     animations[0].reserve(num_of_animated_body_parts);
   }
 
@@ -34,7 +34,7 @@ Animation::Animation(Ogre::SceneNode* a_scene_node)
   extractAnimations(a_scene_node);
 
   // turn the initial anim on
-  for (usint i = 0, for_size = animations[current_animation].size(); i < for_size; ++i) {
+  for (size_t i = 0, for_size = animations[current_animation].size(); i < for_size; ++i) {
     animations[current_animation][i]->setEnabled(true);
   }
 }
@@ -44,7 +44,7 @@ Animation::Animation(Ogre::SceneNode* a_scene_node)
 void Animation::extractAnimations(Ogre::SceneNode* a_scene_node)
 {
   // get animation states from all entities
-  for (usint i = 0; i < num_of_animations; ++i) {
+  for (size_t i = 0; i < num_of_animations; ++i) {
     Ogre::SceneNode::ObjectIterator it = a_scene_node->getAttachedObjectIterator();
     while (it.hasMoreElements()) {
       // get the mesh attached to the scene node
@@ -85,7 +85,7 @@ void Animation::walk(Real a_speed)
     // if it's moving find the fastest possible animation
     stopped = false; // get moving
     if (switching_progress == 0) {
-      for (usint i = 0; i < num_of_movement_modes; ++i) {
+      for (size_t i = 0; i < num_of_movement_modes; ++i) {
         if (speed_abs > movement_speed_limits[i]) { // find the fastest speed limit
           target_animation = static_cast<animation::crusader>(i); // set the target anim
         }
@@ -152,7 +152,7 @@ bool Animation::switchAnimations(Real a_time_to_add)
     // if either switch passed or time limit reached change animation
     if (crossed_switch1 || crossed_switch2 || switching_progress >= switching_time) {
       // disable old anims
-      for (usint i = 0, for_size = animations[current_animation].size(); i < for_size; ++i) {
+      for (size_t i = 0, for_size = animations[current_animation].size(); i < for_size; ++i) {
         animations[current_animation][i]->setWeight(0);
         animations[current_animation][i]->setEnabled(false);
       }
@@ -164,7 +164,7 @@ bool Animation::switchAnimations(Real a_time_to_add)
       switching_progress = 0;
 
       // turn the new anims on
-      for (usint i = 0, for_size = animations[current_animation].size(); i < for_size; ++i) {
+      for (size_t i = 0, for_size = animations[current_animation].size(); i < for_size; ++i) {
         animations[current_animation][i]->setEnabled(true);
         animations[current_animation][i]->setWeight(1);
 
@@ -175,7 +175,7 @@ bool Animation::switchAnimations(Real a_time_to_add)
       // apply wieghts to blend animations smoothly
       Real anim_weight = switching_progress / switching_time;
 
-      for (usint i = 0, for_size = animations[current_animation].size(); i < for_size; ++i) {
+      for (size_t i = 0, for_size = animations[current_animation].size(); i < for_size; ++i) {
         animations[target_animation][i]->setEnabled(true);
         animations[current_animation][i]->setWeight(1 - anim_weight);
         animations[target_animation][i]->setWeight(anim_weight);
@@ -210,12 +210,12 @@ void Animation::update(Real a_dt)
         stopped = true;
 
         // reset the stand anim
-        for (usint i = 0, size = animations[current_animation].size(); i < size; ++i) {
+        for (size_t i = 0, size = animations[current_animation].size(); i < size; ++i) {
           animations[current_animation][i]->setTimePosition(0);
         }
       } else {
         // keep animating until you hit these points and are in anim stand
-        for (usint i = 0, size = animations[current_animation].size(); i < size; ++i) {
+        for (size_t i = 0, size = animations[current_animation].size(); i < size; ++i) {
           animations[current_animation][i]->addTime(a_dt);
         }
       }
@@ -224,7 +224,7 @@ void Animation::update(Real a_dt)
       Real time_to_add = a_dt * rate;
 
       // add the time to animations
-      for (usint i = 0, for_size = animations[current_animation].size(); i < for_size; ++i) {
+      for (size_t i = 0, for_size = animations[current_animation].size(); i < for_size; ++i) {
         animations[current_animation][i]->addTime(time_to_add);
       }
 

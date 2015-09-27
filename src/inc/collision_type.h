@@ -4,6 +4,7 @@
 #define COLLISIONTYPE_H
 
 enum collision_type {
+  collision_type_none,
   collision_type_blocking,
   collision_type_soft,
   collision_type_hard,
@@ -11,6 +12,5 @@ enum collision_type {
 };
 
 const usint MAX_NUM_CS = 64;
-const usint MAX_NUM_ES = 16;
 
 #endif // COLLISIONTYPE_H

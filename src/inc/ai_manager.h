@@ -16,13 +16,13 @@ class GameController;
 class AIManager
 {
 public:
-  AIManager() {
+  AIManager()
+  {
   }
 
   ~AIManager();
 
-  // main loop
-  void update();
+  void update(Real a_dt);
 
   // create ais for units
   CrusaderAI* activateUnit(Crusader*  a_unit,

@@ -8,70 +8,74 @@
 
 class Corpus;
 
+struct reverse_pairs_t {
+  size_t a;
+  size_t b;
+  int sign;
+};
+
+const reverse_pairs_t PAIRS[2] = { { 0, 1, 1 }, { 1, 0, -1 } };
+
 class Collision
 {
 public:
-  Collision(Corpus* a_object1,
-            Corpus* a_object2);
-  ~Collision() {
-  }
+  Collision(Corpus*            a_object1,
+            Corpus*            a_object2,
+            bitset<MAX_NUM_CS> a_cs_bitset1,
+            bitset<MAX_NUM_CS> a_cs_bitset2,
+            Real               a_depth);
+  ~Collision();
 
-  // main loop
+  void findCollisionPlane();
   void resolve(Real a_dt);
-
-  // spheres added by the collision handler
-  void addCollisionSpheres(int a_sphere1,
-                           int a_sphere2);
-  void addCollisionSpheres(int a_sphere1);
 
   // resulting velocity after the collision
   Vector3 getVelocity();
-
-  // get spheres that actually colllided on the calling object
+  Corpus* getCollidingObject();
   vector<usint> getCollisionSphereIndexes();
 
-  // if the objects requires to inspect the other colliding object directly
-  Corpus* getCollidingObject() {
-    return HandlingFirstObject ? Object2 : Object1;
-  }
-
-  // called by handled objects to report their effective conductivity
   void setHitConductivity(Real a_conductivity);
 
-private:
+  // colliding objects
+  Corpus* Object[2];
+  size_t ObjectHits[2];
+  Vector3 Centre[2];
+  Vector3 Velocity[2];
+  vector<Collision*>* CollisionGroup[2] = { NULL, NULL };
+  Real Depth;
+  size_t resolved = 0;
+
   // collision qualities
   collision_type ResultType;
-  Real CollisionVelocity;
 
-  // colliding objects
-  Corpus* Object1;
-  Corpus* Object2;
-
-  Vector3 Velocity1;
-  Vector3 Velocity2;
-  Real Conductivity1;
-  Real Conductivity2;
-
+private:
   // colliding spheres
-  vector<usint> CSIndexes1;
-  vector<usint> CSIndexes2;
+  bitset<MAX_NUM_CS> CSIndexes[2];
+
+  Real CollisionSpeed;
+  Real Conductivity;
 
   // marker to determine which object is being processed atm
   bool HandlingFirstObject;
 };
 
-/** @brief returns the spheres on the calling object that were hit in the collision
- */
-inline vector<usint> Collision::getCollisionSphereIndexes()
+Corpus* Collision::getCollidingObject()
 {
-  return HandlingFirstObject ? CSIndexes1 : CSIndexes2;
+  return HandlingFirstObject ? Object[0] : Object[1];
 }
 
 /** @brief returns the corrected velocity to the appropriate colliding object
  */
 inline Vector3 Collision::getVelocity()
 {
-  return HandlingFirstObject ? Velocity1 : Velocity2;
+  return HandlingFirstObject ? Velocity[0] : Velocity[1];
+}
+
+void Collision::setHitConductivity(Real a_conductivity)
+{
+  if (a_conductivity < Conductivity) {
+    Conductivity = a_conductivity;
+  }
 }
 
 #endif // COLLISION_H

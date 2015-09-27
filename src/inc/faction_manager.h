@@ -15,7 +15,7 @@ public:
   FactionManager();
   virtual ~FactionManager();
 
-  void Update(float delta);
+  void update(Real delta);
 
   Faction* createFaction(const string&           name,
                          global_faction::faction a_faction = global_faction::mercenary);

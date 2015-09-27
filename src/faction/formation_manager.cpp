@@ -9,14 +9,16 @@
 // struct for stl to use for comparison against formation name
 struct FormationEqualsName {
   FormationEqualsName (const string& name)
-    : formation_name(name) {
+    : formation_name(name)
+  {
   }
 
   // name being looked for
   string formation_name;
 
   // comparison for stl find_if
-  bool operator() (Formation* formation) {
+  bool operator() (Formation* formation)
+  {
     return formation_name == formation->getName();
   }
 
@@ -32,7 +34,7 @@ FormationManager::~FormationManager()
   // dtor
 }
 
-void FormationManager::Update(float delta)
+void FormationManager::update(Real delta)
 {
   // this will update formations
 }
@@ -46,7 +48,7 @@ Formation* FormationManager::createFormation(const string& name,
   string unique_name = name;
 
   // keep trying suffixes until the name is unique
-  for (uint i = internal_string::suffix1; i < internal_string::suffix24; ++i) {
+  for (size_t i = internal_string::suffix1; i < internal_string::suffix24; ++i) {
     if (getFormation(unique_name)) {
       unique_name = name + " "
                     + Game::Text->getText(static_cast<internal_string::string_index>(i));

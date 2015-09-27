@@ -47,8 +47,8 @@ bool TextStore::getGameText(vector<string>& GameText)
   spec_file.open(fs_filename.c_str());
 
   if(spec_file.is_open()) {
-    uint begin;
-    uint end;
+    size_t begin;
+    size_t end;
 
     while(!spec_file.eof()) {
       // go line by line
@@ -72,7 +72,7 @@ bool TextStore::getGameText(vector<string>& GameText)
 
         // remove '[' and ']' and save new key
         key = buffer.substr(begin + 1, end - begin - 1);
-        FS::stripWhitespace(key);  // remove whitespace if any
+        FilesHandler::stripWhitespace(key);  // remove whitespace if any
 
       } else {
         // if it's not a key append values to end_value string

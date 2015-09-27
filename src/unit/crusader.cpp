@@ -3,7 +3,7 @@
 #include "crusader.h"
 #include "game.h"
 #include "game_arena.h"
-#include "hud.h"
+//#include "hud.h"
 #include "files_handler.h"
 #include "collision_handler.h"
 #include "particle_manager.h"
@@ -18,94 +18,114 @@
 #include "radar_computer.h"
 #include "text_store.h"
 
-/** gets positions for all the panels used to mount weapons
- * // TEMP!!!
- * @todo: read from mesh instead
- */
-void Crusader::positionWeapons(vector<Vector3>& panel_positions,
-                               vector<usint>&   slots_used)
-{
-  // fake - position should be read from mesh
-  vector<Vector3> positions(chasis.num_of_parts, Vector3(0, 0, 0));
-  positions[0] = (Vector3(0, -0.9, 3));
-  positions[1] = (Vector3(2, -0.9, 3));
-  positions[2] = (Vector3(-2, -0.9, 3));
-  positions[3] = (Vector3(3.8, -0.9, 3));
-  positions[4] = (Vector3(-3.8, -0.9, 3));
-  positions[5] = (Vector3(3.8, -0.9, 3));
-  positions[6] = (Vector3(-3.8, -0.9, 3));
-  // positions[7] = (Vector3(3.8, -1.9, 3)); // legs unused for now at least
-  // positions[8] = (Vector3(-3.8, -1.9, 3));
-
-  // translate panel positions to weapon positions
-  usint k = 0;
-  for (usint j = 0; j < chasis.num_of_parts; ++j) {
-    slots_used[j] = k;
-    for (usint i = 0; i < chasis.panels[j]; ++i) {
-      panel_positions[k] = positions[j];
-      ++k;
-    }
-  }
-}
-
 Crusader::~Crusader()
 {
-  for (usint i = 0, for_size = design.weapons.size(); i < for_size; ++i) {
-    delete weapons[i];
+  for (auto w : weapons) {
+    delete w;
   }
 
   delete terrain_ray;
   delete terrain_ray_query;
-
-  delete animation;
-
+  delete CrusaderAnim;
   delete radar;
+  for (auto p : Parts) {
+    delete p;
+  }
 }
 
 /** This reads the Crusader definition from a file and creates one
  * @todo: add more internal types and read things from the mesh
  */
-Crusader::Crusader(Vector3           a_pos_xyz,
-                   const string&     a_unit_name,
-                   Ogre::SceneNode*  a_scene_node,
+Crusader::Crusader(const string&     a_unit_name,
+                   Vector3           a_pos_xyz,
                    Quaternion        a_orientation,
                    crusader_design_t a_design,
                    crusader_engine_t a_engine,
                    crusader_drive_t  a_drive,
                    crusader_chasis_t a_chasis)
-  : Unit(a_pos_xyz, a_unit_name, a_scene_node, a_orientation), // chain constructors
-  weapons_operational(false), current_group(0), current_weapon(0),
-  shock_damage_old(Vector3::ZERO), shock_damage_new(Vector3::ZERO),
-  design(a_design), engine(a_engine), drive(a_drive), chasis(a_chasis),
-  throttle(0), angular_momentum_top(0), crusader_height(0), coolant_level(100)
+  : Unit(a_unit_name, a_pos_xyz, a_orientation),
+  design(a_design),
+  engine(a_engine),
+  drive(a_drive),
+  chasis(a_chasis),
 {
-  // for battering, should be part of design struct
-  penetration = 0.1;
-  collision = collision_type_soft;
-
   // set temperature to ambient temp
-  core_temperature = surface_temperature;
-  engine_temperature = surface_temperature;
+  EngineTemperature = CoreTemperature = Game::Arena->getAmbientTemperature(a_pos_xyz);
 
   // resize vectors to fit the num of parts and areas
   structure.resize(chasis.num_of_parts, 0);
   armour.resize(chasis.num_of_areas, 0);
 
-  torso_orientation = orientation; // at start align torso with drive
-  torso_direction = orientation * torso_orientation * Vector3(0, 0, 1);
-  torso_node = static_cast<Ogre::SceneNode*>(scene_node->getChild(0));
+  TorsoOrientation = Orientation; // at start align torso with drive
+  TorsoDirection = Orientation * TorsoOrientation * Vector3(0, 0, 1);
+
+  // create entities
+  Ogre::Entity* drive_mesh;
+  Ogre::Entity* chasis_mesh;
+  Ogre::Entity* arm_right_mesh;
+  Ogre::Entity* arm_left_mesh;
+  Ogre::Entity* leg_right_mesh;
+  Ogre::Entity* leg_left_mesh;
+
+  drive_mesh = Game::Scene->createEntity(a_unit_name + "_drive",
+                                         drive.mesh + "_drive.mesh");
+  chasis_mesh = Game::Scene->createEntity(a_unit_name + "_chasis",
+                                          chasis.mesh + "_chasis.mesh");
+  arm_right_mesh = Game::Scene->createEntity(a_unit_name + "_arm_right",
+                                             chasis.mesh + "_arm_right.mesh");
+  arm_left_mesh = Game::Scene->createEntity(a_unit_name + "_arm_left",
+                                            chasis.mesh + "_arm_left.mesh");
+  leg_right_mesh = Game::Scene->createEntity(a_unit_name + "_leg_right",
+                                             drive.mesh + "_leg_right.mesh");
+  leg_left_mesh = Game::Scene->createEntity(a_unit_name + "_leg_left",
+                                            drive.mesh + "_leg_left.mesh");
+  // assign materials
+  drive_mesh->setMaterialName(design.material);
+  chasis_mesh->setMaterialName(design.material);
+  arm_left_mesh->setMaterialName(design.material);
+  arm_right_mesh->setMaterialName(design.material);
+  leg_left_mesh->setMaterialName(design.material);
+  leg_right_mesh->setMaterialName(design.material);
+
+  // create root node (drive) and attach chasis node as a child
+  Ogre::SceneNode* drive_node = Game::Scene->getRootSceneNode()->createChildSceneNode();
+  Ogre::SceneNode* torso_node = drive_node->createChildSceneNode();
+  Ogre::SceneNode* arm_right_node = torso_node->createChildSceneNode(); // attach arms to chasis
+  Ogre::SceneNode* arm_left_node = torso_node->createChildSceneNode();
+
+  // attach meshes
+  drive_node->attachObject(drive_mesh);
+  torso_node->attachObject(chasis_mesh);
+  arm_right_node->attachObject(arm_right_mesh);
+  arm_left_node->attachObject(arm_left_mesh);
+  drive_node->attachObject(leg_right_mesh); // legs attached directly to drive
+  drive_node->attachObject(leg_left_mesh);
+
+  // set flags to entities
+  drive_mesh->setQueryFlags(query_mask_units);
+  chasis_mesh->setQueryFlags(query_mask_units);
+  arm_left_mesh->setQueryFlags(query_mask_units);
+  arm_right_mesh->setQueryFlags(query_mask_units);
+  leg_left_mesh->setQueryFlags(query_mask_units);
+  leg_right_mesh->setQueryFlags(query_mask_units);
+
   // center of mech is at the top of the drive so we need the highest mesh attached to the drive
-  Ogre::SceneNode::ObjectIterator it = scene_node->getAttachedObjectIterator();
+  Ogre::SceneNode::ObjectIterator it = drive_node->getAttachedObjectIterator();
   while (it.hasMoreElements()) {
     Real y = it.getNext()->getBoundingBox().getSize().y;
-    if (y > crusader_height) {
-      crusader_height = y;
+    if (y > CrusaderHeight) {
+      CrusaderHeight = y;
     }
   }
 
+  Parts[crusader_corpus::torso] = new Corpus(this, torso_node);
+  Parts[crusader_corpus::drive] = new Corpus(this, drive_node);
+  Parts[crusader_corpus::arm_r] = new Corpus(this, arm_right_node);
+  Parts[crusader_corpus::arm_l] = new Corpus(this, arm_left_node);
+
   // positioning weapons
-  uint total_panels = 0; // count panels
-  for (usint i = 0; i < chasis.num_of_parts; ++i) {
+  size_t total_panels = 0; // count panels
+  for (size_t i = 0; i < chasis.num_of_parts; ++i) {
     total_panels += chasis.panels[i];
   }
   vector<usint> slots_used(chasis.num_of_parts, 0);
@@ -115,7 +135,7 @@ Crusader::Crusader(Vector3           a_pos_xyz,
   positionWeapons(panel_positions, slots_used);
 
   // create weapons at those mount points
-  for (usint i = 0, for_size = design.weapons.size(); i < for_size; ++i) {
+  for (size_t i = 0, for_size = design.weapons.size(); i < for_size; ++i) {
     weapons.push_back(new Weapon(design.weapons[i], this,
                                  panel_positions[slots_used[design.weapons_placement[i]]],
                                  // if extra ammo vector exists at this point
@@ -128,10 +148,10 @@ Crusader::Crusader(Vector3           a_pos_xyz,
   }
 
   // add heatsinks
-  heatsinks = count(design.internals.begin(), design.internals.end(), internal_type_heatsink);
+  Heatsinks = count(design.internals.begin(), design.internals.end(), internal_type_heatsink);
 
   // add internal_strucuture elements to base structure
-  for (usint i = 0; i < chasis.num_of_parts; ++i) {
+  for (size_t i = 0; i < chasis.num_of_parts; ++i) {
     structure[i] = chasis.structure_base;
 
     // go through all internals
@@ -146,22 +166,22 @@ Crusader::Crusader(Vector3           a_pos_xyz,
   }
 
   // assign armour from design
-  for (usint i = 0; i < chasis.num_of_areas; ++i) {
+  for (size_t i = 0; i < chasis.num_of_areas; ++i) {
     assert(chasis.surface_area[i] > 0);
     armour[i] = design.armour_placement[i]; // temp? / chasis.surface_area[i];
   }
 
   // get armour characteristics
-  armour_structure = armour_type_to_structure[static_cast<uint>(design.armour)];
-  armour_ballistic = armour_type_to_ballistic[static_cast<uint>(design.armour)];
-  armour_conductivity = armour_type_to_conductivity[static_cast<uint>(design.armour)];
-  armour_generated_heat = armour_type_to_generated_heat[static_cast<uint>(design.armour)];
+  ArmourStructure = armour_type_to_structure[static_cast<size_t>(design.armour)];
+  ArmourBallistic = armour_type_to_ballistic[static_cast<size_t>(design.armour)];
+  ArmourConductivity = armour_type_to_conductivity[static_cast<size_t>(design.armour)];
+  ArmourGeneratedHeat = armour_type_to_generated_heat[static_cast<size_t>(design.armour)];
 
   // TODO: load equipemnt
   // design.equipment;
 
   // TODO: load coolant from design
-  coolant = 4; // temp
+  CoolantQuantity = 4; // temp
 
   // after loading all the weapons etc. recalculate weight
   recalculateWeight();
@@ -169,32 +189,32 @@ Crusader::Crusader(Vector3           a_pos_xyz,
   // temp and obselete anyway, clamping will be done against a heightmap and delegated to arena
   // ray query for terrain clamping
   terrain_ray = new Ogre::Ray();
-  terrain_ray_query = new Ogre::DefaultRaySceneQuery(Game::scene);
+  terrain_ray_query = new Ogre::DefaultRaySceneQuery(Game::Scene);
   terrain_ray_query->setSortByDistance(true);
   terrain_ray_query->setQueryMask(query_mask_pointer_floor);
 
   // get animations
-  animation = new Animation(scene_node);
+  CrusaderAnim = new Animation(drive_node);
 
   // creat the radar
   radar = new RadarComputer(design.radar, this);
 
   // assign dust emmitter for walking on surfaces producing particles
-  Ogre::SceneNode* step_dust_node = scene_node->createChildSceneNode();
+  Ogre::SceneNode* step_dust_node = drive_node->createChildSceneNode();
   // put the scene node at ground level
-  step_dust_node->setPosition(Vector3(0, -crusader_height, 0));
-  step_dust = static_cast<ParticleEffectStepDust*>
-              (Game::particle_factory->createStepDust(step_dust_node));
+  step_dust_node->setPosition(Vector3(0, -CrusaderHeight, 0));
+  StepDust = static_cast<ParticleEffectStepDust*>
+             (Game::Particle->createStepDust(step_dust_node));
 }
 
 /** @brief resolves collision including damage and physics
  */
-int Crusader::handleCollision(Collision* a_collision)
+bool Crusader::handleCollision(Collision* a_collision)
 {
   // apply the new velocity (cushion spikes on the cheap)
   // this is wrong on many levels, done completely ouside of physics logic and only works
   // because collisions revert illegal positions
-  velocity = (velocity * 0.1 + a_collision->getVelocity() * 0.85); // doesn't add up to 1
+  Velocity = (Velocity * 0.1 + a_collision->getVelocity() * 0.85); // doesn't add up to 1
   // TODO: collisions need doing properly
   // this is just compensating for the way it's bollocked atm
 
@@ -204,12 +224,12 @@ int Crusader::handleCollision(Collision* a_collision)
   vector<usint> sphere_indexes = a_collision->getCollisionSphereIndexes();
 
   // get all parts involved in collision
-  for (usint i = 0, for_size = sphere_indexes.size(); i < for_size; ++i) {
-    body_areas_bitset[cs_areas[sphere_indexes[i]]] = 1;
+  for (size_t i = 0, for_size = sphere_indexes.size(); i < for_size; ++i) {
+    body_areas_bitset[CSAreas[sphere_indexes[i]]] = 1;
   }
 
   // translate bodyset into a vector of enum body area
-  for (usint i = 0; (i < num_of_body_areas) && body_areas_bitset.any(); ++i) {
+  for (size_t i = 0; (i < num_of_body_areas) && body_areas_bitset.any(); ++i) {
     if (body_areas_bitset[i]) {
       body_areas_bitset[i] = 0;
       body_areas_hit.push_back(static_cast<crusader_area::body_area>(i));
@@ -240,27 +260,27 @@ int Crusader::handleCollision(Collision* a_collision)
   Real total_conductivity = 0;
   Real heat = 0;
 
-  for (usint i = 0, for_size = body_areas_hit.size(); i < for_size; ++i) {
+  for (size_t i = 0, for_size = body_areas_hit.size(); i < for_size; ++i) {
     // armour with penetration applied
     Real effective_armour = armour[body_areas_hit[i]] / (hit->getPenetration() + 1);
 
     // ballistic damage
-    Real damage = ballistic_dmg / (effective_armour * armour_ballistic + 1);
+    Real damage = ballistic_dmg / (effective_armour * ArmourBallistic + 1);
 
     // energy damage
-    damage += energy_dmg / (effective_armour * armour_conductivity + 1);
+    damage += energy_dmg / (effective_armour * ArmourConductivity + 1);
 
     // heat from damage
-    Real local_armour_conductivity = armour_conductivity; // / (effective_armour + 1);
+    Real local_armour_conductivity = ArmourConductivity; // / (effective_armour + 1);
     heat += heat_dmg * local_armour_conductivity;
 
     // heat generated from armour reaction
-    heat += (ballistic_dmg + energy_dmg) * armour_generated_heat;
+    heat += (ballistic_dmg + energy_dmg) * ArmourGeneratedHeat;
 
     // armour damage proportional to coverage
     Real armour_damage = damage * (armour[body_areas_hit[i]]
                                    / design.armour_placement[body_areas_hit[i]]);
-    armour[body_areas_hit[i]] -= (armour_damage / armour_structure);
+    armour[body_areas_hit[i]] -= (armour_damage / ArmourStructure);
     // cap armour at 0
     if (armour[body_areas_hit[i]] < 0) {
       armour[body_areas_hit[i]] = 0;
@@ -295,7 +315,7 @@ int Crusader::handleCollision(Collision* a_collision)
       // if goes below 0 move the damage to integrity // TODO: destroying limbs
       if (structure[part_hit] < 0) {
         // subtract negative structure from core integrity
-        core_integrity += structure[part_hit] / chasis.weight; // scale from weight
+        CoreIntegrity += structure[part_hit] / chasis.weight; // scale from weight
         structure[part_hit] = 0;
       }
     }
@@ -308,30 +328,207 @@ int Crusader::handleCollision(Collision* a_collision)
   a_collision->setHitConductivity(total_conductivity);
 
   // apply heat damage (weight used for scaling as above)
-  surface_temperature += heat / chasis.weight;
+  //SurfaceTemperature += heat / chasis.weight;
 
-  return 0;
+  return true;
+}
+
+/** @brief move the crusader
+ * moving and @todo: slow down on slopes
+ */
+void Crusader::moveCrusader(Real a_dt)
+{
+  // traction
+  Real ground_traction = 0.9; // FAKE
+  Real traction = ground_traction * drive.traction;
+
+  // correct velocity for Direction
+  corrected_velocity_scalar = velocity.dotProduct(Direction);
+  Vector3 corrected_velocity = corrected_velocity_scalar * Direction;
+  velocity = (1 - traction) * velocity + traction * corrected_velocity;
+
+  // animate the walking TODO: only take the walking velocity and ignore sliding
+  CrusaderAnim->walk(corrected_velocity_scalar);
+
+  // kinemataic resistance
+  Real ground_resistance = 0.1; // FAKE
+  Real kinematic_resistance = 0;
+
+  // temp! get the gradient of the slope
+  Real height = Game::Arena->getHeight(XYZ.x, XYZ.z);
+  Real height_ahead = Game::Arena->getHeight(XYZ.x + Direction.x,
+                                             XYZ.z + Direction.z);
+  Real gradient = height_ahead - height;
+  gradient *= gradient;
+  if (gradient > 1) { gradient = 0; }
+
+  // get throttle from Controller which is in <-1,1> range
+  Throttle = Controller->Throttle;
+
+  // difference_of_velocity used to decide whether or not to speed up or slow down
+  // takes into account the Direction as well, init with current velocity
+  Real difference_of_velocity = -velocity.dotProduct(Direction);
+
+  // now decide depending on Direction which values to use
+  if (corrected_velocity_scalar > 0) { // use resistance for fwd or reverse depending on velocity
+    kinematic_resistance = (drive.kinematic_resistance + ground_resistance) / drive.max_speed;
+    difference_of_velocity += Throttle * drive.max_speed; // add intended speed
+  } else {
+    kinematic_resistance = (drive.kinematic_resistance_reverse + ground_resistance)
+                           / drive.max_speed_reverse;
+    difference_of_velocity += Throttle * drive.max_speed_reverse; // add intended speed
+  }
+
+  // make the growth square
+  kinematic_resistance *= kinematic_resistance;
+
+  // acceleration
+  Real acceleration_scalar = 0;
+
+  if (Throttle < 0.1 && Throttle > -0.1) {
+    // if no throttle and velocity low just stop immidately
+    if (velocity.length() < 0.1) {
+      velocity = Vector3(0, 0, 0);
+    }
+  }
+
+  // if difference is smaller then 0.1 don't do antyhing
+  if (difference_of_velocity > 0.1) {
+    // if the set speed is smaller accelerate
+    acceleration_scalar = engine.rating / TotalWeight;
+  } else if (difference_of_velocity < -0.1) {
+    // slow down otherwise
+    if  (corrected_velocity_scalar > 0) {
+      // the crusader is going forward so slow down
+      acceleration_scalar = -engine.rating / TotalWeight;
+    } else {
+      // crusader is reversing so apply a different rating
+      acceleration_scalar = -engine.rating_reverse / TotalWeight;
+    }
+  }
+
+  Vector3 acceleration = traction * acceleration_scalar * Direction;
+
+  // TEMP!!! quick fix for slowing down on slopes
+  acceleration -= Direction * gradient * corrected_velocity_scalar;
+
+  // new velocity and position
+  velocity = velocity - velocity * kinematic_resistance + acceleration * a_dt;
+  move = velocity * a_dt; // save the difference of positions into move
+  XYZ = XYZ + move;
+
+  // terrain clamping
+  XYZ.y = CrusaderHeight + Game::Arena->getHeight(XYZ.x, XYZ.z);
+
+  // get where the drive is turning
+  Radian turning_speed = Controller->getTurnSpeed() * -drive.turn_speed;
+
+  // new Orientation
+  Orientation = Quaternion((turning_speed * a_dt), Vector3::UNIT_Y) * Orientation;
+  // update Direction vector
+  Direction = Orientation * Vector3::UNIT_Z;
+
+  // hook it up to animation
+  CrusaderAnim->turn(turning_speed);
+
+  // dust from under the feet
+  StepDust->setRate(max(corrected_velocity_scalar, 3 * turning_speed.valueRadians()));
+}
+
+/** @brief rotates the torso
+ * uses angles in the horzontal plane internally
+ * rotates the torso (and possibly arms in the future) @todo: vertical angles and arms?
+ */
+void Crusader::moveTorso(Real a_dt)
+{
+  // turning the torso
+  if(Controller->ControlBlock.turn_to_pointer) { // do you want to turn torso
+    // Direction to target from the mouse pointer
+    Vector2 target_direction = Controller->getPointerPosXZ()
+                               - Vector2(XYZ.x, XYZ.z);
+    target_direction.normalise();
+
+    // drive angle in world <-pi,pi>
+    Vector2 planar_direction(Direction.x, Direction.z);
+    Real angle_in_degrees = acos(planar_direction.dotProduct(Vector2::UNIT_Y));
+    Radian drive_angle = Radian(angle_in_degrees);
+    if (Direction.x < 0) {
+      drive_angle = -drive_angle;
+    }
+
+    // angle to target in world <-pi,pi>
+    angle_in_degrees = acos(target_direction.dotProduct(Vector2::UNIT_Y));
+    Radian angle_to_target = Radian(angle_in_degrees);
+    if (target_direction.x < 0) {
+      angle_to_target = -angle_to_target;
+    }
+
+    // torso angle in world
+    planar_direction = Vector2(TorsoDirection.x, TorsoDirection.z);
+    angle_in_degrees = acos(planar_direction.dotProduct(Vector2::UNIT_Y));
+    Radian torso_angle = Radian(angle_in_degrees);
+    if (TorsoDirection.x < 0) {
+      torso_angle = -torso_angle;
+    }
+
+    // get local angle to target
+    localiseAngle(angle_to_target, drive_angle);
+
+    // cap target angle if it exceeds limits of the chasis
+    if (angle_to_target > chasis.torso_arc) {
+      angle_to_target = chasis.torso_arc;
+    } else if (angle_to_target < -chasis.torso_arc) {
+      angle_to_target = -chasis.torso_arc;
+    }
+
+    // get local angle to torso
+    localiseAngle(torso_angle, drive_angle);
+
+    // angle to target from current
+    Radian angle_to_turn = angle_to_target - torso_angle;
+
+    // get max angle crusader can turn in a_dt
+    Radian angle_dt = chasis.torso_turn_speed * a_dt;
+
+    if (angle_to_turn.valueRadians() < 0) { // check which way to turn and
+      angle_dt = -angle_dt;
+      if (angle_dt < angle_to_turn) { // if it would overshoot left
+        angle_dt = angle_to_turn; // cap to precise angle left
+      }
+    } else if (angle_dt > angle_to_turn) { // if it would overshoot right
+      angle_dt = angle_to_turn; // cap to precise angle right
+    }
+
+    // Orientation after turn
+    TorsoOrientation = Quaternion(angle_dt, Vector3::UNIT_Y) * TorsoOrientation;
+
+    // turn the torso node
+    Parts[crusader_corpus::torso]->setOrientation(TorsoOrientation);
+  }
+
+  // update torso Direction even if you're not turning because the drive might be turning
+  TorsoDirection = Orientation * TorsoOrientation * Vector3::UNIT_Z;
 }
 
 /** damage suffered from G forces
  */
-void Crusader::shockDamage()
+void Crusader::shockDamage(Real a_dt)
 {
-  // to make sure dt is sane (1 - span) is > 0
-  // Real span = min(dt, Real(0.1)); // already guaranteed by timer
+  // to make sure a_dt is sane (1 - span) is > 0
+  // Real span = min(a_dt, Real(0.1)); // already guaranteed by timer
 
   // average over span
-  shock_damage_new = shock_damage_new * (1 - dt * 10) + velocity * dt * 10;
+  ShockDamageNew = ShockDamageNew * (1 - a_dt * 10) + Velocity * a_dt * 10;
   // average over a two spans
-  shock_damage_old = shock_damage_old * (1 - dt) + velocity * dt;
+  ShockDamageOld = ShockDamageOld * (1 - a_dt) + Velocity * a_dt;
 
   // get the change in velocity
-  Real shock = (shock_damage_new - shock_damage_old).length();
+  Real shock = (ShockDamageNew - ShockDamageOld).length();
 
   // ignore 0.6G force changes as they would likely be tiny anyway
   if (shock > 6) {
     // damage multipilied by weight / scale ratio
-    Real kinetic_damage = shock * (total_weight / chasis.weight);
+    Real kinetic_damage = shock * (TotalWeight / chasis.weight);
 
     // with zero damage at 1G for weight / scale ratio of 1 and instant death at 5G
     kinetic_damage = log10(kinetic_damage * c1o6) * 0.1;
@@ -339,24 +536,24 @@ void Crusader::shockDamage()
     // if the damage is indeed above 0 after applying the ratio
     if (kinetic_damage > 0) {
       // apply damage to the core
-      core_integrity -= kinetic_damage;
+      CoreIntegrity -= kinetic_damage;
 
       // reset the shock old shock vector
-      shock_damage_new = Vector3::ZERO;
-      shock_damage_old = Vector3::ZERO;
+      ShockDamageNew = Vector3::ZERO;
+      ShockDamageOld = Vector3::ZERO;
     }
 
     // if too hard a collision
     if (shock > drive.max_speed * 0.25) {
       // reset the throttle
-      controller->setThrottle(0);
+      Controller->setThrottle(0);
     }
 
     // notify the log of the damage
-    if (hud_attached) {
-      Game::hud->log->addLine(Game::text->getText(internal_string::shock_damage_sustained)
-                              + " $e" + realIntoString(kinetic_damage * 100, 2) + "$r%");
-    }
+    /*if (hud_attached) {
+       Game::hud->log->addLine(Game::text->getText(internal_string::shock_damage_sustained)
+     + " $e" + realIntoString(kinetic_damage * 100, 2) + "$r%");
+       }*/
   }
 }
 
@@ -397,13 +594,43 @@ void Crusader::recalculateWeight()
 
   // total weight
   Real total_weight_top = chasis.weight + top_armour_weight
-                          + top_structure_weight + heatsinks;
-  total_weight = chasis.weight + drive.weight + engine.weight + total_armour_weight
-                 + total_structure_weight + heatsinks;
+                          + top_structure_weight + Heatsinks;
+  TotalWeight = chasis.weight + drive.weight + engine.weight + total_armour_weight
+                + total_structure_weight + Heatsinks;
 
   // momentums
-  angular_momentum = total_weight * radius_squared_over_2;
-  angular_momentum_top = total_weight_top * radius_squared_over_2;
+  AngularMomentum = TotalWieght * radius_squared_over_2;
+  AngularMomentumTop = total_weight_top * radius_squared_over_2;
+}
+
+/** gets positions for all the panels used to mount weapons
+ * // TEMP!!!
+ * @todo: read from mesh instead
+ */
+void Crusader::positionWeapons(vector<Vector3>& panel_positions,
+                               vector<usint>&   slots_used)
+{
+  // fake - position should be read from mesh
+  vector<Vector3> positions(chasis.num_of_parts, Vector3(0, 0, 0));
+  positions[0] = (Vector3(0, -0.9, 3));
+  positions[1] = (Vector3(2, -0.9, 3));
+  positions[2] = (Vector3(-2, -0.9, 3));
+  positions[3] = (Vector3(3.8, -0.9, 3));
+  positions[4] = (Vector3(-3.8, -0.9, 3));
+  positions[5] = (Vector3(3.8, -0.9, 3));
+  positions[6] = (Vector3(-3.8, -0.9, 3));
+  // positions[7] = (Vector3(3.8, -1.9, 3)); // legs unused for now at least
+  // positions[8] = (Vector3(-3.8, -1.9, 3));
+
+  // translate panel positions to weapon positions
+  usint k = 0;
+  for (usint j = 0; j < chasis.num_of_parts; ++j) {
+    slots_used[j] = k;
+    for (size_t i = 0; i < chasis.panels[j]; ++i) {
+      panel_positions[k] = positions[j];
+      ++k;
+    }
+  }
 }
 
 /** updates all weapons inside the mech
@@ -412,67 +639,62 @@ void Crusader::recalculateWeight()
 void Crusader::fireWeapons()
 {
   // fire individual groups
-  if (take(controller->control_block.fire_group_1)) {
+  if (take(Controller->ControlBlock.fire_group_1)) {
     fireGroup(0);
   }
-  if (take(controller->control_block.fire_group_2)) {
+  if (take(Controller->ControlBlock.fire_group_2)) {
     fireGroup(1);
   }
-  if (take(controller->control_block.fire_group_3)) {
+  if (take(Controller->ControlBlock.fire_group_3)) {
     fireGroup(2);
   }
-  if (take(controller->control_block.fire_group_4)) {
+  if (take(Controller->ControlBlock.fire_group_4)) {
     fireGroup(3);
   }
-  if (take(controller->control_block.fire_group_5)) {
+  if (take(Controller->ControlBlock.fire_group_5)) {
     fireGroup(4);
   }
-  if (take(controller->control_block.fire_group_all)) {
-    for (usint i = 0; i < num_of_weapon_groups; ++i) {
+  if (take(Controller->ControlBlock.fire_group_all)) {
+    for (size_t i = 0; i < num_of_weapon_groups; ++i) {
       fireGroup(i);
     }
   }
 
   // fire selected weapon or group
-  if (take(controller->control_block.fire)) {
-    if (controller->control_block.fire_mode_group) {
+  if (take(Controller->ControlBlock.fire)) {
+    if (Controller->ControlBlock.fire_mode_group) {
       // group fire
-      if (fireGroup(current_group)) {
+      if (fireGroup(CurrentGroup)) {
         // if auto cycle enabled cycle group after fire
-        if (controller->control_block.auto_cycle) { cycleGroup(); }
+        if (Controller->ControlBlock.auto_cycle) { cycleGroup(); }
       }
     } else {
       // fire individual weapons
-      if (current_weapon < design.weapon_groups[current_group].size()) {
-        if (weapons[design.weapon_groups[current_group][current_weapon]]->fire()) {
+      if (CurrentWeapon < design.weapon_groups[CurrentGroup].size()) {
+        if (weapons[design.weapon_groups[CurrentGroup][CurrentWeapon]]->fire()) {
           // if auto cycle enabled cycle weapon after fire
-          if (controller->control_block.auto_cycle) { cycleWeapon(); }
+          if (Controller->ControlBlock.auto_cycle) {
+            cycleWeapon();
+          }
         }
       }
-
     }
   }
 
   // cycling groups manually
-  if (take(controller->control_block.cycle_group)) {
+  if (take(Controller->ControlBlock.cycle_group)) {
     cycleGroup();
   }
 
   // cycling weapons manually
-  if (take(controller->control_block.cycle_weapon)) {
+  if (take(Controller->ControlBlock.cycle_weapon)) {
     // if group fire cycle group instead
-    if (controller->control_block.fire_mode_group) {
+    if (Controller->ControlBlock.fire_mode_group) {
       cycleGroup();
 
     } else {
       cycleWeapon();
     }
-  }
-
-  // updates all weapons for timeout and firing
-  // TODO: make a bitset of active weapons instead of iterating through all maybe?
-  for (usint i = 0, for_size = weapons.size(); i < for_size; ++i) {
-    weapons[i]->update(dt);
   }
 }
 
@@ -481,24 +703,24 @@ void Crusader::fireWeapons()
 void Crusader::cycleGroup()
 {
   // if it fails to find any operational weapons we mark it so current weapon is -1
-  weapons_operational = false;
+  WeaponsOperational = false;
 
   // if it fails to find a valid group it will not cycle at all
-  for (usint i = 0; i < num_of_weapon_groups; ++i) {
+  for (size_t i = 0; i < num_of_weapon_groups; ++i) {
     // wrap around
-    if (++current_group == num_of_weapon_groups) { current_group = 0; }
+    if (++CurrentGroup == num_of_weapon_groups) { CurrentGroup = 0; }
 
     // check if group exists
-    if (design.weapon_groups[current_group].size() > 0) {
+    if (design.weapon_groups[CurrentGroup].size() > 0) {
       // so that it starts with the first weapon
-      current_weapon = -1;
+      CurrentWeapon = -1;
 
       // cycle the weapons so it finds the first valid weapon
       cycleWeapon();
 
       // if the weapon is working we have found our new group
-      if (weapons[design.weapon_groups[current_group][current_weapon]]->isOperational()) {
-        weapons_operational = true;
+      if (weapons[design.weapon_groups[CurrentGroup][CurrentWeapon]]->isOperational()) {
+        WeaponsOperational = true;
         break;
       }
     }
@@ -510,19 +732,19 @@ void Crusader::cycleGroup()
 void Crusader::cycleWeapon()
 {
   // if it fails to find any operational weapons we mark it so current weapon is -1
-  weapons_operational = false;
+  WeaponsOperational = false;
 
-  usint weapons_in_group = design.weapon_groups[current_group].size();
+  usint weapons_in_group = design.weapon_groups[CurrentGroup].size();
 
   if (weapons_in_group > 0) {
     // if it fails to find a valid weapon it still cycles by one
-    for (usint i = 0; i <= weapons_in_group; ++i) {
+    for (size_t i = 0; i <= weapons_in_group; ++i) {
       // wrap around
-      if (++current_weapon == weapons_in_group) { current_weapon = 0; }
+      if (++CurrentWeapon == weapons_in_group) { CurrentWeapon = 0; }
 
       // if the weapon is working we have found the new weapon
-      if (weapons[design.weapon_groups[current_group][current_weapon]]->isOperational()) {
-        weapons_operational = true;
+      if (weapons[design.weapon_groups[CurrentGroup][CurrentWeapon]]->isOperational()) {
+        WeaponsOperational = true;
         break;
       }
     }
@@ -536,7 +758,7 @@ bool Crusader::fireGroup(usint a_group)
 {
   bool fired = false;
 
-  for (usint i = 0, for_size = design.weapon_groups[a_group].size(); i < for_size; ++i) {
+  for (size_t i = 0, for_size = design.weapon_groups[a_group].size(); i < for_size; ++i) {
     if (weapons[design.weapon_groups[a_group][i]]->fire()) { // fire whole group one by one
       // if at least one fired return true
       fired = true;
@@ -546,229 +768,49 @@ bool Crusader::fireGroup(usint a_group)
   return fired;
 }
 
-/** @brief tries to fire all weapons in group
- * returns true if at least one fires
- */
-void Crusader::pumpHeat()
+void Crusader::pumpHeat(Real a_dt)
 {
-  Real ambient_temperature = Game::Arena->getAmbientTemperature(pos_xyz);
-  if (controller->control_block.flush_coolant) {
+  Real ambient_temperature = Game::Arena->getAmbientTemperature(XYZ);
+  if (Controller->ControlBlock.flush_coolant) {
     // if flush coolant key presesed flush for as long as it's pressed
-    Real amount_flushed = dt; // 1 second of flushing depletes 1 unit of coolant
+    Real amount_flushed = a_dt; // 1 second of flushing depletes 1 unit of coolant
 
     // change only the coolant level
-    coolant_level -= amount_flushed / coolant * 100;
+    CoolantLevel -= amount_flushed / CoolantQuantity * 100;
 
     // if it was the last of the coolant
-    if (coolant_level < 0) {
+    if (CoolantLevel < 0) {
       // cap at zero and ignore effects
-      coolant_level = 0;
+      CoolantLevel = 0;
 
     } else {
       // otherwise dump some heat
-      if (core_temperature > ambient_temperature) {
+      if (CoreTemperature > ambient_temperature) {
         // only decrease temp if ambient temp is higher
-        core_temperature -= amount_flushed * critical_temperature;
+        CoreTemperature -= amount_flushed * critical_temperature;
         // 1 second of flushing can clear critical temp
       }
     }
   }
 
-  // pump surface to core - mother nature and father science weep
-  Real difference = armour_conductivity * dt
-                    * (core_temperature - surface_temperature) * 0.5;
-  surface_temperature += difference;
-  core_temperature -= difference;
+  // pump surface to core
+  for (auto p : Parts) {
+    Real difference = ArmourConductivity * a_dt * (CoreTemperature - p->SurfaceTemperature) * 0.5;
+    CoreTemperature -= difference;
+    p->SurfaceTemperature += difference;
+  }
 
   // apply heatsinks
-  if (core_temperature > ambient_temperature) {
-    core_temperature -= dt * heatsinks;
-    surface_temperature -= dt * heatsinks; // this is worng but necessary
+  if (CoreTemperature > ambient_temperature) {
+    CoreTemperature -= a_dt * Heatsinks;
   }
-}
-
-/** @brief move the crusader
- * moving and @todo: slow down on slopes
- */
-void Crusader::moveCrusader()
-{
-  // traction
-  Real ground_traction = 0.9; // FAKE
-  Real traction = ground_traction * drive.traction;
-
-  // correct velocity for direction
-  corrected_velocity_scalar = velocity.dotProduct(direction);
-  Vector3 corrected_velocity = corrected_velocity_scalar * direction;
-  velocity = (1 - traction) * velocity + traction * corrected_velocity;
-
-  // animate the walking TODO: only take the walking velocity and ignore sliding
-  animation->walk(corrected_velocity_scalar);
-
-  // kinemataic resistance
-  Real ground_resistance = 0.1; // FAKE
-  Real kinematic_resistance = 0;
-
-  // temp! get the gradient of the slope
-  Real height = Game::Arena->getHeight(pos_xyz.x, pos_xyz.z);
-  Real height_ahead = Game::Arena->getHeight(pos_xyz.x + direction.x,
-                                             pos_xyz.z + direction.z);
-  Real gradient = height_ahead - height;
-  gradient *= gradient;
-  if (gradient > 1) { gradient = 0; }
-
-  // get throttle from controller which is in <-1,1> range
-  throttle = controller->getThrottle();
-
-  // difference_of_velocity used to decide whether or not to speed up or slow down
-  // takes into account the direction as well, init with current velocity
-  Real difference_of_velocity = -velocity.dotProduct(direction);
-
-  // now decide depending on direction which values to use
-  if (corrected_velocity_scalar > 0) { // use resistance for fwd or reverse depending on velocity
-    kinematic_resistance = (drive.kinematic_resistance + ground_resistance) / drive.max_speed;
-    difference_of_velocity += throttle * drive.max_speed; // add intended speed
-  } else {
-    kinematic_resistance = (drive.kinematic_resistance_reverse + ground_resistance)
-                           / drive.max_speed_reverse;
-    difference_of_velocity += throttle * drive.max_speed_reverse; // add intended speed
-  }
-
-  // make the growth square
-  kinematic_resistance *= kinematic_resistance;
-
-  // acceleration
-  Real acceleration_scalar = 0;
-
-  if (throttle < 0.1 && throttle > -0.1) {
-    // if no throttle and velocity low just stop immidately
-    if (velocity.length() < 0.1) {
-      velocity = Vector3(0, 0, 0);
-    }
-  }
-
-  // if difference is smaller then 0.1 don't do antyhing
-  if (difference_of_velocity > 0.1) {
-    // if the set speed is smaller accelerate
-    acceleration_scalar = engine.rating / total_weight;
-  } else if (difference_of_velocity < -0.1) {
-    // slow down otherwise
-    if  (corrected_velocity_scalar > 0) {
-      // the crusader is going forward so slow down
-      acceleration_scalar = -engine.rating / total_weight;
-    } else {
-      // crusader is reversing so apply a different rating
-      acceleration_scalar = -engine.rating_reverse / total_weight;
-    }
-  }
-
-  Vector3 acceleration = traction * acceleration_scalar * direction;
-
-  // TEMP!!! quick fix for slowing down on slopes
-  acceleration -= direction * gradient * corrected_velocity_scalar;
-
-  // new velocity and position
-  velocity = velocity - velocity * kinematic_resistance + acceleration * dt;
-  move = velocity * dt; // save the difference of positions into move
-  pos_xyz = pos_xyz + move;
-
-  // terrain clamping
-  pos_xyz.y = crusader_height + Game::Arena->getHeight(pos_xyz.x, pos_xyz.z);
-
-  // get where the drive is turning
-  Radian turning_speed = controller->getTurnSpeed() * -drive.turn_speed;
-
-  // new orientation
-  orientation = Quaternion((turning_speed * dt), Vector3::UNIT_Y) * orientation;
-  // update direction vector
-  direction = orientation * Vector3::UNIT_Z;
-
-  // hook it up to animation
-  animation->turn(turning_speed);
-
-  // dust from under the feet
-  step_dust->setRate(max(corrected_velocity_scalar, 3 * turning_speed.valueRadians()));
-}
-
-/** @brief rotates the torso
- * uses angles in the horzontal plane internally
- * rotates the torso (and possibly arms in the future) @todo: vertical angles and arms?
- */
-void Crusader::moveTorso()
-{
-  // turning the torso
-  if(controller->control_block.turn_to_pointer) { // do you want to turn torso
-    // direction to target from the mouse pointer
-    Vector2 target_direction = controller->getPointerPosXZ()
-                               - Vector2(pos_xyz.x, pos_xyz.z);
-    target_direction.normalise();
-
-    // drive angle in world <-pi,pi>
-    Vector2 planar_direction(direction.x, direction.z);
-    Real angle_in_degrees = acos(planar_direction.dotProduct(Vector2::UNIT_Y));
-    Radian drive_angle = Radian(angle_in_degrees);
-    if (direction.x < 0) {
-      drive_angle = -drive_angle;
-    }
-
-    // angle to target in world <-pi,pi>
-    angle_in_degrees = acos(target_direction.dotProduct(Vector2::UNIT_Y));
-    Radian angle_to_target = Radian(angle_in_degrees);
-    if (target_direction.x < 0) {
-      angle_to_target = -angle_to_target;
-    }
-
-    // torso angle in world
-    planar_direction = Vector2(torso_direction.x, torso_direction.z);
-    angle_in_degrees = acos(planar_direction.dotProduct(Vector2::UNIT_Y));
-    Radian torso_angle = Radian(angle_in_degrees);
-    if (torso_direction.x < 0) {
-      torso_angle = -torso_angle;
-    }
-
-    // get local angle to target
-    localiseAngle(angle_to_target, drive_angle);
-
-    // cap target angle if it exceeds limits of the chasis
-    if (angle_to_target > chasis.torso_arc) {
-      angle_to_target = chasis.torso_arc;
-    } else if (angle_to_target < -chasis.torso_arc) {
-      angle_to_target = -chasis.torso_arc;
-    }
-
-    // get local angle to torso
-    localiseAngle(torso_angle, drive_angle);
-
-    // angle to target from current
-    Radian angle_to_turn = angle_to_target - torso_angle;
-
-    // get max angle crusader can turn in dt
-    Radian angle_dt = chasis.torso_turn_speed * dt;
-
-    if (angle_to_turn.valueRadians() < 0) { // check which way to turn and
-      angle_dt = -angle_dt;
-      if (angle_dt < angle_to_turn) { // if it would overshoot left
-        angle_dt = angle_to_turn; // cap to precise angle left
-      }
-    } else if (angle_dt > angle_to_turn) { // if it would overshoot right
-      angle_dt = angle_to_turn; // cap to precise angle right
-    }
-
-    // orientation after turn
-    torso_orientation = Quaternion(angle_dt, Vector3::UNIT_Y) * torso_orientation;
-
-    // turn the torso node
-    torso_node->setOrientation(torso_orientation);
-  }
-
-  // update torso direction even if you're not turning because the drive might be turning
-  torso_direction = orientation * torso_orientation * Vector3::UNIT_Z;
 }
 
 /** @brief local angle based on an angle passed in
  * converts to a <-pi, pi> range angle in relation to global_angle an angle
  */
-inline void Crusader::localiseAngle(Radian &      angle,
-                                    const Radian &global_angle)
+inline void Crusader::localiseAngle(Radian&       angle,
+                                    const Radian& global_angle)
 {
   Radian local_angle;
   Radian local_angle_alt;
@@ -794,61 +836,60 @@ inline void Crusader::localiseAngle(Radian &      angle,
 /** @brief updateController called by update on every frame
  * physics and controls
  */
-int Crusader::update()
+bool Crusader::update(Real a_dt)
 {
-  if (core_integrity > 0) {
-    // damage and heat
-    shockDamage();
-    pumpHeat();
+  if (CoreIntegrity > 0) {
+    shockDamage(a_dt);
+    pumpHeat(a_dt);
 
-    // weapons and targeting
     fireWeapons();
     updateTargets();
+    // updates all weapons for timeout and firing
+    for (auto w : weapons) {
+      w->update(a_dt);
+    }
 
-    // moving
     moveCrusader();
     moveTorso();
 
-    // animation loop
-    animation->update(dt);
-    // radar loop
-    radar->update(dt);
+    CrusaderAnim->update(a_dt);
+    radar->update(a_dt);
 
     // temp
-    if (hud_attached) {
-      Game::hud->status->setLine(string("current group$e ")
-                                 + intoString(current_group), 1, 20);
-      Game::hud->status->setLine(string("current weapon$e ")
-                                 + intoString(current_weapon), 1, 20, 21);
-      if (controller->control_block.fire_mode_group) {
+    /*if (hud_attached) {
+       Game::hud->status->setLine(string("current group$e ")
+     + intoString(current_group), 1, 20);
+       Game::hud->status->setLine(string("current weapon$e ")
+     + intoString(current_weapon), 1, 20, 21);
+       if (Controller->ControlBlock.fire_mode_group) {
         Game::hud->status->setLine(string("$egroup$x mode"), 1, 11, 41);
-      } else {
+       } else {
         Game::hud->status->setLine(string("$esingle$x mode"), 1, 11, 41);
-      }
-      if (controller->control_block.auto_cycle) {
+       }
+       if (Controller->ControlBlock.auto_cycle) {
         Game::hud->status->setLine(string("$aauto"), 1, 6, 54);
-      } else {
+       } else {
         Game::hud->status->setLine(string("$a"), 1, 6, 54);
-      }
-      Game::hud->status->setLine(string("$rpos x: ") + intoString(pos_xyz.x) + " y: "
-                                 + intoString(pos_xyz.z), 0, 20, 0);
+       }
+       Game::hud->status->setLine(string("$rpos x: ") + intoString(XYZ.x) + " y: "
+     + intoString(XYZ.z), 0, 20, 0);
 
-      Game::hud->status->setLine(string("integrity: ") + intoString(core_integrity),
+       Game::hud->status->setLine(string("integrity: ") + intoString(CoreIntegrity),
                                  0, 20, 21);
-    }
-  } else if (core_integrity < -1) { // temp!!!
-    core_integrity = 0;
-    Game::particle_factory->createExplosion(pos_xyz, 10, 2, 3);
-    if (hud_attached) {
-      Game::hud->log->addLine("your crusader has been destroyed - $eGAME OVER");
-    }
+       }*/
+  } else if (CoreIntegrity < -1) { // temp!!!
+    CoreIntegrity = 0;
+    Game::Particle->createExplosion(XYZ, 10, 2, 3);
+    /*if (hud_attached) {
+       Game::hud->log->addLine("your crusader has been destroyed - $eGAME OVER");
+       }*/
   } else {
-    core_integrity -= dt;
+    CoreIntegrity -= a_dt;
   }
 
-  if (Game::Arena->isOutOfBounds(pos_xyz)) {
+  if (Game::Arena->isOutOfBounds(XYZ)) {
     // TODO: either flag this as a bollocked map or if the map has an exit do something here
   }
 
-  return 0; // don't remove crusaders even after death
+  return true;
 }

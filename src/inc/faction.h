@@ -17,22 +17,26 @@ public:
   virtual ~Faction();
 
   // name
-  string& getName() {
+  string& getName()
+  {
     return name;
   }
 
-  void setName(const string a_name) {
+  void setName(const string a_name)
+  {
     name = a_name;
   }
 
   void attack(Faction* a_faction,
               Real     a_damage);
 
-  void setParent(Faction* a_faction) {
+  void setParent(Faction* a_faction)
+  {
     parent = a_faction;
   }
 
-  Faction* getParent() {
+  Faction* getParent()
+  {
     return parent;
   }
 

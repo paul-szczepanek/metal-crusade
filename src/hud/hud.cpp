@@ -3,7 +3,7 @@
 #include "hud.h"
 #include "game.h"
 #include "unit.h"
-#include "camera.h"
+#include "game_camera.h"
 #include "input_handler.h"
 #include "files_handler.h"
 #include "game_controller.h"

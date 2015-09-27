@@ -61,71 +61,88 @@ class GameController
 {
 public:
   GameController(const string& a_name);
-  ~GameController() {
-  }
+  ~GameController();
 
   // throttle
   void setThrottle(Real a_throttle);
-  Real getThrottle() {
-    return throttle;
-  }
+
+  Vector2 getPointerPosXZ();
+
+  Real getThrottle();
 
   // turning the body
-  void setTurn(Real a_turn_speed) {
-    turn_speed = a_turn_speed;
-  }
+  void setTurnSpeed(Real a_turn_speed);
 
-  Real getTurnSpeed() {
-    return turn_speed;
-  }
+  Real getTurnSpeed();
 
   // 3d pointer
-  void setPointerPos(Vector3 a_pointer_pos) {
-    pointer_pos = a_pointer_pos;
-  }
+  void setPointerPos(Vector3 a_pointer_pos);
 
-  Vector3 getPointerPos() {
-    return pointer_pos;
-  }
+  Vector3 getPointerPos();
 
-  Vector2 getPointerPosXZ() {
-    return Vector2(pointer_pos.x, pointer_pos.z);
-  }
+  string getName();
 
-  string getName() {
-    return name;
-  }
+  void setName(const string& a_name);
 
-  // formation (and thus faction) affiliation
-  Formation* getFormation() {
-    return formation;
-  }
-
-  void setFormation(Formation* a_formation) {
-    formation = a_formation;
-  }
-
-  void setFormation(string a_formation_name);
-
-  control_block_t control_block;
+public:
+  control_block_t ControlBlock;
 
 private:
   // speed
-  Real turn_speed;
-  Real throttle;
+  Real TurnSpeed; // <-1,1> negative is left
+  Real Throttle; // <-1,1> negative is reverse
 
-  // pinter
-  Vector3 pointer_pos;
+  // target pointer
+  Vector3 PointerPos;
 
   // controller name being the actual player name
-  string name;
-
-  // group affiliation
-  Formation* formation;
+  string Name;
 
   // control options
   bool InvertTurnToPointer;
 };
+
+Vector2 GameController::getPointerPosXZ()
+{
+  return Vector2(PointerPos.x, PointerPos.z);
+}
+
+Real GameController::getThrottle()
+{
+  return Throttle;
+}
+
+// turning the body
+void GameController::setTurnSpeed(Real a_turn_speed)
+{
+  TurnSpeed = a_turn_speed;
+}
+
+Real GameController::getTurnSpeed()
+{
+  return TurnSpeed;
+}
+
+// 3d pointer
+void GameController::setPointerPos(Vector3 a_pointer_pos)
+{
+  PointerPos = a_pointer_pos;
+}
+
+Vector3 GameController::getPointerPos()
+{
+  return PointerPos;
+}
+
+string GameController::getName()
+{
+  return Name;
+}
+
+void GameController::setName(const string& a_name)
+{
+  Name = a_name;
+}
 
 const Real target_air_offset = 64;
 const Real target_high_offset = 10;

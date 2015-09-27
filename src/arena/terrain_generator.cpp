@@ -16,13 +16,14 @@ const Real effective_height = Real(block_size) / Real(inner_block_size);
 bool TerrainGenerator::getTerrain(const string&                 filename,
                                   vector<usint>&                block_height,
                                   vector<terrain::block_types>& block_type,
-                                  uint&                         width,
-                                  uint&                         height)
+                                  size_t&                       width,
+                                  size_t&                       height)
 {
   // prepare map to read tile data into
   map<string, string> pairs;
-  if (!FS::getPairs(filename + EXT_TERRAIN, TERRAIN_DIR, pairs)) { // insert data from file into
-                                                                   // pairs
+  if (!FilesHandler::getPairs(filename + EXT_TERRAIN, TERRAIN_DIR, pairs)) { // insert data from
+    // file into
+    // pairs
     return false;
   }
 
@@ -31,11 +32,11 @@ bool TerrainGenerator::getTerrain(const string&                 filename,
 
   vector<char> tile_type_codes;
 
-  FS::getDigitArray(block_height, pairs["terrain_height"]);
-  FS::getCharArray(tile_type_codes, pairs["terrain_type"]);
+  FilesHandler::getDigitArray(block_height, pairs["terrain_height"]);
+  FilesHandler::getCharArray(tile_type_codes, pairs["terrain_type"]);
 
   // converting a character code array into an terrain tile type enum array
-  for (int i = 0, for_size = tile_type_codes.size(); i < for_size; ++i) {
+  for (size_t i = 0, for_size = tile_type_codes.size(); i < for_size; ++i) {
     terrain::block_types type;
 
     if (tile_type_codes[i] == 'p') {
@@ -68,8 +69,8 @@ Terrain* TerrainGenerator::generateTerrain(const string& terrain_name)
   // this is the tile data, not actual map data
   vector<usint> block_heights;
   vector<terrain::block_types> block_types;
-  uint tile_columns(0);
-  uint tile_rows(0);
+  size_t tile_columns(0);
+  size_t tile_rows(0);
 
   // load the terrain tile data from a file
   getTerrain(terrain_name, block_heights, block_types, tile_columns, tile_rows);
@@ -80,10 +81,10 @@ Terrain* TerrainGenerator::generateTerrain(const string& terrain_name)
   Terrain* result = new Terrain(terrain_w, terrain_h);
 
   // analyse the hights and convert to a set of tile tile_rows types
-  for (uint i = 0; i < tile_columns; ++i) {
-    for (uint j = 0; j < tile_rows; ++j) {
+  for (size_t i = 0; i < tile_columns; ++i) {
+    for (size_t j = 0; j < tile_rows; ++j) {
       // this is the tile we are creating
-      uint index = i + j * tile_columns;
+      size_t index = i + j * tile_columns;
 
       // read the type and tile_rows for this tile
       const terrain::block_types& block_type = block_types[index];
@@ -127,7 +128,7 @@ Terrain* TerrainGenerator::generateTerrain(const string& terrain_name)
         // create a name of the image that defines a tile that fits prefix_0000
         tile_name = terrain::block_prefix[block_type];
 
-        for (uint i_block = 0; i_block < 4; ++i_block) {
+        for (size_t i_block = 0; i_block < 4; ++i_block) {
           // ternary operators are neat but also annoying when debugging, so there
           if ((block_heights[index_adj[i_block]] > block_heights[index])) {
             tile_name += '1';
@@ -151,8 +152,8 @@ Terrain* TerrainGenerator::generateTerrain(const string& terrain_name)
       tile->load(tile_name + ".tga", "terrain");
 
       // load the data from the image and blend it into the terrain
-      for (uint t_i = 0; t_i < block_size; ++t_i) {
-        for (uint t_j = 0; t_j < block_size; ++t_j) {
+      for (size_t t_i = 0; t_i < block_size; ++t_i) {
+        for (size_t t_j = 0; t_j < block_size; ++t_j) {
           Ogre::ColourValue colour = tile->getColourAt(t_i, t_j, 0);
 
           // translate local tile coords into global terrain coords
@@ -176,8 +177,8 @@ Terrain* TerrainGenerator::generateTerrain(const string& terrain_name)
       // this needs an intermediary step for blending types in non trivial way
 
       // temp types
-      for (uint t_i = 0; t_i < block_size; ++t_i) {
-        for (uint t_j = 0; t_j < block_size; ++t_j) {
+      for (size_t t_i = 0; t_i < block_size; ++t_i) {
+        for (size_t t_j = 0; t_j < block_size; ++t_j) {
           // Ogre::ColourValue colour = tile->getColourAt(t_i, t_j, 0);
 
           // translate local tile coords into global terrain coords
@@ -200,8 +201,8 @@ Terrain* TerrainGenerator::generateTerrain(const string& terrain_name)
 /** @brief gets the weight for a vertex height for blending tiles together
  * @todo: experiment with non-linear blends
  */
-Real TerrainGenerator::getBlendWeight(uint a_i,
-                                      uint a_j)
+Real TerrainGenerator::getBlendWeight(size_t a_i,
+                                      size_t a_j)
 {
   // get the shorter distance from any edge
   if (a_i > block_size * 0.5) {

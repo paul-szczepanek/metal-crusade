@@ -34,7 +34,7 @@ void Timer::reset()
 {
   OgreTimer->reset();
 
-  Start = (long lint)OgreTimer->getMilliseconds();
+  Start = (ulint)OgreTimer->getMilliseconds();
   Ticks = Start;
 }
 
@@ -56,22 +56,22 @@ void Timer::setRate(Real aRate)
 
 /** @brief get internal clock detached from real clock
  */
-long lint Timer::getTicks()
+ulint Timer::getTicks()
 {
   // keeps the internal time consistent by moving the start time if time is warped or paused
   if (TimeWarp) {
     // get step (new time - old time)
-    long lint step = (OgreTimer->getMilliseconds() - Start - Ticks);
+    ulint step = (OgreTimer->getMilliseconds() - Start - Ticks);
 
     // recalculate start to accomodate time-warped step
-    Start = Start + (long lint)(step * (1 - Rate));
+    Start = Start + (ulint)(step * (1 - Rate));
 
     // measure time against the time warp corrected start
-    Ticks = (long lint)OgreTimer->getMilliseconds() - Start;
+    Ticks = (ulint)OgreTimer->getMilliseconds() - Start;
 
   } else {
     // if not warped check if it's not bollocked (mostly for use when debugging, remove later)
-    long lint new_ticks = (long lint)OgreTimer->getMilliseconds() - Start;
+    ulint new_ticks = (ulint)OgreTimer->getMilliseconds() - Start;
 
     if (new_ticks > Ticks + 100) {
       // this basically limits dt to 0.1 seconds by slowing down the game time
@@ -79,7 +79,7 @@ long lint Timer::getTicks()
       Start = Start + (new_ticks - Ticks - 10);
 
       // measure time again with the corrected start
-      Ticks = (long lint)OgreTimer->getMilliseconds() - Start;
+      Ticks = (ulint)OgreTimer->getMilliseconds() - Start;
 
     } else {
       Ticks = new_ticks;

@@ -18,6 +18,7 @@ class GameController;
 class InputHandler;
 class TextStore;
 class GameCamera;
+class CorpusManager;
 class FormationManager;
 class FactionManager;
 class GameArena;
@@ -32,15 +33,14 @@ class Game
   : public Ogre::FrameListener
 {
 public:
-  ~Game() {
-  }
+  ~Game();
 
   static int init(bool aDebugOn);
   static Game* instance();
   void run();
 
   static const string& getVersion();
-  static string Game::getUniqueID();
+  static string getUniqueID();
 
   // the main loop hook
   bool frameRenderingQueued(const Ogre::FrameEvent &aEvt);
@@ -59,6 +59,8 @@ public:
 
   static void log(const string& aText);
 
+  static void destroyModel(Ogre::SceneNode* a_scene_node);
+
   // terminate game
   static void end(string aGoodbye = "Terminated");
   static void kill(string aGoodbye = "Terminal Error");
@@ -69,7 +71,6 @@ private:
   static void enterArena();
   static void exitArena();
 
-  // main loop
   static void input();
   static void logic(int aDTicks);
   static void fpsCalc();
@@ -79,11 +80,12 @@ public:
   static Ogre::Root* OgreRoot;
   static Ogre::Viewport* OgreViewport;
   static Ogre::RenderWindow* OgreWindow;
-  static Ogre::SceneManager* OgreScene;
+  static Ogre::SceneManager* Scene;
 
   static InputHandler* Input;
   static TextStore* Text;
   static GameCamera* Camera;
+  static CorpusManager* Corpus;
   static FormationManager* Formation;
   static FactionManager* Faction;
   static GameArena* Arena;

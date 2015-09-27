@@ -3,13 +3,12 @@
 #ifndef CORPUSFACTORY_H
 #define CORPUSFACTORY_H
 
-#include "factory.h"
+#include "main.h"
 
 class Corpus;
 class ArenaEntity;
 
 class BuildingFactory
-  : public Factory
 {
 public:
   BuildingFactory();
@@ -25,7 +24,7 @@ public:
                                     Quaternion a_orientation = Quaternion(1, 0, 0, 0));
 
 protected:
-  list<Corpus*> corpus;
+  list<Corpus*> Corpuses;
 };
 
 #endif // CORPUSFACTORY_H

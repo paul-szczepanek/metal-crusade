@@ -33,7 +33,6 @@ public:
   InputHandler();
   ~InputHandler();
 
-  // main loop
   void capture();
 
   // called by Ogre whe the window is resized
@@ -76,13 +75,14 @@ private:
   Ogre::RaySceneQuery* mouse_ray_query;
   Ogre::Ray* mouse_ray;
   Real pointer_x, pointer_y;
+  Real CAMERA_DIST;
 
   Ogre::SceneNode* pointer_node;
   Ogre::SceneNode* pointer_centre_node;
 
   // screen size
-  uint screen_width;
-  uint screen_height;
+  size_t screen_width;
+  size_t screen_height;
 };
 
 #endif // OIS_INPUT_H

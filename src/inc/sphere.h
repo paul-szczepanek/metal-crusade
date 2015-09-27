@@ -8,30 +8,41 @@
 // tells you what the distance is to another sphere
 // and if it intersects with it
 
+#define HIT_OVERLAP (0.01)
+
 struct Sphere {
   Sphere()
-    : Radius(1), Centre(Vector3::ZERO) {
+    : Radius(1), Centre(Vector3::ZERO)
+  {
   }
 
   Sphere(Real aRadius)
-    : Radius(aRadius), Centre(Vector3::ZERO) {
+    : Radius(aRadius), Centre(Vector3::ZERO)
+  {
   }
 
   Sphere(Real aX,
          Real aY,
          Real aZ,
          Real aRadius)
-    : Radius(aRadius), Centre(Vector3(aX, aY, aZ)) {
+    : Radius(aRadius), Centre(Vector3(aX, aY, aZ))
+  {
   }
 
   Sphere(const Vector3& aCentre,
          Real           aRadius)
-    : Radius(aRadius), Centre(aCentre) {
+    : Radius(aRadius), Centre(aCentre)
+  {
   }
 
   bool intersects(const Sphere& sphere) const
   {
     return ((sphere.Centre - Centre).length() <= sphere.Radius + Radius);
+  }
+
+  Real getDepth(const Sphere& sphere) const
+  {
+    return sphere.Radius + Radius - (sphere.Centre - Centre).length();
   }
 
   bool contains(const Sphere& sphere) const

@@ -2,7 +2,7 @@
 
 #include "formation.h"
 #include "faction.h"
-#include "game_controller.h"
+#include "unit.h"
 
 Formation::Formation(const string& a_name,
                      Faction*      a_faction)
@@ -13,11 +13,11 @@ Formation::Formation(const string& a_name,
 
 Formation::~Formation()
 {
-  for (list<GameController*>::iterator it = controllers.begin(); it != controllers.end(); ++it) {
-    (*it)->setFormation(NULL);
+  for (auto u : Members) {
+    u->setFormation(NULL);
   }
 
-  controllers.clear();
+  Members.clear();
 
   faction->leaveFaction(this);
 }
@@ -35,29 +35,29 @@ void Formation::setFaction(Faction* a_faction)
 /** @brief a controller (which represents the unit's pilot) joins a formation
  * automatically leaves any old one
  */
-void Formation::joinFormation(GameController* a_controller)
+void Formation::joinFormation(Unit* a_unit)
 {
   // check old formation
-  Formation* old_formation = a_controller->getFormation();
+  Formation* old_formation = a_unit->getFormation();
 
   // if it exists leave it
   if (old_formation != NULL) {
-    old_formation->leaveFormation(a_controller);
+    old_formation->leaveFormation(a_unit);
   }
 
   // put the the controller in the new formation
-  controllers.push_back(a_controller);
+  Members.push_back(a_unit);
   // set the new formation in the controller
-  a_controller->setFormation(this);
+  a_unit->setFormation(this);
 }
 
 /** @brief a controller (which represents the unit's pilot) leaves the formation
  * (used mostly internally)
  */
-void Formation::leaveFormation(GameController* a_controller)
+void Formation::leaveFormation(Unit* a_unit)
 {
   // take the unit out of the list
-  controllers.remove(a_controller);
+  Members.remove(a_unit);
   // and set the unit's formation to none
-  a_controller->setFormation(NULL);
+  a_unit->setFormation(NULL);
 }

@@ -23,13 +23,13 @@ public:
                          fx_anim::anims   a_animation);
   ~ParticleEffectFlipbook();
 
-  int update(Real a_dt);
+  bool update(Real a_dt);
 
 private:
   Ogre::BillboardSet* set;
   Ogre::Billboard* billboard;
-  uint num_frames;
-  uint current_frame;
+  size_t num_frames;
+  size_t current_frame;
 
 };
 

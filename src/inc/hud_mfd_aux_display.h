@@ -12,10 +12,10 @@ class HudMFDAuxDisplay
 {
 public:
   HudMFDAuxDisplay(hud_part_design_t& a_hud_part_design);
-  ~HudMFDAuxDisplay() {
+  ~HudMFDAuxDisplay()
+  {
   }
 
-  // main loop
   void update(Real a_dt);
 
 private:

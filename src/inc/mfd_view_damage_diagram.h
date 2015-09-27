@@ -12,10 +12,10 @@ class MFDViewDamageDiagram
 {
 public:
   MFDViewDamageDiagram(hud_part_design_t& a_hud_part_design);
-  virtual ~MFDViewDamageDiagram() {
+  virtual ~MFDViewDamageDiagram()
+  {
   }
 
-  // main loop
   virtual void update(Real a_dt);
 
 protected:

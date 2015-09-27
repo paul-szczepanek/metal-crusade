@@ -5,14 +5,23 @@
 #include "game_arena.h"
 #include "game_controller.h"
 
-Unit::Unit(Vector3          a_pos_xyz,
-           const string&    a_unit_name,
-           Ogre::SceneNode* a_scene_node,
-           Quaternion       a_orientation)
-  : Corpus(a_pos_xyz, a_unit_name, a_scene_node, a_orientation),
-  core_temperature(0), hud_attached(false)
+Unit::Unit(const string& a_unit_name,
+           Vector3       a_pos_xyz,
+           Quaternion    a_orientation)
+  : ArenaEntity(a_unit_name),
+  Orientation(a_orientation),
+  CoreTemperature(0),
+  hud_attached(false),
+  Velocity(Vector3(0, 0, 0)),
+  Move(Vector3(0, 0, 0)),
+  corrected_velocity_scalar(0),
 {
+  XYZ = a_pos_xyz;
+}
 
+virtual Unit::~Unit()
+{
+  clearFromTargets();
 }
 
 /** @brief calculate the real target of the weapon and the angle it should fire at
@@ -21,7 +30,7 @@ Unit::Unit(Vector3          a_pos_xyz,
 Quaternion Unit::getBallisticAngle(const Vector3& a_position)
 {
   // get the intended target
-  Vector3 pointer_position = controller->getPointerPos();
+  Vector3 pointer_position = Controller->getPointerPos();
   // get the vector pointing at the inteded target
   Vector3 pointer_direction = pointer_position - a_position;
   // get the flattened vector
@@ -49,9 +58,9 @@ Quaternion Unit::getBallisticAngle(const Vector3& a_position)
   Real height = Game::Arena->getHeight(pointer_position.x, pointer_position.z);
 
   // adjust by the target mode
-  if (controller->control_block.target_high) {
+  if (Controller->ControlBlock.target_high) {
     pointer_position.y = height + target_high_offset;
-  } else if (controller->control_block.target_air) {
+  } else if (Controller->ControlBlock.target_air) {
     pointer_position.y = height + target_air_offset;
   } else {
     pointer_position.y = height + target_low_offset;
@@ -66,7 +75,7 @@ Quaternion Unit::getBallisticAngle(const Vector3& a_position)
 
 void Unit::updateTargets()
 {
-  if (take(controller->control_block.target_pointer)) {
+  if (take(Controller->ControlBlock.target_pointer)) {
     getUnitAtPointer();
   }
 }
@@ -75,13 +84,13 @@ void Unit::updateTargets()
  */
 bool Unit::getUnitAtPointer()
 {
-  Vector3 pointer_position = controller->getPointerPos();
-  uint_pair pointer_cell_index = Game::Arena->getCellIndex(pointer_position.x,
-                                                           pointer_position.z);
-  vector<uint_pair> cell_indexes;
+  Vector3 pointer_position = Controller->getPointerPos();
+  size_t_pair pointer_cell_index = Game::Arena->getCellIndex(pointer_position.x,
+                                                             pointer_position.z);
+  vector<size_t_pair> cell_indexes;
   Game::Arena->getCellIndexesWithinRadius(pointer_cell_index, cell_indexes);
 
-  for (usint i = 0, for_size = cell_indexes.size(); i < for_size; ++i) {
+  for (size_t i = 0, for_size = cell_indexes.size(); i < for_size; ++i) {
     list<Unit*>& unit_list = Game::Arena->getUnitCell(cell_indexes[i]);
 
     // if there are any units in the cell
@@ -103,7 +112,7 @@ bool Unit::getUnitAtPointer()
 
 /** @brief get the passed in mobilis as target
  */
-bool Unit::acquireTarget(Corpus* a_target)
+bool Unit::acquireTarget(Unit* a_target)
 {
   // check if target is acquirable
   if (a_target->acquireAsTarget(this)) {
@@ -116,6 +125,29 @@ bool Unit::acquireTarget(Corpus* a_target)
   return false;
 }
 
+/** @brief called by an object which holds this as a target to tell it that it no longer targets it
+ */
+void Unit::releaseAsTarget(Unit* a_targeted_by)
+{
+  if (target_holders.size() > 0) {
+    vector<Unit*>::iterator it = find(target_holders.begin(),
+                                      target_holders.end(), a_targeted_by);
+    if (it < target_holders.end()) {
+      target_holders.erase(it);
+    }
+  }
+}
+
+/** @brief called by other object to try and acquire this as a target
+ * return false if target can't be acquired
+ */
+bool Unit::acquireAsTarget(Unit* a_targeted_by)
+{
+  target_holders.push_back(a_targeted_by);
+
+  return true;
+}
+
 /** @brief puts the object on the arean and in the correct array and in the correct cell index
  * updates the cell index and position if out of bounds
  */
@@ -126,15 +158,16 @@ void Unit::updateCellIndex()
 }
 
 // radar
-bool Unit::isDetectable() {
+bool Unit::isDetectable()
+{
   return true;
 }
 
 /** @brief called by targeted object that requires this to relinquish its current target
  * TODO: relinquish criteria
  */
-bool Unit::loseTarget(Corpus* a_targeted_by,
-                      bool    a_forced)
+bool Unit::loseTarget(Unit* a_targeted_by,
+                      bool  a_forced)
 {
   if (a_forced) {
     target = NULL;
@@ -150,7 +183,7 @@ bool Unit::loseTarget(Corpus* a_targeted_by,
 void Unit::clearFromTargets()
 {
   // stop other objects targeting this object
-  for (usint i = 0, for_size = target_holders.size(); i < for_size; ++i) {
+  for (size_t i = 0, for_size = target_holders.size(); i < for_size; ++i) {
     target_holders[i]->loseTarget(this, true);
   }
 

@@ -10,10 +10,10 @@ class MFDComputer
 {
 public:
   MFDComputer();
-  ~MFDComputer() {
+  ~MFDComputer()
+  {
   }
 
-  // main loop
   void update(Real a_dt);
 
   // make selected
@@ -26,7 +26,8 @@ public:
                  usint a_j);
 
   // get the view type
-  mfd_view::view_type getViewType() {
+  mfd_view::view_type getViewType()
+  {
     return selected_view;
   }
 

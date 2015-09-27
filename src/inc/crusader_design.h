@@ -4,6 +4,7 @@
 #define CRUSADER_DESIGN_H_INCLUDED
 
 #include "armour_type.h"
+#include "internal_type.h"
 
 const usint num_of_body_parts = 9;
 const usint num_of_body_areas = 12;
@@ -15,12 +16,13 @@ enum body_part { // for indexing arrays
   torso,      // 0
   torso_right, // 1
   torso_left, // 2
-  arm_right,  // 3
+  arm_right,    // 3
   arm_left,   // 4
   leg_right,  // 5
   leg_left,   // 6
   leg_right_back, // 7
-  leg_left_back // 8
+  leg_left_back, // 8
+  body_part_max
 };
 
 };
@@ -39,7 +41,8 @@ enum body_area { // for indexing arrays
   torso_right_back, // 8
   torso_left_back, // 9
   leg_right_back, // 10
-  leg_left_back // 11
+  leg_left_back, // 11
+  body_area_max
 };
 
 };
@@ -49,23 +52,20 @@ enum drive_type {
   drive_type_wheels,
   drive_type_tracks,
   drive_type_float,
-  drive_type_hover
+  drive_type_hover,
+  drive_type_max
 };
 
 enum drive_subtype {
   drive_subtype_biped,
-  drive_subtype_quadruped,
   drive_subtype_multiped,
   drive_subtype_bicycle,
-  drive_subtype_tricycle,
-  drive_subtype_quad,
-  drive_subtype_multi_wheel,
-  drive_subtype_unitrack,
+  drive_subtype_wheels,
   drive_subtype_tracks,
-  drive_subtype_multitracks,
   drive_subtype_hovercraft,
   drive_subtype_boat,
-  drive_subtype_rocket
+  drive_subtype_rocket,
+  drive_subtype_max
 };
 
 enum crusader_type {
@@ -73,8 +73,7 @@ enum crusader_type {
   crusader_type_infantry,
   crusader_type_assault,
   crusader_type_goliath,
-  crusader_type_cavarly,
-  crusader_type_messanger,
+  crusader_type_max
 };
 
 // crusader blueprint

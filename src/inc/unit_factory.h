@@ -3,32 +3,40 @@
 #ifndef UNIT_FACTORY_H
 #define UNIT_FACTORY_H
 
+#include "main.h"
 #include "building_factory.h"
+#include "crusader_design.h"
 
 class Unit;
 class Crusader;
 
 class UnitFactory
-  : public Factory
 {
 public:
   UnitFactory();
   ~UnitFactory();
-
-  // main loop
-  void update(Real a_dt);
 
   // creation
   Crusader* spawnCrusader(Vector3 a_pos_xyz,
                           const string& a_name,
                           Quaternion a_orientation = Quaternion(1, 0, 0, 0));
 
+  bool getCrusaderSpec(const string&      filename,
+                       crusader_engine_t& engine,
+                       crusader_drive_t&  drive,
+                       crusader_chasis_t& chasis);
+  bool getCrusaderDesign(const string&      filename,
+                         crusader_design_t& design,
+                         crusader_engine_t& engine,
+                         crusader_drive_t&  drive,
+                         crusader_chasis_t& chasis);
+
   // find unit
-  Unit* getUnit(uint a_id);
+  Unit* getUnit(size_t a_id);
   Unit* getUnit(const string& a_name);
 
 private:
-  list<Unit*> units;
+  list<Unit*> Units;
 };
 
 #endif // UNIT_FACTORY_H

@@ -6,7 +6,7 @@
 #include "main.h"
 
 class Faction;
-class GameController;
+class Unit;
 
 // this represents the group of actual units at a location
 class Formation
@@ -33,15 +33,15 @@ public:
   }
 
   // units joining and leaving the formation
-  void joinFormation(GameController* a_controller);
-  void leaveFormation(GameController* a_controller);
+  void joinFormation(Unit* a_unit);
+  void leaveFormation(Unit* a_unit);
 
 private:
   string name;
   Faction* faction;
 
   // members of the formation
-  list<GameController*> controllers;
+  list<Unit*> Members;
 };
 
 #endif // FORMATION_H

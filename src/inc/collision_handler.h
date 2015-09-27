@@ -11,7 +11,8 @@ class Collision;
 struct collision_pair {
   collision_pair(Corpus* a_object1,
                  Corpus* a_object2)
-    : object1(a_object1), object2(a_object2) {
+    : object1(a_object1), object2(a_object2)
+  {
   }
 
   Corpus* object1;
@@ -24,7 +25,6 @@ public:
   CollisionHandler();
   ~CollisionHandler();
 
-  // main loop
   void update(Real a_dt);
 
   // functions hooking up objects into the system
@@ -32,19 +32,18 @@ public:
   void deregisterObject(Corpus* a_corpus);
 
 private:
-  // main loop
   void updatePotentialCollisions();
   void evaluatePotentialCollisions();
 
   // collisions being processed
-  vector<collision_pair> possible_collisions;
-  vector<Collision*> collisions;
-
-  // all registered objects
-  list<Corpus*> registered_objects;
+  vector<collision_pair> PossibleCollisions;
+  vector<Collision> Collisions;
+  list<Corpus*> RegisteredObjects;
+  map<Corpus*, size_t> Hits;
+  map<Corpus*, vector<Collision*> > CollisionGroups;
 
   // temp
-  Vector2 arena_size;
+  Vector2 ArenaSize;
 };
 
 #endif // COLLISIONHANDLER_H

@@ -7,171 +7,139 @@
 #include "particle_manager.h"
 #include "collision.h"
 #include "weapon.h"
+#include "collision_type.h"
+#include "corpus.h"
 
 // how much slower the bullet moves visually
-const Real velocity_scale = 0.1;
-const Real inverse_velocity_scale = 10;
+#define VELOCITY_SCALE (0.1)
+#define INVERSE_VELOCITY_SCALE (1.0 / (VELOCITY_SCALE))
 // when the air resistance start to become negligible (for gameplay purposes, not in real life)
-const Real air_resistance_cutoff = 400 * velocity_scale;
+const Real air_resistance_cutoff = 400 * VELOCITY_SCALE;
 // grace time for projectiles after spawning so that they don't explode in the owner crusader
 const Real grace_period = 10;
 
-Projectile::Projectile(Vector3          a_pos_xyz,
-                       const string&    a_unit_name,
-                       Ogre::SceneNode* a_scene_node,
-                       Quaternion       a_orientation,
-                       Weapon*          a_weapon,
-                       Corpus*          a_owner)
-  : weapon(a_weapon),
-  NumCorpuses(0),
-  lifetime(0),
-  exploading(false),
-  coverage(1),
-  velocity_dmg_multiplier(1)
+Projectile::~Projectile()
 {
-  // read properties from weapon spec
-  penetration = weapon->weapon_design.penetration;
-  total_weight = weapon->weapon_design.projectile_weight;
-
-  // all projectiles die on collision
-  collision = collision_type_impact;
-
-  // fake speed so that you can see it fly.
-  velocity = direction * velocity_scale * weapon->weapon_design.muzzle_velocity;
-
-  // projectiles don't need one, they are instantly active
-  controller_active = true;
 }
 
-/** @brief interface for collision resolution when the other object is taking damage
- */
-Real Projectile::getBallisticDmg()
+Projectile::Projectile()
 {
-  return weapon->weapon_design.ballistic_dmg * coverage * velocity_dmg_multiplier;
+  reset();
 }
 
-Real Projectile::getEnergyDmg()
+void Projectile::reset(Weapon* a_weapon,
+                       Corpus* a_corpus)
 {
-  return weapon->weapon_design.energy_dmg * coverage;
-}
-
-Real Projectile::getHeatDmg()
-{
-  return weapon->weapon_design.heat_dmg * coverage;
-}
-
-/** @brief check if the collision can happen and prepares the projectile to handle it
- */
-bool Projectile::validateCollision(Corpus* a_colliding_object)
-{
-  // ignore other projectiles and ignore hits at close range
-  if (lifetime < grace_period && owner == a_colliding_object) {
-    return false;
-
-  } else if (a_colliding_object->getCollisionType() == collision_type_impact) { // ignore bullets
-    return false;
-
-  } else {
-    if (exploading) { // if the proejctile is already exploading turn the multiplier off
-      velocity_dmg_multiplier = 1;
-
-    } else { // if it's the first impact and not exploading yet
-      // make the damage inversly proportional to the loss of velocity after firing
-      velocity_dmg_multiplier
-        = velocity.length() / (weapon->weapon_design.muzzle_velocity * velocity_scale);
-    }
-    return true;
+  GracePeriod = grace_period;
+  Exploading = false;
+  OwnerWeapon = a_weapon;
+  Bullet = a_corpus;
+  if (OwnerWeapon && Bullet) {
+    Lifetime = OwnerWeapon->weapon_design.range;
+    // fake speed so that you can see it fly.
+    Bullet->Velocity = VELOCITY_SCALE * new_corpus->Direction *
+                       a_weapon->weapon_design.muzzle_velocity;
+    Bullet->Penetration = OwnerWeapon->weapon_design.penetration;
+    Bullet->TotalWeight = OwnerWeapon->weapon_design.projectile_weight;
+    Bullet->BallisticDmg = OwnerWeapon->weapon_design.BallisticDmg;
+    Bullet->EnergyDmg = OwnerWeapon->weapon_design.EnergyDmg;
+    Bullet->HeatDmg = OwnerWeapon->weapon_design.HeatDmg;
+    Bullet->CollisionType = collision_type_none;
   }
 }
 
 /** @brief resolves collisions
  */
-int Projectile::handleCollision(Collision* a_collision)
+bool Projectile::handleCollision(Collision* a_collision)
 {
-  // explode and apply velocity
-  velocity = a_collision->getVelocity();
-
-  if (!exploading) {
+  if (!Exploading) {
     explode();
   }
 
-  return 0;
+  return true;
 }
 
 /** @brief sets the exploding state stopping motion and starts the explosion effect if needed
  */
 void Projectile::explode()
 {
-  exploading = true;
+  Exploading = true;
 
-  lifetime = grace_period;
-
-  if (weapon->weapon_design.splash_range > 0) {
-    Game::particle_factory->createExplosion(pos_xyz, weapon->weapon_design.splash_range,
-                                            weapon->weapon_design.splash_range
-                                            / (weapon->weapon_design.splash_velocity *
-                                               velocity_scale),
-                                            weapon->weapon_design.heat_dmg / 100.0);
+  if (OwnerWeapon->weapon_design.splash_range > 0) {
+    Lifetime = OwnerWeapon->weapon_design.splash_range;
+    Bullet->BoundingSphere.Radius = 0;
+    Game::Particle->createExplosion(Bullet->XYZ, OwnerWeapon->weapon_design.splash_range,
+                                    OwnerWeapon->weapon_design.splash_range
+                                    / (OwnerWeapon->weapon_design.splash_velocity *
+                                       VELOCITY_SCALE),
+                                    OwnerWeapon->weapon_design.HeatDmg / 100.0);
   }
 }
 
-int Projectile::update()
+bool Projectile::update(Real a_dt)
 {
-  // kill after terrain hit
-  if (pos_xyz.y < Game::Arena->getHeight(pos_xyz.x, pos_xyz.z) // kill when ground hit
-      || lifetime > weapon->weapon_design.range) { // kill after range exceeded
-    if (!exploading) {
+  if (GracePeriod < 0) {
+    Game::Collision->registerObject(Bullet);
+    Bullet->CollisionType = collision_type_impact;
+  }
+
+  // kill after range exceeded
+  if (Lifetime < 0) {
+    if (!Exploading) {
       explode();
     }
   }
-  if (exploading) {
+  if (Exploading) {
     // does the projectile explode causing splash damage
-    if (weapon->weapon_design.splash_range > 0) {
+    if (OwnerWeapon->weapon_design.splash_range > 0) {
       // stop projectile
-      velocity = Vector3::ZERO;
+      Bullet->Velocity = Vector3::ZERO;
 
       // start splash expansion and degradation
-      Real expansion = dt * weapon->weapon_design.splash_velocity * velocity_scale;
+      Real expansion = a_dt * OwnerWeapon->weapon_design.splash_velocity * VELOCITY_SCALE;
       // expand the bounding sphere
-      bounding_sphere.radius += expansion;
+      Bullet->BoundingSphere.Radius += expansion;
 
       // as the ball expands make hp (density) smaller,
       // hp gets below zero if the sphere is larger than max radius of the explosion
-      core_integrity = 1 - (bounding_sphere.radius / weapon->weapon_design.splash_range);
+      Lifetime = 1 - (Bullet->BoundingSphere.Radius / OwnerWeapon->weapon_design.splash_range);
 
       // how much of the expolsion damage to apply
-      coverage = (expansion / weapon->weapon_design.splash_range);
+      Real coverage = (expansion / OwnerWeapon->weapon_design.splash_range);
+
+      Bullet->BallisticDmg = OwnerWeapon->weapon_design.BallisticDmg
+                             * OwnerWeapon->weapon_design.splash_velocity * coverage;
+      Bullet->EnergyDmg = OwnerWeapon->weapon_design.EnergyDmg * coverage;
+      Bullet->HeatDmg = OwnerWeapon->weapon_design.HeatDmg * coverage;
 
     } else { // no splash damage
-      core_integrity = 0; // kill instantly
+      Lifetime = -1; // kill instantly
     }
   } else {
-    // retard motion while the physics weep (air resistance should be velocity squared)
-    if (Vector2(velocity.x, velocity.z).length() > air_resistance_cutoff) {
-      velocity -= direction * weapon->weapon_design.muzzle_velocity * velocity_scale * dt;
+    // retard motion while the physics weep (air resistance should be Velocity squared)
+    if (Vector2(Bullet->Velocity.x, Bullet->Velocity.z).length() > air_resistance_cutoff) {
+      Bullet->Velocity -= Direction * OwnerWeapon->weapon_design.muzzle_velocity * VELOCITY_SCALE *
+                          a_dt;
     }
     // intentionally wrong because we already retarded the downward motion
-    velocity.y = velocity.y - Game::Arena->getGravity() * dt * inverse_velocity_scale;
+    Bullet->Velocity.y = Bullet->Velocity.y - Game::Arena->getGravity() * a_dt *
+                         INVERSE_VELOCITY_SCALE;
     // and there's the euluer integration error too and we need it to plunge fast
   }
 
-  if (core_integrity <= 0) { // kill on hp 0
-    return 1;
-  }
-
-  // move and save the difference of positions into move
-  move = velocity * dt;
-  pos_xyz += move;
-  direction = move;
-  direction.normalise();
-
-  // count up the length into lifetime
-  lifetime += move.length();
-
   // if out of bounds destroy
-  if (out_of_bounds) {
-    return 1;
+  if (Lifetime < 0) {
+    OwnerWeapon = NULL;
+    Bullet->OwnerEntity = NULL;
+    Game::Collision->deregisterObject(Bullet);
+    Game::destroyModel(Bullet->SceneNode);
+    Bullet->SceneNode = NULL;
+    return false;
   }
 
-  return 0;
+  Vector3 move = Bullet->Velocity * a_dt;
+  // count up the length into lifetime
+  Lifetime -= move.length();
+
+  return true;
 }

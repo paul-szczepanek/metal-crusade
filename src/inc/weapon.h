@@ -6,6 +6,7 @@
 #include "main.h"
 
 class Unit;
+class Projectile;
 
 enum weapon_type {
   weapon_type_cannon,
@@ -27,10 +28,10 @@ struct weapon_design_t {
   Real recharge_time;
   Real heat_generated;
   Real muzzle_velocity;
-  Real heat_dmg;
-  Real ballistic_dmg;
+  Real HeatDmg;
+  Real BallisticDmg;
   Real penetration;
-  Real energy_dmg;
+  Real EnergyDmg;
   Real splash_range;
   Real splash_velocity;
   string projectile;
@@ -38,7 +39,7 @@ struct weapon_design_t {
   Real fuel;
   Real homing;
   Real lock_on_time;
-  uint ammo_per_slot;
+  size_t ammo_per_slot;
   Real range;
   // strings
   ulint text_name;
@@ -53,25 +54,28 @@ public:
          Unit*         a_unit,
          Vector3       a_position,
          usint         a_extra_ammo);
-  virtual ~Weapon() {
+  virtual ~Weapon()
+  {
   }
 
-  // main loop
   void update(Real a_dt);
 
   bool fire();
 
   // for hud
-  ulint getAmmo() {
-    return ammo / (weapon_design.multi_fire + 1);
+  ulint getAmmo()
+  {
+    return Ammo / (weapon_design.multi_fire + 1);
   }
 
-  Real getCharge() {
-    return 1 - (timeout / weapon_design.recharge_time);
+  Real getCharge()
+  {
+    return 1 - (Timeout / weapon_design.recharge_time);
   }
 
-  bool isOperational() {
-    return (ammo > 0);
+  bool isOperational()
+  {
+    return (Ammo > 0);
   }
 
   weapon_design_t weapon_design;
@@ -81,12 +85,14 @@ public:
   Unit* Owner;
 
 private:
-  ulint ammo;
-  Real timeout;
-  uint projecitles_primed;
-  Real timeout_step;
+  ulint Ammo;
+  Real Timeout;
+  size_t ProjecitlesPrimed;
+  Real TimeoutStep;
 
-  Vector3 position;
+  Vector3 XYZ;
+
+  list<Projectile*> ActiveList;
 };
 
 #endif // WEAPON_H

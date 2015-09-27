@@ -36,14 +36,14 @@ const string terrain_material_name = "terrain_material";
 GameArena::GameArena()
 {
   // create lights
-  sunlight = Game::OgreScene->createLight("sunlight");
-  backlight = Game::OgreScene->createLight("backlight");
-  ground_light = Game::OgreScene->createLight("ground_light");
+  sunlight = Game::Scene->createLight("sunlight");
+  backlight = Game::Scene->createLight("backlight");
+  ground_light = Game::Scene->createLight("ground_light");
 
   // no ambient light - we use ground light to fake that
-  Game::OgreScene->setAmbientLight(Ogre::ColourValue::Black);
+  Game::Scene->setAmbientLight(Ogre::ColourValue::Black);
   // this could possibly be moved to update light
-  Game::OgreScene->setShadowColour(Ogre::ColourValue(0.3, 0.3, 0.4));
+  Game::Scene->setShadowColour(Ogre::ColourValue(0.3, 0.3, 0.4));
 
   // sunlight casting shadows
   sunlight->setType(Ogre::Light::LT_DIRECTIONAL);
@@ -63,20 +63,20 @@ Real GameArena::getAmbientTemperature(Vector3 a_position)
 
 GameArena::~GameArena()
 {
-  // cleanup ai controllers
-  for (uint i = 0, for_size = ai_game_controllers.size(); i < for_size; ++i) {
-    delete ai_game_controllers[i];
-  }
-
   // cleanup lights
-  Game::OgreScene->destroyAllLights();
+  Game::Scene->destroyAllLights();
 
   // destroy terrain mesh
-  /*CorpusFactory::destroyModel(terrain_node);*/
+  Game::destroyModel(terrain_node);
 
   // cleanup terrain
   Ogre::MaterialManager::getSingleton().remove(terrain_material_name);
 
+  for (auto it : Entities) {
+    delete it;
+  }
+
+  Entities.clear();
 }
 
 /** @brief changes light according to time, date, weather
@@ -150,33 +150,34 @@ int GameArena::loadArena(const string& arena_name)
                                                                  faction_mercenary);
 
   // temp buildings
-  Game::Building->spawnSceneryBuidling(120, 280, "building_test_01");
-  Game::Building->spawnSceneryBuidling(280, 300, "building_test_02");
-  Game::Building->spawnSceneryBuidling(350, 270, "building_test_02");
-  Game::Building->spawnSceneryBuidling(310, 380, "building_test_01");
-  Game::Building->spawnSceneryBuidling(210, 240, "building_test_02");
-  Game::Building->spawnSceneryBuidling(300, 260, "building_test_02");
+  Entities.push_back(Game::Building->spawnSceneryBuidling(120, 280, "building_test_01"));
+  Entities.push_back(Game::Building->spawnSceneryBuidling(280, 300, "building_test_02"));
+  Entities.push_back(Game::Building->spawnSceneryBuidling(350, 270, "building_test_02"));
+  Entities.push_back(Game::Building->spawnSceneryBuidling(310, 380, "building_test_01"));
+  Entities.push_back(Game::Building->spawnSceneryBuidling(210, 240, "building_test_02"));
+  Entities.push_back(Game::Building->spawnSceneryBuidling(300, 260, "building_test_02"));
 
-  Game::Building->spawnSceneryBuidling(320, 480, "building_test_01");
-  Game::Building->spawnSceneryBuidling(880, 300, "building_test_02");
-  Game::Building->spawnSceneryBuidling(950, 270, "building_test_02");
-  Game::Building->spawnSceneryBuidling(310, 380, "building_test_01");
-  Game::Building->spawnSceneryBuidling(110, 340, "building_test_02");
-  Game::Building->spawnSceneryBuidling(300, 160, "building_test_02");
+  Entities.push_back(Game::Building->spawnSceneryBuidling(320, 480, "building_test_01"));
+  Entities.push_back(Game::Building->spawnSceneryBuidling(880, 300, "building_test_02"));
+  Entities.push_back(Game::Building->spawnSceneryBuidling(950, 270, "building_test_02"));
+  Entities.push_back(Game::Building->spawnSceneryBuidling(310, 380, "building_test_01"));
+  Entities.push_back(Game::Building->spawnSceneryBuidling(110, 340, "building_test_02"));
+  Entities.push_back(Game::Building->spawnSceneryBuidling(300, 160, "building_test_02"));
 
   // fake game startup from code - ought to be read from file
-  Crusader* player_unit = Game::unit_factory->spawnCrusader(Vector3(310, 0, 310),
-                                                            "base_husar_cavalry");
+  Crusader* player_unit = Game::Unit->spawnCrusader(Vector3(310, 0, 310), "base_husar_cavalry");
+
+  player_unit->assignController(Game::getGameController(0));
+
   // set player unit controller to local input
-  player_unit->assignController(Game::instance()->getGameController(0));
-  player_formation->joinFormation(Game::instance()->getGameController(0));
+  player_formation->joinFormation(player_unit);
 
   // create the hud according to the unit you're in - HUD NEEDS THE CONTROLLER to be assigned!
-  Game::hud->loadHud(static_cast<Unit*>(player_unit));
+  //Game::hud->loadHud(static_cast<Unit*>(player_unit));
 
   // create ally
-  Crusader* ally_unit = Game::unit_factory->spawnCrusader(Vector3(340, 0, 300),
-                                                          "base_husar_cavalry");
+  Crusader* ally_unit = Game::Unit->spawnCrusader(Vector3(340, 0, 300),
+                                                  "base_husar_cavalry");
 
   NavPoint* nav_point_a = new NavPoint(Vector3(3600, 0, 3600));
 
@@ -185,18 +186,18 @@ int GameArena::loadArena(const string& arena_name)
   ai->setGoal(nav_point_a);
 
   // create crusaders for enemies
-  Crusader* enemy_unit1 = Game::unit_factory->spawnCrusader(Vector3(200, 0, 100),
-                                                            "base_husar_cavalry_red");
-  Crusader* enemy_unit2 = Game::unit_factory->spawnCrusader(Vector3(500, 0, 250),
-                                                            "base_husar_cavalry_red");
-  Crusader* enemy_unit3 = Game::unit_factory->spawnCrusader(Vector3(100, 0, 650),
-                                                            "base_husar_cavalry_red");
-  Crusader* enemy_unit4 = Game::unit_factory->spawnCrusader(Vector3(300, 0, 250),
-                                                            "base_husar_cavalry_red");
-  Crusader* enemy_unit5 = Game::unit_factory->spawnCrusader(Vector3(400, 0, 230),
-                                                            "base_husar_cavalry_red");
-  Crusader* enemy_unit6 = Game::unit_factory->spawnCrusader(Vector3(100, 0, 100),
-                                                            "base_husar_cavalry_red");
+  Crusader* enemy_unit1 = Game::Unit->spawnCrusader(Vector3(200, 0, 100),
+                                                    "base_husar_cavalry_red");
+  Crusader* enemy_unit2 = Game::Unit->spawnCrusader(Vector3(500, 0, 250),
+                                                    "base_husar_cavalry_red");
+  Crusader* enemy_unit3 = Game::Unit->spawnCrusader(Vector3(100, 0, 650),
+                                                    "base_husar_cavalry_red");
+  Crusader* enemy_unit4 = Game::Unit->spawnCrusader(Vector3(300, 0, 250),
+                                                    "base_husar_cavalry_red");
+  Crusader* enemy_unit5 = Game::Unit->spawnCrusader(Vector3(400, 0, 230),
+                                                    "base_husar_cavalry_red");
+  Crusader* enemy_unit6 = Game::Unit->spawnCrusader(Vector3(100, 0, 100),
+                                                    "base_husar_cavalry_red");
 
   // create enemies
   Game::AI->activateUnit(enemy_unit1, enemy_formation)->setEnemy(player_unit);
@@ -228,10 +229,6 @@ void GameArena::partitionArena()
   // set size for the cells holding the object on the map
   corpus_cells = vector<vector<list<Corpus*> > >(num_of_arena_cells_w,
                                                  vector<list<Corpus*> >(num_of_arena_cells_h));
-  mobilis_cells = vector<vector<list<Corpus*> > >(num_of_arena_cells_w,
-                                                  vector<list<Corpus*> >(num_of_arena_cells_h));
-  unit_cells = vector<vector<list<Unit*> > >(num_of_arena_cells_w,
-                                             vector<list<Unit*> >(num_of_arena_cells_h));
 }
 
 /** @brief creates the mesh for the terrain
@@ -245,15 +242,15 @@ void GameArena::createTerrainModel()
   const usint lod_bias = 0;
   const usint step = 1 << lod_bias;
 
-  const uint texture_size_w = terrain->size_w;
-  const uint texture_size_h = terrain->size_h;
+  const size_t texture_size_w = terrain->size_w;
+  const size_t texture_size_h = terrain->size_h;
 
   // calculate number of terrain pages
   const usint num_of_pages_w = texture_size_w / page_size;
   const usint num_of_pages_h = texture_size_h / page_size;
 
   // node to hold all terrain cells
-  terrain_node = Game::OgreScene->getRootSceneNode()->createChildSceneNode();
+  terrain_node = Game::Scene->getRootSceneNode()->createChildSceneNode();
 
   // material for the terrain
   Ogre::MaterialPtr material = Ogre::MaterialManager::getSingleton().create(terrain_material_name,
@@ -281,27 +278,27 @@ void GameArena::createTerrainModel()
   for (usint k = 0; k < num_of_pages_w; ++k) {
     for (usint l = 0; l < num_of_pages_h; ++l) {
       // offsets for this cell
-      uint origin_x = k * page_size;
-      uint origin_y = l * page_size;
+      size_t origin_x = k * page_size;
+      size_t origin_y = l * page_size;
 
       // create the mesh part
-      Ogre::ManualObject* terrain_mesh = Game::OgreScene->createManualObject(
+      Ogre::ManualObject* terrain_mesh = Game::Scene->createManualObject(
         "terrain_mesh_" + intoString(l)
         + "_" + intoString(k));
 
       // create the mesh manually by defining triangle pairs - apply the terrain_name material
       terrain_mesh->begin(terrain_material_name);
 
-      for (uint i = 0; i + step <= page_size; i += step) {
-        uint is = i + step;
-        for (uint j = 0; j + step <= page_size; j += step) {
-          uint js = j + step;
+      for (size_t i = 0; i + step <= page_size; i += step) {
+        size_t is = i + step;
+        for (size_t j = 0; j + step <= page_size; j += step) {
+          size_t js = j + step;
 
           real_pair angle[4];
           Real height[4];
-          uint x[4];
-          uint y[4];
-          uint i_coords;
+          size_t x[4];
+          size_t y[4];
+          size_t i_coords;
 
           // from bottom left anticlockwise
           x[0] = (origin_x + i);
@@ -398,9 +395,9 @@ void GameArena::createTerrainModel()
  * you could cut off the corner indexes for a big radius but it's hardly worth the bother
  * at radius 4 you could save one cell, OK, TODO: cut them off
  */
-void GameArena::getCellIndexesWithinRadius(const uint_pair    a_index,
-                                           vector<uint_pair>& indexes,
-                                           const Real         a_radius)
+void GameArena::getCellIndexesWithinRadius(const size_t_pair    a_index,
+                                           vector<size_t_pair>& indexes,
+                                           const Real           a_radius)
 {
   // round up and add half the cell size to get possible hits from without the radius
   int cell_radius = (a_radius + size_of_arena_cell * 0.5) / size_of_arena_cell + 1;
@@ -409,35 +406,35 @@ void GameArena::getCellIndexesWithinRadius(const uint_pair    a_index,
   indexes.push_back(a_index);
 
   // centre for the spiral (measure from the edge, so even radius 0 gets a cell)
-  const uint& c_i = a_index.first;
-  const uint& c_j = a_index.second;
+  const size_t& c_i = a_index.first;
+  const size_t& c_j = a_index.second;
 
   // this goes in a spiral way putting in indexes closer to first and further away last
   // every time it checks if the index is valid
-  for (int r = 1; r <= cell_radius; ++r) {
+  for (size_t r = 1; r <= cell_radius; ++r) {
     if (c_i + r >= 0 && c_i + r < num_of_arena_cells_w) {
-      for (int i = -r; i <= r; ++i) {
+      for (size_t i = -r; i <= r; ++i) {
         if (c_j + i >= 0 && c_j + i < num_of_arena_cells_h) {
           indexes.push_back(make_pair(c_i + r, c_j + i));
         }
       }
     }
     if (c_i - r >= 0 && c_i - r < num_of_arena_cells_w) {
-      for (int i = -r; i <= r; ++i) {
+      for (size_t i = -r; i <= r; ++i) {
         if (c_j + i >= 0 && c_j + i < num_of_arena_cells_h) {
           indexes.push_back(make_pair(c_i - r, c_j + i));
         }
       }
     }
     if (c_j + r >= 0 && c_j + r < num_of_arena_cells_h) {
-      for (int i = -(r - 1); i <= (r - 1); ++i) {
+      for (size_t i = -(r - 1); i <= (r - 1); ++i) {
         if (c_i + i >= 0 && c_i + i < num_of_arena_cells_w) {
           indexes.push_back(make_pair(c_i + i, c_j + r));
         }
       }
     }
     if (c_j - r >= 0 && c_j - r < num_of_arena_cells_h) {
-      for (int i = -(r - 1); i <= (r - 1); ++i) {
+      for (size_t i = -(r - 1); i <= (r - 1); ++i) {
         if (c_i + i >= 0 && c_i + i < num_of_arena_cells_w) {
           indexes.push_back(make_pair(c_i + i, c_j - r));
         }
@@ -448,14 +445,14 @@ void GameArena::getCellIndexesWithinRadius(const uint_pair    a_index,
 
 /** @brief moves the object's pointer to the new cell if needed
  */
-bool GameArena::updateCellIndex(uint_pair& cell_index,
-                                Vector3&   pos_xyz,
-                                Corpus*    a_thing)
+bool GameArena::updateCellIndex(size_t_pair& cell_index,
+                                Vector3&     pos_xyz,
+                                Corpus*      a_thing)
 {
   // if it's not within the limits of the arena rectiify the position
   bool out_of_bounds = isOutOfBounds(pos_xyz);
   // get the cell index based on position
-  uint_pair new_cell_index = getCellIndex(pos_xyz.x, pos_xyz.z);
+  size_t_pair new_cell_index = getCellIndex(pos_xyz.x, pos_xyz.z);
 
   if (cell_index != new_cell_index) {
     // remove the old cell
@@ -463,7 +460,7 @@ bool GameArena::updateCellIndex(uint_pair& cell_index,
 
     // if no objects left remove from the list of live cells
     if (corpus_cells[cell_index.first][cell_index.second].size() == 0) {
-      live_corpus_cells.remove(&corpus_cells[cell_index.first][cell_index.second]);
+      LiveCorpusCells.remove(&corpus_cells[cell_index.first][cell_index.second]);
     }
 
     // set the new index
@@ -474,7 +471,7 @@ bool GameArena::updateCellIndex(uint_pair& cell_index,
 
     // if it's the first object inset the cell into the list of live cells
     if (corpus_cells[cell_index.first][cell_index.second].size() == 1) {
-      live_corpus_cells.push_back(&corpus_cells[cell_index.first][cell_index.second]);
+      LiveCorpusCells.push_back(&corpus_cells[cell_index.first][cell_index.second]);
     }
   }
 

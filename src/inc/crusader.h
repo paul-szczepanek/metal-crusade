@@ -7,6 +7,18 @@
 #include "internal_type.h"
 #include "crusader_design.h"
 #include "mfd_view_design.h"
+namespace crusader_corpus
+{
+
+enum parts {
+  torso,
+  drive,
+  arm_r,
+  arm_l,
+  parts_max,
+};
+
+}
 
 class Weapon;
 class Animation;
@@ -17,9 +29,8 @@ class Crusader
   : public Unit
 {
 public:
-  Crusader(Vector3           a_pos_xyz,
-           const string&     a_unit_name,
-           Ogre::SceneNode*  a_scene_node,
+  Crusader(const string&     a_unit_name,
+           Vector3           a_pos_xyz,
            Quaternion        a_orientation,
            crusader_design_t a_design,
            crusader_engine_t a_engine,
@@ -27,64 +38,30 @@ public:
            crusader_chasis_t a_chasis);
   ~Crusader();
 
-  // main loop
-  int update();
+  bool update(Real a_dt);
 
-  // collision
-  int handleCollision(Collision* a_collision);
+  bool handleCollision(Collision* a_collision);
 
   // directions
-  Vector3 getDirection() {
-    return torso_direction;
-  }
-
-  Vector3 getDriveDirection() {
-    return direction;
-  }
-
-  Quaternion getLookingOrientation() {
-    return orientation * torso_orientation;
-  }
-
-  // ramming damage
-  Real getBallisticDmg();
+  Vector3 getDirection();
+  Vector3 getDriveDirection();
+  Quaternion getLookingOrientation();
 
   // hud
-  string getHudName() {
-    return design.hud;
-  }
+  //string getHudName();
 
-  Real getSpeed() {
-    return corrected_velocity_scalar;
-  }
-
-  Real getCoolant() {
-    return coolant_level;
-  }
-
-  Real getEngineTemperature() {
-    return engine_temperature;
-  }
-
-  Real getCoreTemperature() {
-    return core_temperature;
-  }
-
-  Real getSurfaceTemperature() {
-    return surface_temperature;
-  }
-
-  Real getPressure() {
-    return core_integrity;
-  }
-
+  Real getSpeed();
+  Real getCoolant();
+  Real getEngineTemperature();
+  Real getCoreTemperature();
+  Real getPressure();
   Real getThrottle();
 
   // damage reporting
   Real getDamage(usint a_diagram_element);
-  mfd_view::diagram_type getDiagramType() {
-    return mfd_view::biped_crusader;
-  }
+  /*mfd_view::diagram_type getDiagramType() {
+     return mfd_view::biped_crusader;
+     }*/
 
   // weapons
   inline vector<usint>& getSelectedGroup();
@@ -92,12 +69,12 @@ public:
 
 private:
   // inner main loop
-  void moveCrusader();
-  void moveTorso();
+  void moveCrusader(Real a_dt);
+  void moveTorso(Real a_dt);
   void fireWeapons();
-  void pumpHeat();
-  void shockDamage();
-  void updateAnimations();
+  void pumpHeat(Real a_dt);
+  void shockDamage(Real a_dt);
+  void updateAnimations(Real a_dt);
 
   // helper functions
   void localiseAngle(Radian&       angle,
@@ -113,14 +90,28 @@ private:
   bool fireGroup(usint a_group);
   void cycleGroup();
   void cycleWeapon();
-  bool weapons_operational;
 
-  usint current_group;
-  usint current_weapon;
+private:
+  // moving
+  Vector3 Velocity;
+  Vector3 Direction;
+  Vector3 TorsoDirection;
+  Quaternion TorsoOrientation;
+  Real Throttle = 0;
+  Real TotalWieght = 0;
+  Real AngularMomentum = 0;
+  Real AngularMomentumTop = 0;
+  // distance to feet from main scene node
+  Real CrusaderHeight = 0;
+  Real DistanceToGround = 0; // from main scene node
+
+  // clamping to the terrain
+  Ogre::Ray* terrain_ray = NULL;
+  Ogre::RaySceneQuery* terrain_ray_query = NULL;
 
   // tracking G forces
-  Vector3 shock_damage_old;
-  Vector3 shock_damage_new;
+  Vector3 ShockDamageOld;
+  Vector3 ShockDamageNew;
 
   // design
   crusader_design_t design;
@@ -128,78 +119,93 @@ private:
   crusader_drive_t drive;
   crusader_chasis_t chasis;
 
-  // effective heatsinks
-  usint heatsinks;
-
-  // node that rotates the torso
-  Ogre::SceneNode* torso_node;
-
-  // moving
-  Real throttle;
-
-  // dust from steps
-  ParticleEffectStepDust* step_dust;
-
-  // orientation
-  int angular_momentum_top;
-  Quaternion torso_orientation;
-  Vector3 torso_direction;
-
-  // distance to ground from main scene node
-  Real crusader_height;
-
-  // clamping to the terrain
-  Ogre::Ray* terrain_ray;
-  Ogre::RaySceneQuery* terrain_ray_query;
+  Corpus* Parts[crusader_corpus::parts_max];
 
   // integrity and armour
   vector<Real> structure;
   vector<Real> armour;
-  Real armour_structure;
-  Real armour_ballistic;
-  Real armour_conductivity;
-  Real armour_generated_heat;
-
+  Real ArmourStructure = 0;
+  Real ArmourBallistic = 0;
+  Real ArmourConductivity = 0;
+  Real ArmourGeneratedHeat = 0;
+  // effective heatsinks
+  usint Heatsinks = 0;
   // temperature
-  Real coolant_level;
-  Real coolant;
-  Real engine_temperature;
+  Real CoolantLevel = 0;
+  Real CoolantQuantity = 0;
+  Real EngineTemperature = 0;
 
   // animation
-  Animation* animation;
+  Animation* CrusaderAnim = NULL;
+  // dust from steps
+  ParticleEffectStepDust* StepDust = NULL;
+
+  usint CurrentGroup = 0;
+  usint CurrentWeapon = 0;
+  bool WeaponsOperational = false;
 };
 
 const Real critical_temperature(500);
 
 inline usint Crusader::getSelectedWeapon()
 {
-  return weapons_operational ? design.weapon_groups[current_group][current_weapon] : -1;
+  return WeaponsOperational ? design.weapon_groups[CurrentGroup][CurrentWeapon] : -1;
 }
 
 inline vector<usint>& Crusader::getSelectedGroup()
 {
-  return design.weapon_groups[current_group];
-}
-
-inline Real Crusader::getBallisticDmg()
-{
-  Real dmg = log10(velocity.length());
-  if (dmg > 0) {
-    return dmg * penetration;
-  } else {
-    return 0;
-  }
+  return design.weapon_groups[CurrentGroup];
 }
 
 inline Real Crusader::getThrottle()
 {
   // throttle scaling depends on direction
-  return (throttle > 0) ? throttle * drive.max_speed : throttle * drive.max_speed_reverse;
+  return (Throttle > 0) ? Throttle * drive.max_speed : Throttle * drive.max_speed_reverse;
 }
 
 inline Real Crusader::getDamage(usint a_diagram_element)
 {
   return armour[a_diagram_element] / design.armour_placement[a_diagram_element];
+}
+
+Vector3 Crusader::getDirection()
+{
+  return TorsoDirection;
+}
+
+Vector3 Crusader::getDriveDirection()
+{
+  return Direction;
+}
+
+Quaternion Crusader::getLookingOrientation()
+{
+  return Orientation * TorsoOrientation;
+}
+
+// hud
+/*string Crusader::getHudName() {
+   return design.hud;
+   }*/
+
+Real Crusader::getSpeed()
+{
+  return corrected_velocity_scalar;
+}
+
+Real Crusader::getCoolant()
+{
+  return CoolantLevel;
+}
+
+Real Crusader::getEngineTemperature()
+{
+  return EngineTemperature;
+}
+
+Real Crusader::getCoreTemperature()
+{
+  return CoreTemperature;
 }
 
 #endif // CRUSADER_H

@@ -35,15 +35,14 @@ public:
   void loadHud(Unit* a_player_unit);
   void activate(bool a_toggle);
 
-  // main loop
   void update(Real a_dt);
 
   // shows the pause screen
   void pause();
 
   // called by input manager when the window resizes
-  void resize(uint a_screen_width,
-              uint a_screen_height);
+  void resize(size_t a_screen_width,
+              size_t a_screen_height);
 
   // hookup for hud parts
   void addContainer(hud_area                a_hud_area,
@@ -58,11 +57,13 @@ public:
                     char*         line3);
 
   // hooking up MFDs to their displays
-  MFDComputer* getMFD() {
+  MFDComputer* getMFD()
+  {
     return mfds.back();
   }
 
-  uint getMFDNumber() {
+  size_t getMFDNumber()
+  {
     return mfds.size();
   }
 
@@ -82,7 +83,7 @@ public:
 
   // the unit using the hud
   Unit* player_unit;
-  GameController* controller;
+  GameController* Controller;
   RadarComputer* radar;
 
   // local time

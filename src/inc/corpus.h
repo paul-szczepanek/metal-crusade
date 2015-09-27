@@ -9,27 +9,28 @@
 
 class Collision;
 class ArenaEntity;
+class Unit;
 
 class Corpus
 {
 public:
-  Corpus();
+  Corpus(ArenaEntity*     a_owner = NULL,
+         Ogre::SceneNode* a_scene_node = NULL);
   virtual ~Corpus();
 
-  // main loop
-  virtual int update(Real a_dt);
+  virtual bool update(Real a_dt);
 
   // position
   Real getX();
   Real getY();
   Real getZ();
   Vector2 getXZ();
-  Vector3 getPosition();
-  uint_pair getCellIndex();
+  Vector3 getXYZ();
+  size_t_pair getCellIndex();
 
   // move around
   void setXYZ(Vector3 a_pos_xyz);
-  void setVelocity(Vector3 a_velocity);
+  void move(Vector3 a_move);
   Vector3 getVelocity();
   // put it in the cell on the arena
   void updateCellIndex();
@@ -37,21 +38,13 @@ public:
   // orientation
   Quaternion getOrientation();
   void setOrientation(Quaternion a_orientation);
-  Quaternion getLookingOrientation();
   Vector3 getDirection();
 
   // model
   void setSceneNode(Ogre::SceneNode* a_scene_node);
-
   void setOwner(ArenaEntity* a_owner);
 
-  // collision handling
-  void collideWith(Corpus* a_thing);
-  bool hasCollidedWith(Corpus* a_thing);
-
   // damage and heat
-  Real getSurfaceTemperature();
-  void setSurfaceTemperature(Real aSurfaceTemperature);
   Real getBallisticDmg();
   Real getEnergyDmg();
   Real getHeatDmg();
@@ -62,81 +55,83 @@ public:
   Real getFriction();
 
   Sphere getBoundingSphere();
-  bitset<MAX_NUM_ES> getExclusionSpheres(Sphere& sphere);
-  bitset<MAX_NUM_CS> getCollisionSpheres(Sphere& sphere);
-  bitset<MAX_NUM_CS> getCollisionSpheres(Sphere&            sphere,
-                                         bitset<MAX_NUM_ES> es_bitset);
-  bool getCollisionSpheres(const string& filename);
+  void pruneCollisionSpheres(const Sphere&       a_sphere,
+                             bitset<MAX_NUM_CS>& a_cs_bitset);
+  Real getCollisionSpheres(const Sphere&             a_sphere,
+                           const bitset<MAX_NUM_CS>& a_valid_cs_bitset,
+                           bitset<MAX_NUM_CS>&       a_cs_bitset);
+
   // read collision spheres for the object TEMP
   void loadCollisionSpheres(const string& aCollisionName);
 
   // resolve collisions
-  bool validateCollision(Corpus* a_colliding_object);
-  int handleCollision(Collision* a_collision);
+  bool validateCollision(Corpus* a_object);
+  bool handleCollision(Collision* a_collision);
   bool revertMove(Vector3 a_move);
-  Real getWeight();
+  void invalidateSpheres();
 
   /*mfd_view::diagram_type getDiagramType() {
      return mfd_view::object;
      }*/
 
-private:
-  void displayCollision(bool a_toggle);
-  void displayCollisionHit();
-  void displayCollisionUpdate();
-
-private:
+public:
   ArenaEntity* OwnerEntity;
-  // main ogre scene node for the object with synced position
   Ogre::SceneNode* SceneNode;
 
-  vector<Sphere> CollisionSpheres;
-  // collision spheres
-  vector<Sphere> ExclusionSpheres;
-  vector<bitset<MAX_NUM_CS> > Exclusions;
-  bool BoundingSphereInvalid;
-  bitset<MAX_NUM_ES> ESInvalid; // exclusion spheres that need their position recalculated
-  bitset<MAX_NUM_CS> CSInvalid; // same for collision spheres
-  Sphere BoundingSphere;
-  vector<usint> CSAreas;
-  vector<usint> ESAreas;
-
-  // sphere positions relative to main scene node
-  Vector3 RelBSPosition;
-  vector<Vector3> RelESPositions;
-  vector<Vector3> RelCSPositions;
-
   // position and orientation
-  Vector3 PosXyz;
+  Vector3 XYZ;
   Quaternion Orientation;
   Vector3 Direction;
+  Vector3 Velocity;
+  Vector3 OldVelocity;
 
   // collision
+  Sphere BoundingSphere;
+  vector<Sphere> CollisionSpheres;
+  // tags for spheres to differentiate parts
+  vector<usint> CSAreas;
+  // sphere positions relative to main scene node
+  Vector3 RelBSPosition;
+  vector<Vector3> RelCSPositions;
+
   collision_type CollisionType;
   Real Penetration;
   Real SurfaceTemperature;
   Real Friction;
+  Real Weight;
+  Real Hardness;
   Real Conductivity;
-  Real total_weight;
 
+  Real BallisticDmg;
+  Real HeatDmg;
+  Real EnergyDmg;
+
+private:
   // index of the cell in the arena the object is in
-  uint_pair CellIndex;
+  size_t_pair CellIndex;
 
   // speed and position
-  Vector3 velocity;
-  Vector3 move;
+  Vector3 Move;
   Real angular_momentum;
   Real corrected_velocity_scalar;
+
+  // need to recalculate from relative positions
+  bool CSInvalid;
+  bool BSInvalid;
+
   bool out_of_bounds;
 
   // collision system
   bool registered;
   // if it's been collided with this frame
   bool collided;
-  // list of objects collided with this frame
-  vector<Corpus*> collided_with;
 
   // debug
+private:
+  void displayCollision(bool a_toggle);
+  void displayCollisionHit();
+  void displayCollisionUpdate();
+
   vector<Ogre::Entity*> DebugCSEntities;
   vector<Ogre::SceneNode*> DebugCSNodes;
   Ogre::Entity* DebugBSEntity;
@@ -145,127 +140,110 @@ private:
   bool DisplayCollisionDebug;
 };
 
-// damage reporting
-Real Corpus::getDamage(usint a_diagram_element) {
-  return core_integrity;
-}
-
-Real Corpus::getWeight() {
-  return total_weight;
-}
-
 // position
-Real Corpus::getX() {
-  return PosXyz.x;
+Real Corpus::getX()
+{
+  return XYZ.x;
 }
 
-Real Corpus::getY() {
-  return PosXyz.y;
+Real Corpus::getY()
+{
+  return XYZ.y;
 }
 
-Real Corpus::getZ() {
-  return PosXyz.z;
+Real Corpus::getZ()
+{
+  return XYZ.z;
 }
 
-Vector2 Corpus::getXZ() {
-  return Vector2(PosXyz.x, PosXyz.z);
+Vector2 Corpus::getXZ()
+{
+  return Vector2(XYZ.x, XYZ.z);
 }
 
-Vector3 Corpus::getPosition() {
-  return PosXyz;
+Vector3 Corpus::getXYZ()
+{
+  return XYZ;
 }
 
-uint_pair Corpus::getCellIndex() {
+size_t_pair Corpus::getCellIndex()
+{
   return CellIndex;
 }
 
 // move around
-void Corpus::setXYZ(Vector3 a_pos_xyz) {
-  PosXyz = a_pos_xyz;
+void Corpus::setXYZ(Vector3 a_pos_xyz)
+{
+  XYZ = a_pos_xyz;
+  invalidateSpheres();
 }
 
-void Corpus::setVelocity(Vector3 a_velocity) {
-  velocity = a_velocity;
+void Corpus::move(Vector3 a_move)
+{
+  Move = a_move;
+  XYZ += Move;
+  Direction = Move;
+  Direction.normalise();
+  invalidateSpheres();
 }
 
-Vector3 Corpus::getVelocity() {
-  return velocity;
+Vector3 Corpus::getVelocity()
+{
+  return Move;
 }
 
 // orientation
-Quaternion Corpus::getOrientation() {
+Quaternion Corpus::getOrientation()
+{
   return Orientation;
 }
 
-Quaternion Corpus::getLookingOrientation() {
-  return Orientation;
+void Corpus::setOrientation(Quaternion a_orientation)
+{
+  Orientation = a_orientation;
+  Direction = Orientation * Vector3::UNIT_Z;
 }
 
-Vector3 Corpus::getDirection();
-
-// hud operation
-Real Corpus::getSpeed() {
-  return corrected_velocity_scalar;
+inline void Corpus::invalidateSpheres()
+{
+  BSInvalid = true;
+  CSInvalid = true;
 }
 
-// collision handling
-void Corpus::collideWith(Corpus* a_thing) {
-  collided_with.push_back(a_thing);
+Vector3 Corpus::getDirection()
+{
+  return Direction;
 }
 
-bool Corpus::hasCollidedWith(Corpus* a_thing);
-
-// damage and heat
-Real Corpus::getSurfaceTemperature() {
-  return SurfaceTemperature;
+Real Corpus::getBallisticDmg()
+{
+  return BallisticDmg;
 }
 
-Real Corpus::getBallisticDmg() {
-  return 0;
+Real Corpus::getEnergyDmg()
+{
+  return EnergyDmg;
 }
 
-Real Corpus::getEnergyDmg() {
-  return 0;
-}
-
-Real Corpus::getHeatDmg() {
-  return 0;
+Real Corpus::getHeatDmg()
+{
+  return HeatDmg;
 }
 
 // collisions
-collision_type Corpus::getCollisionType() {
+collision_type Corpus::getCollisionType()
+{
   return CollisionType;
 }
 
-Real Corpus::getPenetration() {
+Real Corpus::getPenetration()
+{
   return Penetration;
 }
 
-Real Corpus::getFriction() {
+Real Corpus::getFriction()
+{
   return Friction;
-}
-
-bool Corpus::validateCollision(Corpus* a_colliding_object) {
-  return true;
-}
-
-inline void Corpus::setSurfaceTemperature(Real aSurfaceTemperature)
-{
-  SurfaceTemperature = aSurfaceTemperature;
-}
-
-inline bool Corpus::hasCollidedWith(Corpus* a_thing)
-{
-  if (collided_with.size() > 0) {
-    vector<Corpus*>::iterator it = collided_with.begin();
-    vector<Corpus*>::iterator it_end = collided_with.end();
-
-    if (find(it, it_end, a_thing) != it_end) {
-      return true;
-    }
-  }
-
-  return false;
 }
 
 #endif // CORPUS_H

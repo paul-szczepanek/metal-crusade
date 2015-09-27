@@ -1,16 +1,21 @@
 // (c) Paul Szczepanek (teatimecoder.com). Code released under GPL Version 3.
 
 #include "game_camera.h"
-#include "corpus.h"
+#include "unit.h"
 #include "game.h"
 
 static const Radian CAMERA_FOV(0.15); // near orthograhic
 static const Real CAMERA_LEAD = 40; // how far ahead of the unit to look
 
+GameCamera::~GameCamera()
+{
+  delete OgreCamera;
+}
+
 GameCamera::GameCamera()
 {
   // create the Ogre camera
-  OgreCamera = Game::OgreScene->createCamera("camera");
+  OgreCamera = Game::Scene->createCamera("camera");
 
   // camera clipping
   OgreCamera->setNearClipDistance(100); // the camera is 1600 above the ground - pretty safe clip
@@ -59,8 +64,8 @@ void GameCamera::resize(int aWidth,
 
   // position the camera according to the angle and distance
   // temp sideways camera
-  // CameraOffset = Vector3(-sin(camera_angle) * camera_distance *5* aspect_ratio_inverse,
-  //                              cos(camera_angle) * camera_distance *5* aspect_ratio_inverse,
+  // CameraOffset = Vector3(-sin(camera_angle) * CAMERA_DIST *5* aspect_ratio_inverse,
+  //                              cos(camera_angle) * CAMERA_DIST *5* aspect_ratio_inverse,
   //                              0);
 
   CameraOffset = Vector3(0, cos(camera_angle) * CAMERA_DIST * aspect_ratio_inverse,
@@ -70,15 +75,15 @@ void GameCamera::resize(int aWidth,
   LookAtOffset = Vector3(0, -5 * (camera_angle / (0.5 * pi)), 0);
   // -5 is a magic number chosen to show the action best assuming the units are roughly 10m high
 
-  // immidiately snap to new camera position rather than lag
+  // immediately snap to new camera position rather than lag
   Position = LookAt + CameraOffset;
 }
 
 /** @brief add an object to follow with the camera
  */
-void GameCamera::follow(Corpus* aCorpus)
+void GameCamera::follow(Unit* a_entity)
 {
-  FollowList.push_back(aCorpus);
+  FollowList.push_back(a_entity);
 
   // if first unit to follow snap the camera to it
   if (FollowList.size() == 1) {
@@ -92,10 +97,10 @@ void GameCamera::follow(Corpus* aCorpus)
 void GameCamera::update(Real aDt)
 {
   // midpoints with all followed units in a cheap and nasty way TODO: zooming to extents
-  for (usint i = 0, for_size = FollowList.size(); i < for_size; ++i) {
+  for (size_t i = 0, for_size = FollowList.size(); i < for_size; ++i) {
     // see where the unit is pointing and point camera ahead of it
     Vector3 new_LookAt = (CAMERA_LEAD * FollowList.at(i)->getDirection())
-                         + FollowList.at(i)->getPosition();
+                         + FollowList.at(i)->getXYZ();
 
     // midpoint with old camera pos or previous unit
     LookAt += (new_LookAt - LookAt) * aDt * 0.5;

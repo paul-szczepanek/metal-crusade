@@ -52,7 +52,7 @@ InputHandler::InputHandler()
   // ray query for finding where the pointer is in real world cords when using the mouse
   OgreCamera = Game::Camera->getOgreCamera();
   mouse_ray = new Ogre::Ray();
-  mouse_ray_query = new Ogre::DefaultRaySceneQuery(Game::OgreScene);
+  mouse_ray_query = new Ogre::DefaultRaySceneQuery(Game::Scene);
   mouse_ray_query->setSortByDistance(true);
   mouse_ray_query->setQueryMask(query_mask_pointer_floor);
 
@@ -65,18 +65,18 @@ InputHandler::InputHandler()
   resize();
 
   // create pointer mesh TODO: pointer mesh!
-  Ogre::Entity* pointer_mesh = Game::OgreScene->createEntity("pointer", "target.mesh");
-  Ogre::Entity* pointer_centre_mesh = Game::OgreScene->createEntity("pointer_centre",
-                                                                    "target_centre.mesh");
+  Ogre::Entity* pointer_mesh = Game::Scene->createEntity("pointer", "target.mesh");
+  Ogre::Entity* pointer_centre_mesh = Game::Scene->createEntity("pointer_centre",
+                                                                "target_centre.mesh");
   pointer_mesh->setMaterialName("target");
   pointer_mesh->setQueryFlags(query_mask_ignore);
   pointer_mesh->setCastShadows(false);
   pointer_centre_mesh->setMaterialName("target");
   pointer_centre_mesh->setQueryFlags(query_mask_ignore);
   pointer_centre_mesh->setCastShadows(false);
-  pointer_node = Game::OgreScene->getRootSceneNode()->createChildSceneNode();
+  pointer_node = Game::Scene->getRootSceneNode()->createChildSceneNode();
   pointer_node->attachObject(pointer_mesh); // attach mesh
-  pointer_centre_node = Game::OgreScene->getRootSceneNode()->createChildSceneNode();
+  pointer_centre_node = Game::Scene->getRootSceneNode()->createChildSceneNode();
   pointer_centre_node->attachObject(pointer_centre_mesh); // attach mesh
 }
 
@@ -123,9 +123,9 @@ void InputHandler::updateMousePointer()
     // nothing in the way - fing the point where the ray crosses the terrain
     // find the the segment first because we have a rough idea where it is
     const Real step = 128;
-    Real top_distance = camera_distance + step;
-    Real bottom_distance = camera_distance - step;
-    position = mouse_ray->getPoint(camera_distance);
+    Real top_distance = CAMERA_DIST + step;
+    Real bottom_distance = CAMERA_DIST - step;
+    position = mouse_ray->getPoint(CAMERA_DIST);
 
     // check the position is within the arena to save on checking in the arena class
     // this means it just stretches the border height outside the map
@@ -181,9 +181,9 @@ void InputHandler::updateMousePointer()
                                    + Vector3(0, target_high_offset, 0));
 
   // adjust by target mode
-  if (game_controller->control_block.target_high) {
+  if (game_controller->ControlBlock.target_high) {
     position.y += target_high_offset;
-  } else if (game_controller->control_block.target_air) {
+  } else if (game_controller->ControlBlock.target_air) {
     position.y += target_air_offset;
   } else {
     position.y += target_low_offset;
@@ -285,53 +285,53 @@ bool InputHandler::mousePressed(const OIS::MouseEvent& evt,
                                 OIS::MouseButtonID     btn)
 {
   if (key_map->Buttons[input_event_fire] == btn) {
-    game_controller->control_block.fire = true;
+    game_controller->ControlBlock.fire = true;
     if (Game::instance()->getTimer()->getRate() == 0) {
       Game::instance()->getTimer()->unpause();
     }
   } else if (key_map->Buttons[input_event_turn_to_pointer] == btn) {
-    game_controller->control_block.turn_to_pointer = true;
+    game_controller->ControlBlock.turn_to_pointer = true;
   } else // if else chain continues below .v.
 
   // do once buttons
   if (key_map->Buttons[input_event_cycle_group] == btn) {
-    game_controller->control_block.cycle_group = true;
+    game_controller->ControlBlock.cycle_group = true;
   } else if (key_map->Buttons[input_event_cycle_weapon] == btn) {
-    game_controller->control_block.cycle_weapon = true;
+    game_controller->ControlBlock.cycle_weapon = true;
   } else if (key_map->Buttons[input_event_nearest_enemy] == btn) {
-    game_controller->control_block.nearest_enemy = true;
+    game_controller->ControlBlock.nearest_enemy = true;
   } else if (key_map->Buttons[input_event_enemy] == btn) {
-    game_controller->control_block.enemy = true;
+    game_controller->ControlBlock.enemy = true;
   } else if (key_map->Buttons[input_event_enemy_back] == btn) {
-    game_controller->control_block.enemy_back = true;
+    game_controller->ControlBlock.enemy_back = true;
   } else if (key_map->Buttons[input_event_friendly] == btn) {
-    game_controller->control_block.friendly = true;
+    game_controller->ControlBlock.friendly = true;
   } else if (key_map->Buttons[input_event_friendly_back] == btn) {
-    game_controller->control_block.friendly_back = true;
+    game_controller->ControlBlock.friendly_back = true;
   } else if (key_map->Buttons[input_event_target_pointer] == btn) {
-    game_controller->control_block.target_pointer = true;
+    game_controller->ControlBlock.target_pointer = true;
   } else if (key_map->Buttons[input_event_nav_point] == btn) {
-    game_controller->control_block.nav_point = true;
+    game_controller->ControlBlock.nav_point = true;
   } else if (key_map->Buttons[input_event_nav_point_back] == btn) {
-    game_controller->control_block.nav_point_back = true;
+    game_controller->ControlBlock.nav_point_back = true;
   } else if (key_map->Buttons[input_event_inspect] == btn) {
-    game_controller->control_block.inspect = true;
+    game_controller->ControlBlock.inspect = true;
   } else if (key_map->Buttons[input_event_target_low] == btn) {
-    game_controller->control_block.target_low = true;
+    game_controller->ControlBlock.target_low = true;
   } else if (key_map->Buttons[input_event_target_high] == btn) {
-    game_controller->control_block.target_high = true;
+    game_controller->ControlBlock.target_high = true;
   } else if (key_map->Buttons[input_event_target_air] == btn) {
-    game_controller->control_block.target_air = true;
+    game_controller->ControlBlock.target_air = true;
   } else if (key_map->Buttons[input_event_zoom_in] == btn) {
-    game_controller->control_block.zoom_in = true;
+    game_controller->ControlBlock.zoom_in = true;
   } else if (key_map->Buttons[input_event_zoom_out] == btn) {
-    game_controller->control_block.zoom_out = true;
+    game_controller->ControlBlock.zoom_out = true;
   } else if (key_map->Buttons[input_event_zoom_target] == btn) {
-    game_controller->control_block.zoom_target = true;
+    game_controller->ControlBlock.zoom_target = true;
   } else if (key_map->Buttons[input_event_menu_interface] == btn) {
-    game_controller->control_block.menu_interface = true;
+    game_controller->ControlBlock.menu_interface = true;
   } else if (key_map->Buttons[input_event_communication_interface] == btn) {
-    game_controller->control_block.communication_interface = true;
+    game_controller->ControlBlock.communication_interface = true;
   }
 
   return true;
@@ -341,11 +341,11 @@ bool InputHandler::mouseReleased(const OIS::MouseEvent& evt,
                                  OIS::MouseButtonID     btn)
 {
   if (key_map->Buttons[input_event_fire] == btn) {
-    game_controller->control_block.fire = false;
+    game_controller->ControlBlock.fire = false;
   }
 
   if (key_map->Buttons[input_event_turn_to_pointer] == btn) {
-    game_controller->control_block.turn_to_pointer = false;
+    game_controller->ControlBlock.turn_to_pointer = false;
   }
 
   return true;
@@ -398,16 +398,16 @@ bool InputHandler::keyPressed(const OIS::KeyEvent& evt)
     } else {
       game_controller->setThrottle(-0.5);
     }
-  } else // if else chain continues below .v.
+  } else   // if else chain continues below .v.
 
   // flip throttle into reverse (with the same value, zero is always positive)
   if (key_map->Keys[input_event_set_speed_reverse] == evt.key) {
     game_controller->setThrottle(-game_controller->getThrottle());
-  } else // if else chain continues below .v.
+  } else     // if else chain continues below .v.
   // stop crusader
   if (key_map->Keys[input_event_set_speed_0] == evt.key) {
     game_controller->setThrottle(0);
-  } else // if else chain continues below .v.
+  } else       // if else chain continues below .v.
 
   // setting throttle (checks to see if the crusader is in reverse)
   if (key_map->Keys[input_event_set_speed_1] == evt.key) {
@@ -470,164 +470,164 @@ bool InputHandler::keyPressed(const OIS::KeyEvent& evt)
     } else {
       game_controller->setThrottle(-1.0);
     }
-  } else // if else chain continues below .v.
+  } else         // if else chain continues below .v.
 
   // turn left and right
   if (key_map->Keys[input_event_left] == evt.key) {
-    game_controller->setTurn(-1.0);
+    game_controller->setTurnSpeed(-1.0);
   } else if (key_map->Keys[input_event_right] == evt.key) {
-    game_controller->setTurn(1.0);
-  } else // if else chain continues below .v.
+    game_controller->setTurnSpeed(1.0);
+  } else           // if else chain continues below .v.
 
   // toggles
   if (key_map->Keys[input_event_crouch] == evt.key) {
-    game_controller->control_block.crouch = (!game_controller->control_block.crouch);
+    game_controller->ControlBlock.crouch = (!game_controller->ControlBlock.crouch);
   } else if (key_map->Keys[input_event_fire_mode_group] == evt.key) {
-    game_controller->control_block.fire_mode_group =
-      (!game_controller->control_block.fire_mode_group);
+    game_controller->ControlBlock.fire_mode_group =
+      (!game_controller->ControlBlock.fire_mode_group);
   } else if (key_map->Keys[input_event_auto_cycle] == evt.key) {
-    game_controller->control_block.auto_cycle = (!game_controller->control_block.auto_cycle);
+    game_controller->ControlBlock.auto_cycle = (!game_controller->ControlBlock.auto_cycle);
   } else if (key_map->Keys[input_event_nightvision] == evt.key) {
-    game_controller->control_block.nightvision = (!game_controller->control_block.nightvision);
+    game_controller->ControlBlock.nightvision = (!game_controller->ControlBlock.nightvision);
   } else if (key_map->Keys[input_event_power] == evt.key) {
-    game_controller->control_block.power = (!game_controller->control_block.power);
+    game_controller->ControlBlock.power = (!game_controller->ControlBlock.power);
   } else if (key_map->Keys[input_event_radar] == evt.key) {
-    game_controller->control_block.radar = (!game_controller->control_block.radar);
+    game_controller->ControlBlock.radar = (!game_controller->ControlBlock.radar);
   } else if (key_map->Keys[input_event_lights] == evt.key) {
-    game_controller->control_block.lights = (!game_controller->control_block.lights);
-  } else // if else chain continues below .v.
+    game_controller->ControlBlock.lights = (!game_controller->ControlBlock.lights);
+  } else             // if else chain continues below .v.
 
   // TEMP! until I decide how to handle input whilst in different modes
   // multitoggle focus for mfd buttons
   if (key_map->Keys[input_event_log] == evt.key) {
-    if (game_controller->control_block.log) {
-      game_controller->control_block.log = false;
+    if (game_controller->ControlBlock.log) {
+      game_controller->ControlBlock.log = false;
     } else {
-      game_controller->control_block.log = true;
-      game_controller->control_block.menu_interface = false;
-      game_controller->control_block.communication_interface = false;
-      game_controller->control_block.mfd1_select = false;
-      game_controller->control_block.mfd2_select = false;
+      game_controller->ControlBlock.log = true;
+      game_controller->ControlBlock.menu_interface = false;
+      game_controller->ControlBlock.communication_interface = false;
+      game_controller->ControlBlock.mfd1_select = false;
+      game_controller->ControlBlock.mfd2_select = false;
     }
   } else if (key_map->Keys[input_event_menu_interface] == evt.key) {
-    if (game_controller->control_block.menu_interface) {
-      game_controller->control_block.menu_interface = false;
+    if (game_controller->ControlBlock.menu_interface) {
+      game_controller->ControlBlock.menu_interface = false;
     } else {
-      game_controller->control_block.log = false;
-      game_controller->control_block.menu_interface = true;
-      game_controller->control_block.communication_interface = false;
-      game_controller->control_block.mfd1_select = false;
-      game_controller->control_block.mfd2_select = false;
+      game_controller->ControlBlock.log = false;
+      game_controller->ControlBlock.menu_interface = true;
+      game_controller->ControlBlock.communication_interface = false;
+      game_controller->ControlBlock.mfd1_select = false;
+      game_controller->ControlBlock.mfd2_select = false;
     }
   } else if (key_map->Keys[input_event_communication_interface] == evt.key) {
-    if (game_controller->control_block.communication_interface) {
-      game_controller->control_block.communication_interface = false;
+    if (game_controller->ControlBlock.communication_interface) {
+      game_controller->ControlBlock.communication_interface = false;
     } else {
-      game_controller->control_block.log = false;
-      game_controller->control_block.menu_interface = false;
-      game_controller->control_block.communication_interface = true;
-      game_controller->control_block.mfd1_select = false;
-      game_controller->control_block.mfd2_select = false;
+      game_controller->ControlBlock.log = false;
+      game_controller->ControlBlock.menu_interface = false;
+      game_controller->ControlBlock.communication_interface = true;
+      game_controller->ControlBlock.mfd1_select = false;
+      game_controller->ControlBlock.mfd2_select = false;
     }
   } else if (key_map->Keys[input_event_mfd1_select] == evt.key) {
-    if (game_controller->control_block.mfd1_select) {
-      game_controller->control_block.mfd1_select = false;
+    if (game_controller->ControlBlock.mfd1_select) {
+      game_controller->ControlBlock.mfd1_select = false;
     } else {
-      game_controller->control_block.log = false;
-      game_controller->control_block.menu_interface = false;
-      game_controller->control_block.communication_interface = false;
-      game_controller->control_block.mfd1_select = true;
-      game_controller->control_block.mfd2_select = false;
+      game_controller->ControlBlock.log = false;
+      game_controller->ControlBlock.menu_interface = false;
+      game_controller->ControlBlock.communication_interface = false;
+      game_controller->ControlBlock.mfd1_select = true;
+      game_controller->ControlBlock.mfd2_select = false;
     }
   } else if (key_map->Keys[input_event_mfd2_select] == evt.key) {
-    if (game_controller->control_block.mfd2_select) {
-      game_controller->control_block.mfd2_select = false;
+    if (game_controller->ControlBlock.mfd2_select) {
+      game_controller->ControlBlock.mfd2_select = false;
     } else {
-      game_controller->control_block.log = false;
-      game_controller->control_block.menu_interface = false;
-      game_controller->control_block.communication_interface = false;
-      game_controller->control_block.mfd1_select = false;
-      game_controller->control_block.mfd2_select = true;
+      game_controller->ControlBlock.log = false;
+      game_controller->ControlBlock.menu_interface = false;
+      game_controller->ControlBlock.communication_interface = false;
+      game_controller->ControlBlock.mfd1_select = false;
+      game_controller->ControlBlock.mfd2_select = true;
     }
-  } else // if else chain continues below .v.
+  } else               // if else chain continues below .v.
 
   // three way toggle
   if (key_map->Keys[input_event_target_low] == evt.key) {
-    game_controller->control_block.target_low = true;
-    game_controller->control_block.target_high = false;
-    game_controller->control_block.target_air = false;
+    game_controller->ControlBlock.target_low = true;
+    game_controller->ControlBlock.target_high = false;
+    game_controller->ControlBlock.target_air = false;
   } else if (key_map->Keys[input_event_target_high] == evt.key) {
-    game_controller->control_block.target_low = false;
-    game_controller->control_block.target_high = true;
-    game_controller->control_block.target_air = false;
+    game_controller->ControlBlock.target_low = false;
+    game_controller->ControlBlock.target_high = true;
+    game_controller->ControlBlock.target_air = false;
   } else if (key_map->Keys[input_event_target_air] == evt.key) {
-    game_controller->control_block.target_low = false;
-    game_controller->control_block.target_high = false;
-    game_controller->control_block.target_air = true;
-  } else // if else chain continues below .v.
+    game_controller->ControlBlock.target_low = false;
+    game_controller->ControlBlock.target_high = false;
+    game_controller->ControlBlock.target_air = true;
+  } else                 // if else chain continues below .v.
 
   // modifiers
   if (key_map->Keys[input_event_flush_coolant] == evt.key) {
-    game_controller->control_block.flush_coolant = true;
+    game_controller->ControlBlock.flush_coolant = true;
   } else if (key_map->Keys[input_event_align_to_torso] == evt.key) {
-    game_controller->control_block.align_to_torso = true;
+    game_controller->ControlBlock.align_to_torso = true;
   } else if (key_map->Keys[input_event_fire_group_1] == evt.key) {
-    game_controller->control_block.fire_group_1 = true;
+    game_controller->ControlBlock.fire_group_1 = true;
   } else if (key_map->Keys[input_event_fire_group_2] == evt.key) {
-    game_controller->control_block.fire_group_2 = true;
+    game_controller->ControlBlock.fire_group_2 = true;
   } else if (key_map->Keys[input_event_fire_group_3] == evt.key) {
-    game_controller->control_block.fire_group_3 = true;
+    game_controller->ControlBlock.fire_group_3 = true;
   } else if (key_map->Keys[input_event_fire_group_4] == evt.key) {
-    game_controller->control_block.fire_group_4 = true;
+    game_controller->ControlBlock.fire_group_4 = true;
   } else if (key_map->Keys[input_event_fire_group_5] == evt.key) {
-    game_controller->control_block.fire_group_5 = true;
+    game_controller->ControlBlock.fire_group_5 = true;
   } else if (key_map->Keys[input_event_fire_group_all] == evt.key) {
-    game_controller->control_block.fire_group_all = true;
-  } else // if else chain continues below .v.
+    game_controller->ControlBlock.fire_group_all = true;
+  } else                   // if else chain continues below .v.
 
   // do once buttons
   if (key_map->Keys[input_event_nearest_enemy] == evt.key) {
-    game_controller->control_block.nearest_enemy = true;
+    game_controller->ControlBlock.nearest_enemy = true;
   } else if (key_map->Keys[input_event_enemy] == evt.key) {
-    game_controller->control_block.enemy = true;
+    game_controller->ControlBlock.enemy = true;
   } else if (key_map->Keys[input_event_enemy_back] == evt.key) {
-    game_controller->control_block.enemy_back = true;
+    game_controller->ControlBlock.enemy_back = true;
   } else if (key_map->Keys[input_event_friendly] == evt.key) {
-    game_controller->control_block.friendly = true;
+    game_controller->ControlBlock.friendly = true;
   } else if (key_map->Keys[input_event_friendly_back] == evt.key) {
-    game_controller->control_block.friendly_back = true;
+    game_controller->ControlBlock.friendly_back = true;
   } else if (key_map->Keys[input_event_target_pointer] == evt.key) {
-    game_controller->control_block.target_pointer = true;
+    game_controller->ControlBlock.target_pointer = true;
   } else if (key_map->Keys[input_event_nav_point] == evt.key) {
-    game_controller->control_block.nav_point = true;
+    game_controller->ControlBlock.nav_point = true;
   } else if (key_map->Keys[input_event_nav_point_back] == evt.key) {
-    game_controller->control_block.nav_point_back = true;
+    game_controller->ControlBlock.nav_point_back = true;
   } else if (key_map->Keys[input_event_inspect] == evt.key) {
-    game_controller->control_block.inspect = true;
+    game_controller->ControlBlock.inspect = true;
   } else if (key_map->Keys[input_event_cycle_weapon] == evt.key) {
-    game_controller->control_block.cycle_weapon = true;
+    game_controller->ControlBlock.cycle_weapon = true;
   } else if (key_map->Keys[input_event_cycle_group] == evt.key) {
-    game_controller->control_block.cycle_group = true;
+    game_controller->ControlBlock.cycle_group = true;
   } else if (key_map->Keys[input_event_zoom_in] == evt.key) {
-    game_controller->control_block.zoom_in = true;
+    game_controller->ControlBlock.zoom_in = true;
   } else if (key_map->Keys[input_event_zoom_out] == evt.key) {
-    game_controller->control_block.zoom_out = true;
+    game_controller->ControlBlock.zoom_out = true;
   } else if (key_map->Keys[input_event_zoom_target] == evt.key) {
-    game_controller->control_block.zoom_target = true;
+    game_controller->ControlBlock.zoom_target = true;
   } else if (key_map->Keys[input_event_radar_zoom_in] == evt.key) {
-    game_controller->control_block.radar_zoom_in = true;
+    game_controller->ControlBlock.radar_zoom_in = true;
   } else if (key_map->Keys[input_event_radar_zoom_out] == evt.key) {
-    game_controller->control_block.radar_zoom_out = true;
+    game_controller->ControlBlock.radar_zoom_out = true;
   } else if (key_map->Keys[input_event_mfd_up] == evt.key) {
-    game_controller->control_block.mfd_up = true;
+    game_controller->ControlBlock.mfd_up = true;
   } else if (key_map->Keys[input_event_mfd_down] == evt.key) {
-    game_controller->control_block.mfd_down = true;
+    game_controller->ControlBlock.mfd_down = true;
   } else if (key_map->Keys[input_event_mfd_left] == evt.key) {
-    game_controller->control_block.mfd_left = true;
+    game_controller->ControlBlock.mfd_left = true;
   } else if (key_map->Keys[input_event_mfd_right] == evt.key) {
-    game_controller->control_block.mfd_right = true;
+    game_controller->ControlBlock.mfd_right = true;
   } else if (key_map->Keys[input_event_mfd_toggle] == evt.key) {
-    game_controller->control_block.mfd_toggle = true;
+    game_controller->ControlBlock.mfd_toggle = true;
   }
 
   return true;
@@ -645,36 +645,36 @@ bool InputHandler::keyReleased(const OIS::KeyEvent& evt)
   // stop turning unless already turning in the other direction
   if (key_map->Keys[input_event_left] == evt.key) {
     if (keyboard->isKeyDown(key_map->Keys[input_event_right])) {
-      game_controller->setTurn(1.0);
+      game_controller->setTurnSpeed(1.0);
     } else {
-      game_controller->setTurn(0.0);
+      game_controller->setTurnSpeed(0.0);
     }
   } else if (key_map->Keys[input_event_right] == evt.key) {
     if (keyboard->isKeyDown(key_map->Keys[input_event_left])) {
-      game_controller->setTurn(-1.0);
+      game_controller->setTurnSpeed(-1.0);
     } else {
-      game_controller->setTurn(0.0);
+      game_controller->setTurnSpeed(0.0);
     }
   } else // if else chain continues below .v.
 
   // modifiers
   if (key_map->Keys[input_event_flush_coolant] == evt.key) {
-    game_controller->control_block.flush_coolant = false;
+    game_controller->ControlBlock.flush_coolant = false;
   } else if (key_map->Keys[input_event_align_to_torso] == evt.key) {
-    game_controller->control_block.align_to_torso = false;
+    game_controller->ControlBlock.align_to_torso = false;
   } else if (key_map->Keys[input_event_fire_group_1] == evt.key) {
-    game_controller->control_block.fire_group_1 = false;
+    game_controller->ControlBlock.fire_group_1 = false;
   } else if (key_map->Keys[input_event_fire_group_2] == evt.key) {
-    game_controller->control_block.fire_group_2 = false;
+    game_controller->ControlBlock.fire_group_2 = false;
   } else if (key_map->Keys[input_event_fire_group_3] == evt.key) {
-    game_controller->control_block.fire_group_3 = false;
+    game_controller->ControlBlock.fire_group_3 = false;
   } else if (key_map->Keys[input_event_fire_group_4] == evt.key) {
-    game_controller->control_block.fire_group_4 = false;
+    game_controller->ControlBlock.fire_group_4 = false;
   } else if (key_map->Keys[input_event_fire_group_5] == evt.key) {
-    game_controller->control_block.fire_group_5 = false;
+    game_controller->ControlBlock.fire_group_5 = false;
   } else if (key_map->Keys[input_event_fire_group_all] == evt.key) {
-    game_controller->control_block.fire_group_all = false;
-  } else // if else chain continues below .v.
+    game_controller->ControlBlock.fire_group_all = false;
+  } else   // if else chain continues below .v.
 
   // pausing
   if (key_map->Keys[input_event_pause] == evt.key) {

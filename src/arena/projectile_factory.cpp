@@ -17,23 +17,6 @@ ProjectileFactory::~ProjectileFactory()
 {
 }
 
-/** @brief updates all projectiles
- */
-void ProjectileFactory::update(Real a_dt)
-{
-  // walk through all projectiles and update them
-  for (auto it = ActiveList.begin(); it != ActiveList.end(); ) {
-    (*it)->update(a_dt);
-
-    if ((*it)->OwnerEntity == NULL) { // remove if expired
-      // get the iterator to the next item after removal
-      it = ActiveList.erase(it);
-    } else {
-      ++it;
-    }
-  }
-}
-
 /** @brief getFreeProjectile
  *
  * @todo: document this function
@@ -42,7 +25,7 @@ Projectile* ProjectileFactory::getFreeProjectile()
 {
   for (size_t i = 0; i < Projectiles.size(); ++i) {
     lastProjectileIdx = (lastProjectileIdx + 1) % Projectiles.size();
-    if (Projectiles[lastProjectileIdx]->Expired) {
+    if (Projectiles[lastProjectileIdx].OwnerWeapon == NULL) {
       break;
     }
 
@@ -54,7 +37,7 @@ Projectile* ProjectileFactory::getFreeProjectile()
     }
   }
 
-  return Projectiles[lastProjectileIdx];
+  return &Projectiles[lastProjectileIdx];
 }
 
 /** @brief getFreeCorpus
@@ -65,7 +48,7 @@ Corpus* ProjectileFactory::getFreeCorpus()
 {
   for (size_t i = 0; i < Corpuses.size(); ++i) {
     lastCorpusIdx = (lastCorpusIdx + 1) % Corpuses.size();
-    if (Corpuses[lastCorpusIdx]->OwnerEntity == NULL) {
+    if (Corpuses[lastCorpusIdx].OwnerEntity == NULL) {
       break;
     }
 
@@ -77,14 +60,14 @@ Corpus* ProjectileFactory::getFreeCorpus()
     }
   }
 
-  return Corpuses[lastCorpusIdx];
+  return &Corpuses[lastCorpusIdx];
 }
 
 /** @brief creates projectiles and adds them to a list
  */
-void ProjectileFactory::fireProjectile(Vector3    a_pos_xyz,
-                                       Quaternion a_orientation,
-                                       Weapon*    a_weapon)
+Projectile* ProjectileFactory::fireProjectile(Vector3    a_pos_xyz,
+                                              Quaternion a_orientation,
+                                              Weapon*    a_weapon)
 {
   string mesh = "bullet"; // temp
 
@@ -92,26 +75,23 @@ void ProjectileFactory::fireProjectile(Vector3    a_pos_xyz,
   string id_string = Game::getUniqueID() + mesh;
 
   // create mesh for the projectile
-  Ogre::Entity* projectile_mesh = Game::scene->createEntity(id_string, mesh + ".mesh");
+  Ogre::Entity* projectile_mesh = Game::Scene->createEntity(id_string, mesh + ".mesh");
 
   // create root node
-  Ogre::SceneNode* projectile_node = Game::scene->getRootSceneNode()->createChildSceneNode();
+  Ogre::SceneNode* projectile_node = Game::Scene->getRootSceneNode()->createChildSceneNode();
   projectile_node->attachObject(projectile_mesh); // attach mesh
   projectile_mesh->setQueryFlags(query_mask_projectiles); // mask as projectile
 
-  Projectile* new_projectile = getFreeProjectile();
-  new_projectile->setName(id_string);
-  new_projectile->NumCorpuses = 1;
-  new_projectile->weapon = a_weapon;
-  new_projectile->Owner = a_weapon->Owner;
-
   Corpus* new_corpus = getFreeCorpus();
-  new_corpus->setOwner(new_projectile);
+  new_corpus->setOwner(a_weapon->Owner);
   new_corpus->setSceneNode(projectile_node);
   new_corpus->setXYZ(a_pos_xyz);
   new_corpus->setOrientation(a_orientation);
   new_corpus->loadCollisionSpheres(mesh);
 
-  // put the projectile on the list
-  ActiveList.push_back(new_corpus);
+  Projectile* new_projectile = getFreeProjectile();
+  new_projectile->reset(a_weapon, new_corpus);
+  new_projectile->setName(id_string);
+
+  return new_projectile;
 }

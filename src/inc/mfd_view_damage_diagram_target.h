@@ -10,10 +10,10 @@ class MFDViewDamageDiagramTarget
 {
 public:
   MFDViewDamageDiagramTarget(hud_part_design_t& a_hud_part_design);
-  virtual ~MFDViewDamageDiagramTarget() {
+  virtual ~MFDViewDamageDiagramTarget()
+  {
   }
 
-  // main loop
   void update(Real a_dt);
 };
 

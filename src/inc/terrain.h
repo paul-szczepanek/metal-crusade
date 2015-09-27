@@ -57,14 +57,15 @@ const string block_prefix[block_types_max] = {
 class Terrain
 {
 public:
-  Terrain(uint a_width,
-          uint a_height);
-  ~Terrain() {
+  Terrain(size_t a_width,
+          size_t a_height);
+  ~Terrain()
+  {
   }
 
   // get height of vertex
-  Real getHeight(uint a_x,
-                 uint a_y);
+  Real getHeight(size_t a_x,
+                 size_t a_y);
   // get height and angle at arbitrary point, blend nearest vertices
   Real getHeight(Real a_x,
                  Real a_y);
@@ -72,19 +73,19 @@ public:
                      Real a_y);
 
   // set height and type at vertex
-  void setHeight(uint a_x,
-                 uint a_y,
-                 Real a_height);
-  void blendHeight(uint a_x,
-                   uint a_y,
-                   Real a_height,
-                   Real a_weight);
-  void setType(uint           a_x,
-               uint           a_y,
+  void setHeight(size_t a_x,
+                 size_t a_y,
+                 Real   a_height);
+  void blendHeight(size_t a_x,
+                   size_t a_y,
+                   Real   a_height,
+                   Real   a_weight);
+  void setType(size_t         a_x,
+               size_t         a_y,
                terrain::types a_type);
 
-  uint size_w;
-  uint size_h;
+  size_t size_w;
+  size_t size_h;
 
 private:
 
@@ -93,15 +94,15 @@ private:
   vector<terrain::types> terrain_type;
 };
 
-inline Real Terrain::getHeight(uint a_x,
-                               uint a_y)
+inline Real Terrain::getHeight(size_t a_x,
+                               size_t a_y)
 {
   return terrain_height[a_x + a_y * size_w];
 }
 
-inline void Terrain::setHeight(uint a_x,
-                               uint a_y,
-                               Real a_height)
+inline void Terrain::setHeight(size_t a_x,
+                               size_t a_y,
+                               Real   a_height)
 {
   terrain_height[a_x + a_y * size_w] = a_height;
 }
@@ -124,8 +125,8 @@ inline Real Terrain::getHeight(Real a_x,
   Real texture_y = a_y * inverse_scale;
 
   // get upper left corner index of of the sampled square
-  uint i = texture_x;
-  uint j = texture_y;
+  size_t i = texture_x;
+  size_t j = texture_y;
 
   // sample four heights
   Real sample1 = terrain_height[i + j * size_w];

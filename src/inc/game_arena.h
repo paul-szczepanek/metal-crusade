@@ -13,6 +13,7 @@ const Real size_of_arena_cell = 64; // size in metres
 
 class Corpus;
 class Terrain;
+class ArenaEntity;
 
 class GameArena
 {
@@ -23,7 +24,6 @@ public:
   // init
   int loadArena(const string& arena_name);
 
-  // main loop
   void update(Real a_dt);
 
   // get height at x and y
@@ -34,32 +34,33 @@ public:
   Real getAmbientTemperature(Vector3 a_position);
 
   // gravity
-  Real getGravity() {
+  Real getGravity()
+  {
     return gravity;
   }
 
   // the arena is partitioned into cells - reutrns the cell index
-  uint_pair getCellIndex(Real a_x,
-                         Real a_y);
+  size_t_pair getCellIndex(Real a_x,
+                           Real a_y);
 
   // check if position is valid
   bool isOutOfBounds(Vector3& pos_xyz);
   bool isOutOfArena(Vector3& pos_xyz);
 
   // returns true if it's out of bounds - possibly confusing but convenient
-  bool updateCellIndex(uint_pair& cell_index,
-                       Vector3&   pos_xyz,
-                       Corpus*    a_thing);
-  void purgeCellIndex(uint_pair& cell_index,
-                      Corpus*    a_thing);
+  bool updateCellIndex(size_t_pair& cell_index,
+                       Vector3&     pos_xyz,
+                       Corpus*      a_thing);
+  void purgeCellIndex(size_t_pair& cell_index,
+                      Corpus*      a_thing);
 
   // accessing objects on the map based on the cell index
-  list<Corpus*>& getCorpusCell(const uint_pair a_index);
+  list<Corpus*>& getCorpusCell(const size_t_pair a_index);
 
   // fills an array with lists
-  void getCellIndexesWithinRadius(const uint_pair    a_index,
-                                  vector<uint_pair>& indexes,
-                                  const Real         a_radius = 0);
+  void getCellIndexesWithinRadius(const size_t_pair    a_index,
+                                  vector<size_t_pair>& indexes,
+                                  const Real           a_radius = 0);
 
 private:
   // inner main loop
@@ -72,6 +73,7 @@ private:
   // creates the mesh for the terrain
   void createTerrainModel();
 
+public:
   // terrain data
   Terrain* terrain;
 
@@ -79,20 +81,22 @@ private:
   vector<vector<list<Corpus*> > > corpus_cells;
 
   // a list of non-empty cells
-  list<list<CorpusCorpus*>* > live_corpus_cells;
+  list<list<Corpus*>* > LiveCorpusCells;
+
+  vector<ArenaEntity*> Entities;
 
   // gravity
   Real gravity;
 
   // terrain heightmap specs
-  uint texture_size_w;
-  uint texture_size_h;
+  size_t texture_size_w;
+  size_t texture_size_h;
   // size of the whole arena in metres
   Real scene_size_w;
   Real scene_size_h;
   // number of cells a side
-  uint num_of_arena_cells_w;
-  uint num_of_arena_cells_h;
+  size_t num_of_arena_cells_w;
+  size_t num_of_arena_cells_h;
 
   // terrain graphics
   Ogre::SceneNode* terrain_node;
@@ -163,25 +167,25 @@ inline bool GameArena::isOutOfArena(Vector3& pos_xyz)
 
 /** @brief returns the index of the cell in the arena the position is in
  */
-inline uint_pair GameArena::getCellIndex(Real a_x,
-                                         Real a_y)
+inline size_t_pair GameArena::getCellIndex(Real a_x,
+                                           Real a_y)
 {
   // get the index of the cell pased on position
-  uint i = a_x / size_of_arena_cell;
-  uint j = a_y / size_of_arena_cell;
+  size_t i = a_x / size_of_arena_cell;
+  size_t j = a_y / size_of_arena_cell;
 
   return make_pair(i, j);
 }
 
-inline list<Corpus*>& GameArena::getCorpusCell(const uint_pair a_index)
+inline list<Corpus*>& GameArena::getCorpusCell(const size_t_pair a_index)
 {
   return corpus_cells[a_index.first][a_index.second];
 }
 
 /** @brief remove object from the cell
  */
-inline void GameArena::purgeCellIndex(uint_pair& cell_index,
-                                      Corpus*    a_thing)
+inline void GameArena::purgeCellIndex(size_t_pair& cell_index,
+                                      Corpus*      a_thing)
 {
   corpus_cells[cell_index.first][cell_index.second].remove(a_thing);
 }

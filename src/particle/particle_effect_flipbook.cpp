@@ -13,7 +13,7 @@ ParticleEffectFlipbook::ParticleEffectFlipbook(Ogre::SceneNode* a_scene_node,
   scene_node = a_scene_node;
 
   // create the set to hold the anim and attach to the handed down node
-  set = Game::scene->createBillboardSet(1);
+  set = Game::Scene->createBillboardSet(1);
   scene_node->attachObject(set);
 
   switch (a_animation) {
@@ -37,10 +37,10 @@ ParticleEffectFlipbook::~ParticleEffectFlipbook()
   // we need to remove the scene node first
   die();
   // then we can safely kill the set
-  Game::scene->destroyBillboardSet(set);
+  Game::Scene->destroyBillboardSet(set);
 }
 
-int ParticleEffectFlipbook::update(Real a_dt)
+bool ParticleEffectFlipbook::update(Real a_dt)
 {
   lifetime += a_dt;
 
@@ -59,9 +59,9 @@ int ParticleEffectFlipbook::update(Real a_dt)
     } else {
 
       // and finish the anim
-      return 1;
+      return false;
     }
   }
 
-  return 0;
+  return true;
 }

@@ -8,24 +8,32 @@
 #include "input_handler.h"
 #include "game_controller.h"
 #include "game_arena.h"
+#include "corpus_manager.h"
 #include "faction_manager.h"
 #include "formation_manager.h"
+#include "ai_manager.h"
+#include "building_factory.h"
+#include "unit_factory.h"
+#include "projectile_factory.h"
+#include "particle_manager.h"
+#include "collision_handler.h"
 
 Game* gGame = 0;
 
 // 64fps limit for the game
 #define FPS_INTERVAL (16)
 
-const string VERSION_NUMBER = FS::getStringFromFile(DATA_DIR + "version");
+const string VERSION_NUMBER = FilesHandler::getStringFromFile(DATA_DIR + "version");
 
 Ogre::Root* Game::OgreRoot = NULL;
 Ogre::Viewport* Game::OgreViewport = NULL;
 Ogre::RenderWindow* Game::OgreWindow = NULL;
-Ogre::SceneManager* Game::OgreScene = NULL;
+Ogre::SceneManager* Game::Scene = NULL;
 
 InputHandler* Game::Input = NULL;
 TextStore* Game::Text = NULL;
 GameCamera* Game::Camera = NULL;
+CorpusManager* Game::Corpus = NULL;
 FormationManager* Game::Formation = NULL;
 FactionManager* Game::Faction = NULL;
 GameArena* Game::Arena = NULL;
@@ -47,10 +55,12 @@ Real Game::Fps;
 size_t Game::UniqueId;
 bool Game::DebugMode;
 
+Game::~Game()
+{
+}
+
 Game::Game()
 {
-  FS::init();
-
   Text = new TextStore();
 
   Fps = 0;
@@ -108,9 +118,9 @@ void Game::run()
   if (OgreRoot->restoreConfig() || OgreRoot->showConfigDialog()) {
     OgreWindow = OgreRoot->initialise(true, string("Metal Crusade ") + VERSION_NUMBER, "");
 
-    OgreScene = OgreRoot->createSceneManager(Ogre::ST_GENERIC);
+    Scene = OgreRoot->createSceneManager(Ogre::ST_GENERIC);
     // setup shadow type - needs to be done first
-    OgreScene->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_MODULATIVE);
+    Scene->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_MODULATIVE);
 
     // set resources
     Ogre::ResourceGroupManager& res_mngr = Ogre::ResourceGroupManager::getSingleton();
@@ -170,7 +180,8 @@ void Game::enterArena()
 {
   Arena = new GameArena();
 
-  Game::AiManager = new AiManager();
+  Game::Corpus = new CorpusManager();
+  Game::AI = new AIManager();
   Game::Building = new BuildingFactory();
   Game::Projectile = new ProjectileFactory();
   Game::Unit = new UnitFactory();
@@ -181,12 +192,13 @@ void Game::enterArena()
 
 void Game::exitArena()
 {
-  delete Game::AiManager;
+  delete Game::AI;
+  delete Game::Corpus;
   delete Game::Building;
   delete Game::Projectile;
   delete Game::Unit;
   delete Game::Particle;
-  delete Game::Collider;
+  delete Game::Collision;
   //delete Game::Hud;
 
   delete Arena;
@@ -247,16 +259,19 @@ void Game::logic(int aDTicks)
 
     // update game objects
     Arena->update(Delta);
-    Projectile->update(Delta);
     Faction->update(Delta);
     Formation->update(Delta);
-    camera->update(Delta);
+    Particle->update(Delta);
+    Camera->update(Delta);
 
     // show the overlays (2D hud)
     // hud->update(Delta);
 
     // find and resolve collisions
+    Corpus->applyForces(Delta);
     Collision->update(Delta);
+    Corpus->applyVelocity(Delta);
+    Corpus->update(Delta);
 
     AI->update(Delta);
   }
@@ -298,6 +313,28 @@ void Game::fpsCalc()
 
   // temp, show the fps
   // hud->status->setLine(string("$eFPS: ") + intoString(Fps), 0, 20, 50);
+}
+
+/** @brief clears the Ogre objects for a projectile
+ */
+void Game::destroyModel(Ogre::SceneNode* a_scene_node)
+{
+  // destroy attached entities
+  Ogre::SceneNode::ObjectIterator it = a_scene_node->getAttachedObjectIterator();
+  while (it.hasMoreElements()) {
+    Ogre::MovableObject* movable_object = static_cast<Ogre::MovableObject*>(it.getNext());
+    a_scene_node->getCreator()->destroyMovableObject(movable_object);
+  }
+
+  // destroy children if any
+  Ogre::SceneNode::ChildNodeIterator it2 = a_scene_node->getChildIterator();
+  while (it2.hasMoreElements()) {
+    Ogre::SceneNode* child_node = static_cast<Ogre::SceneNode*>(it2.getNext());
+    destroyModel(child_node);
+  }
+
+  // at last remove the scene node
+  Game::Scene->destroySceneNode(a_scene_node);
 }
 
 /** @brief terminal error - die

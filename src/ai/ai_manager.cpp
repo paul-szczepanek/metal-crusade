@@ -5,24 +5,28 @@
 #include "crusader_ai.h"
 #include "game_controller.h"
 #include "formation.h"
+#include "game.h"
 #include "crusader.h"
 
 AIManager::~AIManager()
 {
   // cleanup ais
-  for (uint i = 0, for_size = ais.size(); i < for_size; ++i) {
-    delete ais[i];
+  for (auto ai : ais) {
+    delete ai;
+  }
+  for (auto ai_con : ai_game_controllers) {
+    delete ai_con;
   }
 }
 
 /** @brief updates AIs
  * @todo: pretty much everything
  */
-void AIManager::update()
+void AIManager::update(Real a_dt)
 {
   // call update on every unit
-  for (uint i = 0, for_size = ais.size(); i < for_size; ++i) {
-    ais[i]->update();
+  for (size_t i = 0, for_size = ais.size(); i < for_size; ++i) {
+    ais[i]->update(a_dt);
     // TODO give them group plans
   }
 }
@@ -50,16 +54,14 @@ CrusaderAI* AIManager::activateUnit(Crusader*  a_unit,
   // create a new controller for the ai to use
   ai_game_controllers.push_back(new GameController("crusader ai"));
   // join the formation
-  a_formation->joinFormation(ai_game_controllers.back());
+  a_formation->joinFormation(a_unit);
 
   // create the ai and give it the controller
-  CrusaderAI* ai = Game::ai_factory->createCrusaderAI(a_unit);
+  CrusaderAI* ai = Game::AI->createCrusaderAI(a_unit);
   // assign the controller to the ai
   ai->bindController(ai_game_controllers.back());
-  ai->activate(true);
-
-  // give unit the controller
   a_unit->assignController(ai_game_controllers.back());
+  ai->activate(true);
 
   return ai;
 }

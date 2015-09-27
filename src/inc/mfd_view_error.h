@@ -10,10 +10,10 @@ class MFDViewError
 {
 public:
   MFDViewError(hud_part_design_t& a_hud_part_design);
-  virtual ~MFDViewError() {
+  virtual ~MFDViewError()
+  {
   }
 
-  // main loop
   virtual void update(Real a_dt);
 
   // custom activation to show the view even on one call - this view may be shared

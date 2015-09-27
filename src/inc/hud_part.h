@@ -10,12 +10,13 @@ class HudPart
 {
 public:
   HudPart(hud_part_design_t& a_hud_part_design);
-  virtual ~HudPart() {
+  virtual ~HudPart()
+  {
   }
 
-  // main loop
   virtual void update(Real a_dt) = 0;
-  virtual void resize(Real a_scale) {
+  virtual void resize(Real a_scale)
+  {
   }                                            // for use with 3d elements
 
 protected:

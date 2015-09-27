@@ -35,28 +35,6 @@ const string hud_area_names[hud_num_of_areas] = {
 namespace horizontal { enum position { left, centre, right }; };
 namespace vertical { enum position { top, centre, bottom }; };
 
-// this is the minimum number of lines hud must implement to be usable
-const usint hud_num_of_log_lines = 8;
-const usint hud_num_of_status_lines = 8;
-const usint hud_num_of_mfd_aux_lines = 5;
-
-// mfd
-const usint view_types_per_page = hud_num_of_mfd_aux_lines - 1; // one line is the label
-
-// text lines max length
-const usint hud_log_line_length = 60;
-const usint hud_status_line_length = 60;
-// history size for the log TODO: write excess to file?
-const usint hud_max_hud_num_of_log_lines = 40;
-const usint hud_mfd_aux_line_length = 16;
-
-// colour codes for text: regular, exclamation, alternative
-// huds can implement them however they want or not at all
-const usint hud_num_of_colours = 3; // this is now pretty much hardcoded in parseColours :(
-const char hud_colour_codes[hud_num_of_colours] = { 'r', 'e', 'a' };
-const char hud_escape_char = '$'; // to get the '$' char in a string type two like so "$$"
-const char hud_revert_colour_char = 'x'; // reverts to the last used colour in the line
-
 // an unfortunate name for a namespace but I ran out of good ones
 // and I don't want to pollute the namespace even further
 // since hud design needs to be used in quite a few places

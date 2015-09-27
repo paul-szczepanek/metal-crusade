@@ -12,10 +12,10 @@ class HudSet
 {
 public:
   HudSet(hud_part_design_t& a_hud_part_design);
-  ~HudSet() {
+  ~HudSet()
+  {
   }
 
-  // main loop
   void update(Real a_dt);
 
 private:

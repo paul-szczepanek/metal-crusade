@@ -15,7 +15,6 @@ public:
   HudMFDDisplay(hud_part_design_t& a_hud_part_design);
   ~HudMFDDisplay();
 
-  // main loop
   void update(Real a_dt);
 
 private:

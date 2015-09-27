@@ -42,7 +42,7 @@ ParticleEffect* ParticleManager::createExplosion(Vector3 a_position,
                                                  Real    a_time,
                                                  usint   a_ferocity)
 {
-  Ogre::SceneNode* particle_node = Game::scene->getRootSceneNode()->createChildSceneNode();
+  Ogre::SceneNode* particle_node = Game::Scene->getRootSceneNode()->createChildSceneNode();
   particle_node->setPosition(a_position);
 
   // effects.push_back(new ParticleEffectExplosion(particle_node, a_size, a_time, a_ferocity));
