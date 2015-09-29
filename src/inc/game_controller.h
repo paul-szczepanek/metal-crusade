@@ -102,44 +102,44 @@ private:
   bool InvertTurnToPointer;
 };
 
-Vector2 GameController::getPointerPosXZ()
+inline Vector2 GameController::getPointerPosXZ()
 {
   return Vector2(PointerPos.x, PointerPos.z);
 }
 
-Real GameController::getThrottle()
+inline Real GameController::getThrottle()
 {
   return Throttle;
 }
 
 // turning the body
-void GameController::setTurnSpeed(Real a_turn_speed)
+inline void GameController::setTurnSpeed(Real a_turn_speed)
 {
   TurnSpeed = a_turn_speed;
 }
 
-Real GameController::getTurnSpeed()
+inline Real GameController::getTurnSpeed()
 {
   return TurnSpeed;
 }
 
 // 3d pointer
-void GameController::setPointerPos(Vector3 a_pointer_pos)
+inline void GameController::setPointerPos(Vector3 a_pointer_pos)
 {
   PointerPos = a_pointer_pos;
 }
 
-Vector3 GameController::getPointerPos()
+inline Vector3 GameController::getPointerPos()
 {
   return PointerPos;
 }
 
-string GameController::getName()
+inline string GameController::getName()
 {
   return Name;
 }
 
-void GameController::setName(const string& a_name)
+inline void GameController::setName(const string& a_name)
 {
   Name = a_name;
 }

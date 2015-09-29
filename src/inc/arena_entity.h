@@ -22,6 +22,13 @@ public:
   const string& getName();
   virtual bool handleCollision(Collision* a_collision);
 
+  virtual bool acquireAsTargetBy(ArenaEntity* a_entity);
+  virtual void releaseAsTarget(ArenaEntity* a_targeted_by);
+  virtual bool loseTarget(ArenaEntity* a_targeted_by,
+                          bool         a_forced = false);
+  virtual ArenaEntity* getTarget();
+  virtual void clearFromTargets();
+
 public:
   string Name;
   Vector3 XYZ;
@@ -35,7 +42,7 @@ inline void ArenaEntity::setName(const string& a_name)
 
 inline const string& ArenaEntity::getName()
 {
-  Name;
+  return Name;
 }
 
 inline Vector3 ArenaEntity::getXYZ()
@@ -46,6 +53,11 @@ inline Vector3 ArenaEntity::getXYZ()
 inline void ArenaEntity::setPosition(const Vector3& a_pos)
 {
   XYZ = a_pos;
+}
+
+inline bool ArenaEntity::handleCollision(Collision* /*a_collision*/)
+{
+  return true;
 }
 
 #endif // ENTITY_H

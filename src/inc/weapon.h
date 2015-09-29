@@ -18,13 +18,14 @@ enum weapon_type {
 struct weapon_design_t {
   string filename;
   string model;
+  string projectile;
   weapon_type type;
-  sint multi_fire;
+  usint multi_fire;
+  usint internals;
+  usint panels;
   Real multi_fire_timout;
   Real spread;
   Real weight;
-  sint internals;
-  sint panels;
   Real recharge_time;
   Real heat_generated;
   Real muzzle_velocity;
@@ -34,17 +35,16 @@ struct weapon_design_t {
   Real EnergyDmg;
   Real splash_range;
   Real splash_velocity;
-  string projectile;
   Real projectile_weight;
   Real fuel;
   Real homing;
   Real lock_on_time;
-  size_t ammo_per_slot;
   Real range;
+  size_t ammo_per_slot;
   // strings
-  ulint text_name;
-  ulint text_list_name;
-  ulint text_description;
+  size_t text_name;
+  size_t text_list_name;
+  size_t text_description;
 };
 
 class Weapon
@@ -78,9 +78,11 @@ public:
     return (Ammo > 0);
   }
 
-  weapon_design_t weapon_design;
+  bool loadWeaponDesign(const string& filename);
 
 public:
+  weapon_design_t weapon_design;
+
   // parent unit
   Unit* Owner;
 

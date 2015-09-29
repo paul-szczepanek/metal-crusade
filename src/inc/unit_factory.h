@@ -21,15 +21,15 @@ public:
                           const string& a_name,
                           Quaternion a_orientation = Quaternion(1, 0, 0, 0));
 
-  bool getCrusaderSpec(const string&      filename,
-                       crusader_engine_t& engine,
-                       crusader_drive_t&  drive,
-                       crusader_chasis_t& chasis);
-  bool getCrusaderDesign(const string&      filename,
-                         crusader_design_t& design,
-                         crusader_engine_t& engine,
-                         crusader_drive_t&  drive,
-                         crusader_chasis_t& chasis);
+  bool getCrusaderSpec(const string&       filename,
+                       crusader_engine_t&  engine,
+                       crusader_drive_t&   drive,
+                       crusader_chassis_t& chassis);
+  bool getCrusaderDesign(const string&       filename,
+                         crusader_design_t&  design,
+                         crusader_engine_t&  engine,
+                         crusader_drive_t&   drive,
+                         crusader_chassis_t& chassis);
 
   // find unit
   Unit* getUnit(size_t a_id);

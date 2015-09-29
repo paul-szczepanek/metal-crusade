@@ -8,18 +8,13 @@
 Unit::Unit(const string& a_unit_name,
            Vector3       a_pos_xyz,
            Quaternion    a_orientation)
-  : ArenaEntity(a_unit_name),
-  Orientation(a_orientation),
-  CoreTemperature(0),
-  hud_attached(false),
-  Velocity(Vector3(0, 0, 0)),
-  Move(Vector3(0, 0, 0)),
-  corrected_velocity_scalar(0),
+  : ArenaEntity(a_unit_name)
 {
   XYZ = a_pos_xyz;
+  Orientation = a_orientation;
 }
 
-virtual Unit::~Unit()
+Unit::~Unit()
 {
   clearFromTargets();
 }
@@ -43,7 +38,7 @@ Quaternion Unit::getBallisticAngle(const Vector3& a_position)
   pointer_position = pointer_direction + a_position;
 
   // we need to apply the offset so that the angles converge from the weapons mounted on the sides
-  Vector3 weapon_offset = pos_xyz - a_position;
+  Vector3 weapon_offset = XYZ - a_position;
   // the angle must be limited otherwise you could fire sideways - this limits it to 5 degrees
   Real limit = distance / 11.4300523;
   if (limit < weapon_offset.length()) {
@@ -91,18 +86,12 @@ bool Unit::getUnitAtPointer()
   Game::Arena->getCellIndexesWithinRadius(pointer_cell_index, cell_indexes);
 
   for (size_t i = 0, for_size = cell_indexes.size(); i < for_size; ++i) {
-    list<Unit*>& unit_list = Game::Arena->getUnitCell(cell_indexes[i]);
+    list<Corpus*>& CorpusList = Game::Arena->getCorpusCell(cell_indexes[i]);
 
     // if there are any units in the cell
-    if (unit_list.size() > 0) {
-      list<Unit*>::iterator it = unit_list.begin();
-      list<Unit*>::iterator it_end = unit_list.end();
-
-      // walk through all projectiles
-      for (; it != it_end; ++it) {
-        if ((*it)->getBoundingSphere().contains(pointer_position)) {
-          return acquireTarget((*it));
-        }
+    for (Corpus* c : CorpusList) {
+      if (c->BoundingSphere.contains(pointer_position)) {
+        return acquireTarget(c);
       }
     }
   }
@@ -112,12 +101,12 @@ bool Unit::getUnitAtPointer()
 
 /** @brief get the passed in mobilis as target
  */
-bool Unit::acquireTarget(Unit* a_target)
+bool Unit::acquireTarget(Corpus* a_target)
 {
   // check if target is acquirable
-  if (a_target->acquireAsTarget(this)) {
+  if (a_target->OwnerEntity && a_target->OwnerEntity->acquireAsTargetBy(this)) {
     // set it as target
-    target = a_target;
+    target = static_cast<Unit*>(a_target->OwnerEntity);
 
     return true;
   }
@@ -127,11 +116,11 @@ bool Unit::acquireTarget(Unit* a_target)
 
 /** @brief called by an object which holds this as a target to tell it that it no longer targets it
  */
-void Unit::releaseAsTarget(Unit* a_targeted_by)
+void Unit::releaseAsTarget(ArenaEntity* a_targeted_by)
 {
   if (target_holders.size() > 0) {
-    vector<Unit*>::iterator it = find(target_holders.begin(),
-                                      target_holders.end(), a_targeted_by);
+    vector<ArenaEntity*>::iterator it = find(target_holders.begin(),
+                                             target_holders.end(), a_targeted_by);
     if (it < target_holders.end()) {
       target_holders.erase(it);
     }
@@ -141,20 +130,11 @@ void Unit::releaseAsTarget(Unit* a_targeted_by)
 /** @brief called by other object to try and acquire this as a target
  * return false if target can't be acquired
  */
-bool Unit::acquireAsTarget(Unit* a_targeted_by)
+bool Unit::acquireAsTargetBy(ArenaEntity* a_targeted_by)
 {
   target_holders.push_back(a_targeted_by);
 
   return true;
-}
-
-/** @brief puts the object on the arean and in the correct array and in the correct cell index
- * updates the cell index and position if out of bounds
- */
-void Unit::updateCellIndex()
-{
-  // check the position in the arena and update the arena cells if necessary
-  out_of_bounds = Game::Arena->updateCellIndex(cell_index, pos_xyz, this);
 }
 
 // radar
@@ -166,8 +146,8 @@ bool Unit::isDetectable()
 /** @brief called by targeted object that requires this to relinquish its current target
  * TODO: relinquish criteria
  */
-bool Unit::loseTarget(Unit* a_targeted_by,
-                      bool  a_forced)
+bool Unit::loseTarget(ArenaEntity* a_targeted_by,
+                      bool         a_forced)
 {
   if (a_forced) {
     target = NULL;

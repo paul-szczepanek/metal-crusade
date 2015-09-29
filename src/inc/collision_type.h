@@ -12,5 +12,6 @@ enum collision_type {
 };
 
 const usint MAX_NUM_CS = 64;
+const usint MAX_NUM_CS_AREAS = 16;
 
 #endif // COLLISIONTYPE_H

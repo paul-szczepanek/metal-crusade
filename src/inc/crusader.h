@@ -29,14 +29,14 @@ class Crusader
   : public Unit
 {
 public:
-  Crusader(const string&     a_unit_name,
-           Vector3           a_pos_xyz,
-           Quaternion        a_orientation,
-           crusader_design_t a_design,
-           crusader_engine_t a_engine,
-           crusader_drive_t  a_drive,
-           crusader_chasis_t a_chasis);
-  ~Crusader();
+  Crusader(const string&      a_unit_name,
+           Vector3            a_pos_xyz,
+           Quaternion         a_orientation,
+           crusader_design_t  a_design,
+           crusader_engine_t  a_engine,
+           crusader_drive_t   a_drive,
+           crusader_chassis_t a_chassis);
+  virtual ~Crusader();
 
   bool update(Real a_dt);
 
@@ -54,7 +54,6 @@ public:
   Real getCoolant();
   Real getEngineTemperature();
   Real getCoreTemperature();
-  Real getPressure();
   Real getThrottle();
 
   // damage reporting
@@ -83,8 +82,8 @@ private:
   // building the crusader
   void recalculateWeight();
   void extractAnimationStates(Ogre::SceneNode* a_scene_node);
-  void positionWeapons(vector<Vector3>& panel_positions,
-                       vector<usint>&   slots_used);
+  void positionWeapons();
+  void createModel();
 
   // weapons
   bool fireGroup(usint a_group);
@@ -106,24 +105,24 @@ private:
   Real DistanceToGround = 0; // from main scene node
 
   // clamping to the terrain
-  Ogre::Ray* terrain_ray = NULL;
-  Ogre::RaySceneQuery* terrain_ray_query = NULL;
+  Ogre::Ray* TerrainRay = NULL;
+  Ogre::RaySceneQuery* TerrainRayQuery = NULL;
 
   // tracking G forces
   Vector3 ShockDamageOld;
   Vector3 ShockDamageNew;
 
   // design
-  crusader_design_t design;
-  crusader_engine_t engine;
-  crusader_drive_t drive;
-  crusader_chasis_t chasis;
+  crusader_design_t CrusaderDesign;
+  crusader_engine_t EngineDesign;
+  crusader_drive_t DriveDesign;
+  crusader_chassis_t ChassisDesign;
 
   Corpus* Parts[crusader_corpus::parts_max];
 
   // integrity and armour
-  vector<Real> structure;
-  vector<Real> armour;
+  vector<Real> StructureIntegrity;
+  vector<Real> ArmourIntegrity;
   Real ArmourStructure = 0;
   Real ArmourBallistic = 0;
   Real ArmourConductivity = 0;
@@ -145,40 +144,41 @@ private:
   bool WeaponsOperational = false;
 };
 
-const Real critical_temperature(500);
+const Real CRITICAL_TEMPERATURE(500);
 
 inline usint Crusader::getSelectedWeapon()
 {
-  return WeaponsOperational ? design.weapon_groups[CurrentGroup][CurrentWeapon] : -1;
+  return WeaponsOperational ? CrusaderDesign.weapon_groups[CurrentGroup][CurrentWeapon] : -1;
 }
 
 inline vector<usint>& Crusader::getSelectedGroup()
 {
-  return design.weapon_groups[CurrentGroup];
+  return CrusaderDesign.weapon_groups[CurrentGroup];
 }
 
 inline Real Crusader::getThrottle()
 {
   // throttle scaling depends on direction
-  return (Throttle > 0) ? Throttle * drive.max_speed : Throttle * drive.max_speed_reverse;
+  return (Throttle >
+          0) ? Throttle * DriveDesign.max_speed : Throttle * DriveDesign.max_speed_reverse;
 }
 
 inline Real Crusader::getDamage(usint a_diagram_element)
 {
-  return armour[a_diagram_element] / design.armour_placement[a_diagram_element];
+  return ArmourIntegrity[a_diagram_element] / CrusaderDesign.armour_placement[a_diagram_element];
 }
 
-Vector3 Crusader::getDirection()
+inline Vector3 Crusader::getDirection()
 {
   return TorsoDirection;
 }
 
-Vector3 Crusader::getDriveDirection()
+inline Vector3 Crusader::getDriveDirection()
 {
   return Direction;
 }
 
-Quaternion Crusader::getLookingOrientation()
+inline Quaternion Crusader::getLookingOrientation()
 {
   return Orientation * TorsoOrientation;
 }
@@ -188,22 +188,22 @@ Quaternion Crusader::getLookingOrientation()
    return design.hud;
    }*/
 
-Real Crusader::getSpeed()
+inline Real Crusader::getSpeed()
 {
   return corrected_velocity_scalar;
 }
 
-Real Crusader::getCoolant()
+inline Real Crusader::getCoolant()
 {
   return CoolantLevel;
 }
 
-Real Crusader::getEngineTemperature()
+inline Real Crusader::getEngineTemperature()
 {
   return EngineTemperature;
 }
 
-Real Crusader::getCoreTemperature()
+inline Real Crusader::getCoreTemperature()
 {
   return CoreTemperature;
 }

@@ -14,7 +14,28 @@ ArenaEntity::~ArenaEntity()
 {
 }
 
-bool ArenaEntity::handleCollision(Collision* a_collision)
+bool ArenaEntity::acquireAsTargetBy(ArenaEntity* a_entity)
+{
+  return false;
+}
+
+void ArenaEntity::releaseAsTarget(ArenaEntity* a_targeted_by)
+{
+
+}
+
+bool ArenaEntity::loseTarget(ArenaEntity* a_targeted_by,
+                             bool         a_forced)
 {
   return true;
+}
+
+ArenaEntity* ArenaEntity::getTarget()
+{
+  return this;
+}
+
+void ArenaEntity::clearFromTargets()
+{
+
 }

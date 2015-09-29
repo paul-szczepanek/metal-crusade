@@ -15,6 +15,10 @@ CrusaderAI::CrusaderAI(Crusader* a_self)
   // fake and temp
 }
 
+CrusaderAI::~CrusaderAI()
+{
+}
+
 // temp!!
 void CrusaderAI::setEnemy(Crusader* a_enemy)
 {

@@ -67,9 +67,9 @@ using std::make_pair;
 using std::find;
 using std::find_if;
 
-typedef int8_t sint;
+typedef int16_t sint;
 typedef int64_t lint;
-typedef uint8_t usint;
+typedef uint16_t usint;
 typedef uint64_t ulint;
 typedef unsigned char uchar;
 

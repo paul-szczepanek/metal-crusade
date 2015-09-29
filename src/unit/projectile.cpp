@@ -37,15 +37,22 @@ void Projectile::reset(Weapon* a_weapon,
   if (OwnerWeapon && Bullet) {
     Lifetime = OwnerWeapon->weapon_design.range;
     // fake speed so that you can see it fly.
-    Bullet->Velocity = VELOCITY_SCALE * new_corpus->Direction *
+    Bullet->Velocity = VELOCITY_SCALE * Bullet->Direction *
                        a_weapon->weapon_design.muzzle_velocity;
     Bullet->Penetration = OwnerWeapon->weapon_design.penetration;
-    Bullet->TotalWeight = OwnerWeapon->weapon_design.projectile_weight;
+    Bullet->Weight = OwnerWeapon->weapon_design.projectile_weight;
     Bullet->BallisticDmg = OwnerWeapon->weapon_design.BallisticDmg;
     Bullet->EnergyDmg = OwnerWeapon->weapon_design.EnergyDmg;
     Bullet->HeatDmg = OwnerWeapon->weapon_design.HeatDmg;
     Bullet->CollisionType = collision_type_none;
   }
+}
+
+/** @brief resolves collisions
+ */
+bool Projectile::validateCollision(Corpus* a_collision)
+{
+  return true;
 }
 
 /** @brief resolves collisions
@@ -118,8 +125,8 @@ bool Projectile::update(Real a_dt)
   } else {
     // retard motion while the physics weep (air resistance should be Velocity squared)
     if (Vector2(Bullet->Velocity.x, Bullet->Velocity.z).length() > air_resistance_cutoff) {
-      Bullet->Velocity -= Direction * OwnerWeapon->weapon_design.muzzle_velocity * VELOCITY_SCALE *
-                          a_dt;
+      Bullet->Velocity -= Bullet->Direction * OwnerWeapon->weapon_design.muzzle_velocity
+                          * VELOCITY_SCALE * a_dt;
     }
     // intentionally wrong because we already retarded the downward motion
     Bullet->Velocity.y = Bullet->Velocity.y - Game::Arena->getGravity() * a_dt *

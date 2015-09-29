@@ -168,7 +168,7 @@ void Game::run()
     // load map and start main loop
     if (Arena->loadArena("test_arena") == 0) {
       OgreRoot->addFrameListener(this);  // gets frameRenderingQueued called every frame
-      State = game_state_pause;
+      State = game_state_playing;
       // Game::hud->activate(true);
       OgreRoot->startRendering(); // hands over main loop to ogre
     }

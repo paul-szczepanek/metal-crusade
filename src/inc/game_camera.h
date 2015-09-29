@@ -5,6 +5,8 @@
 
 #include "main.h"
 
+#define DEFAULT_CAMERA_DISTANCE (1400) // to show a circle of 80m
+
 class Unit;
 
 class GameCamera
@@ -25,6 +27,9 @@ public:
   Ogre::Camera* getOgreCamera();
   Quaternion getOrientation();
 
+public:
+  Real CameraDistance = DEFAULT_CAMERA_DISTANCE;
+
 private:
   Ogre::Camera* OgreCamera;
 
@@ -40,16 +45,14 @@ private:
   Vector3 LookAtOffset;
 };
 
-Ogre::Camera* GameCamera::getOgreCamera()
+inline Ogre::Camera* GameCamera::getOgreCamera()
 {
   return OgreCamera;
 }
 
-Quaternion GameCamera::getOrientation()
+inline Quaternion GameCamera::getOrientation()
 {
   return OgreCamera->getOrientation();
 }
-
-const Real CAMERA_DIST(1400); // to show a circle of 80m
 
 #endif // CAMERA_H

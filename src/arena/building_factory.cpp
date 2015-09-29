@@ -46,7 +46,7 @@ ArenaEntity* BuildingFactory::spawnSceneryBuidling(Vector3       a_pos_xyz,
   building_node->setPosition(a_pos_xyz);
 
   Corpus* new_corpus = new Corpus();
-  new_corpus->setXYZ(a_pos_xyz);
+  new_corpus->XYZ = a_pos_xyz;
   new_corpus->setSceneNode(building_node);
   new_corpus->setOrientation(a_orientation);
   new_corpus->setOwner(entity);

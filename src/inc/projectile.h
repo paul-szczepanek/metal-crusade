@@ -18,7 +18,7 @@ class Projectile
 {
 public:
   Projectile();
-  ~Projectile();
+  virtual ~Projectile();
   void reset(Weapon* a_weapon = NULL,
              Corpus* a_corpus = NULL);
 

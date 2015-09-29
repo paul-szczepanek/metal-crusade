@@ -61,6 +61,11 @@ Real GameArena::getAmbientTemperature(Vector3 a_position)
   return 20;
 }
 
+bool GameArena::update(Real a_dt)
+{
+  return true;
+}
+
 GameArena::~GameArena()
 {
   // cleanup lights
@@ -445,14 +450,16 @@ void GameArena::getCellIndexesWithinRadius(const size_t_pair    a_index,
 
 /** @brief moves the object's pointer to the new cell if needed
  */
-bool GameArena::updateCellIndex(size_t_pair& cell_index,
-                                Vector3&     pos_xyz,
-                                Corpus*      a_thing)
+bool GameArena::updateCellIndex(Corpus* a_thing)
 {
+  bool cell_changed = false;
   // if it's not within the limits of the arena rectiify the position
-  bool out_of_bounds = isOutOfBounds(pos_xyz);
+  if (isOutOfBounds(a_thing->XYZ)) {
+    a_thing->goOutOfBounds();
+  }
   // get the cell index based on position
-  size_t_pair new_cell_index = getCellIndex(pos_xyz.x, pos_xyz.z);
+  size_t_pair new_cell_index = getCellIndex(a_thing->XYZ.x, a_thing->XYZ.z);
+  const size_t_pair cell_index = a_thing->CellIndex;
 
   if (cell_index != new_cell_index) {
     // remove the old cell
@@ -464,7 +471,7 @@ bool GameArena::updateCellIndex(size_t_pair& cell_index,
     }
 
     // set the new index
-    cell_index = new_cell_index;
+    a_thing->CellIndex = new_cell_index;
 
     // add to the new cell
     corpus_cells[cell_index.first][cell_index.second].push_back(a_thing);
@@ -472,8 +479,9 @@ bool GameArena::updateCellIndex(size_t_pair& cell_index,
     // if it's the first object inset the cell into the list of live cells
     if (corpus_cells[cell_index.first][cell_index.second].size() == 1) {
       LiveCorpusCells.push_back(&corpus_cells[cell_index.first][cell_index.second]);
+      cell_changed = true;
     }
   }
 
-  return out_of_bounds;
+  return cell_changed;
 }

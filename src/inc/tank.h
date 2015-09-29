@@ -13,7 +13,7 @@ public:
        const string&    a_unit_name,
        Ogre::SceneNode* a_scene_node,
        Quaternion       a_orientation);
-  ~Tank();
+  virtual ~Tank();
 private:
 };
 

@@ -51,14 +51,12 @@ Corpus::~Corpus()
 
 /** @brief get bounding sphere and update it's position
  */
-inline Sphere Corpus::getBoundingSphere()
+void Corpus::updateBoundingSphere()
 {
   if (BSInvalid) { // if object moved last frame offset sphere
     BSInvalid = false;
-    BoundingSphere.Centre = RelBSPosition + XYZ;
+    BoundingSphere.Centre = Orientation * RelBSPosition + XYZ;
   }
-
-  return BoundingSphere;
 }
 
 /** @brief check spheres against passed in bounding sphere to eliminate obvious ones
@@ -77,34 +75,6 @@ void Corpus::pruneCollisionSpheres(const Sphere&       a_sphere,
 
   // mark recalculated
   CSInvalid = false;
-}
-
-/** @brief uses passed in bitset to skip checks
- */
-Real Corpus::getCollisionSpheres(const Sphere&             a_sphere,
-                                 const bitset<MAX_NUM_CS>& a_valid_cs_bitset,
-                                 bitset<MAX_NUM_CS>&       a_cs_bitset)
-{
-  // by default return no spheres
-  bitset<MAX_NUM_CS> cs_bitset;
-  Real result = 0;
-
-  // check if it's returning anything at all
-  if (a_valid_cs_bitset.none() || !BoundingSphere.intersects(a_sphere)) {
-    return false;
-  }
-
-  for (size_t i = 0, for_size = CollisionSpheres.size(); i < for_size; ++i) {
-    if (a_valid_cs_bitset[i]) {
-      const Real depth = CollisionSpheres[i].getDepth(a_sphere);
-      if (depth > HIT_OVERLAP) {
-        result = max(result, depth);
-        a_cs_bitset[i] = 1;
-      }
-    }
-  }
-
-  return result;
 }
 
 /** @brief loads collision spheres from a file based on mesh name
@@ -273,6 +243,7 @@ bool Corpus::revertMove(Vector3 a_move)
 bool Corpus::update(Real a_dt)
 {
   updateCellIndex();
+  invalidateSpheres();
 
   // chain the corpus update
   int return_code = 0;
@@ -291,10 +262,9 @@ bool Corpus::update(Real a_dt)
 
 /** @brief puts the object on the arean and in the correct array and in the correct cell index
  * updates the cell index and position if out of bounds
- * by the magic of virtual tables it knows which array to use
  */
 void Corpus::updateCellIndex()
 {
   // check the position in the arena and update the arena cells if necessary
-  out_of_bounds = Game::Arena->updateCellIndex(CellIndex, XYZ, this);
+  Game::Arena->updateCellIndex(this);
 }

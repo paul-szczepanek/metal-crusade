@@ -5,6 +5,7 @@
 
 #include "armour_type.h"
 #include "internal_type.h"
+#include "main.h"
 
 const usint num_of_body_parts = 9;
 const usint num_of_body_areas = 12;
@@ -94,7 +95,7 @@ struct crusader_design_t {
   vector<usint> weapon_groups[num_of_weapon_groups];
 };
 
-struct crusader_chasis_t {
+struct crusader_chassis_t {
   crusader_type type;
   string model;
   string name;

@@ -32,7 +32,7 @@ bool TerrainGenerator::getTerrain(const string&                 filename,
 
   vector<char> tile_type_codes;
 
-  FilesHandler::getDigitArray(block_height, pairs["terrain_height"]);
+  FilesHandler::getUsintDigitArray(block_height, pairs["terrain_height"]);
   FilesHandler::getCharArray(tile_type_codes, pairs["terrain_type"]);
 
   // converting a character code array into an terrain tile type enum array

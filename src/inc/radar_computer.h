@@ -7,7 +7,6 @@
 #include "sphere.h"
 
 class Corpus;
-class Corpus;
 class Unit;
 class GameController;
 

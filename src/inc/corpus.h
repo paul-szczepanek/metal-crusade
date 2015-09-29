@@ -21,15 +21,10 @@ public:
   virtual bool update(Real a_dt);
 
   // position
-  Real getX();
-  Real getY();
-  Real getZ();
   Vector2 getXZ();
-  Vector3 getXYZ();
   size_t_pair getCellIndex();
 
   // move around
-  void setXYZ(Vector3 a_pos_xyz);
   void move(Vector3 a_move);
   Vector3 getVelocity();
   // put it in the cell on the arena
@@ -54,12 +49,9 @@ public:
   Real getPenetration();
   Real getFriction();
 
-  Sphere getBoundingSphere();
+  void updateBoundingSphere();
   void pruneCollisionSpheres(const Sphere&       a_sphere,
                              bitset<MAX_NUM_CS>& a_cs_bitset);
-  Real getCollisionSpheres(const Sphere&             a_sphere,
-                           const bitset<MAX_NUM_CS>& a_valid_cs_bitset,
-                           bitset<MAX_NUM_CS>&       a_cs_bitset);
 
   // read collision spheres for the object TEMP
   void loadCollisionSpheres(const string& aCollisionName);
@@ -69,6 +61,8 @@ public:
   bool handleCollision(Collision* a_collision);
   bool revertMove(Vector3 a_move);
   void invalidateSpheres();
+
+  void goOutOfBounds();
 
   /*mfd_view::diagram_type getDiagramType() {
      return mfd_view::object;
@@ -84,6 +78,8 @@ public:
   Vector3 Direction;
   Vector3 Velocity;
   Vector3 OldVelocity;
+  // index of the cell in the arena the object is in
+  size_t_pair CellIndex;
 
   // collision
   Sphere BoundingSphere;
@@ -107,9 +103,6 @@ public:
   Real EnergyDmg;
 
 private:
-  // index of the cell in the arena the object is in
-  size_t_pair CellIndex;
-
   // speed and position
   Vector3 Move;
   Real angular_momentum;
@@ -140,45 +133,22 @@ private:
   bool DisplayCollisionDebug;
 };
 
-// position
-Real Corpus::getX()
+inline void Corpus::goOutOfBounds()
 {
-  return XYZ.x;
+  out_of_bounds = true;
 }
 
-Real Corpus::getY()
-{
-  return XYZ.y;
-}
-
-Real Corpus::getZ()
-{
-  return XYZ.z;
-}
-
-Vector2 Corpus::getXZ()
+inline Vector2 Corpus::getXZ()
 {
   return Vector2(XYZ.x, XYZ.z);
 }
 
-Vector3 Corpus::getXYZ()
-{
-  return XYZ;
-}
-
-size_t_pair Corpus::getCellIndex()
+inline size_t_pair Corpus::getCellIndex()
 {
   return CellIndex;
 }
 
-// move around
-void Corpus::setXYZ(Vector3 a_pos_xyz)
-{
-  XYZ = a_pos_xyz;
-  invalidateSpheres();
-}
-
-void Corpus::move(Vector3 a_move)
+inline void Corpus::move(Vector3 a_move)
 {
   Move = a_move;
   XYZ += Move;
@@ -187,18 +157,18 @@ void Corpus::move(Vector3 a_move)
   invalidateSpheres();
 }
 
-Vector3 Corpus::getVelocity()
+inline Vector3 Corpus::getVelocity()
 {
   return Move;
 }
 
 // orientation
-Quaternion Corpus::getOrientation()
+inline Quaternion Corpus::getOrientation()
 {
   return Orientation;
 }
 
-void Corpus::setOrientation(Quaternion a_orientation)
+inline void Corpus::setOrientation(Quaternion a_orientation)
 {
   Orientation = a_orientation;
   Direction = Orientation * Vector3::UNIT_Z;
@@ -210,38 +180,38 @@ inline void Corpus::invalidateSpheres()
   CSInvalid = true;
 }
 
-Vector3 Corpus::getDirection()
+inline Vector3 Corpus::getDirection()
 {
   return Direction;
 }
 
-Real Corpus::getBallisticDmg()
+inline Real Corpus::getBallisticDmg()
 {
   return BallisticDmg;
 }
 
-Real Corpus::getEnergyDmg()
+inline Real Corpus::getEnergyDmg()
 {
   return EnergyDmg;
 }
 
-Real Corpus::getHeatDmg()
+inline Real Corpus::getHeatDmg()
 {
   return HeatDmg;
 }
 
 // collisions
-collision_type Corpus::getCollisionType()
+inline collision_type Corpus::getCollisionType()
 {
   return CollisionType;
 }
 
-Real Corpus::getPenetration()
+inline Real Corpus::getPenetration()
 {
   return Penetration;
 }
 
-Real Corpus::getFriction()
+inline Real Corpus::getFriction()
 {
   return Friction;
 }

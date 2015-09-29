@@ -13,6 +13,9 @@
 
 #include "game_state.h"
 
+#define CAMERA_CLIP_NEAR (200)
+#define CAMERA_CLIP_FAR (1000)
+
 class Timer;
 class GameController;
 class InputHandler;

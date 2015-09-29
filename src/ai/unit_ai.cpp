@@ -8,6 +8,10 @@ UnitAI::UnitAI()
   // ctor
 }
 
+UnitAI::~UnitAI()
+{
+}
+
 void UnitAI::bindController(GameController* a_game_controller)
 {
   game_controller = a_game_controller;

@@ -24,7 +24,7 @@ public:
   // init
   int loadArena(const string& arena_name);
 
-  void update(Real a_dt);
+  bool update(Real a_dt);
 
   // get height at x and y
   Real getHeight(Real a_x,
@@ -48,9 +48,7 @@ public:
   bool isOutOfArena(Vector3& pos_xyz);
 
   // returns true if it's out of bounds - possibly confusing but convenient
-  bool updateCellIndex(size_t_pair& cell_index,
-                       Vector3&     pos_xyz,
-                       Corpus*      a_thing);
+  bool updateCellIndex(Corpus* a_thing);
   void purgeCellIndex(size_t_pair& cell_index,
                       Corpus*      a_thing);
 

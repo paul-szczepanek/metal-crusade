@@ -50,7 +50,6 @@ public:
   // target acquisition
   void updateTargets();
   bool getUnitAtPointer();
-  bool acquireTarget(Unit* a_target);
 
   // partitionening into cells on the arena
   void updateCellIndex();
@@ -68,18 +67,17 @@ public:
   void assignController(GameController* a_controller);
 
   // targetting
-  // called by other object to try and acquire this as a target
-  bool acquireAsTarget(Unit* a_targeted_by);
+  virtual bool acquireTarget(Corpus* a_target);
+  virtual bool acquireAsTargetBy(ArenaEntity* a_entity);
   // called by other objects which hold this as a target to let it know that they no longer do
-  void releaseAsTarget(Unit* a_targeted_by);
+  virtual void releaseAsTarget(ArenaEntity* a_targeted_by);
   // called by targeted object that requires this to relinquish its current target
-  bool loseTarget(Unit* a_targeted_by,
-                  bool  a_forced = false);
-
-  // return the target of this
-  Unit* getTarget();
+  virtual bool loseTarget(ArenaEntity* a_targeted_by,
+                  bool         a_forced = false);
   // clear targets when this object gets destroyed
-  void clearFromTargets();
+  virtual void clearFromTargets();
+  // return the target of this
+  virtual ArenaEntity* getTarget();
 
   // damage reporting
   Real getDamage(usint a_diagram_element);
@@ -88,119 +86,119 @@ public:
 
 protected:
   // targeted objects
-  Unit* target;
+  ArenaEntity* target = NULL;
   // targeted by objects
-  vector<Unit*> target_holders;
+  vector<ArenaEntity*> target_holders;
 
-  Real CoreTemperature;
-  Real TotalWeight;
+  Real CoreTemperature = 0;
+  Real TotalWeight = 0;
   Vector3 Direction;
 
   vector<Weapon*> weapons;
 
   // hud
-  bool hud_attached;
+  bool hud_attached = false;
 
-  RadarComputer* radar;
-  Real CoreIntegrity;
-  Real corrected_velocity_scalar;
-  GameController* Controller;
-  Formation* UnitFormation;
+  //RadarComputer* radar;
+  Real CoreIntegrity = 0;
+  Real corrected_velocity_scalar = 0;
+  GameController* Controller = NULL;
+  Formation* UnitFormation = NULL;
 };
 
-Vector3 Unit::getDirection()
+inline Vector3 Unit::getDirection()
 {
   return Direction;
 }
 
-void Unit::setFormation(Formation* a_formation)
+inline void Unit::setFormation(Formation* a_formation)
 {
   UnitFormation = a_formation;
 }
 
-Formation* Unit::getFormation()
+inline Formation* Unit::getFormation()
 {
   return UnitFormation;
 }
 
-void Unit::assignController(GameController* a_controller)
+inline void Unit::assignController(GameController* a_controller)
 {
   Controller = a_controller;
 }
 
 // hud operation
-Real Unit::getSpeed()
+inline Real Unit::getSpeed()
 {
   return corrected_velocity_scalar;
 }
 
 // return the target of this
-Unit* Unit::getTarget()
+inline ArenaEntity* Unit::getTarget()
 {
   return target;
 }
 
 // orientation
-Quaternion Unit::getMovingOrientation()
+inline Quaternion Unit::getMovingOrientation()
 {
   return Orientation;
 }
 
-Quaternion Unit::getLookingOrientation()
+inline Quaternion Unit::getLookingOrientation()
 {
   return Orientation;
 }
 
 // heat
 // yeah, I know heat is not the same as temp, this is a simplification
-void Unit::addHeat(Real a_heat)
+inline void Unit::addHeat(Real a_heat)
 {
   CoreTemperature += a_heat;
 }
 
 // hud creation
-string Unit::getHudName()
+inline string Unit::getHudName()
 {
   return string("military");
 }
 
-void Unit::attachHud(bool a_toggle)
+inline void Unit::attachHud(bool a_toggle)
 {
   hud_attached = a_toggle;
 }
 
-RadarComputer* Unit::getRadar()
+inline RadarComputer* Unit::getRadar()
 {
-  return radar;
+  //return radar;
 }
 
 // hud operation
-vector<Weapon*>& Unit::getWeapons()
+inline vector<Weapon*>& Unit::getWeapons()
 {
   return weapons;
 }
 
-Real Unit::getThrottle()
+inline Real Unit::getThrottle()
 {
   return 0;
 }
 
-Real Unit::getCoolant()
+inline Real Unit::getCoolant()
 {
   return 0;
 }
 
-Real Unit::getEngineTemperature()
+inline Real Unit::getEngineTemperature()
 {
   return 0;
 }
 
-Real Unit::getCoreTemperature()
+inline Real Unit::getCoreTemperature()
 {
   return 0;
 }
 
-Real Unit::getPressure()
+inline Real Unit::getPressure()
 {
   return CoreIntegrity;
 }

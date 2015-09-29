@@ -19,11 +19,13 @@ const reverse_pairs_t PAIRS[2] = { { 0, 1, 1 }, { 1, 0, -1 } };
 class Collision
 {
 public:
-  Collision(Corpus*            a_object1,
-            Corpus*            a_object2,
-            bitset<MAX_NUM_CS> a_cs_bitset1,
-            bitset<MAX_NUM_CS> a_cs_bitset2,
-            Real               a_depth);
+  Collision(Corpus*                  a_object1,
+            Corpus*                  a_object2,
+            bitset<MAX_NUM_CS>       a_cs_bitset1,
+            bitset<MAX_NUM_CS>       a_cs_bitset2,
+            bitset<MAX_NUM_CS_AREAS> a_cs_area_bitset1,
+            bitset<MAX_NUM_CS_AREAS> a_cs_area_bitset2,
+            Real                     a_depth);
   ~Collision();
 
   void findCollisionPlane();
@@ -32,50 +34,26 @@ public:
   // resulting velocity after the collision
   Vector3 getVelocity();
   Corpus* getCollidingObject();
-  vector<usint> getCollisionSphereIndexes();
+  vector<usint> getCollisionSphereIndexes(size_t a_index);
+  vector<usint> getAreasIndexes(size_t a_index);
 
   void setHitConductivity(Real a_conductivity);
 
+public:
   // colliding objects
   Corpus* Object[2];
-  size_t ObjectHits[2];
   Vector3 Centre[2];
-  Vector3 Velocity[2];
   vector<Collision*>* CollisionGroup[2] = { NULL, NULL };
-  Real Depth;
+
+  // colliding spheres
+  bitset<MAX_NUM_CS> CSIndexes[2];
+  bitset<MAX_NUM_CS_AREAS> CSAreas[2];
+
   size_t resolved = 0;
 
   // collision qualities
+  Real Depth;
   collision_type ResultType;
-
-private:
-  // colliding spheres
-  bitset<MAX_NUM_CS> CSIndexes[2];
-
-  Real CollisionSpeed;
-  Real Conductivity;
-
-  // marker to determine which object is being processed atm
-  bool HandlingFirstObject;
 };
-
-Corpus* Collision::getCollidingObject()
-{
-  return HandlingFirstObject ? Object[0] : Object[1];
-}
-
-/** @brief returns the corrected velocity to the appropriate colliding object
- */
-inline Vector3 Collision::getVelocity()
-{
-  return HandlingFirstObject ? Velocity[0] : Velocity[1];
-}
-
-void Collision::setHitConductivity(Real a_conductivity)
-{
-  if (a_conductivity < Conductivity) {
-    Conductivity = a_conductivity;
-  }
-}
 
 #endif // COLLISION_H

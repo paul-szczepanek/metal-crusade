@@ -50,6 +50,7 @@ void CollisionHandler::updatePotentialCollisions()
   PossibleCollisions.clear();
 
   for (auto c1 : RegisteredObjects) {
+    c1->updateBoundingSphere();
     // get adjacent cell indexes
     vector<size_t_pair> cell_indexes;
     Game::Arena->getCellIndexesWithinRadius(c1->getCellIndex(), cell_indexes);
@@ -59,8 +60,9 @@ void CollisionHandler::updatePotentialCollisions()
       list<Corpus*>& corpus_list = Game::Arena->getCorpusCell(ci);
 
       for (auto c2 : corpus_list) {
+        c2->updateBoundingSphere();
         // check bounding spheres
-        if (c1->getBoundingSphere().intersects(c2->getBoundingSphere())) {
+        if (c1->BoundingSphere.intersects(c2->BoundingSphere)) {
           // validate whether the collision is possible
           if (c1->validateCollision(c2)) {
             // make sure we don't record the pair from both sides, impose order on the pair
@@ -79,44 +81,61 @@ void CollisionHandler::evaluatePotentialCollisions()
 {
   // go through all list of potential collisions
   for (size_t i = 0, for_size = PossibleCollisions.size(); i < for_size; ++i) {
-    // reset collision so that first hit creates a new one rather than just append spheres to one
-    bool new_collision = true;
-
     Corpus* c1 = PossibleCollisions[i].object1;
     Corpus* c2 = PossibleCollisions[i].object2;
-
-    // see how many spheres there are in object
-    usint num_of_cs1 = c1->CollisionSpheres.size();
-    usint num_of_cs2 = c2->CollisionSpheres.size();
-
-    // two objects with multiple collision spheres colliding
-    // get bounding spheres
-    Sphere bounding_sphere1 = c1->getBoundingSphere();
-    Sphere bounding_sphere2 = c2->getBoundingSphere();
 
     // get possible collision spheres based on the bounding spheres
     bitset<MAX_NUM_CS> cs_bitset_valid1;
     bitset<MAX_NUM_CS> cs_bitset_valid2;
-    c2->pruneCollisionSpheres(bounding_sphere1, cs_bitset_valid2);
-    c1->pruneCollisionSpheres(bounding_sphere2, cs_bitset_valid1);
+    c1->pruneCollisionSpheres(c2->BoundingSphere, cs_bitset_valid1);
+    c2->pruneCollisionSpheres(c1->BoundingSphere, cs_bitset_valid2);
+
+    if (cs_bitset_valid1.none() || cs_bitset_valid2.none()) {
+      return;
+    }
 
     // mark spheres involved in the collision
     bitset<MAX_NUM_CS> cs_bitset1;
     bitset<MAX_NUM_CS> cs_bitset2;
-    Real depth = 0;
+    // mark areas hit
+    bitset<MAX_NUM_CS_AREAS> areas_bitset1;
+    bitset<MAX_NUM_CS_AREAS> areas_bitset2;
+
+    Real max_depth = 0;
+
     for (size_t i = 0, for_size = c1->CollisionSpheres.size(); i < for_size; ++i) {
-      if (cs_bitset_valid1[i]) {
-        depth = c2->getCollisionSpheres(c1->CollisionSpheres[i],
-                                        cs_bitset_valid2, cs_bitset2);
-        if (depth > HIT_OVERLAP) {
-          cs_bitset1[i] = 1;
+      if (!cs_bitset_valid1[i]) {
+        continue;
+      }
+
+      Real depth = 0;
+      for (size_t j = 0, for_size = c2->CollisionSpheres.size(); j < for_size; ++j) {
+        if (!cs_bitset_valid2[j]) {
+          continue;
         }
 
+        const Real sphere_depth = c2->CollisionSpheres[j].getDepth(c1->CollisionSpheres[i]);
+
+        if (sphere_depth > HIT_OVERLAP) {
+          depth = max(depth, sphere_depth);
+          cs_bitset2[j] = 1;
+          areas_bitset2[c2->CSAreas[j]] = 1;
+        }
       }
+
+      if (depth > HIT_OVERLAP) {
+        max_depth = max(max_depth, depth);
+        cs_bitset1[i] = 1;
+        areas_bitset1[c1->CSAreas[i]] = 1;
+      }
+
     }
 
     if (cs_bitset1.any()) {
-      Collisions.push_back(Collision(c1, c2, cs_bitset1, cs_bitset2, depth));
+      Collisions.push_back(Collision(c1, c2,
+                                     cs_bitset1, cs_bitset2,
+                                     areas_bitset1, areas_bitset2,
+                                     max_depth));
     }
   }
 }
@@ -137,11 +156,10 @@ void CollisionHandler::update(Real a_dt)
 
   for (Collision col : Collisions) {
     for (const reverse_pairs_t& i : PAIRS) {
-      col.ObjectHits[i.a] = Hits[col.Object[i.a]];
-      if (col.ObjectHits[i.a] > 1) {
+      if (Hits[col.Object[i.a]] > 1) {
         // to handle multi body collisions we resolve them in groups multiple times
         col.CollisionGroup[i.a] = &(CollisionGroups[col.Object[i.a]]);
-        CollisionGroups[col.Object[i.a]].push_back(col);
+        CollisionGroups[col.Object[i.a]].push_back(&col);
       }
     }
   }

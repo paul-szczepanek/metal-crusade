@@ -17,18 +17,21 @@ public:
   virtual ~Formation();
 
   // faction
-  Faction* getFaction() const {
+  Faction* getFaction() const
+  {
     return faction;
   }
 
   void setFaction(Faction* a_faction);
 
   // name
-  string& getName() {
+  string& getName()
+  {
     return name;
   }
 
-  void setName(const string a_name) {
+  void setName(const string a_name)
+  {
     name = a_name;
   }
 

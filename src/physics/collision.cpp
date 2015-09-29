@@ -7,40 +7,42 @@
 #define REPULSION_FACTOR (2)
 #define HIT_DAMPENING    (0.9)
 
-Collision::Collision(Corpus*            a_object1,
-                     Corpus*            a_object2,
-                     bitset<MAX_NUM_CS> a_cs_bitset1,
-                     bitset<MAX_NUM_CS> a_cs_bitset2,
-                     Real               a_depth)
+Collision::Collision(Corpus*                  a_object1,
+                     Corpus*                  a_object2,
+                     bitset<MAX_NUM_CS>       a_cs_bitset1,
+                     bitset<MAX_NUM_CS>       a_cs_bitset2,
+                     bitset<MAX_NUM_CS_AREAS> a_cs_area_bitset1,
+                     bitset<MAX_NUM_CS_AREAS> a_cs_area_bitset2,
+                     Real                     a_depth)
   : Depth(a_depth),
-  Conductivity(1),
-  ResultType(collision_type_soft),
-  HandlingFirstObject(true)
+  ResultType(collision_type_soft)
 {
   Object[0] = a_object1;
   Object[1] = a_object2;
   CSIndexes[0] = a_cs_bitset1;
   CSIndexes[1] = a_cs_bitset2;
-  Velocity[0] = Object[0]->getVelocity();
-  Velocity[1] = Object[1]->getVelocity();
-  CollisionSpeed = (Velocity[0] - Velocity[1]).length();
+  CSAreas[0] = a_cs_area_bitset1;
+  CSAreas[1] = a_cs_area_bitset2;
+}
+
+
+Collision::~Collision()
+{
 }
 
 void Collision::findCollisionPlane()
 {
-  vector<usint> indexes1 = getCollisionSphereIndexes();
+  vector<usint> indexes1 = getCollisionSphereIndexes(0);
   for (const usint& i : indexes1) {
     Centre[0] += Object[0]->CollisionSpheres[i].Centre;
   }
   Centre[0] *= 1.0 / indexes1.size();
 
-  HandlingFirstObject = false;
-  vector<usint> indexes2 = getCollisionSphereIndexes();
+  vector<usint> indexes2 = getCollisionSphereIndexes(1);
   for (const usint& i : indexes2) {
     Centre[1] += Object[1]->CollisionSpheres[i].Centre;
   }
   Centre[1] *= 1.0 / indexes2.size();
-  HandlingFirstObject = true;
 }
 
 #define BLOCKING_WEIGHT (10000000)
@@ -173,7 +175,6 @@ void Collision::resolve(Real a_dt)
   if (!resolved) {
     // call objects to resolve internal actions
     Object[0]->handleCollision(this);
-    HandlingFirstObject = false;
     Object[1]->handleCollision(this);
 
     // heat exchange (yes, again, I know this is not how the real world works
@@ -187,9 +188,11 @@ void Collision::resolve(Real a_dt)
       // temperature difference between two bodies
       Real difference = surface_temperature1 - surface_temperature2;
 
+      Real conductivity = max(Object[0]->Conductivity, Object[1]->Conductivity);
+
       // TODO: this doesn't work well because of the repulsion hack
-      Object[0]->SurfaceTemperature = surface_temperature1 - Conductivity * a_dt * difference;
-      Object[1]->SurfaceTemperature = surface_temperature2 + Conductivity * a_dt * difference;
+      Object[0]->SurfaceTemperature = surface_temperature1 - conductivity * a_dt * difference;
+      Object[1]->SurfaceTemperature = surface_temperature2 + conductivity * a_dt * difference;
     }
   }
 
@@ -198,7 +201,7 @@ void Collision::resolve(Real a_dt)
   // after changing velocities objects might have to resolve other collisions again
   for (const reverse_pairs_t& i : PAIRS) {
     if (CollisionGroup[i.a]) {
-      for (Collision* c : *(CollisionGroup[i.a])) {
+      for (Collision* c : * (CollisionGroup[i.a])) {
         c->resolve(a_dt);
       }
     }
@@ -207,13 +210,24 @@ void Collision::resolve(Real a_dt)
 
 /** @brief returns indexes of hit spheres
  */
-vector<usint> Collision::getCollisionSphereIndexes()
+vector<usint> Collision::getCollisionSphereIndexes(size_t a_index)
 {
   vector<usint> indexes;
-  const bitset<MAX_NUM_CS>& cs_set =  HandlingFirstObject ? CSIndexes[0] : CSIndexes[1];
-  Corpus* corpus = HandlingFirstObject ? Object[1] : Object[0];
-  for (size_t i = 0; i < corpus->CollisionSpheres.size(); ++i) {
-    if (cs_set[i]) {
+  for (size_t i = 0; i < Object[a_index]->CollisionSpheres.size(); ++i) {
+    if (CSIndexes[a_index][i]) {
+      indexes.push_back(i);
+    }
+  }
+  return indexes;
+}
+
+/** @brief returns areas indexes of hit spheres
+ */
+vector<usint> Collision::getAreasIndexes(size_t a_index)
+{
+  vector<usint> indexes;
+  for (size_t i = 0; i < MAX_NUM_CS_AREAS; ++i) {
+    if (CSAreas[a_index][i]) {
       indexes.push_back(i);
     }
   }

@@ -64,12 +64,12 @@ void GameCamera::resize(int aWidth,
 
   // position the camera according to the angle and distance
   // temp sideways camera
-  // CameraOffset = Vector3(-sin(camera_angle) * CAMERA_DIST *5* aspect_ratio_inverse,
-  //                              cos(camera_angle) * CAMERA_DIST *5* aspect_ratio_inverse,
+  // CameraOffset = Vector3(-sin(camera_angle) * CameraDistance *5* aspect_ratio_inverse,
+  //                              cos(camera_angle) * CameraDistance *5* aspect_ratio_inverse,
   //                              0);
 
-  CameraOffset = Vector3(0, cos(camera_angle) * CAMERA_DIST * aspect_ratio_inverse,
-                         sin(camera_angle) * CAMERA_DIST * aspect_ratio_inverse);
+  CameraOffset = Vector3(0, cos(camera_angle) * CameraDistance * aspect_ratio_inverse,
+                         sin(camera_angle) * CameraDistance * aspect_ratio_inverse);
 
   // height of camera target depends on angle
   LookAtOffset = Vector3(0, -5 * (camera_angle / (0.5 * pi)), 0);

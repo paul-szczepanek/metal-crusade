@@ -49,36 +49,38 @@ public:
   bool keyPressed(const OIS::KeyEvent& evt);
   bool keyReleased(const OIS::KeyEvent& evt);
 
-  // bind the controller which recevies local input
+  // bind the controller which receives local input
   void bindController(GameController* a_game_controller);
 
   // translate mouse position to 3D coords in the world
   void updateMousePointer();
 
 private:
-  OIS::InputManager* input_manager;
-  OIS::Mouse* mouse;
-  OIS::Keyboard* keyboard;
+  Vector3 findTerrainCrossingPosition();
+
+private:
+  OIS::InputManager* OISInputManager;
+  OIS::Mouse* OISMouse;
+  OIS::Keyboard* OISKeyboard;
 
   // keyconfig
-  KeyMap* key_map;
+  KeyMap* Keys;
 
   // sticky keys!
-  bool sticky_left_shift;
-  bool sticky_left_control;
+  bool StickyLeftShift;
+  bool StickyLControl;
 
   // local controller
-  GameController* game_controller;
+  GameController* Controller;
 
-  // mouse trasnaltion
+  // mouse translation
   Ogre::Camera* OgreCamera;
-  Ogre::RaySceneQuery* mouse_ray_query;
-  Ogre::Ray* mouse_ray;
-  Real pointer_x, pointer_y;
-  Real CAMERA_DIST;
+  Ogre::RaySceneQuery* MouseRayQuery;
+  Ogre::Ray* MouseRay;
+  Real PointerX, PointerY;
 
-  Ogre::SceneNode* pointer_node;
-  Ogre::SceneNode* pointer_centre_node;
+  Ogre::SceneNode* PointerNode;
+  Ogre::SceneNode* PointerCentreNode;
 
   // screen size
   size_t screen_width;

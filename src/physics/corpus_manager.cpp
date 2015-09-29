@@ -17,6 +17,7 @@ void CorpusManager::update(Real a_dt)
 {
   for (auto cell : Game::Arena->LiveCorpusCells) {
     for (auto c : *cell) {
+      c->update(a_dt);
     }
   }
 }

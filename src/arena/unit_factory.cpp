@@ -39,18 +39,18 @@ Crusader* UnitFactory::spawnCrusader(Vector3       a_pos_xyz,
   // structs for spec for crusader
   crusader_engine_t engine;
   crusader_drive_t drive;
-  crusader_chasis_t chasis;
+  crusader_chassis_t chassis;
   crusader_design_t design;
 
   // load spec from file
-  getCrusaderDesign(a_name, design, engine, drive, chasis);
+  getCrusaderDesign(a_name, design, engine, drive, chassis);
 
   // get unique string from id
-  string id_string = Game::getUniqueID() + chasis.mesh; // append unique id to name
+  string id_string = Game::getUniqueID() + chassis.mesh; // append unique id to name
 
   // pass the root node (drive) to the crusader object
   Crusader* spawn = new Crusader(id_string, a_pos_xyz, a_orientation,
-                                 design, engine, drive, chasis);
+                                 design, engine, drive, chassis);
 
   // put the unit on the list
   Units.push_back(spawn);
@@ -61,11 +61,11 @@ Crusader* UnitFactory::spawnCrusader(Vector3       a_pos_xyz,
 /** @brief load the customisable design of a crusader
  * fills struct with design read from a file
  */
-bool UnitFactory::getCrusaderDesign(const string&      filename,
-                                    crusader_design_t& design,
-                                    crusader_engine_t& engine,
-                                    crusader_drive_t&  drive,
-                                    crusader_chasis_t& chasis)
+bool UnitFactory::getCrusaderDesign(const string&       filename,
+                                    crusader_design_t&  design,
+                                    crusader_engine_t&  engine,
+                                    crusader_drive_t&   drive,
+                                    crusader_chassis_t& chassis)
 {
   using namespace crusader_part;
   using namespace FilesHandler;
@@ -80,16 +80,16 @@ bool UnitFactory::getCrusaderDesign(const string&      filename,
   design.unit = pairs["design.unit"];
 
   //load spec
-  getCrusaderSpec(design.unit, engine, drive, chasis);
+  getCrusaderSpec(design.unit, engine, drive, chassis);
   getStringArray(design.weapons, pairs["design.weapons"]);
-  vector<Ogre::Real> default_0(chasis.num_of_areas, 0);   //defaults 0 armour
+  vector<Ogre::Real> default_0(chassis.num_of_areas, 0);   //defaults 0 armour
   design.armour_placement = default_0;
 
   //continue loading the design
   design.material = pairs["design.material"];
   design.hud = pairs["design.hud"];
   design.radar = pairs["design.radar"];
-  getIntArray(design.weapons_extra_ammo, pairs["design.weapons_extra_ammo"]);
+  getUsintArray(design.weapons_extra_ammo, pairs["design.weapons_extra_ammo"]);
   getEnumArray(design.weapons_placement, pairs["design.weapons_placement"]);
   getStringArray(design.equipment, pairs["design.equipment"]);
   getEnumArray(design.internals, pairs["design.internals"]);
@@ -121,9 +121,9 @@ bool UnitFactory::getCrusaderDesign(const string&      filename,
 
   //read weapons into weapon groups
   for (size_t i = 0; i < num_of_weapon_groups; ++i) {
-  stringstream i_stream;
-  i_stream << "design.weapon_groups." << i;
-  getIntArray(design.weapon_groups[i], pairs[i_stream.str()]);
+    stringstream i_stream;
+    i_stream << "design.weapon_groups." << i;
+    getUsintArray(design.weapon_groups[i], pairs[i_stream.str()]);
   }
 
   return true;
@@ -132,10 +132,10 @@ bool UnitFactory::getCrusaderDesign(const string&      filename,
 /** @brief load inmutable specification of a crusader linked to the graphics
  * fills structs with specs read from a file
  */
-bool UnitFactory::getCrusaderSpec(const string&      filename,
-                                  crusader_engine_t& engine,
-                                  crusader_drive_t&  drive,
-                                  crusader_chasis_t& chasis)
+bool UnitFactory::getCrusaderSpec(const string&       filename,
+                                  crusader_engine_t&  engine,
+                                  crusader_drive_t&   drive,
+                                  crusader_chassis_t& chassis)
 {
   using namespace crusader_part;
   using namespace FilesHandler;
@@ -146,10 +146,10 @@ bool UnitFactory::getCrusaderSpec(const string&      filename,
   assert(getPairs(filename, CRUSADER_DIR, pairs));
 
   //fill structs with info from pairs
-  chasis.filename = filename;
-  chasis.name = pairs["chasis.name"];
-  chasis.model = pairs["chasis.model"];
-  chasis.type = crusader_type(getEnum(pairs["chasis.type"]));
+  chassis.filename = filename;
+  chassis.name = pairs["chassis.name"];
+  chassis.model = pairs["chassis.model"];
+  chassis.type = crusader_type(getEnum(pairs["chassis.type"]));
   engine.rating = getReal(pairs["engine.rating"]);   //effective[KN]
   engine.rating_reverse = getReal(pairs["engine.rating_reverse"]);   //effective[KN]
   engine.heat = getReal(pairs["engine.heat"]);   //[MJ]
@@ -168,71 +168,71 @@ bool UnitFactory::getCrusaderSpec(const string&      filename,
 
   //TODO: add more types of drives an read more parts
   if (drive.subtype == drive_subtype_multiped) {
-  chasis.num_of_parts = 9;
-  chasis.num_of_areas = 12;
+  chassis.num_of_parts = 9;
+  chassis.num_of_areas = 12;
 
   } else {
     //default for most
-    chasis.num_of_parts = 7;
-    chasis.num_of_areas = 10;
+    chassis.num_of_parts = 7;
+    chassis.num_of_areas = 10;
   }
 
-  chasis.internals.reserve(chasis.num_of_parts);
-  chasis.panels.reserve(chasis.num_of_parts);
-  chasis.surface_area.reserve(chasis.num_of_areas);
+  chassis.internals.reserve(chassis.num_of_parts);
+  chassis.panels.reserve(chassis.num_of_parts);
+  chassis.surface_area.reserve(chassis.num_of_areas);
 
   //defaults all to 0
-  vector<Ogre::Real> default_0_real(chasis.num_of_areas, 0);
-  chasis.surface_area = default_0_real;
-  vector<usint> defualt_0(chasis.num_of_parts, 0);
-  chasis.internals = defualt_0;
-  chasis.panels = defualt_0;
+  vector<Ogre::Real> default_0_real(chassis.num_of_areas, 0);
+  chassis.surface_area = default_0_real;
+  vector<usint> defualt_0(chassis.num_of_parts, 0);
+  chassis.internals = defualt_0;
+  chassis.panels = defualt_0;
 
   //continue loading
-  chasis.mesh = pairs["chasis.mesh"];
-  chasis.weight = getReal(pairs["chasis.weight"]);   //[t]
-  chasis.max_weight = getReal(pairs["chasis.max_weight"]);   //[t]
-  chasis.heat_dissipation_base = getReal(pairs["chasis.heat_dissipation_base"]);   //[MJ]
-  chasis.heat_dissipation_rate = getReal(pairs["chasis.heat_dissipation_rate"]);   //multpiplier
-  chasis.torso_arc = getReal(pairs["chasis.torso_arc"]) * pi;   //[rad]
-  chasis.arms_arc = getReal(pairs["chasis.arms_arc"]) * pi;   //[rad]
-  chasis.torso_turn_speed = getReal(pairs["chasis.torso_turn_speed"]) * pi;   //[rad/s]
-  chasis.arms_turn_speed = getReal(pairs["chasis.arms_turn_speed"]) * pi;   //[rad/s]
-  chasis.structure_base = getReal(pairs["chasis.structure_base"]);   //[rad/s]
-  chasis.internals[torso] = intoInt(pairs["chasis.internals.torso"]);   //[m3]
-  chasis.internals[torso_right] = intoInt(pairs["chasis.internals.torso_right"]);
-  chasis.internals[torso_left] = intoInt(pairs["chasis.internals.torso_left"]);
-  chasis.internals[arm_left] = intoInt(pairs["chasis.internals.arm_left"]);
-  chasis.internals[arm_right] = intoInt(pairs["chasis.internals.arm_right"]);
-  chasis.internals[leg_left] = intoInt(pairs["chasis.internals.leg_left"]);
-  chasis.internals[leg_right] = intoInt(pairs["chasis.internals.leg_right"]);
-  chasis.panels[torso] = intoInt(pairs["chasis.panels.torso"]);
-  chasis.panels[torso_right] = intoInt(pairs["chasis.panels.torso_right"]);
-  chasis.panels[torso_left] = intoInt(pairs["chasis.panels.torso_left"]);
-  chasis.panels[arm_right] = intoInt(pairs["chasis.panels.arm_right"]);
-  chasis.panels[arm_left] = intoInt(pairs["chasis.panels.arm_left"]);
-  chasis.panels[leg_right] = intoInt(pairs["chasis.panels.leg_right"]);
-  chasis.panels[leg_left] = intoInt(pairs["chasis.panels.leg_left"]);
-  chasis.surface_area[crusader_area::torso] =
-    getReal(pairs["chasis.surface_area.torso"]);
-  chasis.surface_area[crusader_area::torso_right] =
-    getReal(pairs["chasis.surface_area.torso_right"]);
-  chasis.surface_area[crusader_area::torso_left] =
-    getReal(pairs["chasis.surface_area.torso_left"]);
-  chasis.surface_area[crusader_area::arm_left] =
-    getReal(pairs["chasis.surface_area.arm_left"]);
-  chasis.surface_area[crusader_area::arm_right] =
-    getReal(pairs["chasis.surface_area.arm_right"]);
-  chasis.surface_area[crusader_area::leg_left] =
-    getReal(pairs["chasis.surface_area.leg_left"]);
-  chasis.surface_area[crusader_area::leg_right] =
-    getReal(pairs["chasis.surface_area.leg_right"]);
-  chasis.surface_area[crusader_area::torso_back] =
-    getReal(pairs["chasis.surface_area.torso_back"]);
-  chasis.surface_area[crusader_area::torso_right_back] =
-    getReal(pairs["chasis.surface_area.torso_right_back"]);
-  chasis.surface_area[crusader_area::torso_left_back] =
-    getReal(pairs["chasis.surface_area.torso_left_back"]);
+  chassis.mesh = pairs["chassis.mesh"];
+  chassis.weight = getReal(pairs["chassis.weight"]);   //[t]
+  chassis.max_weight = getReal(pairs["chassis.max_weight"]);   //[t]
+  chassis.heat_dissipation_base = getReal(pairs["chassis.heat_dissipation_base"]);   //[MJ]
+  chassis.heat_dissipation_rate = getReal(pairs["chassis.heat_dissipation_rate"]);   //multpiplier
+  chassis.torso_arc = getReal(pairs["chassis.torso_arc"]) * pi;   //[rad]
+  chassis.arms_arc = getReal(pairs["chassis.arms_arc"]) * pi;   //[rad]
+  chassis.torso_turn_speed = getReal(pairs["chassis.torso_turn_speed"]) * pi;   //[rad/s]
+  chassis.arms_turn_speed = getReal(pairs["chassis.arms_turn_speed"]) * pi;   //[rad/s]
+  chassis.structure_base = getReal(pairs["chassis.structure_base"]);   //[rad/s]
+  chassis.internals[torso] = intoInt(pairs["chassis.internals.torso"]);   //[m3]
+  chassis.internals[torso_right] = intoInt(pairs["chassis.internals.torso_right"]);
+  chassis.internals[torso_left] = intoInt(pairs["chassis.internals.torso_left"]);
+  chassis.internals[arm_left] = intoInt(pairs["chassis.internals.arm_left"]);
+  chassis.internals[arm_right] = intoInt(pairs["chassis.internals.arm_right"]);
+  chassis.internals[leg_left] = intoInt(pairs["chassis.internals.leg_left"]);
+  chassis.internals[leg_right] = intoInt(pairs["chassis.internals.leg_right"]);
+  chassis.panels[torso] = intoInt(pairs["chassis.panels.torso"]);
+  chassis.panels[torso_right] = intoInt(pairs["chassis.panels.torso_right"]);
+  chassis.panels[torso_left] = intoInt(pairs["chassis.panels.torso_left"]);
+  chassis.panels[arm_right] = intoInt(pairs["chassis.panels.arm_right"]);
+  chassis.panels[arm_left] = intoInt(pairs["chassis.panels.arm_left"]);
+  chassis.panels[leg_right] = intoInt(pairs["chassis.panels.leg_right"]);
+  chassis.panels[leg_left] = intoInt(pairs["chassis.panels.leg_left"]);
+  chassis.surface_area[crusader_area::torso] =
+    getReal(pairs["chassis.surface_area.torso"]);
+  chassis.surface_area[crusader_area::torso_right] =
+    getReal(pairs["chassis.surface_area.torso_right"]);
+  chassis.surface_area[crusader_area::torso_left] =
+    getReal(pairs["chassis.surface_area.torso_left"]);
+  chassis.surface_area[crusader_area::arm_left] =
+    getReal(pairs["chassis.surface_area.arm_left"]);
+  chassis.surface_area[crusader_area::arm_right] =
+    getReal(pairs["chassis.surface_area.arm_right"]);
+  chassis.surface_area[crusader_area::leg_left] =
+    getReal(pairs["chassis.surface_area.leg_left"]);
+  chassis.surface_area[crusader_area::leg_right] =
+    getReal(pairs["chassis.surface_area.leg_right"]);
+  chassis.surface_area[crusader_area::torso_back] =
+    getReal(pairs["chassis.surface_area.torso_back"]);
+  chassis.surface_area[crusader_area::torso_right_back] =
+    getReal(pairs["chassis.surface_area.torso_right_back"]);
+  chassis.surface_area[crusader_area::torso_left_back] =
+    getReal(pairs["chassis.surface_area.torso_left_back"]);
 
   return true;
 }

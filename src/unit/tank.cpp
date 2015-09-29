@@ -12,3 +12,7 @@ Tank::Tank(Vector3          a_pos_xyz,
   : Unit(a_unit_name, a_pos_xyz, a_orientation)
 {
 }
+
+Tank::~Tank()
+{
+}

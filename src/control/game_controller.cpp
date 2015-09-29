@@ -4,6 +4,11 @@
 #include "formation_manager.h"
 #include "game.h"
 
+
+GameController::~GameController()
+{
+}
+
 GameController::GameController(const string& a_name = "Player")
   : TurnSpeed(0.0),
   Throttle(0.0),

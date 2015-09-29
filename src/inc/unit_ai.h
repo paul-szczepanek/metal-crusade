@@ -11,9 +11,7 @@ class UnitAI
 {
 public:
   UnitAI();
-  virtual ~UnitAI()
-  {
-  }
+  virtual ~UnitAI();
 
   virtual void update(Real a_dt) = 0;
 

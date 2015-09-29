@@ -85,7 +85,7 @@ Projectile* ProjectileFactory::fireProjectile(Vector3    a_pos_xyz,
   Corpus* new_corpus = getFreeCorpus();
   new_corpus->setOwner(a_weapon->Owner);
   new_corpus->setSceneNode(projectile_node);
-  new_corpus->setXYZ(a_pos_xyz);
+  new_corpus->XYZ = a_pos_xyz;
   new_corpus->setOrientation(a_orientation);
   new_corpus->loadCollisionSpheres(mesh);
 
