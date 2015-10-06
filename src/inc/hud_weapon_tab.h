@@ -25,7 +25,7 @@ public:
   {
   }
 
-  void update(Real a_dt);
+  void update(const Real a_dt);
 
 private:
   usint font_size;

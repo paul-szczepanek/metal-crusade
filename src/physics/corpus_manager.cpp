@@ -13,7 +13,7 @@ CorpusManager::~CorpusManager()
 {
 }
 
-void CorpusManager::update(Real a_dt)
+void CorpusManager::update(const Real a_dt)
 {
   for (auto cell : Game::Arena->LiveCorpusCells) {
     for (auto c : *cell) {
@@ -22,7 +22,7 @@ void CorpusManager::update(Real a_dt)
   }
 }
 
-void CorpusManager::applyForces(Real a_dt)
+void CorpusManager::applyForces(const Real a_dt)
 {
   Real dts = a_dt * a_dt;
   Vector3 gravity = Vector3(0, 0, -1) * Game::Arena->getGravity() * dts;
@@ -33,7 +33,7 @@ void CorpusManager::applyForces(Real a_dt)
   }
 }
 
-void CorpusManager::applyVelocity(Real a_dt)
+void CorpusManager::applyVelocity(const Real a_dt)
 {
   for (auto cell : Game::Arena->LiveCorpusCells) {
     for (auto c : *cell) {

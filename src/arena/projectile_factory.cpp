@@ -65,7 +65,7 @@ Corpus* ProjectileFactory::getFreeCorpus()
 
 /** @brief creates projectiles and adds them to a list
  */
-Projectile* ProjectileFactory::fireProjectile(Vector3    a_pos_xyz,
+Projectile* ProjectileFactory::spawnProjectile(Vector3    a_pos_xyz,
                                               Quaternion a_orientation,
                                               Weapon*    a_weapon)
 {

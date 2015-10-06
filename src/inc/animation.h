@@ -29,7 +29,7 @@ public:
   {
   }
 
-  void update(Real a_dt);
+  void update(const Real a_dt);
 
   // setting the animation speed - type is set automatically
   void walk(Real a_speed);

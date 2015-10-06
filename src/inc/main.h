@@ -141,6 +141,33 @@ inline bool take(bool& do_once)
   return false;
 }
 
+/** @brief local angle based on an angle passed in
+ * converts to a <-pi, pi> range angle in relation to global_angle an angle
+ */
+inline void localiseAngle(Radian&       angle,
+                          const Radian& global_angle)
+{
+  Radian local_angle;
+  Radian local_angle_alt;
+
+  if (global_angle < angle) {
+    local_angle = angle - global_angle;
+    local_angle_alt = Radian(2 * pi) - (angle - global_angle);
+    if (local_angle > local_angle_alt) {
+      local_angle = -local_angle_alt;
+    }
+  } else {
+    local_angle = global_angle - angle;
+    local_angle_alt = Radian(2 * pi) - (global_angle - angle);
+    if (local_angle > local_angle_alt) {
+      local_angle = -local_angle_alt;
+    }
+    local_angle = -local_angle;
+  }
+
+  angle = local_angle;
+}
+
 // TODO: TEMP put back in hud design
 
 // this is the minimum number of lines hud must implement to be usable

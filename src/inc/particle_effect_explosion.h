@@ -15,7 +15,7 @@ public:
                           Real             a_ferocity);
   ~ParticleEffectExplosion();
 
-  bool update(Real a_dt);
+  bool update(const Real a_dt);
 
 private:
   Ogre::ParticleSystem* explosion;

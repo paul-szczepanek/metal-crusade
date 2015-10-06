@@ -17,6 +17,7 @@ public:
   virtual ~ArenaEntity();
   virtual Vector3 getXYZ();
   virtual void setPosition(const Vector3& a_pos);
+  virtual bool update(const Real a_dt);
 
   void setName(const string& a_name);
   const string& getName();
@@ -31,7 +32,7 @@ public:
 
 public:
   string Name;
-  Vector3 XYZ;
+  Vector3 XYZ = Vector3::ZERO;
   Quaternion Orientation;
 };
 

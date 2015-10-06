@@ -32,7 +32,7 @@ InputHandler::InputHandler()
 
   // add keyboard to OIS
   OISKeyboard = static_cast<OIS::Keyboard*>
-             (OISInputManager->createInputObject(OIS::OISKeyboard, true));
+                (OISInputManager->createInputObject(OIS::OISKeyboard, true));
   OISKeyboard->setEventCallback(this);
 
   // add mouse to OIS
@@ -97,15 +97,18 @@ Vector3 InputHandler::findTerrainCrossingPosition()
   Real top_distance = camera_distance + step;
   Real bottom_distance = camera_distance - step;
   Vector3 position = MouseRay->getPoint(camera_distance);
+  Vector3 ray_origin = MouseRay->getOrigin();
+  Vector3 ray_direction = MouseRay->getDirection();
 
-  // check the position is within the arena to save on checking in the arena class
-  // this means it just stretches the border height outside the map
-  if (Game::Arena->isOutOfBounds(position)
-      || position.y < -CAMERA_CLIP_FAR || position.y > CAMERA_CLIP_FAR) { //TODO: temp fix for broken camera
+  //TODO: temp fix for broken camera
+  if (ray_origin.y < CAMERA_CLIP_NEAR || ray_direction.y > -0.1) {
+    // the ray is not pointing down towards the ground so we're not going to hit anything
     return Vector3::ZERO;
   }
 
-  //TODO: rewrite this mess
+  // check the position is within the arena to save on checking in the arena class
+  // TODO: rewrite this mess
+  Game::Arena->isOutOfBounds(position);
 
   // start at the distance the camera is from the focal point
   if (position.y < Game::Arena->getHeight(position.x, position.z)) {
@@ -145,7 +148,6 @@ Vector3 InputHandler::findTerrainCrossingPosition()
     }
   }
 
-  // why hello there little pointer
   return MouseRay->getPoint(middle_distance);
 }
 
@@ -155,10 +157,8 @@ void InputHandler::updateMousePointer()
 {
   // send a ray from camera to pointer position
   OgreCamera->getCameraToViewportRay(PointerX, PointerY, MouseRay);
-
   // use the ray in the query
   MouseRayQuery->setRay(*MouseRay);
-
   // execute query
   Ogre::RaySceneQueryResult &result = MouseRayQuery->execute();
 
@@ -195,11 +195,10 @@ void InputHandler::updateMousePointer()
     position.y += target_low_offset;
   }
 
-  // pass the pointer pos to game cotnroller
-  Controller->setPointerPos(position);
-
   // move the outer target mesh
   PointerNode->setPosition(position);
+  // pass the pointer pos to game cotnroller
+  Controller->setPointerPos(position);
 }
 
 /** @brief called every frame
@@ -268,6 +267,7 @@ void InputHandler::resize()
   const OIS::MouseState& mouse_state = OISMouse->getMouseState();
   mouse_state.width = screen_width;
   mouse_state.height = screen_height;
+  Game::Camera->resize(screen_width, screen_height);
 }
 
 /** @brief updates mouse position inside the window

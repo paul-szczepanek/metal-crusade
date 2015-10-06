@@ -15,7 +15,7 @@ public:
   HudMFDDisplay(hud_part_design_t& a_hud_part_design);
   ~HudMFDDisplay();
 
-  void update(Real a_dt);
+  void update(const Real a_dt);
 
 private:
   void changeView(mfd_view::view_type a_view);

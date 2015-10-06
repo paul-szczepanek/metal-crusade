@@ -83,7 +83,7 @@ void Projectile::explode()
   }
 }
 
-bool Projectile::update(Real a_dt)
+bool Projectile::update(const Real a_dt)
 {
   if (GracePeriod < 0) {
     Game::Collision->registerObject(Bullet);

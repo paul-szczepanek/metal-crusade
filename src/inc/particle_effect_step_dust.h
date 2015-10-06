@@ -12,7 +12,7 @@ public:
   ParticleEffectStepDust(Ogre::SceneNode* scene_node);
   ~ParticleEffectStepDust();
 
-  bool update(Real a_dt);
+  bool update(const Real a_dt);
 
   void setRate(Real a_rate);
 

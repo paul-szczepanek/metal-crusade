@@ -20,12 +20,12 @@ ParticleManager::~ParticleManager()
   effects.clear();
 }
 
-void ParticleManager::update(Real a_dt)
+void ParticleManager::update(const Real a_dt)
 {
-  // call update on every unit
-  for (list<ParticleEffect*>::iterator it = effects.begin(); it != effects.end(); ) {
+  // call update on every effect
+  for (auto it = effects.begin(); it != effects.end(); ) {
     // remove if expired
-    if ((*it)->update(a_dt) == 1) {
+    if (!(*it)->update(a_dt)) {
       delete *it;
 
       // get the iterator to the next item after removal

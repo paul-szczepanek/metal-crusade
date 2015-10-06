@@ -12,7 +12,7 @@ public:
   HudRadarDisplay(hud_part_design_t& a_hud_part_design);
   ~HudRadarDisplay();
 
-  void update(Real a_dt);
+  void update(const Real a_dt);
 
 private:
   // radar on/off

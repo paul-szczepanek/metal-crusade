@@ -60,7 +60,7 @@ public:
   // TODO: this is temp!!
   static GameController* getGameController(const string& /*aName*/);
 
-  static void log(const string& aText);
+  static void log(const string& a_text);
 
   static void destroyModel(Ogre::SceneNode* a_scene_node);
 
@@ -75,7 +75,7 @@ private:
   static void exitArena();
 
   static void input();
-  static void logic(int aDTicks);
+  static void logic(ulint a_ticks);
   static void fpsCalc();
   static void limitFPS();
 

@@ -12,7 +12,7 @@ void getDigitArrayT(vector<T>& int_array,
 
 template <class T1, class T2>
 void getEnumPairArrayT(vector<pair<T1, T2> >& position_pair_array,
-                       string                 a_buffer);
+                       string a_buffer);
 
 template <typename T>
 void getEnumArrayT(vector<T>& enum_array,
@@ -47,7 +47,7 @@ void getEnumArray(vector<crusader_part::body_part>& enum_array,
 }
 
 void getEnumArray(vector<internal_type>& enum_array,
-                  string                            a_buffer)
+                  string                 a_buffer)
 {
   getEnumArrayT(enum_array, a_buffer);
 }
@@ -57,11 +57,13 @@ void getUsintDigitArray(vector<usint>& int_array,
 {
   getDigitArrayT(int_array, a_buffer);
 }
+
 void getIntDigitArray(vector<int>& int_array,
                       string       a_buffer)
 {
   getDigitArrayT(int_array, a_buffer);
 }
+
 void getSizeTDigitArray(vector<size_t>& int_array,
                         string          a_buffer)
 {
@@ -383,7 +385,7 @@ void getStringArray(vector<string>& string_array,
 /** @brief fills structs with ints read from a file and casts them to enum
  */
 template <typename T> void getEnumArrayT(vector<T>& enum_array,
-    string     a_buffer)
+                                         string     a_buffer)
 {
   vector<string> string_array;
 
@@ -672,7 +674,7 @@ void getColourArray(vector<Ogre::ColourValue>& colour_array,
 /** @brief fills the vector with int but treats each character as an int so 82 is 8 and 2
  */
 template <typename T> void getDigitArrayT(vector<T>& int_array,
-    string     a_buffer)
+                                          string     a_buffer)
 {
   for(int i = 0, for_size = a_buffer.size(); i < for_size; ++i) {
     // this will fail for ";" so check for them since this might be multiline buffer
@@ -684,4 +686,3 @@ template <typename T> void getDigitArrayT(vector<T>& int_array,
 }
 
 }
-

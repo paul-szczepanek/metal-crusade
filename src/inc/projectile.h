@@ -22,7 +22,7 @@ public:
   void reset(Weapon* a_weapon = NULL,
              Corpus* a_corpus = NULL);
 
-  bool update(Real a_dt);
+  bool update(const Real a_dt);
 
   // handle collision
   virtual bool validateCollision(Corpus* a_collision);
@@ -39,7 +39,7 @@ public:
   // how far has it traveled
   Real Lifetime;
   Real GracePeriod;
-  Vector3 Velocity;
+  Vector3 Velocity = Vector3::ZERO;
   // for splash damage
   bool Exploading;
 };

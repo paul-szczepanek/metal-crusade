@@ -22,7 +22,7 @@ AIManager::~AIManager()
 /** @brief updates AIs
  * @todo: pretty much everything
  */
-void AIManager::update(Real a_dt)
+void AIManager::update(const Real a_dt)
 {
   // call update on every unit
   for (size_t i = 0, for_size = ais.size(); i < for_size; ++i) {

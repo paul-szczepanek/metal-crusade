@@ -61,8 +61,11 @@ Real GameArena::getAmbientTemperature(Vector3 a_position)
   return 20;
 }
 
-bool GameArena::update(Real a_dt)
+bool GameArena::update(const Real a_dt)
 {
+  for (auto it : Entities) {
+    it->update(a_dt);
+  }
   return true;
 }
 
@@ -76,10 +79,6 @@ GameArena::~GameArena()
 
   // cleanup terrain
   Ogre::MaterialManager::getSingleton().remove(terrain_material_name);
-
-  for (auto it : Entities) {
-    delete it;
-  }
 
   Entities.clear();
 }
@@ -155,22 +154,22 @@ int GameArena::loadArena(const string& arena_name)
                                                                  faction_mercenary);
 
   // temp buildings
-  Entities.push_back(Game::Building->spawnSceneryBuidling(120, 280, "building_test_01"));
-  Entities.push_back(Game::Building->spawnSceneryBuidling(280, 300, "building_test_02"));
-  Entities.push_back(Game::Building->spawnSceneryBuidling(350, 270, "building_test_02"));
-  Entities.push_back(Game::Building->spawnSceneryBuidling(310, 380, "building_test_01"));
-  Entities.push_back(Game::Building->spawnSceneryBuidling(210, 240, "building_test_02"));
-  Entities.push_back(Game::Building->spawnSceneryBuidling(300, 260, "building_test_02"));
+  Game::Building->spawnSceneryBuidling(120, 280, "building_test_01");
+  Game::Building->spawnSceneryBuidling(280, 300, "building_test_02");
+  Game::Building->spawnSceneryBuidling(350, 270, "building_test_02");
+  Game::Building->spawnSceneryBuidling(310, 380, "building_test_01");
+  Game::Building->spawnSceneryBuidling(210, 240, "building_test_02");
+  Game::Building->spawnSceneryBuidling(300, 260, "building_test_02");
 
-  Entities.push_back(Game::Building->spawnSceneryBuidling(320, 480, "building_test_01"));
-  Entities.push_back(Game::Building->spawnSceneryBuidling(880, 300, "building_test_02"));
-  Entities.push_back(Game::Building->spawnSceneryBuidling(950, 270, "building_test_02"));
-  Entities.push_back(Game::Building->spawnSceneryBuidling(310, 380, "building_test_01"));
-  Entities.push_back(Game::Building->spawnSceneryBuidling(110, 340, "building_test_02"));
-  Entities.push_back(Game::Building->spawnSceneryBuidling(300, 160, "building_test_02"));
+  Game::Building->spawnSceneryBuidling(320, 480, "building_test_01");
+  Game::Building->spawnSceneryBuidling(880, 300, "building_test_02");
+  Game::Building->spawnSceneryBuidling(950, 270, "building_test_02");
+  Game::Building->spawnSceneryBuidling(310, 380, "building_test_01");
+  Game::Building->spawnSceneryBuidling(110, 340, "building_test_02");
+  Game::Building->spawnSceneryBuidling(300, 160, "building_test_02");
 
   // fake game startup from code - ought to be read from file
-  Crusader* player_unit = Game::Unit->spawnCrusader(Vector3(310, 0, 310), "base_husar_cavalry");
+  Crusader* player_unit = Game::Unit->spawnCrusader(Vector3(380, 0, 380), "base_husar_cavalry");
 
   player_unit->assignController(Game::getGameController(0));
 

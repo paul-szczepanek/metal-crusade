@@ -22,7 +22,7 @@ public:
   ParticleEffect();
   virtual ~ParticleEffect();
 
-  virtual bool update(Real a_dt) = 0;
+  virtual bool update(const Real a_dt) = 0;
 
 protected:
   void die();

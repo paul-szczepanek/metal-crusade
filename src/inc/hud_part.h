@@ -14,7 +14,7 @@ public:
   {
   }
 
-  virtual void update(Real a_dt) = 0;
+  virtual void update(const Real a_dt) = 0;
   virtual void resize(Real a_scale)
   {
   }                                            // for use with 3d elements

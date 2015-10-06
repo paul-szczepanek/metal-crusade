@@ -18,7 +18,7 @@ public:
          Ogre::SceneNode* a_scene_node = NULL);
   virtual ~Corpus();
 
-  virtual bool update(Real a_dt);
+  virtual bool update(const Real a_dt);
 
   // position
   Vector2 getXZ();
@@ -73,11 +73,11 @@ public:
   Ogre::SceneNode* SceneNode;
 
   // position and orientation
-  Vector3 XYZ;
+  Vector3 XYZ = Vector3::ZERO;
   Quaternion Orientation;
-  Vector3 Direction;
-  Vector3 Velocity;
-  Vector3 OldVelocity;
+  Vector3 Direction = Vector3::ZERO;
+  Vector3 Velocity = Vector3::ZERO;
+  Vector3 OldVelocity = Vector3::ZERO;
   // index of the cell in the arena the object is in
   size_t_pair CellIndex;
 
@@ -87,7 +87,7 @@ public:
   // tags for spheres to differentiate parts
   vector<usint> CSAreas;
   // sphere positions relative to main scene node
-  Vector3 RelBSPosition;
+  Vector3 RelBSPosition = Vector3::ZERO;
   vector<Vector3> RelCSPositions;
 
   collision_type CollisionType;
@@ -104,7 +104,7 @@ public:
 
 private:
   // speed and position
-  Vector3 Move;
+  Vector3 Move = Vector3::ZERO;
   Real angular_momentum;
   Real corrected_velocity_scalar;
 

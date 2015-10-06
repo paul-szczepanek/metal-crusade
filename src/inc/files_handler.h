@@ -28,8 +28,8 @@ void getCharArray(vector<char>& char_array,
                   string        a_buffer);
 void getStringArray(vector<string>& string_array,
                     string          a_buffer);
-bool getPairs(const string&        filename,
-              const string&        dir,
+bool getPairs(const string& filename,
+              const string& dir,
               map<string, string>& pairs);
 string getStringFromFile(const string& filename);
 void getRealSeries(vector<Real>& real_array,
@@ -46,11 +46,11 @@ void getUsintArray(vector<usint>& int_array,
 void getIntArray(vector<int>& int_array,
                  string       a_buffer);
 void getEnumArray(vector<long unsigned int>& enum_array,
-                  string          a_buffer);
+                  string                     a_buffer);
 void getEnumArray(vector<crusader_part::body_part>& enum_array,
-                  string          a_buffer);
+                  string                            a_buffer);
 void getEnumArray(vector<internal_type>& enum_array,
-                  string          a_buffer);
+                  string                 a_buffer);
 void getUsintDigitArray(vector<usint>& int_array,
                         string         a_buffer);
 void getIntDigitArray(vector<int>& int_array,

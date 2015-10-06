@@ -23,7 +23,7 @@ public:
                          fx_anim::anims   a_animation);
   ~ParticleEffectFlipbook();
 
-  bool update(Real a_dt);
+  bool update(const Real a_dt);
 
 private:
   Ogre::BillboardSet* set;

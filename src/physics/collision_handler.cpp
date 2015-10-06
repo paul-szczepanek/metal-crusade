@@ -142,7 +142,7 @@ void CollisionHandler::evaluatePotentialCollisions()
 
 /** @brief produce collisions and evaluate them
  */
-void CollisionHandler::update(Real a_dt)
+void CollisionHandler::update(const Real a_dt)
 {
   updatePotentialCollisions();
   evaluatePotentialCollisions();

@@ -58,7 +58,7 @@ public:
   {
   }
 
-  void update(Real a_dt);
+  void update(const Real a_dt);
 
   bool fire();
 

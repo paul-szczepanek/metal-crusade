@@ -14,6 +14,13 @@ ArenaEntity::~ArenaEntity()
 {
 }
 
+bool ArenaEntity::update(const Real a_dt)
+{
+  return true;
+}
+
+// targeting
+
 bool ArenaEntity::acquireAsTargetBy(ArenaEntity* a_entity)
 {
   return false;
@@ -21,7 +28,6 @@ bool ArenaEntity::acquireAsTargetBy(ArenaEntity* a_entity)
 
 void ArenaEntity::releaseAsTarget(ArenaEntity* a_targeted_by)
 {
-
 }
 
 bool ArenaEntity::loseTarget(ArenaEntity* a_targeted_by,
@@ -37,5 +43,4 @@ ArenaEntity* ArenaEntity::getTarget()
 
 void ArenaEntity::clearFromTargets()
 {
-
 }

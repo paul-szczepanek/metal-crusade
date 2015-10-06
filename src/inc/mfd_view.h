@@ -16,7 +16,7 @@ public:
   {
   }
 
-  virtual void update(Real a_dt) = 0;
+  virtual void update(const Real a_dt) = 0;
 
   // shows and hides the view and its overlay elements
   virtual void activate(bool a_toggle);

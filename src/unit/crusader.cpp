@@ -24,8 +24,6 @@ Crusader::~Crusader()
     delete w;
   }
 
-  delete TerrainRay;
-  delete TerrainRayQuery;
   delete CrusaderAnim;
   //delete radar;
   for (auto p : Parts) {
@@ -125,6 +123,7 @@ Crusader::Crusader(const string&      a_unit_name,
   DriveDesign(a_drive),
   ChassisDesign(a_chassis)
 {
+  CoreIntegrity = 1.0;
   // set temperature to ambient temp
   EngineTemperature = CoreTemperature = Game::Arena->getAmbientTemperature(a_pos_xyz);
 
@@ -170,7 +169,7 @@ Crusader::Crusader(const string&      a_unit_name,
   ArmourConductivity = armour_type_to_conductivity[static_cast<size_t>(CrusaderDesign.armour)];
   ArmourGeneratedHeat = armour_type_to_generated_heat[static_cast<size_t>(CrusaderDesign.armour)];
 
-  // TODO: load equipemnt
+  // TODO: load equipment
   // design.equipment;
 
   // TODO: load coolant from design
@@ -179,17 +178,10 @@ Crusader::Crusader(const string&      a_unit_name,
   // after loading all the weapons etc. recalculate weight
   recalculateWeight();
 
-  // temp and obselete anyway, clamping will be done against a heightmap and delegated to arena
-  // ray query for terrain clamping
-  TerrainRay = new Ogre::Ray();
-  TerrainRayQuery = new Ogre::DefaultRaySceneQuery(Game::Scene);
-  TerrainRayQuery->setSortByDistance(true);
-  TerrainRayQuery->setQueryMask(query_mask_pointer_floor);
-
   /*
-  // create the radar
-  radar = new RadarComputer(CrusaderDesign.radar, this);
-  */
+     // create the radar
+     radar = new RadarComputer(CrusaderDesign.radar, this);
+   */
 }
 
 /** @brief resolves collision including damage and physics
@@ -289,7 +281,7 @@ bool Crusader::handleCollision(Collision* a_collision)
 /** @brief move the crusader
  * moving and @todo: slow down on slopes
  */
-void Crusader::moveCrusader(Real a_dt)
+void Crusader::moveCrusader(const Real a_dt)
 {
   // traction
   Real ground_traction = 0.9; // FAKE
@@ -306,6 +298,9 @@ void Crusader::moveCrusader(Real a_dt)
   // kinemataic resistance
   Real ground_resistance = 0.1; // FAKE
   Real kinematic_resistance = 0;
+
+  // temp, should be done in physics
+  Game::Arena->isOutOfBounds(XYZ);
 
   // temp! get the gradient of the slope
   Real height = Game::Arena->getHeight(XYZ.x, XYZ.z);
@@ -340,7 +335,7 @@ void Crusader::moveCrusader(Real a_dt)
   Real acceleration_scalar = 0;
 
   if (Throttle < 0.1 && Throttle > -0.1) {
-    // if no throttle and velocity low just stop immidately
+    // if no throttle and velocity low just stop immediately
     if (Velocity.length() < 0.1) {
       Velocity = Vector3(0, 0, 0);
     }
@@ -389,10 +384,10 @@ void Crusader::moveCrusader(Real a_dt)
 }
 
 /** @brief rotates the torso
- * uses angles in the horzontal plane internally
+ * uses angles in the horizontal plane internally
  * rotates the torso (and possibly arms in the future) @todo: vertical angles and arms?
  */
-void Crusader::moveTorso(Real a_dt)
+void Crusader::moveTorso(const Real a_dt)
 {
   // turning the torso
   if(Controller->ControlBlock.turn_to_pointer) { // do you want to turn torso
@@ -465,7 +460,7 @@ void Crusader::moveTorso(Real a_dt)
 
 /** damage suffered from G forces
  */
-void Crusader::shockDamage(Real a_dt)
+void Crusader::shockDamage(const Real a_dt)
 {
   // to make sure a_dt is sane (1 - span) is > 0
   // Real span = min(a_dt, Real(0.1)); // already guaranteed by timer
@@ -615,7 +610,7 @@ void Crusader::positionWeapons()
 /** updates all weapons inside the mech
  * @todo: optimise
  */
-void Crusader::fireWeapons()
+void Crusader::updateWeapons(const Real a_dt)
 {
   // fire individual groups
   if (take(Controller->ControlBlock.fire_group_1)) {
@@ -674,6 +669,11 @@ void Crusader::fireWeapons()
     } else {
       cycleWeapon();
     }
+  }
+
+  // updates all weapons for timeout and firing
+  for (auto w : weapons) {
+    w->update(a_dt);
   }
 }
 
@@ -747,7 +747,7 @@ bool Crusader::fireGroup(usint a_group)
   return fired;
 }
 
-void Crusader::pumpHeat(Real a_dt)
+void Crusader::pumpHeat(const Real a_dt)
 {
   Real ambient_temperature = Game::Arena->getAmbientTemperature(XYZ);
   if (Controller->ControlBlock.flush_coolant) {
@@ -785,48 +785,17 @@ void Crusader::pumpHeat(Real a_dt)
   }
 }
 
-/** @brief local angle based on an angle passed in
- * converts to a <-pi, pi> range angle in relation to global_angle an angle
- */
-inline void Crusader::localiseAngle(Radian&       angle,
-                                    const Radian& global_angle)
-{
-  Radian local_angle;
-  Radian local_angle_alt;
-
-  if (global_angle < angle) {
-    local_angle = angle - global_angle;
-    local_angle_alt = Radian(2 * pi) - (angle - global_angle);
-    if (local_angle > local_angle_alt) {
-      local_angle = -local_angle_alt;
-    }
-  } else {
-    local_angle = global_angle - angle;
-    local_angle_alt = Radian(2 * pi) - (global_angle - angle);
-    if (local_angle > local_angle_alt) {
-      local_angle = -local_angle_alt;
-    }
-    local_angle = -local_angle;
-  }
-
-  angle = local_angle;
-}
-
 /** @brief updateController called by update on every frame
  * physics and controls
  */
-bool Crusader::update(Real a_dt)
+bool Crusader::update(const Real a_dt)
 {
   if (CoreIntegrity > 0) {
     shockDamage(a_dt);
     pumpHeat(a_dt);
 
-    fireWeapons();
+    updateWeapons(a_dt);
     updateTargets();
-    // updates all weapons for timeout and firing
-    for (auto w : weapons) {
-      w->update(a_dt);
-    }
 
     moveCrusader(a_dt);
     moveTorso(a_dt);
@@ -835,7 +804,8 @@ bool Crusader::update(Real a_dt)
     //radar->update(a_dt);
 
     // temp
-    /*if (hud_attached) {
+    /*
+    if (hud_attached) {
        Game::hud->status->setLine(string("current group$e ")
      + intoString(current_group), 1, 20);
        Game::hud->status->setLine(string("current weapon$e ")
@@ -855,13 +825,16 @@ bool Crusader::update(Real a_dt)
 
        Game::hud->status->setLine(string("integrity: ") + intoString(CoreIntegrity),
                                  0, 20, 21);
-       }*/
+     }
+     */
   } else if (CoreIntegrity < -1) { // temp!!!
     CoreIntegrity = 0;
     Game::Particle->createExplosion(XYZ, 10, 2, 3);
-    /*if (hud_attached) {
+    /*
+    if (hud_attached) {
        Game::hud->log->addLine("your crusader has been destroyed - $eGAME OVER");
-       }*/
+     }
+     */
   } else {
     CoreIntegrity -= a_dt;
   }

@@ -16,7 +16,7 @@ public:
   {
   }
 
-  virtual void update(Real a_dt);
+  virtual void update(const Real a_dt);
 
 protected:
   // inner main loop

@@ -17,13 +17,13 @@ public:
 
   ~ProjectileFactory();
 
-  void update(Real a_dt);
+  void update(const Real a_dt);
 
   Projectile* getFreeProjectile();
   Corpus* getFreeCorpus();
 
   // object creation
-  Projectile* fireProjectile(Vector3    a_pos_xyz,
+  Projectile* spawnProjectile(Vector3    a_pos_xyz,
                              Quaternion a_orientation,
                              Weapon*    a_weapon);
 

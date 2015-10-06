@@ -24,7 +24,7 @@ public:
   // init
   int loadArena(const string& arena_name);
 
-  bool update(Real a_dt);
+  bool update(const Real a_dt);
 
   // get height at x and y
   Real getHeight(Real a_x,

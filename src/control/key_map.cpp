@@ -123,6 +123,8 @@ bool KeyMap::getKeyConfig(const string& filename)
  */
 OIS::KeyCode KeyMap::translateKeycode(const string& id)
 {
+  // this might look insane but this way it's stored as code and has no impact on memory usage
+  // as it's freed after use
   map<string, OIS::KeyCode> keys;
 
   // build map to translate string to OIS keycode

@@ -17,7 +17,7 @@ public:
   CrusaderAI(Crusader* a_self);
   virtual ~CrusaderAI();
 
-  void update(Real a_dt);
+  void update(const Real a_dt);
 
   void setGoal(NavPoint* a_goal);
   void setEnemy(Crusader* a_enemy);

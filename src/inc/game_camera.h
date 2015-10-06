@@ -15,7 +15,7 @@ public:
   GameCamera();
   ~GameCamera();
 
-  void update(Real a_dt);
+  void update(const Real a_dt);
 
   // set target(s) for the camera to follow
   void follow(Unit* a_entity);

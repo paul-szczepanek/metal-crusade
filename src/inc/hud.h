@@ -35,7 +35,7 @@ public:
   void loadHud(Unit* a_player_unit);
   void activate(bool a_toggle);
 
-  void update(Real a_dt);
+  void update(const Real a_dt);
 
   // shows the pause screen
   void pause();

@@ -33,7 +33,7 @@ void CrusaderAI::setGoal(NavPoint* a_goal)
 }
 
 // TEMPTEMPTEMPTEMP!!!!
-void CrusaderAI::update(Real a_dt)
+void CrusaderAI::update(const Real a_dt)
 {
   // temp!!
   if (enemy != self && active) {

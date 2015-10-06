@@ -14,7 +14,7 @@ public:
   {
   }
 
-  void update(Real a_dt);
+  void update(const Real a_dt);
 
   // make selected
   void activate(bool a_toggle);

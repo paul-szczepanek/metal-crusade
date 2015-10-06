@@ -240,7 +240,7 @@ bool Corpus::revertMove(Vector3 a_move)
 
 /** @brief game logic, physics and control
  */
-bool Corpus::update(Real a_dt)
+bool Corpus::update(const Real a_dt)
 {
   updateCellIndex();
   invalidateSpheres();

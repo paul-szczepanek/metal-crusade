@@ -38,7 +38,7 @@ public:
            crusader_chassis_t a_chassis);
   virtual ~Crusader();
 
-  bool update(Real a_dt);
+  bool update(const Real a_dt);
 
   bool handleCollision(Collision* a_collision);
 
@@ -68,16 +68,12 @@ public:
 
 private:
   // inner main loop
-  void moveCrusader(Real a_dt);
-  void moveTorso(Real a_dt);
-  void fireWeapons();
-  void pumpHeat(Real a_dt);
-  void shockDamage(Real a_dt);
-  void updateAnimations(Real a_dt);
-
-  // helper functions
-  void localiseAngle(Radian&       angle,
-                     const Radian& global_angle);
+  void moveCrusader(const Real a_dt);
+  void moveTorso(const Real a_dt);
+  void updateWeapons(const Real a_dt);
+  void pumpHeat(const Real a_dt);
+  void shockDamage(const Real a_dt);
+  void updateAnimations(const Real a_dt);
 
   // building the crusader
   void recalculateWeight();
@@ -92,9 +88,9 @@ private:
 
 private:
   // moving
-  Vector3 Velocity;
-  Vector3 Direction;
-  Vector3 TorsoDirection;
+  Vector3 Velocity = Vector3::ZERO;
+  Vector3 Direction = Vector3::ZERO;
+  Vector3 TorsoDirection = Vector3::ZERO;
   Quaternion TorsoOrientation;
   Real Throttle = 0;
   Real TotalWieght = 0;
@@ -104,13 +100,9 @@ private:
   Real CrusaderHeight = 0;
   Real DistanceToGround = 0; // from main scene node
 
-  // clamping to the terrain
-  Ogre::Ray* TerrainRay = NULL;
-  Ogre::RaySceneQuery* TerrainRayQuery = NULL;
-
   // tracking G forces
-  Vector3 ShockDamageOld;
-  Vector3 ShockDamageNew;
+  Vector3 ShockDamageOld = Vector3::ZERO;
+  Vector3 ShockDamageNew = Vector3::ZERO;
 
   // design
   crusader_design_t CrusaderDesign;
@@ -159,8 +151,8 @@ inline vector<usint>& Crusader::getSelectedGroup()
 inline Real Crusader::getThrottle()
 {
   // throttle scaling depends on direction
-  return (Throttle >
-          0) ? Throttle * DriveDesign.max_speed : Throttle * DriveDesign.max_speed_reverse;
+  return (Throttle > 0) ? Throttle * DriveDesign.max_speed
+                        : Throttle * DriveDesign.max_speed_reverse;
 }
 
 inline Real Crusader::getDamage(usint a_diagram_element)

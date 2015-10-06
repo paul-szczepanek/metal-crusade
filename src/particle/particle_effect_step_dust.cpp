@@ -57,7 +57,7 @@ ParticleEffectStepDust::~ParticleEffectStepDust()
   die();
 }
 
-bool ParticleEffectStepDust::update(Real a_dt)
+bool ParticleEffectStepDust::update(const Real a_dt)
 {
   return true;
 }

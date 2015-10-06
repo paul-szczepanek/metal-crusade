@@ -25,7 +25,7 @@ public:
   CollisionHandler();
   ~CollisionHandler();
 
-  void update(Real a_dt);
+  void update(const Real a_dt);
 
   // functions hooking up objects into the system
   void registerObject(Corpus* a_corpus);

@@ -73,7 +73,7 @@ public:
   virtual void releaseAsTarget(ArenaEntity* a_targeted_by);
   // called by targeted object that requires this to relinquish its current target
   virtual bool loseTarget(ArenaEntity* a_targeted_by,
-                  bool         a_forced = false);
+                          bool         a_forced = false);
   // clear targets when this object gets destroyed
   virtual void clearFromTargets();
   // return the target of this
@@ -92,7 +92,7 @@ protected:
 
   Real CoreTemperature = 0;
   Real TotalWeight = 0;
-  Vector3 Direction;
+  Vector3 Direction = Vector3::ZERO;
 
   vector<Weapon*> weapons;
 

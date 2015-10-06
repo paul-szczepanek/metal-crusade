@@ -29,7 +29,7 @@ public:
   ~Collision();
 
   void findCollisionPlane();
-  void resolve(Real a_dt);
+  void resolve(const Real a_dt);
 
   // resulting velocity after the collision
   Vector3 getVelocity();
@@ -53,7 +53,7 @@ public:
 
   // collision qualities
   Real Depth;
-  collision_type ResultType;
+  collision_type ResultType = collision_type_soft;
 };
 
 #endif // COLLISION_H

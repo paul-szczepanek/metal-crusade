@@ -80,7 +80,7 @@ bool Weapon::loadWeaponDesign(const string& filename)
 
 /** @brief update the timeout and fire weapon if primed
  */
-void Weapon::update(Real a_dt)
+void Weapon::update(const Real a_dt)
 {
   if (ProjecitlesPrimed > 0) {
     // this fires each time it passes the multi_fire_timout step
@@ -110,7 +110,7 @@ void Weapon::update(Real a_dt)
       weapon_orientation = firing_cone * weapon_orientation;
 
       // create projectile
-      Projectile* new_projectile = Game::Projectile->fireProjectile(weapon_position,
+      Projectile* new_projectile = Game::Projectile->spawnProjectile(weapon_position,
                                                                     weapon_orientation,
                                                                     this);
       ActiveList.push_back(new_projectile);

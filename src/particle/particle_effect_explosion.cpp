@@ -52,7 +52,7 @@ ParticleEffectExplosion::~ParticleEffectExplosion()
   die();
 }
 
-bool ParticleEffectExplosion::update(Real a_dt)
+bool ParticleEffectExplosion::update(const Real a_dt)
 {
   lifetime += a_dt;
 

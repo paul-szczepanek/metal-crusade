@@ -14,8 +14,7 @@ Collision::Collision(Corpus*                  a_object1,
                      bitset<MAX_NUM_CS_AREAS> a_cs_area_bitset1,
                      bitset<MAX_NUM_CS_AREAS> a_cs_area_bitset2,
                      Real                     a_depth)
-  : Depth(a_depth),
-  ResultType(collision_type_soft)
+  : Depth(a_depth)
 {
   Object[0] = a_object1;
   Object[1] = a_object2;
@@ -24,7 +23,6 @@ Collision::Collision(Corpus*                  a_object1,
   CSAreas[0] = a_cs_area_bitset1;
   CSAreas[1] = a_cs_area_bitset2;
 }
-
 
 Collision::~Collision()
 {
@@ -48,7 +46,7 @@ void Collision::findCollisionPlane()
 #define BLOCKING_WEIGHT (10000000)
 #define RESOLVE_LIMIT (10)
 
-void Collision::resolve(Real a_dt)
+void Collision::resolve(const Real a_dt)
 {
   // stabilise piles of objects
   if (resolved > RESOLVE_LIMIT) {

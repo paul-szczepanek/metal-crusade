@@ -25,6 +25,7 @@ public:
 
 protected:
   list<Corpus*> Corpuses;
+  list<ArenaEntity*> Buildings;
 };
 
 #endif // CORPUSFACTORY_H

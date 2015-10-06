@@ -4,7 +4,6 @@
 #include "formation_manager.h"
 #include "game.h"
 
-
 GameController::~GameController()
 {
 }

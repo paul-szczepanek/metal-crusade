@@ -40,7 +40,7 @@ ParticleEffectFlipbook::~ParticleEffectFlipbook()
   Game::Scene->destroyBillboardSet(set);
 }
 
-bool ParticleEffectFlipbook::update(Real a_dt)
+bool ParticleEffectFlipbook::update(const Real a_dt)
 {
   lifetime += a_dt;
 

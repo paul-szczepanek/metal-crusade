@@ -6,6 +6,7 @@
 #include "game.h"
 #include "crusader.h"
 #include "unit.h"
+#include "game_arena.h"
 
 UnitFactory::UnitFactory()
 {
@@ -54,6 +55,7 @@ Crusader* UnitFactory::spawnCrusader(Vector3       a_pos_xyz,
 
   // put the unit on the list
   Units.push_back(spawn);
+  Game::Arena->Entities.push_back(spawn);
 
   return spawn;
 }
@@ -121,9 +123,9 @@ bool UnitFactory::getCrusaderDesign(const string&       filename,
 
   //read weapons into weapon groups
   for (size_t i = 0; i < num_of_weapon_groups; ++i) {
-    stringstream i_stream;
-    i_stream << "design.weapon_groups." << i;
-    getUsintArray(design.weapon_groups[i], pairs[i_stream.str()]);
+  stringstream i_stream;
+  i_stream << "design.weapon_groups." << i;
+  getUsintArray(design.weapon_groups[i], pairs[i_stream.str()]);
   }
 
   return true;

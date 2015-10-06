@@ -15,8 +15,10 @@ BuildingFactory::BuildingFactory()
 BuildingFactory::~BuildingFactory()
 {
   for (auto c : Corpuses) {
-    delete c->OwnerEntity;
     delete c;
+  }
+  for (auto b : Buildings) {
+    delete b;
   }
 }
 
@@ -56,6 +58,8 @@ ArenaEntity* BuildingFactory::spawnSceneryBuidling(Vector3       a_pos_xyz,
 
   // put the structure on the list
   Corpuses.push_back(new_corpus);
+  Game::Arena->Entities.push_back(entity);
+  Buildings.push_back(entity);
 
   return entity;
 }

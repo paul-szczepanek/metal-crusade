@@ -14,7 +14,7 @@ public:
   {
   }
 
-  virtual void update(Real a_dt);
+  virtual void update(const Real a_dt);
 
   // custom activation to show the view even on one call - this view may be shared
   void activate(bool a_toggle);

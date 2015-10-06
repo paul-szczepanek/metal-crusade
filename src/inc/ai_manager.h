@@ -22,7 +22,7 @@ public:
 
   ~AIManager();
 
-  void update(Real a_dt);
+  void update(const Real a_dt);
 
   // create ais for units
   CrusaderAI* activateUnit(Crusader*  a_unit,

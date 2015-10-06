@@ -88,9 +88,9 @@ int Game::init(bool aDebugOn)
   return 0;
 }
 
-void Game::log(const string& aText)
+void Game::log(const string& a_text)
 {
-  cout << aText << endl;
+  cout << a_text << endl;
 }
 
 /** @brief starts the game loop
@@ -170,6 +170,7 @@ void Game::run()
       OgreRoot->addFrameListener(this);  // gets frameRenderingQueued called every frame
       State = game_state_playing;
       // Game::hud->activate(true);
+      Game::Input->resize();
       OgreRoot->startRendering(); // hands over main loop to ogre
     }
 
@@ -225,7 +226,7 @@ bool Game::frameRenderingQueued(const Ogre::FrameEvent& /*aEvt*/)
   if (State == game_state_playing) {
     // use internal clock
     NewTime = GameTimer->getTicks();
-    int d_ticks = NewTime - LastTime;
+    ulint d_ticks = NewTime - LastTime;
     LastTime = NewTime;
 
     // main game loop
@@ -251,11 +252,11 @@ bool Game::frameRenderingQueued(const Ogre::FrameEvent& /*aEvt*/)
 
 /** @brief physics and the rest of the simulation
  */
-void Game::logic(int aDTicks)
+void Game::logic(ulint a_ticks)
 {
-  if (aDTicks > 0) {  // don't update if paused
+  if (a_ticks > 0) {  // don't update if paused
     // ticks to ticks per second
-    Delta = Real(aDTicks) / Real(1000);
+    Delta = Real(a_ticks) / Real(1000);
 
     // update game objects
     Arena->update(Delta);

@@ -13,7 +13,7 @@ public:
   ParticleManager();
   virtual ~ParticleManager();
 
-  void update(Real a_dt);
+  void update(const Real a_dt);
 
   // create explosions
   ParticleEffect* createExplosion(Ogre::SceneNode* scene_node,

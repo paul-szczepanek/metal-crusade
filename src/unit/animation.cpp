@@ -190,7 +190,7 @@ bool Animation::switchAnimations(Real a_time_to_add)
 
 /** @brief progresses the animation
  */
-void Animation::update(Real a_dt)
+void Animation::update(const Real a_dt)
 {
   if (!stopped) {
     if (rate == 0) { // if trying to stop ignore the speed and keep animating
