@@ -7,6 +7,8 @@
 #include "sphere.h"
 #include "collision_type.h"
 
+#define BLOCKING_WEIGHT (10000000)
+
 class Collision;
 class ArenaEntity;
 class Unit;
@@ -26,12 +28,10 @@ public:
 
   // move around
   void move(Vector3 a_move);
-  Vector3 getVelocity();
   // put it in the cell on the arena
   void updateCellIndex();
 
   // orientation
-  Quaternion getOrientation();
   void setOrientation(Quaternion a_orientation);
   Vector3 getDirection();
 
@@ -54,7 +54,7 @@ public:
                              bitset<MAX_NUM_CS>& a_cs_bitset);
 
   // read collision spheres for the object TEMP
-  void loadCollisionSpheres(const string& aCollisionName);
+  void loadCollision(const string& aCollisionName);
 
   // resolve collisions
   bool validateCollision(Corpus* a_object);
@@ -62,24 +62,22 @@ public:
   bool revertMove(Vector3 a_move);
   void invalidateSpheres();
 
-  void goOutOfBounds();
-
   /*mfd_view::diagram_type getDiagramType() {
      return mfd_view::object;
      }*/
 
 public:
-  ArenaEntity* OwnerEntity;
-  Ogre::SceneNode* SceneNode;
+  ArenaEntity* OwnerEntity = NULL;
+  Ogre::SceneNode* SceneNode = NULL;
 
   // position and orientation
   Vector3 XYZ = Vector3::ZERO;
-  Quaternion Orientation;
+  Quaternion Orientation = Quaternion::IDENTITY;
   Vector3 Direction = Vector3::ZERO;
   Vector3 Velocity = Vector3::ZERO;
   Vector3 OldVelocity = Vector3::ZERO;
   // index of the cell in the arena the object is in
-  size_t_pair CellIndex;
+  size_t_pair CellIndex = { 0, 0 };
 
   // collision
   Sphere BoundingSphere;
@@ -91,33 +89,29 @@ public:
   vector<Vector3> RelCSPositions;
 
   collision_type CollisionType;
-  Real Penetration;
-  Real SurfaceTemperature;
-  Real Friction;
-  Real Weight;
-  Real Hardness;
-  Real Conductivity;
+  Real Penetration = 0;
+  Real SurfaceTemperature = 0;
+  Real Friction = 0;
+  Real Weight = 0;
+  Real Hardness = 0;
+  Real Conductivity = 0;
 
-  Real BallisticDmg;
-  Real HeatDmg;
-  Real EnergyDmg;
+  Real BallisticDmg = 0;
+  Real HeatDmg = 0;
+  Real EnergyDmg = 0;
 
 private:
   // speed and position
-  Vector3 Move = Vector3::ZERO;
-  Real angular_momentum;
-  Real corrected_velocity_scalar;
+  Real angular_momentum = 0;
+  Real corrected_velocity_scalar = 0;
 
   // need to recalculate from relative positions
-  bool CSInvalid;
-  bool BSInvalid;
+  bool CSInvalid = true;
+  bool BSInvalid = true;
 
-  bool out_of_bounds;
-
-  // collision system
-  bool registered;
-  // if it's been collided with this frame
-  bool collided;
+public:
+  bool OutOfBounds = false;
+  bool OnArena = false;
 
   // debug
 private:
@@ -133,11 +127,6 @@ private:
   bool DisplayCollisionDebug;
 };
 
-inline void Corpus::goOutOfBounds()
-{
-  out_of_bounds = true;
-}
-
 inline Vector2 Corpus::getXZ()
 {
   return Vector2(XYZ.x, XYZ.z);
@@ -150,23 +139,12 @@ inline size_t_pair Corpus::getCellIndex()
 
 inline void Corpus::move(Vector3 a_move)
 {
-  Move = a_move;
-  XYZ += Move;
-  Direction = Move;
+  XYZ += a_move;
+  Direction = a_move;
   Direction.normalise();
   invalidateSpheres();
 }
 
-inline Vector3 Corpus::getVelocity()
-{
-  return Move;
-}
-
-// orientation
-inline Quaternion Corpus::getOrientation()
-{
-  return Orientation;
-}
 
 inline void Corpus::setOrientation(Quaternion a_orientation)
 {

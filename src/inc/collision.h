@@ -32,7 +32,6 @@ public:
   void resolve(const Real a_dt);
 
   // resulting velocity after the collision
-  Vector3 getVelocity();
   Corpus* getCollidingObject();
   vector<usint> getCollisionSphereIndexes(size_t a_index);
   vector<usint> getAreasIndexes(size_t a_index);

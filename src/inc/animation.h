@@ -24,12 +24,12 @@ enum crusader { // for indexing arrays
 class Animation
 {
 public:
-  Animation(Ogre::SceneNode* a_scene_node);
-  ~Animation()
-  {
-  }
+  Animation();
+  ~Animation();
 
   void update(const Real a_dt);
+
+  void extractAnimations(Ogre::SceneNode* a_scene_node);
 
   // setting the animation speed - type is set automatically
   void walk(Real a_speed);
@@ -37,24 +37,23 @@ public:
   void turn(Radian a_turning_speed);
 
 private:
-  void extractAnimations(Ogre::SceneNode* a_scene_node);
   bool switchAnimations(Real a_time_to_add);
 
   // current status
-  bool stopped;
-  Real cycle_length;
-  Real rate;
-  animation::crusader current_animation;
-  animation::crusader target_animation;
-  Real switching_progress;
+  bool Stopped;
+  Real CycleLength;
+  Real Rate;
+  animation::crusader CurrentAnim;
+  animation::crusader TargetAnim;
+  Real SwitchingProgress;
 
   // animation data
-  vector<Ogre::AnimationState*> animations[num_of_animations];
-  Real movement_speeds[num_of_movement_modes];
-  Real movement_speed_limits[num_of_movement_modes];
-  Real switch_points[2];
-  Real stand_points[2];
-  // vector<Real> footsteps; // when the mech hits the ground TODO
+  vector<Ogre::AnimationState*> Animations[num_of_animations];
+  Real MovementSpeeds[num_of_movement_modes];
+  Real MovementSpeedLimits[num_of_movement_modes];
+  Real SwitchPoints[2];
+  Real StandPoints[2];
+  // vector<Real> Footsteps; // when the mech hits the ground TODO
 };
 
 #endif // ANIMATION_H

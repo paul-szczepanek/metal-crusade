@@ -6,17 +6,42 @@
 #include "game_controller.h"
 
 Unit::Unit(const string& a_unit_name,
-           Vector3       a_pos_xyz,
-           Quaternion    a_orientation)
+           Vector3       a_pos_xyz)
   : ArenaEntity(a_unit_name)
 {
   XYZ = a_pos_xyz;
-  Orientation = a_orientation;
+  Ground = new Corpus(this);
+  Ground->loadCollision("ground");
+  Ground->CollisionType = collision_type_blocking;
+  Ground->Weight = BLOCKING_WEIGHT;
+  updateGround();
 }
 
 Unit::~Unit()
 {
   clearFromTargets();
+  delete Ground;
+}
+
+Corpus* Unit::getGround()
+{
+  updateGround();
+  return Ground;
+}
+
+void Unit::updateGround()
+{
+  Ground->XYZ.x = XYZ.x;
+  Ground->XYZ.y = Game::Arena->getHeight(XYZ.x, XYZ.z) - 10;
+  Ground->XYZ.z = XYZ.z;
+  Ground->Penetration = 0;
+  Ground->SurfaceTemperature = 0;
+  Ground->Friction = 0.9;
+  Ground->Hardness = 0.1;
+  Ground->Conductivity = 0;
+  Ground->BallisticDmg = 0;
+  Ground->HeatDmg = 0;
+  Ground->EnergyDmg = 0;
 }
 
 /** @brief calculate the real target of the weapon and the angle it should fire at
@@ -174,4 +199,15 @@ void Unit::clearFromTargets()
     target->releaseAsTarget(this);
     target = NULL;
   }
+}
+
+// orientation
+Quaternion Unit::getDriveOrientation()
+{
+  return Quaternion::IDENTITY;
+}
+
+Vector3 Unit::getDriveDirection()
+{
+  return Vector3::ZERO;
 }

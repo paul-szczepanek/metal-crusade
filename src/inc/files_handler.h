@@ -15,6 +15,7 @@ const string RADAR_DIR = "design/radar/";
 const string UNIT_DIR = "unit/";
 const string TEXT_DIR = "text/";
 const string MODEL_DIR = "model/";
+const string COLLISION_DIR = "model/collision/";
 const string TERRAIN_DIR = "terrain/";
 const string EXT_TERRAIN = ".terrain";
 

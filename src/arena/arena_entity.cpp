@@ -44,3 +44,18 @@ ArenaEntity* ArenaEntity::getTarget()
 void ArenaEntity::clearFromTargets()
 {
 }
+
+Corpus* ArenaEntity::getGround()
+{
+  return NULL;
+}
+
+Vector3 ArenaEntity::getDirection()
+{
+  return Vector3::ZERO;
+}
+
+Quaternion ArenaEntity::getOrientation()
+{
+  return Quaternion::IDENTITY;
+}

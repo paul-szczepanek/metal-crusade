@@ -112,12 +112,7 @@ void GameArena::updateLights()
 Real GameArena::getHeight(Real a_x,
                           Real a_y)
 {
-  Real terrain_height = terrain->getHeight(a_x, a_y);
-
-  // currently you can only walk on terrain but in the future this is where extra checks will
-  // allow to walk on structures like bridges
-
-  return terrain_height;
+  return TerrainData->getHeight(a_x, a_y);
 }
 
 /** @brief loads a map when you enter a location and populates it with stuff
@@ -129,12 +124,12 @@ int GameArena::loadArena(const string& arena_name)
   gravity = 10; // m/s^2
 
   // create the terrain
-  terrain = TerrainGenerator::generateTerrain("test");
+  TerrainData = TerrainGenerator::generateTerrain("test");
 
   // todo: this might go the other way around, so that the terrain adapts to the arena size
   // size of the map in metres
-  scene_size_w = terrain->size_w * metres_per_pixel;
-  scene_size_h = terrain->size_h * metres_per_pixel;
+  scene_size_w = TerrainData->size_w * metres_per_pixel;
+  scene_size_h = TerrainData->size_h * metres_per_pixel;
 
   // prepare the cells
   partitionArena();
@@ -169,7 +164,7 @@ int GameArena::loadArena(const string& arena_name)
   Game::Building->spawnSceneryBuidling(300, 160, "building_test_02");
 
   // fake game startup from code - ought to be read from file
-  Crusader* player_unit = Game::Unit->spawnCrusader(Vector3(380, 0, 380), "base_husar_cavalry");
+  Crusader* player_unit = Game::Unit->spawnCrusader(Vector3(60, 0, 60), "base_husar_cavalry");
 
   player_unit->assignController(Game::getGameController(0));
 
@@ -178,7 +173,7 @@ int GameArena::loadArena(const string& arena_name)
 
   // create the hud according to the unit you're in - HUD NEEDS THE CONTROLLER to be assigned!
   //Game::hud->loadHud(static_cast<Unit*>(player_unit));
-
+/*
   // create ally
   Crusader* ally_unit = Game::Unit->spawnCrusader(Vector3(340, 0, 300),
                                                   "base_husar_cavalry");
@@ -210,7 +205,7 @@ int GameArena::loadArena(const string& arena_name)
   Game::AI->activateUnit(enemy_unit4, enemy_formation)->setEnemy(ally_unit);
   Game::AI->activateUnit(enemy_unit5, enemy_formation)->setEnemy(player_unit);
   Game::AI->activateUnit(enemy_unit6, enemy_formation)->setEnemy(ally_unit);
-
+*/
   // and tell the camera to follow the players unit
   Game::Camera->follow(player_unit);
 
@@ -231,7 +226,7 @@ void GameArena::partitionArena()
   num_of_arena_cells_h = scene_size_h / size_of_arena_cell;
 
   // set size for the cells holding the object on the map
-  corpus_cells = vector<vector<list<Corpus*> > >(num_of_arena_cells_w,
+  CorpusCells = vector<vector<list<Corpus*> > >(num_of_arena_cells_w,
                                                  vector<list<Corpus*> >(num_of_arena_cells_h));
 }
 
@@ -246,8 +241,8 @@ void GameArena::createTerrainModel()
   const usint lod_bias = 0;
   const usint step = 1 << lod_bias;
 
-  const size_t texture_size_w = terrain->size_w;
-  const size_t texture_size_h = terrain->size_h;
+  const size_t texture_size_w = TerrainData->size_w;
+  const size_t texture_size_h = TerrainData->size_h;
 
   // calculate number of terrain pages
   const usint num_of_pages_w = texture_size_w / page_size;
@@ -315,9 +310,9 @@ void GameArena::createTerrainModel()
           y[3] = (origin_y + j);
 
           for (i_coords = 0; i_coords < 4; ++i_coords) {
-            angle[i_coords] = terrain->getAngle(x[i_coords] % texture_size_w,
+            angle[i_coords] = TerrainData->getAngle(x[i_coords] % texture_size_w,
                                                 y[i_coords] % texture_size_h);
-            height[i_coords] = terrain->getHeight(x[i_coords] % texture_size_w,
+            height[i_coords] = TerrainData->getHeight(x[i_coords] % texture_size_w,
                                                   y[i_coords] % texture_size_h);
           }
 
@@ -447,39 +442,70 @@ void GameArena::getCellIndexesWithinRadius(const size_t_pair    a_index,
   }
 }
 
+void GameArena::deregisterObject(Corpus* a_thing)
+{
+  a_thing->OwnerEntity = NULL;
+  if (a_thing->OnArena) {
+    a_thing->OnArena = false;
+    removeCorpusFromCell(a_thing);
+  }
+}
+
+void GameArena::registerObject(Corpus* a_thing)
+{
+  if (!a_thing->OnArena) {
+    a_thing->OnArena = true;
+    a_thing->CellIndex = getCellIndex(a_thing->XYZ.x, a_thing->XYZ.z);
+    insertCorpusIntoCell(a_thing);
+  }
+}
+
+void GameArena::removeCorpusFromCell(Corpus* a_thing)
+{
+  const size_t_pair& cell_index = a_thing->CellIndex;
+
+  // remove the old cell
+  CorpusCells[cell_index.first][cell_index.second].remove(a_thing);
+
+  // if no objects left remove from the list of live cells
+  if (CorpusCells[cell_index.first][cell_index.second].size() == 0) {
+    LiveCorpusCells.remove(&CorpusCells[cell_index.first][cell_index.second]);
+  }
+}
+
+void GameArena::insertCorpusIntoCell(Corpus* a_thing)
+{
+  const size_t_pair& cell_index = a_thing->CellIndex;
+  // add to the new cell
+  CorpusCells[cell_index.first][cell_index.second].push_back(a_thing);
+
+  // if it's the first object inset the cell into the list of live cells
+  if (CorpusCells[cell_index.first][cell_index.second].size() == 1) {
+    LiveCorpusCells.push_back(&CorpusCells[cell_index.first][cell_index.second]);
+  }
+}
+
 /** @brief moves the object's pointer to the new cell if needed
  */
 bool GameArena::updateCellIndex(Corpus* a_thing)
 {
   bool cell_changed = false;
-  // if it's not within the limits of the arena rectiify the position
+
   if (isOutOfBounds(a_thing->XYZ)) {
-    a_thing->goOutOfBounds();
+    // if it's not within the limits of the arena the position has just been fixed
+    // so it's safe to continue to get indexes
+    a_thing->OutOfBounds = true;
   }
+
   // get the cell index based on position
-  size_t_pair new_cell_index = getCellIndex(a_thing->XYZ.x, a_thing->XYZ.z);
-  const size_t_pair cell_index = a_thing->CellIndex;
+  const size_t_pair new_cell_index = getCellIndex(a_thing->XYZ.x, a_thing->XYZ.z);
 
-  if (cell_index != new_cell_index) {
-    // remove the old cell
-    corpus_cells[cell_index.first][cell_index.second].remove(a_thing);
-
-    // if no objects left remove from the list of live cells
-    if (corpus_cells[cell_index.first][cell_index.second].size() == 0) {
-      LiveCorpusCells.remove(&corpus_cells[cell_index.first][cell_index.second]);
-    }
-
+  if (a_thing->CellIndex != new_cell_index) {
+    cell_changed = true;
+    removeCorpusFromCell(a_thing);
     // set the new index
     a_thing->CellIndex = new_cell_index;
-
-    // add to the new cell
-    corpus_cells[cell_index.first][cell_index.second].push_back(a_thing);
-
-    // if it's the first object inset the cell into the list of live cells
-    if (corpus_cells[cell_index.first][cell_index.second].size() == 1) {
-      LiveCorpusCells.push_back(&corpus_cells[cell_index.first][cell_index.second]);
-      cell_changed = true;
-    }
+    insertCorpusIntoCell(a_thing);
   }
 
   return cell_changed;

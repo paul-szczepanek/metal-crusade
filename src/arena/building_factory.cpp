@@ -7,6 +7,7 @@
 #include "query_mask.h"
 #include "arena_entity.h"
 #include "collision_handler.h"
+#include "corpus_manager.h"
 
 BuildingFactory::BuildingFactory()
 {
@@ -53,8 +54,8 @@ ArenaEntity* BuildingFactory::spawnSceneryBuidling(Vector3       a_pos_xyz,
   new_corpus->setOrientation(a_orientation);
   new_corpus->setOwner(entity);
   new_corpus->SurfaceTemperature = Game::Arena->getAmbientTemperature(a_pos_xyz);
-  new_corpus->loadCollisionSpheres(a_name);
-  Game::Collision->registerObject(new_corpus);
+  new_corpus->loadCollision(a_name);
+  Game::Corpus->registerStaticObject(new_corpus);
 
   // put the structure on the list
   Corpuses.push_back(new_corpus);

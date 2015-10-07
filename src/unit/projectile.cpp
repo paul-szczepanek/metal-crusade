@@ -3,7 +3,7 @@
 #include "projectile.h"
 #include "game.h"
 #include "game_arena.h"
-#include "collision_handler.h"
+#include "corpus_manager.h"
 #include "particle_manager.h"
 #include "collision.h"
 #include "weapon.h"
@@ -86,7 +86,6 @@ void Projectile::explode()
 bool Projectile::update(const Real a_dt)
 {
   if (GracePeriod < 0) {
-    Game::Collision->registerObject(Bullet);
     Bullet->CollisionType = collision_type_impact;
   }
 
@@ -137,8 +136,7 @@ bool Projectile::update(const Real a_dt)
   // if out of bounds destroy
   if (Lifetime < 0) {
     OwnerWeapon = NULL;
-    Bullet->OwnerEntity = NULL;
-    Game::Collision->deregisterObject(Bullet);
+    Game::Corpus->deregisterObject(Bullet);
     Game::destroyModel(Bullet->SceneNode);
     Bullet->SceneNode = NULL;
     return false;

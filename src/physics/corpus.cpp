@@ -6,23 +6,14 @@
 #include "files_handler.h"
 #include "arena_entity.h"
 #include "game_arena.h"
-#include "collision_handler.h"
+#include "corpus_manager.h"
 #include "collision.h"
 
 Corpus::Corpus(ArenaEntity*     a_owner,
                Ogre::SceneNode* a_scene_node)
   : OwnerEntity(a_owner),
   SceneNode(a_scene_node),
-  BSInvalid(true),
-  CSInvalid(true),
-  CollisionType(collision_type_blocking),
-  Penetration(0),
-  Friction(0.5),
-  Hardness(1),
-  Conductivity(1),
-  CellIndex(make_pair(0, 0)),
-  out_of_bounds(false),
-  DisplayCollisionDebug(false)
+  CollisionType(collision_type_blocking)
 {
 }
 
@@ -45,8 +36,7 @@ Corpus::~Corpus()
     Game::destroyModel(SceneNode);
   }
 
-  Game::Collision->deregisterObject(this);
-  Game::Arena->purgeCellIndex(CellIndex, this);
+  Game::Corpus->deregisterObject(this);
 }
 
 /** @brief get bounding sphere and update it's position
@@ -79,7 +69,7 @@ void Corpus::pruneCollisionSpheres(const Sphere&       a_sphere,
 
 /** @brief loads collision spheres from a file based on mesh name
  */
-void Corpus::loadCollisionSpheres(const string& a_collision_name)
+void Corpus::loadCollision(const string& a_collision_name)
 {
   // TEMP!!! fake, only works for crusaders for now
   if (a_collision_name == "bullet") {
@@ -89,12 +79,19 @@ void Corpus::loadCollisionSpheres(const string& a_collision_name)
     RelCSPositions.push_back(Vector3::ZERO);
     CSAreas.push_back(0);
     return;
+  } else if (a_collision_name == "ground") {
+    RelBSPosition = Vector3::ZERO;
+    BoundingSphere = Sphere(RelBSPosition, 10);
+    CollisionSpheres.push_back(Sphere(RelBSPosition, 10));
+    RelCSPositions.push_back(Vector3::ZERO);
+    CSAreas.push_back(0);
+    return;
   }
 
-  string a_filename = a_collision_name + "/" + a_collision_name + "_collision";
+  string a_filename = a_collision_name + "_collision";
 
   map<string, string> pairs;
-  assert(FilesHandler::getPairs(a_filename, MODEL_DIR, pairs));
+  assert(FilesHandler::getPairs(a_filename, COLLISION_DIR, pairs));
 
   // bounding sphere
   vector<string> bs_sphere_string;
@@ -147,7 +144,7 @@ void Corpus::loadCollisionSpheres(const string& a_collision_name)
   RelBSPosition = BoundingSphere.Centre;
 
   // debug
-  // displayCollision(true);
+  displayCollision(true);
 }
 
 /** @brief debug spheres create and destroy
@@ -242,15 +239,16 @@ bool Corpus::revertMove(Vector3 a_move)
  */
 bool Corpus::update(const Real a_dt)
 {
-  updateCellIndex();
-  invalidateSpheres();
+  //if (OldVelocity != Vector3::ZERO) {
+    if (OnArena) {
+      updateCellIndex();
+      invalidateSpheres();
+    }
 
-  // chain the corpus update
-  int return_code = 0;
-
-  // update the scene node
-  SceneNode->setPosition(XYZ);
-  SceneNode->setOrientation(Orientation);
+    // update the scene node
+    SceneNode->setPosition(XYZ);
+    SceneNode->setOrientation(Orientation);
+  //}
 
   // temp debug
   if (DisplayCollisionDebug) {
@@ -260,7 +258,7 @@ bool Corpus::update(const Real a_dt)
   return true;
 }
 
-/** @brief puts the object on the arean and in the correct array and in the correct cell index
+/** @brief puts the object on the arena and in the correct array and in the correct cell index
  * updates the cell index and position if out of bounds
  */
 void Corpus::updateCellIndex()

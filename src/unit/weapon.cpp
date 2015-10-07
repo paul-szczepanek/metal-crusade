@@ -94,7 +94,7 @@ void Weapon::update(const Real a_dt)
                     weapon_design.multi_fire_timout;
 
       // get the orientation of the torso for calulating the position of the projectile spawn
-      Quaternion orientation = Owner->getLookingOrientation();
+      Quaternion orientation = Owner->getOrientation();
       // get current position of the weapon
       Vector3 weapon_position = Owner->getXYZ() + orientation * XYZ;
       // get the ballistic angle to hit the target

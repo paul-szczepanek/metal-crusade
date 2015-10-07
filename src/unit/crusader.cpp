@@ -5,7 +5,7 @@
 #include "game_arena.h"
 //#include "hud.h"
 #include "files_handler.h"
-#include "collision_handler.h"
+#include "corpus_manager.h"
 #include "particle_manager.h"
 #include "particle_effect_step_dust.h"
 #include "weapon.h"
@@ -63,9 +63,9 @@ void Crusader::createModel()
 
   // create root node (drive) and attach chassis node as a child
   Ogre::SceneNode* drive_node = Game::Scene->getRootSceneNode()->createChildSceneNode();
-  Ogre::SceneNode* torso_node = drive_node->createChildSceneNode();
-  Ogre::SceneNode* arm_right_node = torso_node->createChildSceneNode(); // attach arms to chassis
-  Ogre::SceneNode* arm_left_node = torso_node->createChildSceneNode();
+  Ogre::SceneNode* torso_node = Game::Scene->getRootSceneNode()->createChildSceneNode();
+  Ogre::SceneNode* arm_right_node = Game::Scene->getRootSceneNode()->createChildSceneNode();
+  Ogre::SceneNode* arm_left_node = Game::Scene->getRootSceneNode()->createChildSceneNode();
 
   // attach meshes
   drive_node->attachObject(drive_mesh);
@@ -93,12 +93,24 @@ void Crusader::createModel()
   }
 
   // get animations
-  CrusaderAnim = new Animation(drive_node);
+  CrusaderAnim = new Animation();
+  // get animation states from all the entities in the crusader
+  CrusaderAnim->extractAnimations(drive_node);
+  CrusaderAnim->extractAnimations(torso_node);
+  CrusaderAnim->extractAnimations(arm_right_node);
+  CrusaderAnim->extractAnimations(arm_left_node);
 
   Parts[crusader_corpus::torso] = new Corpus(this, torso_node);
   Parts[crusader_corpus::drive] = new Corpus(this, drive_node);
   Parts[crusader_corpus::arm_r] = new Corpus(this, arm_right_node);
   Parts[crusader_corpus::arm_l] = new Corpus(this, arm_left_node);
+
+  for (auto p : Parts) {
+    Game::Corpus->registerDynamicObject(p);
+  }
+
+  Parts[crusader_corpus::torso]->loadCollision(ChassisDesign.mesh);
+  Parts[crusader_corpus::drive]->loadCollision(ChassisDesign.mesh + "_drive");
 
   // assign dust emmitter for walking on surfaces producing particles
   Ogre::SceneNode* step_dust_node = drive_node->createChildSceneNode();
@@ -117,22 +129,17 @@ Crusader::Crusader(const string&      a_unit_name,
                    crusader_engine_t  a_engine,
                    crusader_drive_t   a_drive,
                    crusader_chassis_t a_chassis)
-  : Unit(a_unit_name, a_pos_xyz, a_orientation),
+  : Unit(a_unit_name, a_pos_xyz),
   CrusaderDesign(a_design),
   EngineDesign(a_engine),
   DriveDesign(a_drive),
   ChassisDesign(a_chassis)
 {
   CoreIntegrity = 1.0;
-  // set temperature to ambient temp
-  EngineTemperature = CoreTemperature = Game::Arena->getAmbientTemperature(a_pos_xyz);
 
   // resize vectors to fit the num of parts and areas
   StructureIntegrity.resize(ChassisDesign.num_of_parts, 0);
   ArmourIntegrity.resize(ChassisDesign.num_of_areas, 0);
-
-  TorsoOrientation = Orientation; // at start align torso with drive
-  TorsoDirection = Orientation * TorsoOrientation * Vector3(0, 0, 1);
 
   createModel();
   // get positions of panels and translate to weapon positions
@@ -177,6 +184,19 @@ Crusader::Crusader(const string&      a_unit_name,
 
   // after loading all the weapons etc. recalculate weight
   recalculateWeight();
+
+  // terrain clamping
+  XYZ.y = CrusaderHeight + Game::Arena->getHeight(XYZ.x, XYZ.z);
+  for (auto p : Parts) {
+    p->XYZ = XYZ;
+  }
+
+  // at start align torso with drive
+  setOrientation(a_orientation);
+  setDriveOrientation(a_orientation);
+
+  // set temperature to ambient temp
+  EngineTemperature = CoreTemperature = Game::Arena->getAmbientTemperature(XYZ);
 
   /*
      // create the radar
@@ -288,8 +308,9 @@ void Crusader::moveCrusader(const Real a_dt)
   Real traction = ground_traction * DriveDesign.traction;
 
   // correct velocity for Direction
-  corrected_velocity_scalar = Velocity.dotProduct(Direction);
-  Vector3 corrected_velocity = corrected_velocity_scalar * Direction;
+  const Vector3& direction = getDriveDirection();
+  corrected_velocity_scalar = Velocity.dotProduct(direction);
+  Vector3 corrected_velocity = corrected_velocity_scalar * direction;
   Velocity = (1 - traction) * Velocity + traction * corrected_velocity;
 
   // animate the walking TODO: only take the walking velocity and ignore sliding
@@ -304,8 +325,8 @@ void Crusader::moveCrusader(const Real a_dt)
 
   // temp! get the gradient of the slope
   Real height = Game::Arena->getHeight(XYZ.x, XYZ.z);
-  Real height_ahead = Game::Arena->getHeight(XYZ.x + Direction.x,
-                                             XYZ.z + Direction.z);
+  Real height_ahead = Game::Arena->getHeight(XYZ.x + direction.x,
+                                             XYZ.z + direction.z);
   Real gradient = height_ahead - height;
   gradient *= gradient;
   if (gradient > 1) { gradient = 0; }
@@ -315,7 +336,7 @@ void Crusader::moveCrusader(const Real a_dt)
 
   // difference_of_velocity used to decide whether or not to speed up or slow down
   // takes into account the Direction as well, init with current velocity
-  Real difference_of_velocity = -Velocity.dotProduct(Direction);
+  Real difference_of_velocity = -Velocity.dotProduct(direction);
 
   // now decide depending on Direction which values to use
   if (corrected_velocity_scalar > 0) { // use resistance for fwd or reverse depending on velocity
@@ -356,25 +377,28 @@ void Crusader::moveCrusader(const Real a_dt)
     }
   }
 
-  Vector3 acceleration = traction * acceleration_scalar * Direction;
+  Vector3 acceleration = traction * acceleration_scalar * direction;
 
   // TEMP!!! quick fix for slowing down on slopes
-  acceleration -= Direction * gradient * corrected_velocity_scalar;
+  acceleration -= direction * gradient * corrected_velocity_scalar;
 
   // new velocity and position
   Velocity = Velocity - Velocity * kinematic_resistance + acceleration * a_dt;
-  XYZ += Velocity * a_dt;
+  //XYZ = Parts[crusader_corpus::drive]->XYZ;
 
   // terrain clamping
-  XYZ.y = CrusaderHeight + Game::Arena->getHeight(XYZ.x, XYZ.z);
+  //XYZ.y = CrusaderHeight + Game::Arena->getHeight(XYZ.x, XYZ.z) + 100;
+  for (auto p : Parts) {
+    //p->XYZ = XYZ;
+  }
 
   // get where the drive is turning
   Radian turning_speed = Controller->getTurnSpeed() * -DriveDesign.turn_speed;
 
   // new Orientation
-  Orientation = Quaternion((turning_speed * a_dt), Vector3::UNIT_Y) * Orientation;
-  // update Direction vector
-  Direction = Orientation * Vector3::UNIT_Z;
+  Quaternion orientation_change((turning_speed * a_dt), Vector3::UNIT_Y);
+  setDriveOrientation(orientation_change * getDriveOrientation());
+  setOrientation(orientation_change * getOrientation());
 
   // hook it up to animation
   CrusaderAnim->turn(turning_speed);
@@ -397,10 +421,11 @@ void Crusader::moveTorso(const Real a_dt)
     target_direction.normalise();
 
     // drive angle in world <-pi,pi>
-    Vector2 planar_direction(Direction.x, Direction.z);
+    const Vector3& drive_direction = getDriveDirection();
+    Vector2 planar_direction(drive_direction.x, drive_direction.z);
     Real angle_in_degrees = acos(planar_direction.dotProduct(Vector2::UNIT_Y));
     Radian drive_angle = Radian(angle_in_degrees);
-    if (Direction.x < 0) {
+    if (drive_direction.x < 0) {
       drive_angle = -drive_angle;
     }
 
@@ -412,10 +437,11 @@ void Crusader::moveTorso(const Real a_dt)
     }
 
     // torso angle in world
-    planar_direction = Vector2(TorsoDirection.x, TorsoDirection.z);
+    const Vector3& direction = getDirection();
+    planar_direction = Vector2(direction.x, direction.z);
     angle_in_degrees = acos(planar_direction.dotProduct(Vector2::UNIT_Y));
     Radian torso_angle = Radian(angle_in_degrees);
-    if (TorsoDirection.x < 0) {
+    if (direction.x < 0) {
       torso_angle = -torso_angle;
     }
 
@@ -448,14 +474,9 @@ void Crusader::moveTorso(const Real a_dt)
     }
 
     // Orientation after turn
-    TorsoOrientation = Quaternion(angle_dt, Vector3::UNIT_Y) * TorsoOrientation;
-
-    // turn the torso node
-    Parts[crusader_corpus::torso]->setOrientation(TorsoOrientation);
+    Quaternion orientation_change(angle_dt, Vector3::UNIT_Y);
+    setOrientation(orientation_change * getOrientation());
   }
-
-  // update torso Direction even if you're not turning because the drive might be turning
-  TorsoDirection = Orientation * TorsoOrientation * Vector3::UNIT_Z;
 }
 
 /** damage suffered from G forces
@@ -844,4 +865,41 @@ bool Crusader::update(const Real a_dt)
   }
 
   return true;
+}
+
+Vector3 Crusader::getDirection()
+{
+  return Parts[crusader_corpus::torso]->Direction;
+}
+
+Vector3 Crusader::getDriveDirection()
+{
+  return Parts[crusader_corpus::drive]->Direction;
+}
+
+Quaternion Crusader::getOrientation()
+{
+  return Parts[crusader_corpus::torso]->Orientation;
+}
+
+Quaternion Crusader::getDriveOrientation()
+{
+  return Parts[crusader_corpus::drive]->Orientation;
+}
+
+void Crusader::setOrientation(Quaternion a_orientation)
+{
+  const Vector3 direction = a_orientation * Vector3(0, 0, 1);
+  Parts[crusader_corpus::torso]->Orientation = a_orientation;
+  Parts[crusader_corpus::torso]->Direction = direction;
+  Parts[crusader_corpus::arm_l]->Orientation = a_orientation;
+  Parts[crusader_corpus::arm_l]->Direction = direction;
+  Parts[crusader_corpus::arm_r]->Orientation = a_orientation;
+  Parts[crusader_corpus::arm_r]->Direction = direction;
+}
+
+void Crusader::setDriveOrientation(Quaternion a_orientation)
+{
+  Parts[crusader_corpus::drive]->Orientation = a_orientation;
+  Parts[crusader_corpus::drive]->Direction = a_orientation * Vector3(0, 0, 1);
 }

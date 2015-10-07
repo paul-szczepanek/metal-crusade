@@ -89,22 +89,22 @@ public:
 
 private:
 
-  Real inverse_scale;
-  vector<Real> terrain_height;
-  vector<terrain::types> terrain_type;
+  Real InverseScale;
+  vector<Real> Height;
+  vector<terrain::types> TileTypes;
 };
 
 inline Real Terrain::getHeight(size_t a_x,
                                size_t a_y)
 {
-  return terrain_height[a_x + a_y * size_w];
+  return Height[a_x + a_y * size_w];
 }
 
 inline void Terrain::setHeight(size_t a_x,
                                size_t a_y,
                                Real   a_height)
 {
-  terrain_height[a_x + a_y * size_w] = a_height;
+  Height[a_x + a_y * size_w] = a_height;
 }
 
 inline real_pair Terrain::getAngle(Real a_x,
@@ -121,18 +121,18 @@ inline Real Terrain::getHeight(Real a_x,
                                Real a_y)
 {
   // translate world coords into texture coords
-  Real texture_x = a_x * inverse_scale;
-  Real texture_y = a_y * inverse_scale;
+  Real texture_x = a_x * InverseScale;
+  Real texture_y = a_y * InverseScale;
 
   // get upper left corner index of of the sampled square
   size_t i = texture_x;
   size_t j = texture_y;
 
   // sample four heights
-  Real sample1 = terrain_height[i + j * size_w];
-  Real sample2 = terrain_height[i + 1 + j * size_w];
-  Real sample3 = terrain_height[i + (j + 1) * size_w];
-  Real sample4 = terrain_height[i + 1 + (j + 1) * size_w];
+  Real sample1 = Height[i + j * size_w];
+  Real sample2 = Height[i + 1 + j * size_w];
+  Real sample3 = Height[i + (j + 1) * size_w];
+  Real sample4 = Height[i + 1 + (j + 1) * size_w];
 
   // get x and y in the 1 by 1 pixel size cell
   Real weight_x = texture_x - i;

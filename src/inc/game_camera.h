@@ -25,7 +25,6 @@ public:
               int a_height);
 
   Ogre::Camera* getOgreCamera();
-  Quaternion getOrientation();
 
 public:
   Real CameraDistance = DEFAULT_CAMERA_DISTANCE;
@@ -48,11 +47,6 @@ private:
 inline Ogre::Camera* GameCamera::getOgreCamera()
 {
   return OgreCamera;
-}
-
-inline Quaternion GameCamera::getOrientation()
-{
-  return OgreCamera->getOrientation();
 }
 
 #endif // CAMERA_H

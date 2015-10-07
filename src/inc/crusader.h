@@ -43,9 +43,12 @@ public:
   bool handleCollision(Collision* a_collision);
 
   // directions
-  Vector3 getDirection();
-  Vector3 getDriveDirection();
-  Quaternion getLookingOrientation();
+  virtual Vector3 getDriveDirection();
+  virtual Quaternion getDriveOrientation();
+  virtual Vector3 getDirection();
+  virtual Quaternion getOrientation();
+  virtual void setDriveOrientation(Quaternion);
+  virtual void setOrientation(Quaternion);
 
   // hud
   //string getHudName();
@@ -89,9 +92,6 @@ private:
 private:
   // moving
   Vector3 Velocity = Vector3::ZERO;
-  Vector3 Direction = Vector3::ZERO;
-  Vector3 TorsoDirection = Vector3::ZERO;
-  Quaternion TorsoOrientation;
   Real Throttle = 0;
   Real TotalWieght = 0;
   Real AngularMomentum = 0;
@@ -158,21 +158,6 @@ inline Real Crusader::getThrottle()
 inline Real Crusader::getDamage(usint a_diagram_element)
 {
   return ArmourIntegrity[a_diagram_element] / CrusaderDesign.armour_placement[a_diagram_element];
-}
-
-inline Vector3 Crusader::getDirection()
-{
-  return TorsoDirection;
-}
-
-inline Vector3 Crusader::getDriveDirection()
-{
-  return Direction;
-}
-
-inline Quaternion Crusader::getLookingOrientation()
-{
-  return Orientation * TorsoOrientation;
 }
 
 // hud

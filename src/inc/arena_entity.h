@@ -15,8 +15,13 @@ public:
   ArenaEntity();
   ArenaEntity(const string& a_name);
   virtual ~ArenaEntity();
+
   virtual Vector3 getXYZ();
-  virtual void setPosition(const Vector3& a_pos);
+  virtual void setXYZ(const Vector3& a_pos);
+
+  virtual Vector3 getDirection();
+  virtual Quaternion getOrientation();
+
   virtual bool update(const Real a_dt);
 
   void setName(const string& a_name);
@@ -29,11 +34,11 @@ public:
                           bool         a_forced = false);
   virtual ArenaEntity* getTarget();
   virtual void clearFromTargets();
+  virtual Corpus* getGround();
 
 public:
   string Name;
   Vector3 XYZ = Vector3::ZERO;
-  Quaternion Orientation;
 };
 
 inline void ArenaEntity::setName(const string& a_name)
@@ -51,7 +56,7 @@ inline Vector3 ArenaEntity::getXYZ()
   return XYZ;
 }
 
-inline void ArenaEntity::setPosition(const Vector3& a_pos)
+inline void ArenaEntity::setXYZ(const Vector3& a_pos)
 {
   XYZ = a_pos;
 }

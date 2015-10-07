@@ -6,6 +6,8 @@
 #include "weapon.h"
 #include "query_mask.h"
 #include "unit.h"
+#include "game_arena.h"
+#include "corpus_manager.h"
 
 ProjectileFactory::ProjectileFactory()
   : Projectiles(32),
@@ -48,7 +50,7 @@ Corpus* ProjectileFactory::getFreeCorpus()
 {
   for (size_t i = 0; i < Corpuses.size(); ++i) {
     lastCorpusIdx = (lastCorpusIdx + 1) % Corpuses.size();
-    if (Corpuses[lastCorpusIdx].OwnerEntity == NULL) {
+    if (!Corpuses[lastCorpusIdx].OnArena) {
       break;
     }
 
@@ -66,8 +68,8 @@ Corpus* ProjectileFactory::getFreeCorpus()
 /** @brief creates projectiles and adds them to a list
  */
 Projectile* ProjectileFactory::spawnProjectile(Vector3    a_pos_xyz,
-                                              Quaternion a_orientation,
-                                              Weapon*    a_weapon)
+                                               Quaternion a_orientation,
+                                               Weapon*    a_weapon)
 {
   string mesh = "bullet"; // temp
 
@@ -87,7 +89,9 @@ Projectile* ProjectileFactory::spawnProjectile(Vector3    a_pos_xyz,
   new_corpus->setSceneNode(projectile_node);
   new_corpus->XYZ = a_pos_xyz;
   new_corpus->setOrientation(a_orientation);
-  new_corpus->loadCollisionSpheres(mesh);
+  new_corpus->loadCollision(mesh);
+  new_corpus->CollisionType = collision_type_none;
+  Game::Corpus->registerDynamicObject(new_corpus);
 
   Projectile* new_projectile = getFreeProjectile();
   new_projectile->reset(a_weapon, new_corpus);

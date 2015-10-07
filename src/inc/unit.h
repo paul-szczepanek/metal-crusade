@@ -17,14 +17,15 @@ class Unit
 {
 public:
   Unit(const string& a_unit_name,
-       Vector3       a_pos_xyz,
-       Quaternion    a_orientation);
+       Vector3       a_pos_xyz);
   virtual ~Unit();
 
   // orientation
-  virtual Quaternion getMovingOrientation();
-  virtual Quaternion getLookingOrientation();
-  virtual Vector3 getDirection();
+  virtual Vector3 getDriveDirection();
+  virtual Quaternion getDriveOrientation();
+
+  void updateGround();
+  virtual Corpus* getGround();
 
   // heat
   // yeah, I know heat is not the same as temp, this is a simplification
@@ -92,7 +93,8 @@ protected:
 
   Real CoreTemperature = 0;
   Real TotalWeight = 0;
-  Vector3 Direction = Vector3::ZERO;
+
+  Corpus* Ground;
 
   vector<Weapon*> weapons;
 
@@ -105,11 +107,6 @@ protected:
   GameController* Controller = NULL;
   Formation* UnitFormation = NULL;
 };
-
-inline Vector3 Unit::getDirection()
-{
-  return Direction;
-}
 
 inline void Unit::setFormation(Formation* a_formation)
 {
@@ -136,17 +133,6 @@ inline Real Unit::getSpeed()
 inline ArenaEntity* Unit::getTarget()
 {
   return target;
-}
-
-// orientation
-inline Quaternion Unit::getMovingOrientation()
-{
-  return Orientation;
-}
-
-inline Quaternion Unit::getLookingOrientation()
-{
-  return Orientation;
 }
 
 // heat

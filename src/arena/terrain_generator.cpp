@@ -13,26 +13,26 @@ const Real effective_height = Real(block_size) / Real(inner_block_size);
 
 /** @brief this gets the deifinition of a premade map of tiles
  */
-bool TerrainGenerator::getTerrain(const string&                 filename,
-                                  vector<usint>&                block_height,
-                                  vector<terrain::block_types>& block_type,
-                                  size_t&                       width,
-                                  size_t&                       height)
+bool TerrainGenerator::getTerrain(const string&                 a_filename,
+                                  vector<usint>&                a_block_height,
+                                  vector<terrain::block_types>& a_block_type,
+                                  size_t&                       a_width,
+                                  size_t&                       a_height)
 {
   // prepare map to read tile data into
   map<string, string> pairs;
-  if (!FilesHandler::getPairs(filename + EXT_TERRAIN, TERRAIN_DIR, pairs)) { // insert data from
+  if (!FilesHandler::getPairs(a_filename + EXT_TERRAIN, TERRAIN_DIR, pairs)) { // insert data from
     // file into
     // pairs
     return false;
   }
 
-  width = intoInt(pairs["width"]);
-  height = intoInt(pairs["height"]);
+  a_width = intoInt(pairs["width"]);
+  a_height = intoInt(pairs["height"]);
 
   vector<char> tile_type_codes;
 
-  FilesHandler::getUsintDigitArray(block_height, pairs["terrain_height"]);
+  FilesHandler::getUsintDigitArray(a_block_height, pairs["terrain_height"]);
   FilesHandler::getCharArray(tile_type_codes, pairs["terrain_type"]);
 
   // converting a character code array into an terrain tile type enum array
@@ -53,7 +53,7 @@ bool TerrainGenerator::getTerrain(const string&                 filename,
       type = terrain::block_river;
     }
 
-    block_type.push_back(type);
+    a_block_type.push_back(type);
   }
 
   return true;
@@ -191,6 +191,8 @@ Terrain* TerrainGenerator::generateTerrain(const string& terrain_name)
           }
         }
       }
+
+      delete tile;
 
     }
   }

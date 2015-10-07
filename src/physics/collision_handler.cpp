@@ -2,6 +2,7 @@
 
 #include "game.h"
 #include "game_arena.h"
+#include "arena_entity.h"
 #include "collision_handler.h"
 #include "collision.h"
 #include "corpus.h"
@@ -50,7 +51,12 @@ void CollisionHandler::updatePotentialCollisions()
   PossibleCollisions.clear();
 
   for (auto c1 : RegisteredObjects) {
+    if (c1->CollisionType == collision_type_none) {
+      continue;
+    }
+
     c1->updateBoundingSphere();
+
     // get adjacent cell indexes
     vector<size_t_pair> cell_indexes;
     Game::Arena->getCellIndexesWithinRadius(c1->getCellIndex(), cell_indexes);
@@ -60,7 +66,12 @@ void CollisionHandler::updatePotentialCollisions()
       list<Corpus*>& corpus_list = Game::Arena->getCorpusCell(ci);
 
       for (auto c2 : corpus_list) {
+        if (c2->CollisionType == collision_type_none) {
+          continue;
+        }
+
         c2->updateBoundingSphere();
+
         // check bounding spheres
         if (c1->BoundingSphere.intersects(c2->BoundingSphere)) {
           // validate whether the collision is possible
@@ -69,6 +80,16 @@ void CollisionHandler::updatePotentialCollisions()
             collision_pair cp = c1 < c2 ? collision_pair(c1, c2) : collision_pair(c2, c1);
             PossibleCollisions.push_back(cp);
           }
+        }
+      }
+    }
+
+    // collision with the ground
+    if (c1->OwnerEntity) {
+      Corpus* c2 = c1->OwnerEntity->getGround();
+      if (c2) {
+        if (c1->BoundingSphere.intersects(c2->BoundingSphere)) {
+          PossibleCollisions.push_back(collision_pair(c1, c2));
         }
       }
     }

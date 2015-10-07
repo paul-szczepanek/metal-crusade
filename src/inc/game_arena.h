@@ -49,8 +49,6 @@ public:
 
   // returns true if it's out of bounds - possibly confusing but convenient
   bool updateCellIndex(Corpus* a_thing);
-  void purgeCellIndex(size_t_pair& cell_index,
-                      Corpus*      a_thing);
 
   // accessing objects on the map based on the cell index
   list<Corpus*>& getCorpusCell(const size_t_pair a_index);
@@ -60,7 +58,12 @@ public:
                                   vector<size_t_pair>& indexes,
                                   const Real           a_radius = 0);
 
+  void deregisterObject(Corpus* a_thing);
+  void registerObject(Corpus* a_thing);
+
 private:
+  void removeCorpusFromCell(Corpus* a_thing);
+  void insertCorpusIntoCell(Corpus* a_thing);
   // inner main loop
   void updateLights();
   void updateCells();
@@ -73,10 +76,10 @@ private:
 
 public:
   // terrain data
-  Terrain* terrain;
+  Terrain* TerrainData;
 
   // all the objects in the arena segregated into cells
-  vector<vector<list<Corpus*> > > corpus_cells;
+  vector<vector<list<Corpus*> > > CorpusCells;
 
   // a list of non-empty cells
   list<list<Corpus*>* > LiveCorpusCells;
@@ -177,15 +180,7 @@ inline size_t_pair GameArena::getCellIndex(Real a_x,
 
 inline list<Corpus*>& GameArena::getCorpusCell(const size_t_pair a_index)
 {
-  return corpus_cells[a_index.first][a_index.second];
-}
-
-/** @brief remove object from the cell
- */
-inline void GameArena::purgeCellIndex(size_t_pair& cell_index,
-                                      Corpus*      a_thing)
-{
-  corpus_cells[cell_index.first][cell_index.second].remove(a_thing);
+  return CorpusCells[a_index.first][a_index.second];
 }
 
 #endif // ARENA_H

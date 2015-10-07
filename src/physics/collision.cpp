@@ -6,6 +6,7 @@
 
 #define REPULSION_FACTOR (2)
 #define HIT_DAMPENING    (0.9)
+#define RESOLVE_LIMIT (10)
 
 Collision::Collision(Corpus*                  a_object1,
                      Corpus*                  a_object2,
@@ -42,9 +43,6 @@ void Collision::findCollisionPlane()
   }
   Centre[1] *= 1.0 / indexes2.size();
 }
-
-#define BLOCKING_WEIGHT (10000000)
-#define RESOLVE_LIMIT (10)
 
 void Collision::resolve(const Real a_dt)
 {

@@ -5,6 +5,8 @@
 
 #include "main.h"
 
+class Corpus;
+
 class CorpusManager
 {
 public:
@@ -15,8 +17,11 @@ public:
   void applyForces(Real delta);
   void applyVelocity(Real delta);
 
-private:
+  void registerStaticObject(Corpus* a_corpus);
+  void registerDynamicObject(Corpus* a_corpus);
+  void deregisterObject(Corpus* a_corpus);
 
+  list<Corpus*> Corpuses;
 };
 
 #endif // CORPUSMANAGER_H

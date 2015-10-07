@@ -11,10 +11,6 @@ class Terrain;
 class TerrainGenerator
 {
 public:
-  ~TerrainGenerator()
-  {
-  }
-
   static Terrain* generateTerrain(const string& terrain_name);
   static bool getTerrain(const string&                 filename,
                          vector<usint>&                block_height,
@@ -25,12 +21,6 @@ public:
   // gets the weight for a vertex height for blending tiles together
   static Real getBlendWeight(size_t a_i,
                              size_t a_j);
-
-private:
-  TerrainGenerator()
-  {
-  }
-
 };
 
 #endif // TERRAINGENERATOR_H
