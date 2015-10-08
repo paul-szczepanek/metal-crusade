@@ -50,7 +50,7 @@ void CollisionHandler::updatePotentialCollisions()
   // clear last frame collisions if any
   PossibleCollisions.clear();
 
-  for (auto c1 : RegisteredObjects) {
+  for (Corpus* c1 : RegisteredObjects) {
     if (c1->CollisionType == collision_type_none) {
       continue;
     }
@@ -61,11 +61,11 @@ void CollisionHandler::updatePotentialCollisions()
     vector<size_t_pair> cell_indexes;
     Game::Arena->getCellIndexesWithinRadius(c1->getCellIndex(), cell_indexes);
 
-    for (const size_t_pair& ci : cell_indexes) {
+    for (const size_t_pair ci : cell_indexes) {
       // get lists from each cell
       list<Corpus*>& corpus_list = Game::Arena->getCorpusCell(ci);
 
-      for (auto c2 : corpus_list) {
+      for (Corpus* c2 : corpus_list) {
         if (c2->CollisionType == collision_type_none) {
           continue;
         }
@@ -88,6 +88,7 @@ void CollisionHandler::updatePotentialCollisions()
     if (c1->OwnerEntity) {
       Corpus* c2 = c1->OwnerEntity->getGround();
       if (c2) {
+        c2->updateBoundingSphere();
         if (c1->BoundingSphere.intersects(c2->BoundingSphere)) {
           PossibleCollisions.push_back(collision_pair(c1, c2));
         }
@@ -169,13 +170,13 @@ void CollisionHandler::update(const Real a_dt)
   evaluatePotentialCollisions();
 
   // count how many collisions each corpus takes part in and record that in the collisions
-  for (Collision col : Collisions) {
+  for (Collision& col : Collisions) {
     col.findCollisionPlane();
     ++Hits[col.Object[0]];
     ++Hits[col.Object[1]];
   }
 
-  for (Collision col : Collisions) {
+  for (Collision& col : Collisions) {
     for (const reverse_pairs_t& i : PAIRS) {
       if (Hits[col.Object[i.a]] > 1) {
         // to handle multi body collisions we resolve them in groups multiple times
@@ -186,7 +187,7 @@ void CollisionHandler::update(const Real a_dt)
   }
 
   // resolve each collision
-  for (Collision col : Collisions) {
+  for (Collision& col : Collisions) {
     col.resolve(a_dt);
   }
 

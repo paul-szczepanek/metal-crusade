@@ -36,7 +36,7 @@ public:
   // gravity
   Real getGravity()
   {
-    return gravity;
+    return Gravity;
   }
 
   // the arena is partitioned into cells - reutrns the cell index
@@ -87,25 +87,25 @@ public:
   vector<ArenaEntity*> Entities;
 
   // gravity
-  Real gravity;
+  Real Gravity;
 
   // terrain heightmap specs
-  size_t texture_size_w;
-  size_t texture_size_h;
+  size_t TextureSizeW;
+  size_t TextureSizeH;
   // size of the whole arena in metres
-  Real scene_size_w;
-  Real scene_size_h;
+  Real SceneSizeW;
+  Real SceneSizeH;
   // number of cells a side
-  size_t num_of_arena_cells_w;
-  size_t num_of_arena_cells_h;
+  size_t NumArenaCellsW;
+  size_t NumArenaCellsH;
 
   // terrain graphics
-  Ogre::SceneNode* terrain_node;
+  Ogre::SceneNode* TerrainNode;
 
   // lights
-  Ogre::Light* sunlight;
-  Ogre::Light* backlight;
-  Ogre::Light* ground_light; // for ambient
+  Ogre::Light* Sunlight;
+  Ogre::Light* Backlight;
+  Ogre::Light* GroundLight; // for ambient
 };
 
 /** @brief returns whether the position is not outside of arena bounds and fixes the position
@@ -119,9 +119,9 @@ inline bool GameArena::isOutOfBounds(Vector3& pos_xyz)
   if (pos_xyz.x < size_of_arena_cell) {
     pos_xyz.x = size_of_arena_cell;
     out_of_bounds = true;
-  } else if (pos_xyz.x > scene_size_w - size_of_arena_cell) {
+  } else if (pos_xyz.x > SceneSizeW - size_of_arena_cell) {
     // we subract a tiny amount so when casting to int we get an index within bounds
-    pos_xyz.x = scene_size_w - size_of_arena_cell - Real(0.0001);
+    pos_xyz.x = SceneSizeW - size_of_arena_cell - Real(0.0001);
     out_of_bounds = true;
   }
 
@@ -129,9 +129,9 @@ inline bool GameArena::isOutOfBounds(Vector3& pos_xyz)
   if (pos_xyz.z < size_of_arena_cell) {
     pos_xyz.z = size_of_arena_cell;
     out_of_bounds = true;
-  } else if (pos_xyz.z > scene_size_h - size_of_arena_cell) {
+  } else if (pos_xyz.z > SceneSizeH - size_of_arena_cell) {
     // we subract a tiny amount so when casting to int we get an index within bounds
-    pos_xyz.z = scene_size_h - size_of_arena_cell - Real(0.0001);
+    pos_xyz.z = SceneSizeH - size_of_arena_cell - Real(0.0001);
     out_of_bounds = true;
   }
 
@@ -149,8 +149,8 @@ inline bool GameArena::isOutOfArena(Vector3& pos_xyz)
   if (pos_xyz.x < 0) {
     pos_xyz.x = 0;
     out_of_arena = true;
-  } else if (pos_xyz.x >= scene_size_w) {
-    pos_xyz.x = scene_size_w - Real(0.0001); // this is so that casting to int works
+  } else if (pos_xyz.x >= SceneSizeW) {
+    pos_xyz.x = SceneSizeW - Real(0.0001); // this is so that casting to int works
     out_of_arena = true;
   }
 
@@ -158,8 +158,8 @@ inline bool GameArena::isOutOfArena(Vector3& pos_xyz)
   if (pos_xyz.z < 0) {
     pos_xyz.z = 0;
     out_of_arena = true;
-  } else if (pos_xyz.z >= scene_size_h) {
-    pos_xyz.z = scene_size_h - Real(0.0001); // this is so that casting to int works
+  } else if (pos_xyz.z >= SceneSizeH) {
+    pos_xyz.z = SceneSizeH - Real(0.0001); // this is so that casting to int works
     out_of_arena = true;
   }
 

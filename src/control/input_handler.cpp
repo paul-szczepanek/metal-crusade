@@ -58,8 +58,8 @@ InputHandler::InputHandler()
 
   // these two lines of redundancy allow to set up the camera and hud later on
   // as calling resize would also call the resize of camera nd hud and they may not exist yet
-  screen_width = Game::OgreWindow->getWidth();
-  screen_height = Game::OgreWindow->getHeight();
+  ScreenW = Game::OgreWindow->getWidth();
+  ScreenH = Game::OgreWindow->getHeight();
 
   // set the extents from where mouse input is taken
   resize();
@@ -228,33 +228,33 @@ void InputHandler::bindController(GameController* a_game_controller)
  */
 void InputHandler::windowResized(Ogre::RenderWindow* render_window)
 {
-  screen_width = render_window->getWidth();
-  screen_height = render_window->getHeight();
+  ScreenW = render_window->getWidth();
+  ScreenH = render_window->getHeight();
 
   // sanity check on window size
-  if (screen_width < 320) { // min width 320
-    screen_width = 320;
-    render_window->resize(screen_width, screen_height);
+  if (ScreenW < 320) { // min width 320
+    ScreenW = 320;
+    render_window->resize(ScreenW, ScreenH);
   }
-  if (screen_height < 240) { // min height 240
-    screen_height = 240;
-    render_window->resize(screen_width, screen_height);
+  if (ScreenH < 240) { // min height 240
+    ScreenH = 240;
+    render_window->resize(ScreenW, ScreenH);
   }
 
   // sanity check on aspect ratio
-  if (screen_width < screen_height) { // limit portrait mode to square
-    screen_height = screen_width;
-    render_window->resize(screen_width, screen_height);
-  } else if (screen_width > screen_height * 3) { // limit wide aspect ratio to 3:1
-    screen_width = screen_height * 3;
-    render_window->resize(screen_width, screen_height);
+  if (ScreenW < ScreenH) { // limit portrait mode to square
+    ScreenH = ScreenW;
+    render_window->resize(ScreenW, ScreenH);
+  } else if (ScreenW > ScreenH * 3) { // limit wide aspect ratio to 3:1
+    ScreenW = ScreenH * 3;
+    render_window->resize(ScreenW, ScreenH);
   }
 
   // change the window size for mouse input
   resize();
 
   // readjust the camera angle
-  Game::Camera->resize(screen_width, screen_height);
+  Game::Camera->resize(ScreenW, ScreenH);
 
   // rearragne the hud
   // Game::hud->resize(screen_width, screen_height);
@@ -265,9 +265,9 @@ void InputHandler::windowResized(Ogre::RenderWindow* render_window)
 void InputHandler::resize()
 {
   const OIS::MouseState& mouse_state = OISMouse->getMouseState();
-  mouse_state.width = screen_width;
-  mouse_state.height = screen_height;
-  Game::Camera->resize(screen_width, screen_height);
+  mouse_state.width = ScreenW;
+  mouse_state.height = ScreenH;
+  Game::Camera->resize(ScreenW, ScreenH);
 }
 
 /** @brief updates mouse position inside the window

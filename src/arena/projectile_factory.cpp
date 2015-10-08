@@ -26,20 +26,20 @@ ProjectileFactory::~ProjectileFactory()
 Projectile* ProjectileFactory::getFreeProjectile()
 {
   for (size_t i = 0; i < Projectiles.size(); ++i) {
-    lastProjectileIdx = (lastProjectileIdx + 1) % Projectiles.size();
-    if (Projectiles[lastProjectileIdx].OwnerWeapon == NULL) {
+    LastProjectileIdx = (LastProjectileIdx + 1) % Projectiles.size();
+    if (Projectiles[LastProjectileIdx].OwnerWeapon == NULL) {
       break;
     }
 
     if (i > Projectiles.size() / 4) {
       // if we waster too much time looking for a free one, double the size and return a new one
-      lastProjectileIdx = Projectiles.size();
+      LastProjectileIdx = Projectiles.size();
       Projectiles.resize(Projectiles.size() * 2);
       break;
     }
   }
 
-  return &Projectiles[lastProjectileIdx];
+  return &Projectiles[LastProjectileIdx];
 }
 
 /** @brief getFreeCorpus
@@ -49,20 +49,20 @@ Projectile* ProjectileFactory::getFreeProjectile()
 Corpus* ProjectileFactory::getFreeCorpus()
 {
   for (size_t i = 0; i < Corpuses.size(); ++i) {
-    lastCorpusIdx = (lastCorpusIdx + 1) % Corpuses.size();
-    if (!Corpuses[lastCorpusIdx].OnArena) {
+    LastCorpusIdx = (LastCorpusIdx + 1) % Corpuses.size();
+    if (!Corpuses[LastCorpusIdx].OnArena) {
       break;
     }
 
     if (i > Corpuses.size() / 4) {
       // if we waster too much time looking for a free one, double the size and return a new one
-      lastCorpusIdx = Corpuses.size();
+      LastCorpusIdx = Corpuses.size();
       Corpuses.resize(Corpuses.size() * 2);
       break;
     }
   }
 
-  return &Corpuses[lastCorpusIdx];
+  return &Corpuses[LastCorpusIdx];
 }
 
 /** @brief creates projectiles and adds them to a list

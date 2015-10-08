@@ -33,10 +33,10 @@ public:
   TankAI* createCrusaderAI(Tank* a_self);
 
 private:
-  vector<UnitAI*> ais;
+  vector<UnitAI*> AIs;
 
   // controllers for the units on the map cotnrolled by ais
-  vector<GameController*> ai_game_controllers;
+  vector<GameController*> AIGameControllers;
 };
 
 #endif // AI_FACTORY_H

@@ -8,7 +8,7 @@
 Faction::Faction(const string&                 a_name,
                  const global_faction::faction a_faction,
                  const ulint                   a_uid)
-  : faction_type(a_faction), uid(a_uid), name(a_name)
+  : FactionType(a_faction), UID(a_uid), Name(a_name)
 {
   // ctor
 }
@@ -20,12 +20,12 @@ Faction::~Faction()
 
 void Faction::joinFaction(Formation* a_formation)
 {
-  formations.push_back(a_formation);
+  Formations.push_back(a_formation);
 }
 
 void Faction::leaveFaction(Formation* a_formation)
 {
-  formations.remove(a_formation);
+  Formations.remove(a_formation);
 }
 
 void Faction::attack(Faction* a_faction,

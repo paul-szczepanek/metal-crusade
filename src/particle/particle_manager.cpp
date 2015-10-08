@@ -13,23 +13,23 @@ ParticleManager::ParticleManager()
 
 ParticleManager::~ParticleManager()
 {
-  for (list<ParticleEffect*>::iterator it = effects.begin(); it != effects.end(); ++it) {
+  for (list<ParticleEffect*>::iterator it = Effects.begin(); it != Effects.end(); ++it) {
     delete *it;
   }
 
-  effects.clear();
+  Effects.clear();
 }
 
 void ParticleManager::update(const Real a_dt)
 {
   // call update on every effect
-  for (auto it = effects.begin(); it != effects.end(); ) {
+  for (auto it = Effects.begin(); it != Effects.end(); ) {
     // remove if expired
     if (!(*it)->update(a_dt)) {
       delete *it;
 
       // get the iterator to the next item after removal
-      it = effects.erase(it);
+      it = Effects.erase(it);
 
     } else {
       ++it;
@@ -47,10 +47,10 @@ ParticleEffect* ParticleManager::createExplosion(Vector3 a_position,
 
   // effects.push_back(new ParticleEffectExplosion(particle_node, a_size, a_time, a_ferocity));
   // temp
-  effects.push_back(new ParticleEffectFlipbook(particle_node, a_size,
+  Effects.push_back(new ParticleEffectFlipbook(particle_node, a_size,
                                                a_ferocity, fx_anim::petrol));
 
-  return effects.back();
+  return Effects.back();
 }
 
 ParticleEffect* ParticleManager::createExplosion(Ogre::SceneNode* scene_node,
@@ -60,16 +60,16 @@ ParticleEffect* ParticleManager::createExplosion(Ogre::SceneNode* scene_node,
 {
   Ogre::SceneNode* particle_node = scene_node->createChildSceneNode();
 
-  effects.push_back(new ParticleEffectExplosion(particle_node, a_size, a_time, a_ferocity));
+  Effects.push_back(new ParticleEffectExplosion(particle_node, a_size, a_time, a_ferocity));
 
-  return effects.back();
+  return Effects.back();
 }
 
 ParticleEffect* ParticleManager::createStepDust(Ogre::SceneNode* scene_node)
 {
   Ogre::SceneNode* particle_node = scene_node->createChildSceneNode();
 
-  effects.push_back(new ParticleEffectStepDust(particle_node));
+  Effects.push_back(new ParticleEffectStepDust(particle_node));
 
-  return effects.back();
+  return Effects.back();
 }

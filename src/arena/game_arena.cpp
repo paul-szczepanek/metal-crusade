@@ -36,9 +36,9 @@ const string terrain_material_name = "terrain_material";
 GameArena::GameArena()
 {
   // create lights
-  sunlight = Game::Scene->createLight("sunlight");
-  backlight = Game::Scene->createLight("backlight");
-  ground_light = Game::Scene->createLight("ground_light");
+  Sunlight = Game::Scene->createLight("sunlight");
+  Backlight = Game::Scene->createLight("backlight");
+  GroundLight = Game::Scene->createLight("ground_light");
 
   // no ambient light - we use ground light to fake that
   Game::Scene->setAmbientLight(Ogre::ColourValue::Black);
@@ -46,13 +46,13 @@ GameArena::GameArena()
   Game::Scene->setShadowColour(Ogre::ColourValue(0.3, 0.3, 0.4));
 
   // sunlight casting shadows
-  sunlight->setType(Ogre::Light::LT_DIRECTIONAL);
-  sunlight->setPosition(Vector3(100, 200, -100)); // TODO: change to spot for texture shadows
-  sunlight->setCastShadows(true);
-  backlight->setType(Ogre::Light::LT_DIRECTIONAL);
-  backlight->setCastShadows(false);
-  ground_light->setType(Ogre::Light::LT_DIRECTIONAL);
-  ground_light->setCastShadows(false);
+  Sunlight->setType(Ogre::Light::LT_DIRECTIONAL);
+  Sunlight->setPosition(Vector3(100, 200, -100)); // TODO: change to spot for texture shadows
+  Sunlight->setCastShadows(true);
+  Backlight->setType(Ogre::Light::LT_DIRECTIONAL);
+  Backlight->setCastShadows(false);
+  GroundLight->setType(Ogre::Light::LT_DIRECTIONAL);
+  GroundLight->setCastShadows(false);
 }
 
 Real GameArena::getAmbientTemperature(Vector3 a_position)
@@ -75,7 +75,7 @@ GameArena::~GameArena()
   Game::Scene->destroyAllLights();
 
   // destroy terrain mesh
-  Game::destroyModel(terrain_node);
+  Game::destroyModel(TerrainNode);
 
   // cleanup terrain
   Ogre::MaterialManager::getSingleton().remove(terrain_material_name);
@@ -95,16 +95,16 @@ void GameArena::updateLights()
   Real b = 0.7;
 
   // sunlight
-  sunlight->setDiffuseColour(r, g, b);
-  sunlight->setDirection(-0.5, -1, 0.5);
+  Sunlight->setDiffuseColour(r, g, b);
+  Sunlight->setDirection(-0.5, -1, 0.5);
 
   // backlight
-  backlight->setDiffuseColour(b * 0.25, g * 0.25, r * 0.5);
-  backlight->setDirection(1, -0.5, -1);
+  Backlight->setDiffuseColour(b * 0.25, g * 0.25, r * 0.5);
+  Backlight->setDirection(1, -0.5, -1);
 
   // fake ambient TODO: take dominant ground colour
-  ground_light->setDiffuseColour(0.8, 0.5, 0.4);
-  ground_light->setDirection(0.1, 1, 0.3);
+  GroundLight->setDiffuseColour(0.8, 0.5, 0.4);
+  GroundLight->setDirection(0.1, 1, 0.3);
 }
 
 /** @brief returns the height of the arena at this point
@@ -121,15 +121,15 @@ Real GameArena::getHeight(Real a_x,
 int GameArena::loadArena(const string& arena_name)
 {
   // TODO: read from file obviously
-  gravity = 10; // m/s^2
+  Gravity = 10; // m/s^2
 
   // create the terrain
   TerrainData = TerrainGenerator::generateTerrain("test");
 
   // todo: this might go the other way around, so that the terrain adapts to the arena size
   // size of the map in metres
-  scene_size_w = TerrainData->size_w * metres_per_pixel;
-  scene_size_h = TerrainData->size_h * metres_per_pixel;
+  SceneSizeW = TerrainData->SizeW * metres_per_pixel;
+  SceneSizeH = TerrainData->SizeH * metres_per_pixel;
 
   // prepare the cells
   partitionArena();
@@ -149,7 +149,8 @@ int GameArena::loadArena(const string& arena_name)
                                                                  faction_mercenary);
 
   // temp buildings
-  Game::Building->spawnSceneryBuidling(120, 280, "building_test_01");
+  Game::Building->spawnSceneryBuidling(Vector3(240, 0, 220), "building_test_02");
+  /*
   Game::Building->spawnSceneryBuidling(280, 300, "building_test_02");
   Game::Building->spawnSceneryBuidling(350, 270, "building_test_02");
   Game::Building->spawnSceneryBuidling(310, 380, "building_test_01");
@@ -162,9 +163,10 @@ int GameArena::loadArena(const string& arena_name)
   Game::Building->spawnSceneryBuidling(310, 380, "building_test_01");
   Game::Building->spawnSceneryBuidling(110, 340, "building_test_02");
   Game::Building->spawnSceneryBuidling(300, 160, "building_test_02");
+  */
 
   // fake game startup from code - ought to be read from file
-  Crusader* player_unit = Game::Unit->spawnCrusader(Vector3(60, 0, 60), "base_husar_cavalry");
+  Crusader* player_unit = Game::Unit->spawnCrusader(Vector3(220, 0, 280), "base_husar_cavalry");
 
   player_unit->assignController(Game::getGameController(0));
 
@@ -222,12 +224,12 @@ int GameArena::loadArena(const string& arena_name)
 void GameArena::partitionArena()
 {
   // number of cells with objects inside them
-  num_of_arena_cells_w = scene_size_w / size_of_arena_cell;
-  num_of_arena_cells_h = scene_size_h / size_of_arena_cell;
+  NumArenaCellsW = SceneSizeW / size_of_arena_cell;
+  NumArenaCellsH = SceneSizeH / size_of_arena_cell;
 
   // set size for the cells holding the object on the map
-  CorpusCells = vector<vector<list<Corpus*> > >(num_of_arena_cells_w,
-                                                 vector<list<Corpus*> >(num_of_arena_cells_h));
+  CorpusCells = vector<vector<list<Corpus*> > >(NumArenaCellsW,
+                                                 vector<list<Corpus*> >(NumArenaCellsH));
 }
 
 /** @brief creates the mesh for the terrain
@@ -241,15 +243,15 @@ void GameArena::createTerrainModel()
   const usint lod_bias = 0;
   const usint step = 1 << lod_bias;
 
-  const size_t texture_size_w = TerrainData->size_w;
-  const size_t texture_size_h = TerrainData->size_h;
+  const size_t TextureSizeW = TerrainData->SizeW;
+  const size_t TextureSizeH = TerrainData->SizeH;
 
   // calculate number of terrain pages
-  const usint num_of_pages_w = texture_size_w / page_size;
-  const usint num_of_pages_h = texture_size_h / page_size;
+  const usint num_of_pages_w = TextureSizeW / page_size;
+  const usint num_of_pages_h = TextureSizeH / page_size;
 
   // node to hold all terrain cells
-  terrain_node = Game::Scene->getRootSceneNode()->createChildSceneNode();
+  TerrainNode = Game::Scene->getRootSceneNode()->createChildSceneNode();
 
   // material for the terrain
   Ogre::MaterialPtr material = Ogre::MaterialManager::getSingleton().create(terrain_material_name,
@@ -310,18 +312,18 @@ void GameArena::createTerrainModel()
           y[3] = (origin_y + j);
 
           for (i_coords = 0; i_coords < 4; ++i_coords) {
-            angle[i_coords] = TerrainData->getAngle(x[i_coords] % texture_size_w,
-                                                y[i_coords] % texture_size_h);
-            height[i_coords] = TerrainData->getHeight(x[i_coords] % texture_size_w,
-                                                  y[i_coords] % texture_size_h);
+            angle[i_coords] = TerrainData->getAngle(x[i_coords] % TextureSizeW,
+                                                y[i_coords] % TextureSizeH);
+            height[i_coords] = TerrainData->getHeight(x[i_coords] % TextureSizeW,
+                                                  y[i_coords] % TextureSizeH);
           }
 
           // first bottom-left vertex
           i_coords = 0;
           terrain_mesh->position(i * metres_per_pixel, height[i_coords],
                                  j * metres_per_pixel);
-          terrain_mesh->textureCoord(x[i_coords] / Real(texture_size_w),
-                                     y[i_coords] / Real(texture_size_h));
+          terrain_mesh->textureCoord(x[i_coords] / Real(TextureSizeW),
+                                     y[i_coords] / Real(TextureSizeH));
           terrain_mesh->textureCoord(i / detail_density, j / detail_density);
           terrain_mesh->normal(angle[i_coords].first, angle[i_coords].second, 0.5);
 
@@ -329,8 +331,8 @@ void GameArena::createTerrainModel()
           i_coords = 1;
           terrain_mesh->position(i * metres_per_pixel, height[i_coords],
                                  js * metres_per_pixel);
-          terrain_mesh->textureCoord(x[i_coords] / Real(texture_size_w),
-                                     y[i_coords] / Real(texture_size_h));
+          terrain_mesh->textureCoord(x[i_coords] / Real(TextureSizeW),
+                                     y[i_coords] / Real(TextureSizeH));
           terrain_mesh->textureCoord(i / detail_density, js / detail_density);
           terrain_mesh->normal(angle[i_coords].first, angle[i_coords].second, 0.5);
 
@@ -338,8 +340,8 @@ void GameArena::createTerrainModel()
           i_coords = 2;
           terrain_mesh->position(is * metres_per_pixel, height[i_coords],
                                  js * metres_per_pixel);
-          terrain_mesh->textureCoord(x[i_coords] / Real(texture_size_w),
-                                     y[i_coords] / Real(texture_size_h));
+          terrain_mesh->textureCoord(x[i_coords] / Real(TextureSizeW),
+                                     y[i_coords] / Real(TextureSizeH));
           terrain_mesh->textureCoord(is / detail_density, js / detail_density);
           terrain_mesh->normal(angle[i_coords].first, angle[i_coords].second, 0.5);
 
@@ -347,8 +349,8 @@ void GameArena::createTerrainModel()
           i_coords = 3;
           terrain_mesh->position(is * metres_per_pixel, height[i_coords],
                                  j * metres_per_pixel);
-          terrain_mesh->textureCoord(x[i_coords] / Real(texture_size_w),
-                                     y[i_coords] / Real(texture_size_h));
+          terrain_mesh->textureCoord(x[i_coords] / Real(TextureSizeW),
+                                     y[i_coords] / Real(TextureSizeH));
           terrain_mesh->textureCoord(is / detail_density, j / detail_density);
           terrain_mesh->normal(angle[i_coords].first, angle[i_coords].second, 0.5);
 
@@ -356,8 +358,8 @@ void GameArena::createTerrainModel()
           i_coords = 0;
           terrain_mesh->position(i * metres_per_pixel, height[i_coords],
                                  j * metres_per_pixel);
-          terrain_mesh->textureCoord(x[i_coords] / Real(texture_size_w),
-                                     y[i_coords] / Real(texture_size_h));
+          terrain_mesh->textureCoord(x[i_coords] / Real(TextureSizeW),
+                                     y[i_coords] / Real(TextureSizeH));
           terrain_mesh->textureCoord(i / detail_density, j / detail_density);
           terrain_mesh->normal(angle[i_coords].first, angle[i_coords].second, 0.5);
 
@@ -365,8 +367,8 @@ void GameArena::createTerrainModel()
           i_coords = 2;
           terrain_mesh->position(is * metres_per_pixel, height[i_coords],
                                  js * metres_per_pixel);
-          terrain_mesh->textureCoord(x[i_coords] / Real(texture_size_w),
-                                     y[i_coords] / Real(texture_size_h));
+          terrain_mesh->textureCoord(x[i_coords] / Real(TextureSizeW),
+                                     y[i_coords] / Real(TextureSizeH));
           terrain_mesh->textureCoord(is / detail_density, js / detail_density);
           terrain_mesh->normal(angle[i_coords].first, angle[i_coords].second, 0.5);
         }
@@ -380,7 +382,7 @@ void GameArena::createTerrainModel()
       terrain_mesh->setCastShadows(false);
 
       // attach to a scene node
-      Ogre::SceneNode* cell_node = terrain_node->createChildSceneNode();
+      Ogre::SceneNode* cell_node = TerrainNode->createChildSceneNode();
       cell_node->attachObject(terrain_mesh);
 
       // position cells in agrid
@@ -411,30 +413,30 @@ void GameArena::getCellIndexesWithinRadius(const size_t_pair    a_index,
   // this goes in a spiral way putting in indexes closer to first and further away last
   // every time it checks if the index is valid
   for (size_t r = 1; r <= cell_radius; ++r) {
-    if (c_i + r >= 0 && c_i + r < num_of_arena_cells_w) {
+    if (c_i + r >= 0 && c_i + r < NumArenaCellsW) {
       for (size_t i = -r; i <= r; ++i) {
-        if (c_j + i >= 0 && c_j + i < num_of_arena_cells_h) {
+        if (c_j + i >= 0 && c_j + i < NumArenaCellsH) {
           indexes.push_back(make_pair(c_i + r, c_j + i));
         }
       }
     }
-    if (c_i - r >= 0 && c_i - r < num_of_arena_cells_w) {
+    if (c_i - r >= 0 && c_i - r < NumArenaCellsW) {
       for (size_t i = -r; i <= r; ++i) {
-        if (c_j + i >= 0 && c_j + i < num_of_arena_cells_h) {
+        if (c_j + i >= 0 && c_j + i < NumArenaCellsH) {
           indexes.push_back(make_pair(c_i - r, c_j + i));
         }
       }
     }
-    if (c_j + r >= 0 && c_j + r < num_of_arena_cells_h) {
+    if (c_j + r >= 0 && c_j + r < NumArenaCellsH) {
       for (size_t i = -(r - 1); i <= (r - 1); ++i) {
-        if (c_i + i >= 0 && c_i + i < num_of_arena_cells_w) {
+        if (c_i + i >= 0 && c_i + i < NumArenaCellsW) {
           indexes.push_back(make_pair(c_i + i, c_j + r));
         }
       }
     }
-    if (c_j - r >= 0 && c_j - r < num_of_arena_cells_h) {
+    if (c_j - r >= 0 && c_j - r < NumArenaCellsH) {
       for (size_t i = -(r - 1); i <= (r - 1); ++i) {
-        if (c_i + i >= 0 && c_i + i < num_of_arena_cells_w) {
+        if (c_i + i >= 0 && c_i + i < NumArenaCellsW) {
           indexes.push_back(make_pair(c_i + i, c_j - r));
         }
       }

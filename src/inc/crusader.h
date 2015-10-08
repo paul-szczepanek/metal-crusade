@@ -167,7 +167,7 @@ inline Real Crusader::getDamage(usint a_diagram_element)
 
 inline Real Crusader::getSpeed()
 {
-  return corrected_velocity_scalar;
+  return CorrectedVelocityScalar;
 }
 
 inline Real Crusader::getCoolant()

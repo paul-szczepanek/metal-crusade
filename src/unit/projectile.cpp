@@ -12,11 +12,9 @@
 
 // how much slower the bullet moves visually
 #define VELOCITY_SCALE (0.1)
-#define INVERSE_VELOCITY_SCALE (1.0 / (VELOCITY_SCALE))
-// when the air resistance start to become negligible (for gameplay purposes, not in real life)
-const Real air_resistance_cutoff = 400 * VELOCITY_SCALE;
+
 // grace time for projectiles after spawning so that they don't explode in the owner crusader
-const Real grace_period = 10;
+#define GRACE_PERIOD (10)
 
 Projectile::~Projectile()
 {
@@ -30,7 +28,7 @@ Projectile::Projectile()
 void Projectile::reset(Weapon* a_weapon,
                        Corpus* a_corpus)
 {
-  GracePeriod = grace_period;
+  GracePeriod = GRACE_PERIOD;
   Exploading = false;
   OwnerWeapon = a_weapon;
   Bullet = a_corpus;
@@ -71,14 +69,15 @@ bool Projectile::handleCollision(Collision* a_collision)
 void Projectile::explode()
 {
   Exploading = true;
+  // stop projectile
+  Bullet->Velocity = Vector3::ZERO;
 
   if (OwnerWeapon->weapon_design.splash_range > 0) {
     Lifetime = OwnerWeapon->weapon_design.splash_range;
     Bullet->BoundingSphere.Radius = 0;
     Game::Particle->createExplosion(Bullet->XYZ, OwnerWeapon->weapon_design.splash_range,
                                     OwnerWeapon->weapon_design.splash_range
-                                    / (OwnerWeapon->weapon_design.splash_velocity *
-                                       VELOCITY_SCALE),
+                                    / (OwnerWeapon->weapon_design.splash_velocity),
                                     OwnerWeapon->weapon_design.HeatDmg / 100.0);
   }
 }
@@ -98,11 +97,8 @@ bool Projectile::update(const Real a_dt)
   if (Exploading) {
     // does the projectile explode causing splash damage
     if (OwnerWeapon->weapon_design.splash_range > 0) {
-      // stop projectile
-      Bullet->Velocity = Vector3::ZERO;
-
       // start splash expansion and degradation
-      Real expansion = a_dt * OwnerWeapon->weapon_design.splash_velocity * VELOCITY_SCALE;
+      Real expansion = a_dt * OwnerWeapon->weapon_design.splash_velocity;
       // expand the bounding sphere
       Bullet->BoundingSphere.Radius += expansion;
 
@@ -121,16 +117,6 @@ bool Projectile::update(const Real a_dt)
     } else { // no splash damage
       Lifetime = -1; // kill instantly
     }
-  } else {
-    // retard motion while the physics weep (air resistance should be Velocity squared)
-    if (Vector2(Bullet->Velocity.x, Bullet->Velocity.z).length() > air_resistance_cutoff) {
-      Bullet->Velocity -= Bullet->Direction * OwnerWeapon->weapon_design.muzzle_velocity
-                          * VELOCITY_SCALE * a_dt;
-    }
-    // intentionally wrong because we already retarded the downward motion
-    Bullet->Velocity.y = Bullet->Velocity.y - Game::Arena->getGravity() * a_dt *
-                         INVERSE_VELOCITY_SCALE;
-    // and there's the euluer integration error too and we need it to plunge fast
   }
 
   // if out of bounds destroy

@@ -87,23 +87,23 @@ public:
 
 protected:
   // targeted objects
-  ArenaEntity* target = NULL;
+  ArenaEntity* CurrentTarget = NULL;
   // targeted by objects
-  vector<ArenaEntity*> target_holders;
+  vector<ArenaEntity*> TargetHolders;
 
   Real CoreTemperature = 0;
   Real TotalWeight = 0;
 
   Corpus* Ground;
 
-  vector<Weapon*> weapons;
+  vector<Weapon*> Weapons;
 
   // hud
-  bool hud_attached = false;
+  bool HudAttached = false;
 
   //RadarComputer* radar;
   Real CoreIntegrity = 0;
-  Real corrected_velocity_scalar = 0;
+  Real CorrectedVelocityScalar = 0;
   GameController* Controller = NULL;
   Formation* UnitFormation = NULL;
 };
@@ -126,13 +126,13 @@ inline void Unit::assignController(GameController* a_controller)
 // hud operation
 inline Real Unit::getSpeed()
 {
-  return corrected_velocity_scalar;
+  return CorrectedVelocityScalar;
 }
 
 // return the target of this
 inline ArenaEntity* Unit::getTarget()
 {
-  return target;
+  return CurrentTarget;
 }
 
 // heat
@@ -150,7 +150,7 @@ inline string Unit::getHudName()
 
 inline void Unit::attachHud(bool a_toggle)
 {
-  hud_attached = a_toggle;
+  HudAttached = a_toggle;
 }
 
 inline RadarComputer* Unit::getRadar()
@@ -161,7 +161,7 @@ inline RadarComputer* Unit::getRadar()
 // hud operation
 inline vector<Weapon*>& Unit::getWeapons()
 {
-  return weapons;
+  return Weapons;
 }
 
 inline Real Unit::getThrottle()

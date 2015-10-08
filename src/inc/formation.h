@@ -19,7 +19,7 @@ public:
   // faction
   Faction* getFaction() const
   {
-    return faction;
+    return OwnerFaction;
   }
 
   void setFaction(Faction* a_faction);
@@ -27,12 +27,12 @@ public:
   // name
   string& getName()
   {
-    return name;
+    return Name;
   }
 
   void setName(const string a_name)
   {
-    name = a_name;
+    Name = a_name;
   }
 
   // units joining and leaving the formation
@@ -40,8 +40,8 @@ public:
   void leaveFormation(Unit* a_unit);
 
 private:
-  string name;
-  Faction* faction;
+  string Name;
+  Faction* OwnerFaction;
 
   // members of the formation
   list<Unit*> Members;

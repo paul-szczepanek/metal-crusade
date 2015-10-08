@@ -6,9 +6,9 @@
 
 Formation::Formation(const string& a_name,
                      Faction*      a_faction)
-  : name(a_name), faction(a_faction)
+  : Name(a_name), OwnerFaction(a_faction)
 {
-  faction->joinFaction(this);
+  OwnerFaction->joinFaction(this);
 }
 
 Formation::~Formation()
@@ -19,7 +19,7 @@ Formation::~Formation()
 
   Members.clear();
 
-  faction->leaveFaction(this);
+  OwnerFaction->leaveFaction(this);
 }
 
 /** @brief a controller (which represents the unit's pilot) joins a formation
@@ -27,9 +27,9 @@ Formation::~Formation()
  */
 void Formation::setFaction(Faction* a_faction)
 {
-  faction = a_faction;
-  faction->leaveFaction(this);
-  faction->joinFaction(this);
+  OwnerFaction = a_faction;
+  OwnerFaction->leaveFaction(this);
+  OwnerFaction->joinFaction(this);
 }
 
 /** @brief a controller (which represents the unit's pilot) joins a formation

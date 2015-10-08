@@ -6,54 +6,54 @@
 
 ParticleEffectStepDust::ParticleEffectStepDust(Ogre::SceneNode* particle_node)
 {
-  scene_node = particle_node;
+  SceneNode = particle_node;
 
-  dust = Game::Scene->createParticleSystem(60, "particles");
-  dust->setSortingEnabled(true);
-  dust->setMaterialName("dust");
-  dust->setParameter("particle_width", "10");
-  dust->setParameter("particle_height", "10");
+  Dust = Game::Scene->createParticleSystem(60, "particles");
+  Dust->setSortingEnabled(true);
+  Dust->setMaterialName("dust");
+  Dust->setParameter("particle_width", "10");
+  Dust->setParameter("particle_height", "10");
 
   // move the dust under the terrain over time
-  Ogre::ParticleAffector* dust_mover = dust->addAffector("LinearForce");
+  Ogre::ParticleAffector* dust_mover = Dust->addAffector("LinearForce");
   dust_mover->setParameter("force_application", "add");
   dust_mover->setParameter("force_vector", "0 -2.5 0");
 
   // doesn't work! TODO: find out why
-  Ogre::ParticleAffector* dust_fader = dust->addAffector("ColourFader");
+  Ogre::ParticleAffector* dust_fader = Dust->addAffector("ColourFader");
   dust_fader->setParameter("alpha", "-0.01");
 
   // scale up the dust as it settles
-  Ogre::ParticleAffector* dust_scaler = dust->addAffector("Scaler");
+  Ogre::ParticleAffector* dust_scaler = Dust->addAffector("Scaler");
   dust_scaler->setParameter("rate", "14");
 
   // rotate dust
-  Ogre::ParticleAffector* dust_rotator = dust->addAffector("Rotator");
+  Ogre::ParticleAffector* dust_rotator = Dust->addAffector("Rotator");
   dust_rotator->setParameter("rotation_speed_range_start", "0");
   dust_rotator->setParameter("rotation_speed_range_end", "20");
   dust_rotator->setParameter("rotation_range_start", "0");
   dust_rotator->setParameter("rotation_range_end", "360");
 
   // emit in a plane under the feet
-  dust_emitter = dust->addEmitter("Box");
+  DustEmitter = Dust->addEmitter("Box");
 
-  dust_emitter->setParameter("width", "6");
-  dust_emitter->setParameter("height", "0");
-  dust_emitter->setParameter("depth", "2");
-  dust_emitter->setAngle(Radian(pi));
-  dust_emitter->setEmissionRate(0);
-  dust_emitter->setMinParticleVelocity(0);
-  dust_emitter->setMaxParticleVelocity(1);
-  dust_emitter->setTimeToLive(6);
+  DustEmitter->setParameter("width", "6");
+  DustEmitter->setParameter("height", "0");
+  DustEmitter->setParameter("depth", "2");
+  DustEmitter->setAngle(Radian(pi));
+  DustEmitter->setEmissionRate(0);
+  DustEmitter->setMinParticleVelocity(0);
+  DustEmitter->setMaxParticleVelocity(1);
+  DustEmitter->setTimeToLive(6);
 
-  scene_node->attachObject(dust);
+  SceneNode->attachObject(Dust);
 
-  dust->setEmitting(true);
+  Dust->setEmitting(true);
 }
 
 ParticleEffectStepDust::~ParticleEffectStepDust()
 {
-  Game::Scene->destroyParticleSystem(dust);
+  Game::Scene->destroyParticleSystem(Dust);
   die();
 }
 
@@ -65,17 +65,17 @@ bool ParticleEffectStepDust::update(const Real a_dt)
 void ParticleEffectStepDust::setRate(Real a_rate)
 {
   // the faster the crusader goes more dust gets upset
-  dust_emitter->setEmissionRate(a_rate * a_rate * 0.025);
+  DustEmitter->setEmissionRate(a_rate * a_rate * 0.025);
 
   // this is a really cheap way to set the dust size
   if (a_rate > 8) {
-    dust->setParameter("particle_width", "12");
-    dust->setParameter("particle_height", "12");
+    Dust->setParameter("particle_width", "12");
+    Dust->setParameter("particle_height", "12");
   } else if (a_rate > 2) {
-    dust->setParameter("particle_width", "6");
-    dust->setParameter("particle_height", "6");
+    Dust->setParameter("particle_width", "6");
+    Dust->setParameter("particle_height", "6");
   } else {
-    dust->setParameter("particle_width", "3");
-    dust->setParameter("particle_height", "3");
+    Dust->setParameter("particle_width", "3");
+    Dust->setParameter("particle_height", "3");
   }
 }

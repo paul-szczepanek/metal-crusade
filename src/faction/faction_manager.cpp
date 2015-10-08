@@ -93,11 +93,11 @@ ulint FactionManager::attack(Faction* a_attacker,
                              Faction* a_defender,
                              Real     a_damage)
 {
-  map<ulint, map<ulint, Real> >::iterator it = relations.find(a_defender->uid);
+  map<ulint, map<ulint, Real> >::iterator it = relations.find(a_defender->UID);
 
   // look for relations of this factions
   if (it != relations.end()) {
-    map<ulint, Real>::iterator it2 = it->second.find(a_attacker->uid);
+    map<ulint, Real>::iterator it2 = it->second.find(a_attacker->UID);
 
     // if a relation to the attacker doesn't exist yet, create one
     if (it2 != it->second.end()) {
@@ -108,15 +108,15 @@ ulint FactionManager::attack(Faction* a_attacker,
       return it2->second;
 
     } else {
-      it->second.insert(pair<ulint, Real>(a_attacker->uid, a_damage));
+      it->second.insert(pair<ulint, Real>(a_attacker->UID, a_damage));
     }
   } else { // no relations exist yet
     // create the first one
     map<ulint, Real> relation;
-    relation.insert(pair<ulint, Real>(a_attacker->uid, a_damage));
+    relation.insert(pair<ulint, Real>(a_attacker->UID, a_damage));
 
     // crea the map for relations and insert the relation
-    relations.insert(pair<ulint, map<ulint, Real> >(a_defender->uid, relation));
+    relations.insert(pair<ulint, map<ulint, Real> >(a_defender->UID, relation));
   }
 
   updatePolicy(a_defender, a_attacker);
@@ -127,10 +127,10 @@ ulint FactionManager::attack(Faction* a_attacker,
 Real FactionManager::getRelation(Faction* a_from,
                                  Faction* a_to)
 {
-  map<ulint, map<ulint, Real> >::iterator it = relations.find(a_from->uid);
+  map<ulint, map<ulint, Real> >::iterator it = relations.find(a_from->UID);
 
   if (it != relations.end()) {
-    map<ulint, Real>::iterator it2 = it->second.find(a_to->uid);
+    map<ulint, Real>::iterator it2 = it->second.find(a_to->UID);
 
     if (it2 != it->second.end()) {
       return it2->second;

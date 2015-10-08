@@ -84,8 +84,8 @@ public:
                size_t         a_y,
                terrain::types a_type);
 
-  size_t size_w;
-  size_t size_h;
+  size_t SizeW;
+  size_t SizeH;
 
 private:
 
@@ -97,14 +97,14 @@ private:
 inline Real Terrain::getHeight(size_t a_x,
                                size_t a_y)
 {
-  return Height[a_x + a_y * size_w];
+  return Height[a_x + a_y * SizeW];
 }
 
 inline void Terrain::setHeight(size_t a_x,
                                size_t a_y,
                                Real   a_height)
 {
-  Height[a_x + a_y * size_w] = a_height;
+  Height[a_x + a_y * SizeW] = a_height;
 }
 
 inline real_pair Terrain::getAngle(Real a_x,
@@ -129,10 +129,10 @@ inline Real Terrain::getHeight(Real a_x,
   size_t j = texture_y;
 
   // sample four heights
-  Real sample1 = Height[i + j * size_w];
-  Real sample2 = Height[i + 1 + j * size_w];
-  Real sample3 = Height[i + (j + 1) * size_w];
-  Real sample4 = Height[i + 1 + (j + 1) * size_w];
+  Real sample1 = Height[i + j * SizeW];
+  Real sample2 = Height[i + 1 + j * SizeW];
+  Real sample3 = Height[i + (j + 1) * SizeW];
+  Real sample4 = Height[i + 1 + (j + 1) * SizeW];
 
   // get x and y in the 1 by 1 pixel size cell
   Real weight_x = texture_x - i;

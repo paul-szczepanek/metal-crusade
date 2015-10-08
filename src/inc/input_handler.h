@@ -83,8 +83,8 @@ private:
   Ogre::SceneNode* PointerCentreNode;
 
   // screen size
-  size_t screen_width;
-  size_t screen_height;
+  size_t ScreenW;
+  size_t ScreenH;
 };
 
 #endif // OIS_INPUT_H

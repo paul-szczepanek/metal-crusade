@@ -8,29 +8,29 @@ ParticleEffectExplosion::ParticleEffectExplosion(Ogre::SceneNode* particle_node,
                                                  Real             a_time,
                                                  Real             a_ferocity)
 {
-  scene_node = particle_node;
-  lifetime = 0;
-  lifetime_limit = a_time + 0.25;
+  SceneNode = particle_node;
+  CurrentLifetime = 0;
+  LifetimeLimit = a_time + 0.25;
 
-  explosion = Game::Scene->createParticleSystem(10, "particles");
-  explosion->setSortingEnabled(true);
-  explosion->setMaterialName("explosion");
-  explosion->setParameter("particle_width", "6");
-  explosion->setParameter("particle_height", "1");
+  Explosion = Game::Scene->createParticleSystem(10, "particles");
+  Explosion->setSortingEnabled(true);
+  Explosion->setMaterialName("explosion");
+  Explosion->setParameter("particle_width", "6");
+  Explosion->setParameter("particle_height", "1");
 
   // scale up
-  Ogre::ParticleAffector* explosion_scaler = explosion->addAffector("Scaler");
+  Ogre::ParticleAffector* explosion_scaler = Explosion->addAffector("Scaler");
   explosion_scaler->setParameter("rate", realIntoString(a_size / (a_time * 1.25)));
 
   // rotate
-  Ogre::ParticleAffector* explosion_rotator = explosion->addAffector("Rotator");
+  Ogre::ParticleAffector* explosion_rotator = Explosion->addAffector("Rotator");
   explosion_rotator->setParameter("rotation_speed_range_start", "-180");
   explosion_rotator->setParameter("rotation_speed_range_end", "180");
   explosion_rotator->setParameter("rotation_range_start", "0");
   explosion_rotator->setParameter("rotation_range_end", "360");
 
   // emit from a sphere
-  Ogre::ParticleEmitter* explosion_emitter = explosion->addEmitter("Ellipsoid");
+  Ogre::ParticleEmitter* explosion_emitter = Explosion->addEmitter("Ellipsoid");
   explosion_emitter->setParameter("width", "4");
   explosion_emitter->setParameter("height", "4");
   explosion_emitter->setParameter("depth", "4");
@@ -41,23 +41,23 @@ ParticleEffectExplosion::ParticleEffectExplosion(Ogre::SceneNode* particle_node,
   explosion_emitter->setTimeToLive(a_time);
   explosion_emitter->setDuration(0.25);
 
-  scene_node->attachObject(explosion);
+  SceneNode->attachObject(Explosion);
 
-  explosion->setEmitting(true);
+  Explosion->setEmitting(true);
 }
 
 ParticleEffectExplosion::~ParticleEffectExplosion()
 {
-  Game::Scene->destroyParticleSystem(explosion);
+  Game::Scene->destroyParticleSystem(Explosion);
   die();
 }
 
 bool ParticleEffectExplosion::update(const Real a_dt)
 {
-  lifetime += a_dt;
+  CurrentLifetime += a_dt;
 
   // kill after lifetime ends
-  if (lifetime > lifetime_limit) {
+  if (CurrentLifetime > LifetimeLimit) {
     return false;
   }
 

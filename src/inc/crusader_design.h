@@ -7,9 +7,9 @@
 #include "internal_type.h"
 #include "main.h"
 
-const usint num_of_body_parts = 9;
-const usint num_of_body_areas = 12;
-const usint num_of_weapon_groups = 5; // max 5 because there are only 5 input events
+#define NUM_OF_BODY_PARTS (9)
+#define NUM_OF_BODY_AREAS (12)
+#define NUM_OF_WEAPON_GROUPS (5) // max 5 because there are only 5 input events
 
 namespace crusader_part
 {
@@ -92,7 +92,7 @@ struct crusader_design_t {
   vector<Real> armour_placement;
   vector<string> equipment;
   string radar;
-  vector<usint> weapon_groups[num_of_weapon_groups];
+  vector<usint> weapon_groups[NUM_OF_WEAPON_GROUPS];
 };
 
 struct crusader_chassis_t {

@@ -48,10 +48,10 @@ public:
   bitset<MAX_NUM_CS> CSIndexes[2];
   bitset<MAX_NUM_CS_AREAS> CSAreas[2];
 
-  size_t resolved = 0;
+  size_t Resolved = 0;
 
   // collision qualities
-  Real Depth;
+  Real Depth = 0;
   collision_type ResultType = collision_type_soft;
 };
 

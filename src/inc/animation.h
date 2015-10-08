@@ -39,6 +39,7 @@ public:
 private:
   bool switchAnimations(Real a_time_to_add);
 
+private:
   // current status
   bool Stopped;
   Real CycleLength;

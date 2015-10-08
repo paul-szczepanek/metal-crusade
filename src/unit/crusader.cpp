@@ -20,7 +20,7 @@
 
 Crusader::~Crusader()
 {
-  for (auto w : weapons) {
+  for (auto w : Weapons) {
     delete w;
   }
 
@@ -309,12 +309,12 @@ void Crusader::moveCrusader(const Real a_dt)
 
   // correct velocity for Direction
   const Vector3& direction = getDriveDirection();
-  corrected_velocity_scalar = Velocity.dotProduct(direction);
-  Vector3 corrected_velocity = corrected_velocity_scalar * direction;
+  CorrectedVelocityScalar = Velocity.dotProduct(direction);
+  Vector3 corrected_velocity = CorrectedVelocityScalar * direction;
   Velocity = (1 - traction) * Velocity + traction * corrected_velocity;
 
   // animate the walking TODO: only take the walking velocity and ignore sliding
-  CrusaderAnim->walk(corrected_velocity_scalar);
+  CrusaderAnim->walk(CorrectedVelocityScalar);
 
   // kinemataic resistance
   Real ground_resistance = 0.1; // FAKE
@@ -339,7 +339,7 @@ void Crusader::moveCrusader(const Real a_dt)
   Real difference_of_velocity = -Velocity.dotProduct(direction);
 
   // now decide depending on Direction which values to use
-  if (corrected_velocity_scalar > 0) { // use resistance for fwd or reverse depending on velocity
+  if (CorrectedVelocityScalar > 0) { // use resistance for fwd or reverse depending on velocity
     kinematic_resistance =
       (DriveDesign.kinematic_resistance + ground_resistance) / DriveDesign.max_speed;
     difference_of_velocity += Throttle * DriveDesign.max_speed; // add intended speed
@@ -368,7 +368,7 @@ void Crusader::moveCrusader(const Real a_dt)
     acceleration_scalar = EngineDesign.rating / TotalWeight;
   } else if (difference_of_velocity < -0.1) {
     // slow down otherwise
-    if  (corrected_velocity_scalar > 0) {
+    if  (CorrectedVelocityScalar > 0) {
       // the crusader is going forward so slow down
       acceleration_scalar = -EngineDesign.rating / TotalWeight;
     } else {
@@ -380,7 +380,7 @@ void Crusader::moveCrusader(const Real a_dt)
   Vector3 acceleration = traction * acceleration_scalar * direction;
 
   // TEMP!!! quick fix for slowing down on slopes
-  acceleration -= direction * gradient * corrected_velocity_scalar;
+  acceleration -= direction * gradient * CorrectedVelocityScalar;
 
   // new velocity and position
   Velocity = Velocity - Velocity * kinematic_resistance + acceleration * a_dt;
@@ -404,7 +404,7 @@ void Crusader::moveCrusader(const Real a_dt)
   CrusaderAnim->turn(turning_speed);
 
   // dust from under the feet
-  StepDust->setRate(max(corrected_velocity_scalar, 3 * turning_speed.valueRadians()));
+  StepDust->setRate(max(CorrectedVelocityScalar, 3 * turning_speed.valueRadians()));
 }
 
 /** @brief rotates the torso
@@ -616,7 +616,7 @@ void Crusader::positionWeapons()
 
   // create weapons at those mount points
   for (size_t i = 0, for_size = CrusaderDesign.weapons.size(); i < for_size; ++i) {
-    weapons.push_back(new Weapon(CrusaderDesign.weapons[i], this,
+    Weapons.push_back(new Weapon(CrusaderDesign.weapons[i], this,
                                  panel_positions[slots_used[CrusaderDesign.weapons_placement[i]]],
                                  // if extra ammo vector exists at this point
                                  (i < CrusaderDesign.weapons_extra_ammo.size()) ?
@@ -624,7 +624,7 @@ void Crusader::positionWeapons()
                                  : 0)); // oterwise assume no extra ammo
 
     // also adds extra ammo if available for that weapon
-    slots_used[CrusaderDesign.weapons_placement[i]] += weapons[i]->weapon_design.panels;
+    slots_used[CrusaderDesign.weapons_placement[i]] += Weapons[i]->weapon_design.panels;
   }
 }
 
@@ -650,7 +650,7 @@ void Crusader::updateWeapons(const Real a_dt)
     fireGroup(4);
   }
   if (take(Controller->ControlBlock.fire_group_all)) {
-    for (size_t i = 0; i < num_of_weapon_groups; ++i) {
+    for (size_t i = 0; i < NUM_OF_WEAPON_GROUPS; ++i) {
       fireGroup(i);
     }
   }
@@ -666,7 +666,7 @@ void Crusader::updateWeapons(const Real a_dt)
     } else {
       // fire individual weapons
       if (CurrentWeapon < CrusaderDesign.weapon_groups[CurrentGroup].size()) {
-        if (weapons[CrusaderDesign.weapon_groups[CurrentGroup][CurrentWeapon]]->fire()) {
+        if (Weapons[CrusaderDesign.weapon_groups[CurrentGroup][CurrentWeapon]]->fire()) {
           // if auto cycle enabled cycle weapon after fire
           if (Controller->ControlBlock.auto_cycle) {
             cycleWeapon();
@@ -693,7 +693,7 @@ void Crusader::updateWeapons(const Real a_dt)
   }
 
   // updates all weapons for timeout and firing
-  for (auto w : weapons) {
+  for (auto w : Weapons) {
     w->update(a_dt);
   }
 }
@@ -706,9 +706,9 @@ void Crusader::cycleGroup()
   WeaponsOperational = false;
 
   // if it fails to find a valid group it will not cycle at all
-  for (size_t i = 0; i < num_of_weapon_groups; ++i) {
+  for (size_t i = 0; i < NUM_OF_WEAPON_GROUPS; ++i) {
     // wrap around
-    if (++CurrentGroup == num_of_weapon_groups) { CurrentGroup = 0; }
+    if (++CurrentGroup == NUM_OF_WEAPON_GROUPS) { CurrentGroup = 0; }
 
     // check if group exists
     if (CrusaderDesign.weapon_groups[CurrentGroup].size() > 0) {
@@ -719,7 +719,7 @@ void Crusader::cycleGroup()
       cycleWeapon();
 
       // if the weapon is working we have found our new group
-      if (weapons[CrusaderDesign.weapon_groups[CurrentGroup][CurrentWeapon]]->isOperational()) {
+      if (Weapons[CrusaderDesign.weapon_groups[CurrentGroup][CurrentWeapon]]->isOperational()) {
         WeaponsOperational = true;
         break;
       }
@@ -743,7 +743,7 @@ void Crusader::cycleWeapon()
       if (++CurrentWeapon == weapons_in_group) { CurrentWeapon = 0; }
 
       // if the weapon is working we have found the new weapon
-      if (weapons[CrusaderDesign.weapon_groups[CurrentGroup][CurrentWeapon]]->isOperational()) {
+      if (Weapons[CrusaderDesign.weapon_groups[CurrentGroup][CurrentWeapon]]->isOperational()) {
         WeaponsOperational = true;
         break;
       }
@@ -759,7 +759,7 @@ bool Crusader::fireGroup(usint a_group)
   bool fired = false;
 
   for (size_t i = 0, for_size = CrusaderDesign.weapon_groups[a_group].size(); i < for_size; ++i) {
-    if (weapons[CrusaderDesign.weapon_groups[a_group][i]]->fire()) { // fire whole group one by one
+    if (Weapons[CrusaderDesign.weapon_groups[a_group][i]]->fire()) { // fire whole group one by one
       // if at least one fired return true
       fired = true;
     }

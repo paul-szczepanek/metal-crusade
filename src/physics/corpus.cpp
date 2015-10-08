@@ -20,14 +20,15 @@ Corpus::Corpus(ArenaEntity*     a_owner,
 void Corpus::setSceneNode(Ogre::SceneNode* a_scene_node)
 {
   SceneNode = a_scene_node;
-  //Orientation = SceneNode->getOrientation();
+  SceneNode->setPosition(XYZ);
+  SceneNode->setOrientation(Orientation);
+  invalidateSpheres();
+  updateCellIndex();
 }
 
 void Corpus::setOwner(ArenaEntity* a_owner)
 {
   OwnerEntity = a_owner;
-  XYZ = OwnerEntity->getXYZ();
-  invalidateSpheres();
 }
 
 Corpus::~Corpus()
@@ -200,6 +201,14 @@ void Corpus::displayCollision(bool a_toggle)
  */
 void Corpus::displayCollisionUpdate()
 {
+  updateBoundingSphere();
+  for (size_t i = 0, for_size = CollisionSpheres.size(); i < for_size; ++i) {
+    // recalculate position if it's first time this tick
+    if (CSInvalid) {
+      CollisionSpheres[i].Centre = Orientation * RelCSPositions[i] + XYZ;
+    }
+  }
+  CSInvalid = false;
   DebugBSNode->setPosition(BoundingSphere.Centre);
   for (size_t i = 0, for_size = CollisionSpheres.size(); i < for_size; ++i) {
     DebugCSNodes[i]->setPosition(CollisionSpheres[i].Centre);
@@ -220,17 +229,9 @@ bool Corpus::validateCollision(Corpus* a_object)
  */
 bool Corpus::handleCollision(Collision* a_collision)
 {
-  SceneNode->showBoundingBox(true); // temp
-
-  return true;
-}
-
-/** @brief reverts an illegal move
- * @todo: replace by something less painfully simplistic
- */
-bool Corpus::revertMove(Vector3 a_move)
-{
-  XYZ -= a_move; // haha only serious
+  if (SceneNode) {
+    SceneNode->showBoundingBox(true); // temp
+  }
 
   return true;
 }
@@ -239,16 +240,16 @@ bool Corpus::revertMove(Vector3 a_move)
  */
 bool Corpus::update(const Real a_dt)
 {
-  //if (OldVelocity != Vector3::ZERO) {
-    if (OnArena) {
+  if (OnArena) {
+    if (OldVelocity != Vector3::ZERO) {
       updateCellIndex();
-      invalidateSpheres();
     }
+    invalidateSpheres();
+  }
 
-    // update the scene node
-    SceneNode->setPosition(XYZ);
-    SceneNode->setOrientation(Orientation);
-  //}
+  // update the scene node
+  SceneNode->setPosition(XYZ);
+  SceneNode->setOrientation(Orientation);
 
   // temp debug
   if (DisplayCollisionDebug) {

@@ -23,9 +23,9 @@ public:
   void setEnemy(Crusader* a_enemy);
 
 private:
-  ArenaEntity* enemy;
-  Crusader* self;
-  NavPoint* goal;
+  ArenaEntity* Enemy;
+  Crusader* Self;
+  NavPoint* Goal;
 };
 
 #endif // CRUSADERAI_H

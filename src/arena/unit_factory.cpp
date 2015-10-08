@@ -122,7 +122,7 @@ bool UnitFactory::getCrusaderDesign(const string&       filename,
     getReal(pairs["design.armour_placement.torso_left_back"]);
 
   //read weapons into weapon groups
-  for (size_t i = 0; i < num_of_weapon_groups; ++i) {
+  for (size_t i = 0; i < NUM_OF_WEAPON_GROUPS; ++i) {
   stringstream i_stream;
   i_stream << "design.weapon_groups." << i;
   getUsintArray(design.weapon_groups[i], pairs[i_stream.str()]);

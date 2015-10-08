@@ -30,8 +30,8 @@ public:
 private:
   vector<Projectile> Projectiles;
   vector<Corpus> Corpuses;
-  size_t lastCorpusIdx = 0;
-  size_t lastProjectileIdx = 0;
+  size_t LastCorpusIdx = 0;
+  size_t LastProjectileIdx = 0;
 };
 
 #endif // PROJECTILEFACTORY_H

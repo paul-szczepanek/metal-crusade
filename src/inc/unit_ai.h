@@ -19,8 +19,8 @@ public:
   void bindController(GameController* a_game_controller);
 
 protected:
-  bool active;
-  GameController* game_controller;
+  bool Active;
+  GameController* Controller;
 };
 
 #endif // UNITAI_H

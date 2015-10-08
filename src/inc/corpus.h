@@ -59,7 +59,6 @@ public:
   // resolve collisions
   bool validateCollision(Corpus* a_object);
   bool handleCollision(Collision* a_collision);
-  bool revertMove(Vector3 a_move);
   void invalidateSpheres();
 
   /*mfd_view::diagram_type getDiagramType() {
@@ -102,7 +101,6 @@ public:
 
 private:
   // speed and position
-  Real angular_momentum = 0;
   Real corrected_velocity_scalar = 0;
 
   // need to recalculate from relative positions
@@ -110,8 +108,8 @@ private:
   bool BSInvalid = true;
 
 public:
-  bool OutOfBounds = false;
   bool OnArena = false;
+  bool OutOfBounds = false;
 
   // debug
 private:
@@ -140,8 +138,6 @@ inline size_t_pair Corpus::getCellIndex()
 inline void Corpus::move(Vector3 a_move)
 {
   XYZ += a_move;
-  Direction = a_move;
-  Direction.normalise();
   invalidateSpheres();
 }
 

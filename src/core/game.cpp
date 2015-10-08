@@ -228,6 +228,9 @@ bool Game::frameRenderingQueued(const Ogre::FrameEvent& /*aEvt*/)
     NewTime = GameTimer->getTicks();
     ulint d_ticks = NewTime - LastTime;
     LastTime = NewTime;
+    if (d_ticks > 40) {
+      d_ticks = 40; //temp
+    }
 
     // main game loop
     logic(d_ticks);

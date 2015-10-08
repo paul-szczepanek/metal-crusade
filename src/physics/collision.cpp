@@ -32,13 +32,15 @@ Collision::~Collision()
 void Collision::findCollisionPlane()
 {
   vector<usint> indexes1 = getCollisionSphereIndexes(0);
-  for (const usint& i : indexes1) {
+  Centre[0] = Vector3::ZERO;
+  for (const usint i : indexes1) {
     Centre[0] += Object[0]->CollisionSpheres[i].Centre;
   }
   Centre[0] *= 1.0 / indexes1.size();
 
   vector<usint> indexes2 = getCollisionSphereIndexes(1);
-  for (const usint& i : indexes2) {
+  Centre[1] = Vector3::ZERO;
+  for (const usint i : indexes2) {
     Centre[1] += Object[1]->CollisionSpheres[i].Centre;
   }
   Centre[1] *= 1.0 / indexes2.size();
@@ -47,7 +49,7 @@ void Collision::findCollisionPlane()
 void Collision::resolve(const Real a_dt)
 {
   // stabilise piles of objects
-  if (resolved > RESOLVE_LIMIT) {
+  if (Resolved > RESOLVE_LIMIT) {
     Object[0]->Velocity = Vector3::ZERO;
     Object[1]->Velocity = Vector3::ZERO;
   }
@@ -58,9 +60,10 @@ void Collision::resolve(const Real a_dt)
 
   // only resolve the collision if the objects are getting closer
   const Real distance_before = Object[0]->XYZ.squaredDistance(Object[1]->XYZ);
-  const Real distance_after = (Object[0]->XYZ + velocity[0]).squaredDistance(
-    Object[1]->XYZ + velocity[1]);
-  if (distance_before > distance_after) {
+  const Vector3 pos_later1 = Object[0]->XYZ + velocity[0];
+  const Vector3 pos_later2 = Object[1]->XYZ + velocity[1];
+  const Real distance_after = pos_later1.squaredDistance(pos_later2);
+  if (distance_before < distance_after) {
     return;
   }
 
@@ -168,7 +171,7 @@ void Collision::resolve(const Real a_dt)
   Object[0]->Velocity = velocity[0];
   Object[1]->Velocity = velocity[1];
 
-  if (!resolved) {
+  if (!Resolved) {
     // call objects to resolve internal actions
     Object[0]->handleCollision(this);
     Object[1]->handleCollision(this);
@@ -192,7 +195,7 @@ void Collision::resolve(const Real a_dt)
     }
   }
 
-  ++resolved;
+  ++Resolved;
 
   // after changing velocities objects might have to resolve other collisions again
   for (const reverse_pairs_t& i : PAIRS) {

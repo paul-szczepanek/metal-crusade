@@ -9,7 +9,7 @@ class ParticleEffectStepDust
   : public ParticleEffect
 {
 public:
-  ParticleEffectStepDust(Ogre::SceneNode* scene_node);
+  ParticleEffectStepDust(Ogre::SceneNode* SceneNode);
   ~ParticleEffectStepDust();
 
   bool update(const Real a_dt);
@@ -17,8 +17,8 @@ public:
   void setRate(Real a_rate);
 
 private:
-  Ogre::ParticleSystem* dust;
-  Ogre::ParticleEmitter* dust_emitter;
+  Ogre::ParticleSystem* Dust;
+  Ogre::ParticleEmitter* DustEmitter;
 
 };
 

@@ -19,12 +19,12 @@ public:
   // name
   string& getName()
   {
-    return name;
+    return Name;
   }
 
   void setName(const string a_name)
   {
-    name = a_name;
+    Name = a_name;
   }
 
   void attack(Faction* a_faction,
@@ -32,24 +32,24 @@ public:
 
   void setParent(Faction* a_faction)
   {
-    parent = a_faction;
+    Parent = a_faction;
   }
 
   Faction* getParent()
   {
-    return parent;
+    return Parent;
   }
 
   // which global faction this represents - there may be more than one with the same faction field!
-  global_faction::faction faction_type;
-  ulint uid;
+  global_faction::faction FactionType;
+  ulint UID;
 
 private:
-  string name;
+  string Name;
   // members of the faction
-  list<Formation*> formations;
+  list<Formation*> Formations;
 
-  Faction* parent;
+  Faction* Parent;
 
   // TODO: list of object lists belonging to the faction so that attacking a building will work
 

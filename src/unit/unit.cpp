@@ -131,7 +131,7 @@ bool Unit::acquireTarget(Corpus* a_target)
   // check if target is acquirable
   if (a_target->OwnerEntity && a_target->OwnerEntity->acquireAsTargetBy(this)) {
     // set it as target
-    target = static_cast<Unit*>(a_target->OwnerEntity);
+    CurrentTarget = static_cast<Unit*>(a_target->OwnerEntity);
 
     return true;
   }
@@ -143,11 +143,11 @@ bool Unit::acquireTarget(Corpus* a_target)
  */
 void Unit::releaseAsTarget(ArenaEntity* a_targeted_by)
 {
-  if (target_holders.size() > 0) {
-    vector<ArenaEntity*>::iterator it = find(target_holders.begin(),
-                                             target_holders.end(), a_targeted_by);
-    if (it < target_holders.end()) {
-      target_holders.erase(it);
+  if (TargetHolders.size() > 0) {
+    vector<ArenaEntity*>::iterator it = find(TargetHolders.begin(),
+                                             TargetHolders.end(), a_targeted_by);
+    if (it < TargetHolders.end()) {
+      TargetHolders.erase(it);
     }
   }
 }
@@ -157,7 +157,7 @@ void Unit::releaseAsTarget(ArenaEntity* a_targeted_by)
  */
 bool Unit::acquireAsTargetBy(ArenaEntity* a_targeted_by)
 {
-  target_holders.push_back(a_targeted_by);
+  TargetHolders.push_back(a_targeted_by);
 
   return true;
 }
@@ -175,12 +175,12 @@ bool Unit::loseTarget(ArenaEntity* a_targeted_by,
                       bool         a_forced)
 {
   if (a_forced) {
-    target = NULL;
+    CurrentTarget = NULL;
     return true;
 
   } else {
     // temp!
-    target = NULL;
+    CurrentTarget = NULL;
     return true;
   }
 }
@@ -188,16 +188,16 @@ bool Unit::loseTarget(ArenaEntity* a_targeted_by,
 void Unit::clearFromTargets()
 {
   // stop other objects targeting this object
-  for (size_t i = 0, for_size = target_holders.size(); i < for_size; ++i) {
-    target_holders[i]->loseTarget(this, true);
+  for (size_t i = 0, for_size = TargetHolders.size(); i < for_size; ++i) {
+    TargetHolders[i]->loseTarget(this, true);
   }
 
-  target_holders.clear();
+  TargetHolders.clear();
 
   // release the target held by this object
-  if (target != NULL) {
-    target->releaseAsTarget(this);
-    target = NULL;
+  if (CurrentTarget != NULL) {
+    CurrentTarget->releaseAsTarget(this);
+    CurrentTarget = NULL;
   }
 }
 

@@ -33,6 +33,8 @@ ArenaEntity* BuildingFactory::spawnSceneryBuidling(Vector3       a_pos_xyz,
   string id_string = Game::getUniqueID() + a_name;
   ArenaEntity* entity = new ArenaEntity(id_string);
 
+  a_pos_xyz.y = Game::Arena->getHeight(a_pos_xyz.x, a_pos_xyz.z);
+
   // create entity
   Ogre::Entity* building_mesh = Game::Scene->createEntity(id_string, a_name + ".mesh");
 
@@ -48,11 +50,9 @@ ArenaEntity* BuildingFactory::spawnSceneryBuidling(Vector3       a_pos_xyz,
   // position the node for the Corpus because it doesn't do a whole lot by itself
   building_node->setPosition(a_pos_xyz);
 
-  Corpus* new_corpus = new Corpus();
+  Corpus* new_corpus = new Corpus(entity, building_node);
   new_corpus->XYZ = a_pos_xyz;
-  new_corpus->setSceneNode(building_node);
   new_corpus->setOrientation(a_orientation);
-  new_corpus->setOwner(entity);
   new_corpus->SurfaceTemperature = Game::Arena->getAmbientTemperature(a_pos_xyz);
   new_corpus->loadCollision(a_name);
   Game::Corpus->registerStaticObject(new_corpus);
@@ -72,6 +72,5 @@ ArenaEntity* BuildingFactory::spawnSceneryBuidling(Real          a_x,
                                                    const string& a_name,
                                                    Quaternion    a_orientation)
 {
-  return spawnSceneryBuidling(Vector3(a_x, Game::Arena->getHeight(a_x, a_y), a_y),
-                              a_name, a_orientation);
+  return spawnSceneryBuidling(Vector3(a_x, 0, a_y), a_name, a_orientation);
 }

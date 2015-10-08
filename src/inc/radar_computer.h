@@ -22,7 +22,7 @@ enum dot_type {
   solid, // unmoving structures
   solid_target, // enemies if they are targets and recognised as such
   ally, // units responding to iff query
-  target, // enemies if they are targets and recognised as such
+  CurrentTarget, // enemies if they are targets and recognised as such
   unknown // everything that doesn't identify as ally
 };
 

@@ -27,10 +27,10 @@ public:
 protected:
   void die();
 
-  Ogre::SceneNode* scene_node;
+  Ogre::SceneNode* SceneNode;
 
-  Real lifetime;
-  Real lifetime_limit;
+  Real CurrentLifetime;
+  Real LifetimeLimit;
 };
 
 #endif // PARTICLEEFFECT_H

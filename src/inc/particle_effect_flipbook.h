@@ -26,10 +26,10 @@ public:
   bool update(const Real a_dt);
 
 private:
-  Ogre::BillboardSet* set;
-  Ogre::Billboard* billboard;
-  size_t num_frames;
-  size_t current_frame;
+  Ogre::BillboardSet* BillboardSet;
+  Ogre::Billboard* Billboard;
+  size_t NumFrames;
+  size_t CurrentFrame;
 
 };
 

@@ -27,7 +27,7 @@ public:
   ParticleEffect* createStepDust(Ogre::SceneNode* scene_node);
 
 private:
-  list<ParticleEffect*> effects;
+  list<ParticleEffect*> Effects;
 };
 
 #endif // PARTICLEFACTORY_H
