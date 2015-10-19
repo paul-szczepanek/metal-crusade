@@ -3,35 +3,73 @@
 #include "radar_computer.h"
 #include "files_handler.h"
 #include "game.h"
-#include "arena.h"
+#include "game_arena.h"
 #include "game_controller.h"
 #include "unit.h"
+#include "text_store.h"
 
-const Real bs_to_dot_size = 1 / root_of_2;
+#define BS_TO_DOT_SIZE (1 / root_of_2)
 
 RadarComputer::RadarComputer(const string& filename,
                              Unit*         a_unit)
-  : active(true), unit(a_unit), active_radar(false), units_refresh_interval(1),
-  units_refresh_accumulator(0)
+  : OwnerUnit(a_unit)
 {
-  if (FilesHandler::getRadarDesign(filename, radar_design) == false) {
+  if (getRadarDesign(filename, radar_design) == false) {
     Game::kill(filename + " radar spec garbled! Oh, dear.");
   }
 
-  // default to active if radar is capable;
-  active_radar = radar_design.active;
+  // default to active if radar is capable
+  ActiveRadar = radar_design.active;
+}
+
+/** @brief load weapon spec from file
+  */
+bool RadarComputer::getRadarDesign(const string& filename, radar_design_t& radar_design)
+{
+  using namespace FilesHandler;
+  // prepare map to read data into
+  map<string, string> pairs;
+  //insert data from file into pairs
+  assert(getPairs(filename, RADAR_DIR, pairs));
+
+  // fill structs with info from pairs
+  radar_design.filename = filename;
+  radar_design.model = pairs["radar_design.model"];
+  // game text
+  radar_design.text_name = Game::Text->getStringKey(pairs["radar_design.text_name"]);
+  radar_design.text_list_name = Game::Text->getStringKey(pairs["radar_design.text_list_name"]);
+  radar_design.text_description = Game::Text->getStringKey(pairs["radar_design.text_description"]);
+  // basic properties
+  radar_design.weight = getReal(pairs["radar_design.weight"]);
+  // radar type
+  radar_design.active = getBool(pairs["radar_design.active"]);
+  radar_design.sweep = radar::sweep_type(getEnum(pairs["radar_design.sweep"]));
+  radar_design.cone_angle = Ogre::Radian(getReal(pairs["radar_design.cone_angle"]) * degree2rad);
+  radar_design.heads = intoInt(pairs["radar_design.heads"]);
+  // radar parameters
+  radar_design.power = getReal(pairs["radar_design.power"]);
+  radar_design.heat_sensivity = getReal(pairs["radar_design.power"]);
+  radar_design.electromagnetic_sensivity =
+      getReal(pairs["radar_design.electromagnetic_sensivity"]);
+
+  return true;
 }
 
 /** @brief main loop
  */
 void RadarComputer::update(Real a_dt)
 {
-  if (active) {
-    // potential units list doesn't need to be updated every frame
-    units_refresh_accumulator += a_dt;
+  // toggling on and off TODO: add a delay to this, at least to turning on
+  if (Enabled != Game::Hud->Controller->ControlBlock.radar) {
+    Enabled = !Enabled;
+  }
 
-    if (units_refresh_accumulator > units_refresh_interval) {
-      units_refresh_accumulator = 0;
+  if (Enabled) {
+    // potential units list doesn't need to be updated every frame
+    RefreshAccumulator += a_dt;
+
+    if (RefreshAccumulator > RefreshInterval) {
+      RefreshAccumulator = 0;
       updateObjectsWithinRadius();
     }
     updateRadarData();
@@ -40,7 +78,7 @@ void RadarComputer::update(Real a_dt)
 
 void RadarComputer::setRadarRange(Real a_range)
 {
-  radar_sphere.radius = a_range;
+  RadarSphere.Radius = a_range;
   updateObjectsWithinRadius();
 }
 
@@ -51,13 +89,9 @@ void RadarComputer::setRadarRange(Real a_range)
  */
 void RadarComputer::updateRadarData()
 {
-  // do the units
-  vector<radar::CorpusDot>::iterator it = mobilis_dots.begin();
-  vector<radar::CorpusDot>::iterator it_end = mobilis_dots.end();
-
-  for (; it != it_end; ++it) {
-    (*it).position = (*it).object->getPosition();
-    (*it).detected = true;
+  for (radar::CorpusDot& dot : CorpusDots) {
+    dot.position = dot.object->XYZ;
+    dot.detected = true;
   }
 }
 
@@ -70,68 +104,28 @@ void RadarComputer::updateRadarData()
 void RadarComputer::updateObjectsWithinRadius()
 {
   // adjust the position of the radar sphere
-  radar_sphere.centre = unit->getPosition();
+  RadarSphere.Centre = OwnerUnit->getXYZ();
 
   // clear old objects
-  corpus_dots.clear();
-  mobilis_dots.clear();
+  CorpusDots.clear();
 
   // get cell indexes within radius
-  vector<uint_pair> cell_indexes;
-  Game::arena->getCellIndexesWithinRadius(unit->getCellIndex(), cell_indexes,
-                                          radar_sphere.radius);
+  vector<size_t_pair> cell_indexes;
+  Game::Arena->getCellIndexesWithinRadius(OwnerUnit->getXYZ(), cell_indexes,
+                                          RadarSphere.Radius);
 
   // for cells within the radius of the radar
-  for (uint i = 0, for_size = cell_indexes.size(); i < for_size; ++i) {
+  for (size_t_pair index : cell_indexes) {
     // get objects' lists
-    list<Corpus*>& unit_corpus_list = Game::arena->getCorpusCell(cell_indexes[i]);
-    list<Corpus*>& unit_mobilis_list = Game::arena->getCorpusCell(cell_indexes[i]);
-    list<Unit*>& unit_cell_list = Game::arena->getUnitCell(cell_indexes[i]);
+    list<Corpus*>& unit_corpus_list = Game::Arena->getCorpusCell(index);
 
     // if there are any corpus in the cell
     if (unit_corpus_list.size() > 0) {
-      // go through them all and check their distance from the radar
-      list<Corpus*>::iterator it = unit_corpus_list.begin();
-      list<Corpus*>::iterator it_end = unit_corpus_list.end();
-
-      for (; it != it_end; ++it) {
+      for (Corpus* c : unit_corpus_list) {
         // if it's within the radar sphere add to the list for processing
-        if (radar_sphere.contains((*it)->getPosition())) {
-          Real size = (*it)->getBoundingSphere().radius * bs_to_dot_size;
-          corpus_dots.push_back(radar::CorpusDot((*it), size, (*it)->getPosition()));
-        }
-      }
-    }
-
-    // if there are any mobilis in the cell
-    if (unit_mobilis_list.size() > 0) {
-      // go through them all and check their distance from the radar
-      list<Corpus*>::iterator it = unit_mobilis_list.begin();
-      list<Corpus*>::iterator it_end = unit_mobilis_list.end();
-
-      for (; it != it_end; ++it) {
-        // if it's within the radar sphere add to the list for processing
-        if (radar_sphere.contains((*it)->getPosition())) {
-          // get rid of tiny projectiles and things you're not able to target
-          if ((*it)->isDetectable()) {
-            Real size = (*it)->getBoundingSphere().radius * bs_to_dot_size;
-            mobilis_dots.push_back(radar::CorpusDot((*it), size));
-          }
-        }
-      }
-    }
-
-    // if there are any units in the cell
-    if (unit_cell_list.size() > 0) {
-      // go through them all and check their distance from the radar
-      list<Unit*>::iterator it = unit_cell_list.begin();
-      list<Unit*>::iterator it_end = unit_cell_list.end();
-
-      for (; it != it_end; ++it) {
-        // if it's within the radar sphere add to the list for processing
-        if (radar_sphere.contains((*it)->getPosition())) {
-          Real size = (*it)->getBoundingSphere().radius * bs_to_dot_size;
-          mobilis_dots.push_back(radar::CorpusDot((*it), size));
+        if (RadarSphere.contains(c->XYZ)) {
+          Real dot_size = c->BoundingSphere.Radius * BS_TO_DOT_SIZE;
+          CorpusDots.push_back(radar::CorpusDot(c, dot_size));
         }
       }
     }

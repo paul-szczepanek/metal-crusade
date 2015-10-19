@@ -4,7 +4,6 @@
 #include "game.h"
 #include "unit.h"
 #include "weapon.h"
-#include "hud.h"
 #include "text_store.h"
 #include "game_controller.h"
 
@@ -14,10 +13,10 @@ HudWeaponTab::HudWeaponTab(hud_part_design_t& a_hud_part_design)
   Ogre::OverlayManager* overlay_mngr = Ogre::OverlayManager::getSingletonPtr();
 
   // alias the vector of weapons for easy access here
-  weapons = Game::hud->player_unit->getWeapons();
+  weapons = Game::Hud->PlayerUnit->getWeapons();
 
   // resize the container to accomodate the number of weapons
-  container->setDimensions(size.first, size.second * weapons.size());
+  Container->setDimensions(size.first, size.second * weapons.size());
 
   // get font size
   if (a_hud_part_design.parameters.size() < 1) { // kill the game if too few params
@@ -37,7 +36,7 @@ HudWeaponTab::HudWeaponTab(hud_part_design_t& a_hud_part_design)
                                                                                  name +
                                                                                  "lights_container"));
   lights_container->setMetricsMode(Ogre::GMM_PIXELS);
-  container->addChild(lights_container); // add it to the main container
+  Container->addChild(lights_container); // add it to the main container
 
   // create a container for the text elements to guarantee proper z-sorting
   Ogre::OverlayContainer* text_container = static_cast<Ogre::OverlayContainer*>
@@ -53,7 +52,7 @@ HudWeaponTab::HudWeaponTab(hud_part_design_t& a_hud_part_design)
     // create the baground tab
     string id = a_hud_part_design.name + "_tab_bg_" + intoString(i);
     createPanel(id, a_hud_part_design.name,
-                0, size.second * i, size.first, size.second, container);
+                0, size.second * i, size.first, size.second, Container);
 
     // create lights showig timout progress
     weapon_tab_lights_t lights;
@@ -80,10 +79,10 @@ HudWeaponTab::HudWeaponTab(hud_part_design_t& a_hud_part_design)
 
     // text for diasplaying weapon names
     // get the weapon shortened name
-    string weapon_name = Game::text->getText(weapons[i]->weapon_design.text_list_name);
+    string weapon_name = Game::Text->getText(weapons[i]->weapon_design.text_list_name);
     id = a_hud_part_design.name + "_name_text_" + intoString(i); // unique id
     tab_name_elements.push_back(createTextArea(id, weapon_name, font_size,
-                                               Game::hud->hud_design.display_colours[0],
+                                               Game::Hud->hud_design.display_colours[0],
                                                offset + 1, size.second * i + 3,
                                                size.first - offset, size.second,
                                                text_container));
@@ -91,7 +90,7 @@ HudWeaponTab::HudWeaponTab(hud_part_design_t& a_hud_part_design)
     // text for diasplaying ammo number
     id = a_hud_part_design.name + "_ammo_text_" + intoString(i); // unique id
     tab_ammo_elements.push_back(createTextArea(id, "000", font_size,
-                                               Game::hud->hud_design.display_colours[0],
+                                               Game::Hud->hud_design.display_colours[0],
                                                11, size.second * i + 3, offset,
                                                size.second, text_container));
   }
@@ -104,15 +103,15 @@ void HudWeaponTab::update(Real a_dt)
   accumulator += a_dt;
   if (accumulator > interval) { // runs at 10fps
     // get the addres of the vector of weapon indexes in the selected group
-    vector<usint> current_group = Game::hud->player_unit->getSelectedGroup();
+    vector<usint> current_group = Game::Hud->PlayerUnit->getSelectedGroup();
     usint g = 0; // index of weapons in  the group
 
     // deafult to no weapon selected - in group mode all weapons are selected in group
     usint current_weapon = -1;
 
     // if in single mode find the current weapon
-    if (!Game::hud->controller->control_block.fire_mode_group) {
-      current_weapon = Game::hud->player_unit->getSelectedWeapon();
+    if (!Game::Hud->Controller->ControlBlock.fire_mode_group) {
+      current_weapon = Game::Hud->PlayerUnit->getSelectedWeapon();
     }
 
     // go trhough all weapons to show the ammo and apprpriate lights under the name
@@ -131,7 +130,7 @@ void HudWeaponTab::update(Real a_dt)
       } else {
         // out of ammo
         tab_ammo_elements[i]->setCaption("---");
-        tab_ammo_elements[i]->setColour(Game::hud->hud_design.display_colours[1]);
+        tab_ammo_elements[i]->setColour(Game::Hud->hud_design.display_colours[1]);
       }
 
       // determine if the weapon is in the selected group
@@ -149,7 +148,7 @@ void HudWeaponTab::update(Real a_dt)
         // light up the tri-colour lights under the weapon name
         if (in_selected_group) {
           // show selected group in green - except the selected weapon which is in yellow
-          if (Game::hud->controller->control_block.fire_mode_group
+          if (Game::Hud->Controller->ControlBlock.fire_mode_group
               || i != current_weapon) {
             // groups in green
             for (usint j = 0; j < number_of_lights; ++j) {

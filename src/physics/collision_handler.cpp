@@ -59,7 +59,7 @@ void CollisionHandler::updatePotentialCollisions()
 
     // get adjacent cell indexes
     vector<size_t_pair> cell_indexes;
-    Game::Arena->getCellIndexesWithinRadius(c1->getCellIndex(), cell_indexes);
+    Game::Arena->getCellIndexesWithinRadius(c1->XYZ, cell_indexes);
 
     for (const size_t_pair ci : cell_indexes) {
       // get lists from each cell

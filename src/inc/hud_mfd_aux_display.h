@@ -4,6 +4,7 @@
 #define MFD_AUX_DISPLAY_H
 
 #include "hud_part.h"
+#include "game_hud.h"
 
 class MFDComputer;
 
@@ -29,7 +30,7 @@ private:
   Real hud_part_accumulator;
 
   // lines of text
-  Ogre::OverlayElement* mfd_aux_text_elements[hud_num_of_colours][hud_num_of_mfd_aux_lines];
+  Ogre::OverlayElement* mfd_aux_text_elements[HUD_NUM_OF_COLOURS][HUD_NUM_OF_MFD_AUX_LINES];
 };
 
 #endif // MFD_AUX_DISPLAY_H

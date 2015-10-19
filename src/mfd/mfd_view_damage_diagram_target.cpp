@@ -2,7 +2,6 @@
 
 #include "mfd_view_damage_diagram_target.h"
 #include "game.h"
-#include "hud.h"
 #include "unit.h"
 
 MFDViewDamageDiagramTarget::MFDViewDamageDiagramTarget(hud_part_design_t& a_hud_part_design)
@@ -13,13 +12,13 @@ MFDViewDamageDiagramTarget::MFDViewDamageDiagramTarget(hud_part_design_t& a_hud_
 
 void MFDViewDamageDiagramTarget::update(Real a_dt)
 {
-  if (active) {
-    if (Game::hud->player_unit->getTarget() == NULL) {
+  if (Active) {
+    if (Game::Hud->PlayerUnit->getTarget() == NULL) {
       if (diagram != mfd_view::blank) {
         switchDiagrams(mfd_view::blank);
       }
     } else {
-      updateDiagramElements(a_dt, Game::hud->player_unit->getTarget());
+      updateDiagramElements(a_dt, Game::Hud->PlayerUnit->getTarget());
     }
   }
 }

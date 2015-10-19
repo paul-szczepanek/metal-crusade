@@ -1,6 +1,7 @@
 // (c) Paul Szczepanek (teatimecoder.com). Code released under GPL Version 3.
 
 #include "game.h"
+#include "game_hud.h"
 #include "files_handler.h"
 #include "timer.h"
 #include "text_store.h"
@@ -17,43 +18,44 @@
 #include "projectile_factory.h"
 #include "particle_manager.h"
 #include "collision_handler.h"
+#include "status_computer.h"
 
-Game* gGame = 0;
+Game* gGame = NULL;
 
 // 64fps limit for the game
 #define FPS_INTERVAL (16)
 
 const string VERSION_NUMBER = FilesHandler::getStringFromFile(DATA_DIR + "version");
 
-Ogre::Root* Game::OgreRoot = NULL;
-Ogre::Viewport* Game::OgreViewport = NULL;
-Ogre::RenderWindow* Game::OgreWindow = NULL;
-Ogre::SceneManager* Game::Scene = NULL;
-
-InputHandler* Game::Input = NULL;
-TextStore* Game::Text = NULL;
-GameCamera* Game::Camera = NULL;
-CorpusManager* Game::Corpus = NULL;
-FormationManager* Game::Formation = NULL;
-FactionManager* Game::Faction = NULL;
-GameArena* Game::Arena = NULL;
-AIManager* Game::AI = NULL;
-ParticleManager* Game::Particle = NULL;
-UnitFactory* Game::Unit = NULL;
-BuildingFactory* Game::Building = NULL;
-ProjectileFactory* Game::Projectile = NULL;
-CollisionHandler* Game::Collision = NULL;
-
+Ogre::Root*             Game::OgreRoot = NULL;
+Ogre::Viewport*         Game::OgreViewport = NULL;
+Ogre::RenderWindow*     Game::OgreWindow = NULL;
+Ogre::SceneManager*     Game::Scene = NULL;
+InputHandler*           Game::Input = NULL;
+TextStore*              Game::Text = NULL;
+GameCamera*             Game::Camera = NULL;
+CorpusManager*          Game::Corpus = NULL;
+FormationManager*       Game::Formation = NULL;
+FactionManager*         Game::Faction = NULL;
+GameArena*              Game::Arena = NULL;
+AIManager*              Game::AI = NULL;
+ParticleManager*        Game::Particle = NULL;
+UnitFactory*            Game::Unit = NULL;
+BuildingFactory*        Game::Building = NULL;
+ProjectileFactory*      Game::Projectile = NULL;
+CollisionHandler*       Game::Collision = NULL;
+Timer*                  Game::GameTimer = NULL;
+GameHud*                Game::Hud = NULL;
 vector<GameController*> Game::Controllers;
-game_state Game::State;
-Timer* Game::GameTimer = NULL;
-ulint Game::NewTime;
-ulint Game::LastTime;
-ulint Game::RealTime;
-Real Game::Delta;
-Real Game::Fps;
-size_t Game::UniqueId;
-bool Game::DebugMode;
+
+game_state  Game::State = game_state::game_state_init;
+ulint       Game::NewTime = 0;
+ulint       Game::LastTime = 0;
+ulint       Game::RealTime = 0;
+Real        Game::Delta = 0;
+Real        Game::Fps = 0;
+size_t      Game::UniqueId = 0;
+bool        Game::DebugMode = false;
 
 Game::~Game()
 {
@@ -61,10 +63,7 @@ Game::~Game()
 
 Game::Game()
 {
-  Text = new TextStore();
-
-  Fps = 0;
-  UniqueId = 0;
+  Game::Text = new TextStore();
 }
 
 const string& Game::getVersion()
@@ -79,11 +78,11 @@ Game* Game::instance()
   return gGame;
 }
 
-int Game::init(bool aDebugOn)
+int Game::init(bool a_debug_on)
 {
   gGame = new Game();
 
-  DebugMode = aDebugOn;
+  DebugMode = a_debug_on;
 
   return 0;
 }
@@ -118,9 +117,9 @@ void Game::run()
   if (OgreRoot->restoreConfig() || OgreRoot->showConfigDialog()) {
     OgreWindow = OgreRoot->initialise(true, string("Metal Crusade ") + VERSION_NUMBER, "");
 
-    Scene = OgreRoot->createSceneManager(Ogre::ST_GENERIC);
+    Game::Scene = OgreRoot->createSceneManager(Ogre::ST_GENERIC);
     // setup shadow type - needs to be done first
-    Scene->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_MODULATIVE);
+    Game::Scene->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_MODULATIVE);
 
     // set resources
     Ogre::ResourceGroupManager& res_mngr = Ogre::ResourceGroupManager::getSingleton();
@@ -141,18 +140,18 @@ void Game::run()
     res_mngr.initialiseResourceGroup("particles");
     res_mngr.initialiseResourceGroup("terrain");
 
-    Camera = new GameCamera(); // needs scene manager to exist
+    Game::Camera = new GameCamera(); // needs scene manager to exist
 
     // init viewport with the camera
-    OgreViewport = OgreWindow->addViewport(Camera->getOgreCamera());
+    OgreViewport = OgreWindow->addViewport(Camera->OgreCamera);
     OgreViewport->setBackgroundColour(Ogre::ColourValue::Black);
 
     // needs to be called after camera, window, viewport, scene manager
-    Input = new InputHandler();
+    Game::Input = new InputHandler();
 
     // bind input to first controller
     Controllers.push_back(new GameController("Player1"));
-    Input->bindController(Controllers[0]);
+    Game::Input->bindController(Controllers[0]);
 
     // game time init
     GameTimer = new Timer(OgreRoot->getTimer());
@@ -160,8 +159,8 @@ void Game::run()
     RealTime = 0;
 
     // create the world and objects
-    Formation = new FormationManager();
-    Faction = new FactionManager();
+    Game::Formation = new FormationManager();
+    Game::Faction = new FactionManager();
 
     enterArena();
 
@@ -169,17 +168,16 @@ void Game::run()
     if (Arena->loadArena("test_arena") == 0) {
       OgreRoot->addFrameListener(this);  // gets frameRenderingQueued called every frame
       State = game_state_playing;
-      // Game::hud->activate(true);
+      Game::Hud->activate(true);
       Game::Input->resize();
       OgreRoot->startRendering(); // hands over main loop to ogre
     }
-
   }
 }
 
 void Game::enterArena()
 {
-  Arena = new GameArena();
+  Game::Arena = new GameArena();
 
   Game::Corpus = new CorpusManager();
   Game::AI = new AIManager();
@@ -188,7 +186,7 @@ void Game::enterArena()
   Game::Unit = new UnitFactory();
   Game::Particle = new ParticleManager();
   Game::Collision = new CollisionHandler();
-  //Game::hud = new Hud();
+  Game::Hud = new GameHud();
 }
 
 void Game::exitArena()
@@ -200,10 +198,10 @@ void Game::exitArena()
   delete Game::Unit;
   delete Game::Particle;
   delete Game::Collision;
-  //delete Game::Hud;
+  delete Game::Hud;
 
   delete Arena;
-  Arena = NULL;
+  Game::Arena = NULL;
 }
 
 /** @brief captures input from devices
@@ -211,7 +209,7 @@ void Game::exitArena()
  */
 void Game::input()
 {
-  Input->capture();
+  Game::Input->capture();
 }
 
 /** @brief main loop is handled by OGRE and this gets called once every frame
@@ -228,16 +226,11 @@ bool Game::frameRenderingQueued(const Ogre::FrameEvent& /*aEvt*/)
     NewTime = GameTimer->getTicks();
     ulint d_ticks = NewTime - LastTime;
     LastTime = NewTime;
-    if (d_ticks > 40) {
-      d_ticks = 40; //temp
-    }
 
     // main game loop
     logic(d_ticks);
 
   } else if (State == game_state_pause) {
-    GameTimer->pause();
-    // hud->pause();
 
   } else if (State == game_state_closing) {
     return false;
@@ -247,7 +240,7 @@ bool Game::frameRenderingQueued(const Ogre::FrameEvent& /*aEvt*/)
   }
 
   // pad out time for steady FPS
-  limitFPS();
+  //limitFPS();
 
   // renders frame at return
   return true;
@@ -262,22 +255,17 @@ void Game::logic(ulint a_ticks)
     Delta = Real(a_ticks) / Real(1000);
 
     // update game objects
-    Arena->update(Delta);
-    Faction->update(Delta);
-    Formation->update(Delta);
-    Particle->update(Delta);
-    Camera->update(Delta);
+    Game::Arena->update(Delta);
+    Game::Faction->update(Delta);
+    Game::Formation->update(Delta);
+    Game::Particle->update(Delta);
+    Game::Camera->update(Delta);
+    Game::Corpus->update(Delta);
 
     // show the overlays (2D hud)
-    // hud->update(Delta);
+    Game::Hud->update(Delta);
 
-    // find and resolve collisions
-    Corpus->applyForces(Delta);
-    Collision->update(Delta);
-    Corpus->applyVelocity(Delta);
-    Corpus->update(Delta);
-
-    AI->update(Delta);
+    Game::AI->update(Delta);
   }
 }
 
@@ -316,29 +304,7 @@ void Game::fpsCalc()
   RealTime = new_real_time;
 
   // temp, show the fps
-  // hud->status->setLine(string("$eFPS: ") + intoString(Fps), 0, 20, 50);
-}
-
-/** @brief clears the Ogre objects for a projectile
- */
-void Game::destroyModel(Ogre::SceneNode* a_scene_node)
-{
-  // destroy attached entities
-  Ogre::SceneNode::ObjectIterator it = a_scene_node->getAttachedObjectIterator();
-  while (it.hasMoreElements()) {
-    Ogre::MovableObject* movable_object = static_cast<Ogre::MovableObject*>(it.getNext());
-    a_scene_node->getCreator()->destroyMovableObject(movable_object);
-  }
-
-  // destroy children if any
-  Ogre::SceneNode::ChildNodeIterator it2 = a_scene_node->getChildIterator();
-  while (it2.hasMoreElements()) {
-    Ogre::SceneNode* child_node = static_cast<Ogre::SceneNode*>(it2.getNext());
-    destroyModel(child_node);
-  }
-
-  // at last remove the scene node
-  Game::Scene->destroySceneNode(a_scene_node);
+  Game::Hud->status->setLine(string("$eFPS: ") + intoString(Fps), 0, 20, 50);
 }
 
 /** @brief terminal error - die
@@ -347,4 +313,12 @@ void Game::kill(string aGoodbye)
 {
   cout << aGoodbye << endl;
   exit(1);
+}
+
+void Game::setGameState(game_state a_state)
+{
+  if (a_state == game_state_pause) {
+    Game::Hud->pause();
+  }
+  State = a_state;
 }

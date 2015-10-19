@@ -1,0 +1,16 @@
+material terrain
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			ambient 0.600000 0.600000 0.600000 0.600000
+			diffuse 0.900000 1.000000 0.900000 0.600000
+			specular 0.900000 0.900000 0.900000 0.600000 12.500000
+                        scene_blend alpha_blend
+			depth_write off
+
+		}
+	}
+}

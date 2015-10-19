@@ -4,6 +4,7 @@
 #define WEAPON_TAB_H
 
 #include "hud_part.h"
+#include "game_hud.h"
 
 class Weapon;
 class GameController;

@@ -4,20 +4,20 @@
 #define HUDPART_H
 
 #include "main.h"
+#include "game_hud.h"
 #include "hud_design.h"
+#include "game_hud.h"
+
+#define HUD_3D_DISTANCE (-200)
 
 class HudPart
 {
 public:
   HudPart(hud_part_design_t& a_hud_part_design);
-  virtual ~HudPart()
-  {
-  }
+  virtual ~HudPart();
 
   virtual void update(const Real a_dt) = 0;
-  virtual void resize(Real a_scale)
-  {
-  }                                            // for use with 3d elements
+  virtual void resize(Real a_scale);
 
 protected:
   // basic common properties
@@ -26,7 +26,7 @@ protected:
   hud_part_enum::function function;
 
   // master container for all elements
-  Ogre::OverlayContainer* container;
+  Ogre::OverlayContainer* Container;
 
   // short hand for creating elements
   Ogre::OverlayElement* createPanel(const string&           a_id,
@@ -47,6 +47,8 @@ protected:
                                        Ogre::OverlayContainer* a_container);
 };
 
-const Real hud_3d_distance = -200;
+inline void HudPart::resize(Real a_scale)
+{
+}
 
 #endif // HUDPART_H

@@ -3,6 +3,7 @@
 #ifndef MFDVIEW_H
 #define MFDVIEW_H
 
+#include "game_hud.h"
 #include "hud_part.h"
 
 class MFDComputer;
@@ -12,9 +13,7 @@ class MFDView
 {
 public:
   MFDView(hud_part_design_t& a_hud_part_design);
-  virtual ~MFDView()
-  {
-  }
+  virtual ~MFDView();
 
   virtual void update(const Real a_dt) = 0;
 
@@ -23,9 +22,8 @@ public:
 
 protected:
   // the controlling mfd
-  MFDComputer* mfd;
-
-  bool active;
+  MFDComputer* mfd = NULL;
+  bool Active = false;
 };
 
 #endif // MFDVIEW_H

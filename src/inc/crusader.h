@@ -40,6 +40,11 @@ public:
 
   bool update(const Real a_dt);
 
+  virtual const Vector3& getXYZ();
+  virtual const Vector3& getVelocity();
+  virtual void setXYZ(const Vector3& a_pos);
+  virtual void setVelocity(const Vector3& a_pos);
+
   bool handleCollision(Collision* a_collision);
 
   // directions
@@ -50,9 +55,6 @@ public:
   virtual void setDriveOrientation(Quaternion);
   virtual void setOrientation(Quaternion);
 
-  // hud
-  //string getHudName();
-
   Real getSpeed();
   Real getCoolant();
   Real getEngineTemperature();
@@ -61,13 +63,16 @@ public:
 
   // damage reporting
   Real getDamage(usint a_diagram_element);
-  /*mfd_view::diagram_type getDiagramType() {
+
+  mfd_view::diagram_type getDiagramType() {
      return mfd_view::biped_crusader;
-     }*/
+  }
 
   // weapons
   inline vector<usint>& getSelectedGroup();
   inline usint getSelectedWeapon();
+
+  string getHudName();
 
 private:
   // inner main loop
@@ -91,7 +96,7 @@ private:
 
 private:
   // moving
-  Vector3 Velocity = Vector3::ZERO;
+  Vector3 InputVelocity = Vector3::ZERO;
   Real Throttle = 0;
   Real TotalWieght = 0;
   Real AngularMomentum = 0;
@@ -134,6 +139,7 @@ private:
   usint CurrentGroup = 0;
   usint CurrentWeapon = 0;
   bool WeaponsOperational = false;
+  bool HudAttached = false;
 };
 
 const Real CRITICAL_TEMPERATURE(500);
@@ -161,9 +167,11 @@ inline Real Crusader::getDamage(usint a_diagram_element)
 }
 
 // hud
-/*string Crusader::getHudName() {
-   return design.hud;
-   }*/
+
+inline string Crusader::getHudName()
+{
+return CrusaderDesign.hud;
+}
 
 inline Real Crusader::getSpeed()
 {

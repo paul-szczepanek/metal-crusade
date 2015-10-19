@@ -1,6 +1,6 @@
 // (c) Paul Szczepanek (teatimecoder.com). Code released under GPL Version 3.
 
-#include "hud.h"
+#include "game_hud.h"
 #include "game.h"
 #include "unit.h"
 #include "game_camera.h"
@@ -27,9 +27,9 @@ const string hud_textures_dir = "data/texture/hud/";
 const Real base_width(1024);
 const Real base_height(768);
 
-Hud::Hud()
-  : active(false), hud_width(base_width), hud_height(base_height),
-  scale(1), scale_w(1), scale_h(1), selected_mfd(0), hud_mode(interface_mode::mfd)
+GameHud::GameHud()
+  : hud_width(base_width)
+  , hud_height(base_height)
 {
   log = new LogComputer();
   status = new StatusComputer();
@@ -37,7 +37,7 @@ Hud::Hud()
 
 /** @brief unloads the whole frontend when exiting the arena
  */
-Hud::~Hud()
+GameHud::~GameHud()
 {
   // destroy all the parts
   for (usint i = 0, for_size = hud_parts.size(); i < for_size; ++i) {
@@ -45,7 +45,7 @@ Hud::~Hud()
   }
 
   // destroy all overlays an elements, this also takes care of ogre elements created by hud_parts
-  Ogre::OverlayManager* overlay_mngr = &Ogre::OverlayManager::getSingleton();
+  Ogre::OverlayManager* overlay_mngr = Ogre::OverlayManager::getSingletonPtr();
   overlay_mngr->destroyAllOverlayElements();
   overlay_mngr->destroyAll();
 
@@ -58,7 +58,7 @@ Hud::~Hud()
 
 /** @brief turns hud on/off
  */
-void Hud::activate(bool a_toggle)
+void GameHud::activate(bool a_toggle)
 {
   active = a_toggle;
   if (active) {
@@ -84,35 +84,127 @@ void Hud::activate(bool a_toggle)
 
 /** @brief shows the pause screen
  */
-void Hud::pause()
+void GameHud::pause()
 {
   centre_overlay->show();
+}
+/** @brief load definition of the ingame hud
+  * fills structs with specs read from a file
+  */
+bool GameHud::getHudDesign(const string& filename, hud_design_t& hud_design)
+{
+  using namespace FilesHandler;
+  //prepare map to read data into
+  map<string, string> pairs;
+  //TODO: replace assert with a fallback or just bail
+  assert(getPairs(filename, HUD_DIR, pairs)); //insert data from file into pairs
+
+  //fill structs with info from pairs
+  hud_design.name = filename;
+  hud_design.font_name = pairs["hud_design.font_name"];
+  getStringArray(hud_design.area_textures, pairs["hud_design.area_textures"]);
+  getStringArray(hud_design.area_cover_textures, pairs["hud_design.area_cover_textures"]);
+  FilesHandler::getEnumPairArrayT(hud_design.positions, pairs["hud_design.positions"]);
+  getIntPairArray(hud_design.sizes, pairs["hud_design.sizes"]);
+  getIntPairArray(hud_design.offsets, pairs["hud_design.offsets"]);
+  getIntPairArray(hud_design.offsets_alternative, pairs["hud_design.offsets_alternative"]);
+  getColourArray(hud_design.status_colours, pairs["hud_design.status_colours"]);
+  getColourArray(hud_design.log_colours, pairs["hud_design.log_colours"]);
+  getColourArray(hud_design.mfd_colours, pairs["hud_design.mfd_colours"]);
+  getColourArray(hud_design.display_colours, pairs["hud_design.display_colours"]);
+  getEnumArrayT(hud_design.mfd_views, pairs["hud_design.mfd_views"]);
+
+  usint i = 0;
+
+  //check to see if a part with a consecutive tag exists
+  while (pairs.find(string("hud_design.parts.") + intoString(i)) != pairs.end()) {
+    //load design of each part
+    hud_part_design_t hud_part_design;
+    vector<string> hud_part_design_string;
+    getStringArray(hud_part_design_string,
+                   pairs[string("hud_design.parts.") + intoString(i)]);
+
+    //makes sure the are enough values to fill the design
+    if (hud_part_design_string.size() < 9) {
+      cout << hud_part_design_string.size() << endl;
+      return false;
+    }
+
+    hud_part_design.area = hud_area(getEnum(hud_part_design_string[0]));
+    hud_part_design.name = hud_part_design_string[1];
+    hud_part_design.type = hud_part_enum::type(getEnum(hud_part_design_string[2]));
+    getRealSeries(hud_part_design.parameters, hud_part_design_string[3]);
+    hud_part_design.function = hud_part_enum::function(getEnum(hud_part_design_string[4]));
+    hud_part_design.position.first = intoInt(hud_part_design_string[5]);
+    hud_part_design.position.second = intoInt(hud_part_design_string[6]);
+    hud_part_design.size.first = intoInt(hud_part_design_string[7]);
+    hud_part_design.size.second = intoInt(hud_part_design_string[8]);
+    hud_design.parts.push_back(hud_part_design);
+
+    ++i;
+  }
+
+  //sanity check on values
+  if (hud_design.area_textures.size() > 7
+      && hud_design.area_cover_textures.size() > 7
+      && hud_design.positions.size() > 7
+      && hud_design.sizes.size() > 7
+      && hud_design.offsets.size() > 7
+      && hud_design.offsets_alternative.size() > 7
+      && hud_design.status_colours.size() > 0
+      && hud_design.log_colours.size() > 0
+      && hud_design.mfd_colours.size() > 0
+      && hud_design.display_colours.size() > 0) {
+    //pad colours if too few
+    padHudColours(hud_design.status_colours);
+    padHudColours(hud_design.log_colours);
+    padHudColours(hud_design.mfd_colours);
+    padHudColours(hud_design.display_colours);
+
+  } else {
+    cout << "hud definition incomplete" << endl;
+    return false;
+  }
+
+  return true;
+}
+
+/** @brief propagates the last colour in a table if there are too few
+  */
+void GameHud::padHudColours(vector<Ogre::ColourValue>& colour_array)
+{
+  //if fewer colours than hud needs
+  if (colour_array.size() < HUD_NUM_OF_COLOURS) {
+    //copy the last colour over and over until full
+    for (usint i = colour_array.size(); i < HUD_NUM_OF_COLOURS; ++i) {
+      colour_array.push_back(colour_array.back());
+    }
+  }
 }
 
 /** @brief actually loads the hud with all the textures dependent on the name
  * all assets are later fried up when the hud is killed as they are big textures
  */
-void Hud::loadHud(Unit* a_player_unit)
+void GameHud::loadHud(Unit* a_player_unit)
 {
   // hook up the hud to the unit
-  player_unit = a_player_unit;
-  player_unit->attachHud(true);
+  PlayerUnit = a_player_unit;
+  PlayerUnit->attachHud(true);
+  Controller = PlayerUnit->getController();
 
-  // alias the controller and radar for hud parts' access
-  controller = player_unit->getController();
-  radar = player_unit->getRadar();
+  radar = PlayerUnit->getRadar();
 
   // hook up the timer
   timer = Game::instance()->getTimer();
 
   // try and load the definition
-  if (FilesHandler::getHudDesign(player_unit->getHudName(), hud_design) == false) {
+  if (getHudDesign(PlayerUnit->getHudName(), hud_design) == false) {
     Game::kill("hud definition failed to load!");
   }
 
   // load hud materials from a directory based on the name of the hud from the mech design
   Ogre::ResourceGroupManager& resource_mngr = Ogre::ResourceGroupManager::getSingleton();
-  resource_mngr.addResourceLocation(hud_textures_dir + player_unit->getHudName(),
+  resource_mngr.addResourceLocation(hud_textures_dir + PlayerUnit->getHudName(),
                                     "FileSystem", "hud");
   resource_mngr.initialiseResourceGroup("hud");
 
@@ -133,7 +225,7 @@ void Hud::loadHud(Unit* a_player_unit)
     // create the top container
     hud_areas[i] = (static_cast<Ogre::OverlayContainer*>
                     (overlay_mngr->createOverlayElement("Panel",
-                                                        hud_area_names[i] + "_hud_area")));
+                        hud_area_names[i] + "_hud_area")));
 
     // apply meterial with texture from design
     hud_areas[i]->setMaterialName(hud_design.area_textures[i]);
@@ -221,14 +313,14 @@ void Hud::loadHud(Unit* a_player_unit)
   }
 
   // set size and position of all the elements
-  resize(Game::render_window->getWidth(), Game::render_window->getHeight());
+  resize(Game::OgreWindow->getWidth(), Game::OgreWindow->getHeight());
 }
 
 /** @brief slides overlays around smoothly to match their current offset
  */
-void Hud::offsetUpdate(Real     a_dt,
-                       hud_area a_hud_area,
-                       bool     a_alternative)
+void GameHud::offsetUpdate(Real     a_dt,
+                           hud_area a_hud_area,
+                           bool     a_alternative)
 {
   // smoth transition bewteen offsets
   if (a_alternative) {
@@ -258,20 +350,20 @@ void Hud::offsetUpdate(Real     a_dt,
 /** @brief main loop - updates all parts and deals with mode selection and handles mfd selection
  * the fps of each part is independent, each has an accumulator; digital parts can run at lower fps
  */
-void Hud::update(Real a_dt)
+void GameHud::update(Real a_dt)
 {
   if (active) {
     // hide the paused screen
     centre_overlay->hide();
 
     // interface modes
-    if (controller->control_block.communication_interface) {
+    if (Controller->ControlBlock.communication_interface) {
       hud_mode = interface_mode::communication;
 
-    } else if (controller->control_block.menu_interface) {
+    } else if (Controller->ControlBlock.menu_interface) {
       hud_mode = interface_mode::computer;
 
-    } else if (controller->control_block.log) {
+    } else if (Controller->ControlBlock.log) {
       hud_mode = interface_mode::log;
 
     } else {
@@ -281,14 +373,14 @@ void Hud::update(Real a_dt)
     // mfd mode
     if (hud_mode == interface_mode::mfd) {
       // mfd selection
-      if (take(Game::hud->controller->control_block.mfd1_select)) {
+      if (take(Controller->ControlBlock.mfd1_select)) {
         // select previous mfd
         mfds[selected_mfd]->activate(false);
         --selected_mfd;
         if (selected_mfd > mfds.size()) {
           selected_mfd = 0;
         }
-      } else if (take(Game::hud->controller->control_block.mfd2_select)) {
+      } else if (take(Controller->ControlBlock.mfd2_select)) {
         // select next mfd
         mfds[selected_mfd]->activate(false);
         ++selected_mfd;
@@ -327,8 +419,8 @@ void Hud::update(Real a_dt)
 
 /** @brief resizes and positions all the elements again to accomodate any sreens size
  */
-void Hud::resize(uint a_screen_width,
-                 uint a_screen_height)
+void GameHud::resize(size_t a_screen_width,
+                     size_t a_screen_height)
 {
   // get scale from the screen width and height
   hud_width = a_screen_width;
@@ -370,9 +462,9 @@ void Hud::resize(uint a_screen_width,
 /** @brief creates a metarial and apply a texture to it of the same name
  * if there is already a material of same name it returns that instead
  */
-Ogre::MaterialPtr Hud::createOverlayMaterial(const string&      a_name,
-                                             texture_addressing a_addressing,
-                                             string             a_texture_name)
+Ogre::MaterialPtr GameHud::createOverlayMaterial(const string&      a_name,
+    texture_addressing a_addressing,
+    string             a_texture_name)
 {
   Ogre::MaterialPtr material;
 
@@ -409,11 +501,11 @@ Ogre::MaterialPtr Hud::createOverlayMaterial(const string&      a_name,
  * this cap can be removed by making the function accept any number of lines
  * but at a cost of complexity and more checking so I'll do that if I ever need more than 3 colours
  */
-void Hud::parseColours(const string& message,
-                       usint         a_length,
-                       char*         line1,
-                       char*         line2,
-                       char*         line3)
+void GameHud::parseColours(const string& message,
+                           usint         a_length,
+                           char*         line1,
+                           char*         line2,
+                           char*         line3)
 {
   usint colour = 0; // default colour
   usint last_colour = colour; // previously used colour
@@ -423,13 +515,13 @@ void Hud::parseColours(const string& message,
   // parse the string and seperate the message into different colours
   for (usint i = 0; i < a_length; ++i) {
     // if you hit an escape char
-    if (k < k_limit && message[k] == hud_escape_char) {
+    if (k < k_limit && message[k] == HUD_ESCAPE_CHAR) {
       // move to next char
       ++k;
 
       if (k < k_limit) { // check in case the escape char was the last thing in the string
         // if revert colour char found
-        if (message[k] == hud_revert_colour_char) {
+        if (message[k] == HUD_REVERT_COLOUR_CHAR) {
           // switch to the previous colour
           colour = last_colour;
 
@@ -438,7 +530,7 @@ void Hud::parseColours(const string& message,
 
         } else {
           // otherwise look for a new colour code
-          for (usint l = 0; l < hud_num_of_colours; ++l) {
+          for (usint l = 0; l < HUD_NUM_OF_COLOURS; ++l) {
             // set the colour if the colour cound is found
             if (message[k] == hud_colour_codes[l]) {
               // push old colour as the last used colour
@@ -479,9 +571,9 @@ void Hud::parseColours(const string& message,
  * the moving is x,-y not x,y and bizzarely the screen size is <0,2> and not <0,1>
  * scaling is done after movement against the point 1,-1 not 0.5,0.5
  */
-Real Hud::positionHorizontal(int                  a_width,
-                             horizontal::position a_position,
-                             Real                 a_offset)
+Real GameHud::positionHorizontal(int                  a_width,
+                                 horizontal::position a_position,
+                                 Real                 a_offset)
 {
   switch (a_position) {
 
@@ -502,9 +594,9 @@ Real Hud::positionHorizontal(int                  a_width,
 /** @brief translate positions given in enums into OGRE relative coords
  * see positionHorizontal above
  */
-Real Hud::positionVertical(int                a_height,
-                           vertical::position a_position,
-                           Real               a_offset)
+Real GameHud::positionVertical(int                a_height,
+                               vertical::position a_position,
+                               Real               a_offset)
 {
   switch (a_position) {
 
@@ -525,7 +617,7 @@ Real Hud::positionVertical(int                a_height,
 
 /** @brief translate positions given in enums into pixel coords
  */
-Real Hud::getHudAreaOriginX(hud_area a_hud_area)
+Real GameHud::getHudAreaOriginX(hud_area a_hud_area)
 {
 
   switch (hud_design.positions[a_hud_area].first) {
@@ -548,7 +640,7 @@ Real Hud::getHudAreaOriginX(hud_area a_hud_area)
 
 /** @brief translate positions given in enums into pixel coords
  */
-Real Hud::getHudAreaOriginY(hud_area a_hud_area)
+Real GameHud::getHudAreaOriginY(hud_area a_hud_area)
 {
   switch (hud_design.positions[a_hud_area].second) {
 

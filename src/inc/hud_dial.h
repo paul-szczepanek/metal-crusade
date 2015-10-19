@@ -4,6 +4,7 @@
 #define HUD_DIAL_H
 
 #include "hud_part.h"
+#include "game_hud.h"
 
 // parameters
 // (min_value,

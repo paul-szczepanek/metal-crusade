@@ -5,6 +5,11 @@
 
 #include "main.h"
 #include "hud_design.h"
+#ifdef PLATFORM_WIN32
+#include <OgreOverlaySystem.h>
+#else
+#include <OGRE/Overlay/OgreOverlaySystem.h>
+#endif
 
 class HudPart;
 class Unit;
@@ -26,11 +31,11 @@ enum modes {
 
 };
 
-class Hud
+class GameHud
 {
 public:
-  Hud();
-  ~Hud();
+  GameHud();
+  ~GameHud();
   // init
   void loadHud(Unit* a_player_unit);
   void activate(bool a_toggle);
@@ -77,22 +82,10 @@ public:
   Real getHudAreaOriginX(hud_area a_hud_area);
   Real getHudAreaOriginY(hud_area a_hud_area);
 
-  // log and status display
-  LogComputer* log;
-  StatusComputer* status;
-
-  // the unit using the hud
-  Unit* player_unit;
-  GameController* Controller;
-  RadarComputer* radar;
-
-  // local time
-  Timer* timer;
-
-  // hud design
-  hud_design_t hud_design;
-
 private:
+  bool getHudDesign(const string& filename, hud_design_t& hud_design);
+  void padHudColours(vector<Ogre::ColourValue>& colour_array);
+
   // positioning
   void offsetUpdate(Real     a_dt,
                     hud_area a_hud_area,
@@ -103,23 +96,38 @@ private:
   Real positionVertical(int                a_height,
                         vertical::position a_position,
                         Real               a_offset);
+public:
+  // log and status display
+  LogComputer* log = NULL;
+  StatusComputer* status = NULL;
 
+  // the unit using the hud
+  Unit* PlayerUnit = NULL;
+  GameController* Controller = NULL;
+  RadarComputer* radar = NULL;
+
+  // local time
+  Timer* timer = NULL;
+
+  // hud design
+  hud_design_t hud_design;
+private:
   // hud areas
   Ogre::OverlayContainer* hud_areas[hud_num_of_areas];
   Ogre::Overlay* hud_overlays[hud_num_of_areas];
-  Ogre::Overlay* hud_overlay_3d;
+  Ogre::Overlay* hud_overlay_3d = NULL;
 
   // special temp containers for pause
-  Ogre::OverlayContainer* centre_container;
-  Ogre::Overlay* centre_overlay;
+  Ogre::OverlayContainer* centre_container = NULL;
+  Ogre::Overlay* centre_overlay = NULL;
 
   // hud size and position
-  bool active;
+  bool active = false;
   Real hud_width;
   Real hud_height;
-  Real scale;
-  Real scale_w;
-  Real scale_h;
+  Real scale = 1;
+  Real scale_w = 1;
+  Real scale_h = 1;
   int_pair area_offsets[hud_num_of_areas];
 
   // all the individual hud parts
@@ -127,21 +135,42 @@ private:
 
   // MFD
   vector<MFDComputer*> mfds;
-  usint selected_mfd;
+  usint selected_mfd = 0;
 
   // wchich item is active
-  interface_mode::modes hud_mode;
+  interface_mode::modes hud_mode = interface_mode::mfd;
 };
 
-inline void Hud::addContainer(hud_area                a_hud_area,
+inline void GameHud::addContainer(hud_area                a_hud_area,
                               Ogre::OverlayContainer* a_container)
 {
   hud_overlays[a_hud_area]->add2D(a_container);
 }
 
-inline void Hud::addElement(Ogre::SceneNode* a_scene_node)
+inline void GameHud::addElement(Ogre::SceneNode* a_scene_node)
 {
   hud_overlay_3d->add3D(a_scene_node);
+}
+
+/** @brief clears the Ogre objects
+ */
+inline void destroyOverlayContainer(Ogre::OverlayContainer* a_overlay)
+{
+  // destroy child containers
+  Ogre::OverlayContainer::ChildContainerIterator it2 = a_overlay->getChildContainerIterator();
+  while (it2.hasMoreElements()) {
+    Ogre::OverlayContainer* child_node = static_cast<Ogre::OverlayContainer*>(it2.getNext());
+    destroyOverlayContainer(child_node);
+  }
+
+  // destroy child overlays
+  Ogre::OverlayContainer::ChildIterator it = a_overlay->getChildIterator();
+  while (it.hasMoreElements()) {
+    Ogre::OverlayElement* overlay = static_cast<Ogre::OverlayElement*>(it.getNext());
+    Ogre::OverlayManager::getSingleton().destroyOverlayElement(overlay);
+  }
+
+  Ogre::OverlayManager::getSingleton().destroyOverlayElement(a_overlay);
 }
 
 #endif // HUD_H

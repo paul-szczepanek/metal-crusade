@@ -1,20 +1,19 @@
 // (c) Paul Szczepanek (teatimecoder.com). Code released under GPL Version 3.
 
 #include "log_computer.h"
-#include "hud.h"
 #include "game.h"
 
 LogComputer::LogComputer()
   : current_log_line(0)
 {
-  for (usint i = 0; i < hud_num_of_colours; ++i) {
+  for (usint i = 0; i < HUD_NUM_OF_COLOURS; ++i) {
     // init char tables for log lines
-    for (usint j = 0; j < hud_max_hud_num_of_log_lines; ++j) {
-      for (usint k = 0; k < hud_log_line_length; ++k) {
+    for (usint j = 0; j < HUD_MAX_HUD_NUM_OF_LOG_LINES; ++j) {
+      for (usint k = 0; k < HUD_LOG_LINE_LENGTH; ++k) {
         log_lines[i][j][k] = ' ';
       }
       // stick the string terminator in the last char
-      log_lines[i][j][hud_log_line_length] = '\0';
+      log_lines[i][j][HUD_LOG_LINE_LENGTH] = '\0';
     }
   }
 }
@@ -24,9 +23,9 @@ LogComputer::LogComputer()
 void LogComputer::addLine(const string& a_message)
 {
   // advance log
-  usint log_line_number = (++current_log_line) % hud_max_hud_num_of_log_lines;
+  usint log_line_number = (++current_log_line) % HUD_MAX_HUD_NUM_OF_LOG_LINES;
 
-  Game::hud->parseColours(a_message, hud_log_line_length, log_lines[0][log_line_number],
+  Game::Hud->parseColours(a_message, HUD_LOG_LINE_LENGTH, log_lines[0][log_line_number],
                           log_lines[1][log_line_number], log_lines[2][log_line_number]);
 }
 
@@ -35,8 +34,8 @@ void LogComputer::addLine(const string& a_message)
 void LogComputer::changeLine(const string& a_message)
 {
   // keep the log on the same line
-  usint log_line_number = current_log_line % hud_max_hud_num_of_log_lines;
+  usint log_line_number = current_log_line % HUD_MAX_HUD_NUM_OF_LOG_LINES;
 
-  Game::hud->parseColours(a_message, hud_log_line_length, log_lines[0][log_line_number],
+  Game::Hud->parseColours(a_message, HUD_LOG_LINE_LENGTH, log_lines[0][log_line_number],
                           log_lines[1][log_line_number], log_lines[2][log_line_number]);
 }

@@ -5,6 +5,7 @@
 
 #include "main.h"
 #include "sphere.h"
+#include "game_hud.h"
 
 class Corpus;
 class Unit;
@@ -12,6 +13,7 @@ class GameController;
 
 namespace radar
 {
+
 enum sweep_type {
   rotating,
   fixed,
@@ -19,26 +21,26 @@ enum sweep_type {
 };
 
 enum dot_type {
-  solid, // unmoving structures
-  solid_target, // enemies if they are targets and recognised as such
-  ally, // units responding to iff query
-  CurrentTarget, // enemies if they are targets and recognised as such
-  unknown // everything that doesn't identify as ally
+  solid,          // unmoving structures
+  solid_target,   // enemies if they are targets and recognised as such
+  ally,           // units responding to IFF query
+  CurrentTarget,  // enemies if they are targets and recognised as such
+  unknown         // everything that doesn't identify as ally
 };
 
 struct CorpusDot {
   CorpusDot(Corpus* a_object,
             Real    a_size)
-    : type(unknown), size(a_size), position(Vector3::ZERO), detected(false),
-    object(a_object)
+    : object(a_object),
+    size(a_size)
   {
   }
 
-  dot_type type;
-  Real size;
-  Vector3 position;
-  bool detected;
-  Corpus* object;
+  Corpus* object = NULL;
+  dot_type type = unknown;
+  Real size = 0;
+  Vector3 position = Vector3::ZERO;
+  bool detected = false;
 };
 
 };
@@ -65,68 +67,78 @@ class RadarComputer
 public:
   RadarComputer(const string& filename,
                 Unit*         a_unit);
-  ~RadarComputer()
-  {
-  }
 
   void update(const Real a_dt);
 
   // make active
-  void setActive(bool a_toggle)
-  {
-    active = a_toggle;
-  }
-
-  bool getActive()
-  {
-    return active;
-  }
+  void setActive(bool a_toggle);
+  bool getActive();
 
   // toggle radar active of passive
-  void setActiveRadar(bool a_toggle)
-  {
-    active_radar = a_toggle;
-  }
-
-  bool getActiveRadar()
-  {
-    return active_radar;
-  }
+  void setActiveRadar(bool a_toggle);
+  bool getActiveRadar();
 
   // radar range
-  Real getRadarRange()
-  {
-    return radar_sphere.Radius;
-  }
-
+  Real getRadarRange();
   void setRadarRange(Real a_range);
 
-  // objects within the radar's radius
-  vector<radar::CorpusDot> corpus_dots;
-  vector<radar::CorpusDot> mobilis_dots;
+  vector<radar::CorpusDot>& getDots();
 
 private:
-
   void updateRadarData();
-
   // find potential objects to detect
   void updateObjectsWithinRadius();
 
-  // radar on/off
-  bool active;
+  bool getRadarDesign(const string& filename, radar_design_t& radar_design);
 
+private:
+  // owner
+  Unit* OwnerUnit = NULL;
   // spec
   radar_design_t radar_design;
-  // owner
-  Unit* unit;
 
+  // objects within the radar's radius
+  vector<radar::CorpusDot> CorpusDots;
+
+  // radar on/off
+  bool Enabled = true;
   // radar currently in passive/active mode
-  bool active_radar;
-  Sphere radar_sphere;
+  bool ActiveRadar = true;
+  Sphere RadarSphere;
 
   // for checking units only periodically
-  Real units_refresh_interval;
-  Real units_refresh_accumulator;
+  Real RefreshInterval = 1;
+  Real RefreshAccumulator = 0;
 };
+
+inline void RadarComputer::setActive(bool a_toggle)
+{
+  Enabled = a_toggle;
+}
+
+inline vector<radar::CorpusDot>& RadarComputer::getDots()
+{
+  return CorpusDots;
+}
+
+inline bool RadarComputer::getActive()
+{
+  return Enabled;
+}
+
+inline void RadarComputer::setActiveRadar(bool a_toggle)
+{
+  ActiveRadar = a_toggle;
+}
+
+inline bool RadarComputer::getActiveRadar()
+{
+  return ActiveRadar;
+}
+
+inline Real RadarComputer::getRadarRange()
+{
+  return RadarSphere.Radius;
+}
 
 #endif // RADARCOMPUTER_H

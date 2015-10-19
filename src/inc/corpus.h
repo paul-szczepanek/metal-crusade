@@ -7,7 +7,8 @@
 #include "sphere.h"
 #include "collision_type.h"
 
-#define BLOCKING_WEIGHT (10000000)
+#define BLOCKING_WEIGHT ((Real)10000000)
+#define GROUND_COLLISION_RADIUS ((Real)20)
 
 class Collision;
 class ArenaEntity;
@@ -87,7 +88,7 @@ public:
   Vector3 RelBSPosition = Vector3::ZERO;
   vector<Vector3> RelCSPositions;
 
-  collision_type CollisionType;
+  collision_type CollisionType = collision_type_soft;
   Real Penetration = 0;
   Real SurfaceTemperature = 0;
   Real Friction = 0;
@@ -112,7 +113,7 @@ public:
   bool OutOfBounds = false;
 
   // debug
-private:
+public:
   void displayCollision(bool a_toggle);
   void displayCollisionHit();
   void displayCollisionUpdate();

@@ -11,10 +11,10 @@
 #include "corpus.h"
 
 // how much slower the bullet moves visually
-#define VELOCITY_SCALE (0.1)
+#define VELOCITY_SCALE ((Real)0.1)
 
 // grace time for projectiles after spawning so that they don't explode in the owner crusader
-#define GRACE_PERIOD (10)
+#define GRACE_PERIOD ((Real)10)
 
 Projectile::~Projectile()
 {
@@ -123,7 +123,7 @@ bool Projectile::update(const Real a_dt)
   if (Lifetime < 0) {
     OwnerWeapon = NULL;
     Game::Corpus->deregisterObject(Bullet);
-    Game::destroyModel(Bullet->SceneNode);
+    destroyModel(Bullet->SceneNode);
     Bullet->SceneNode = NULL;
     return false;
   }
@@ -134,3 +134,14 @@ bool Projectile::update(const Real a_dt)
 
   return true;
 }
+
+const Vector3& Projectile::getXYZ()
+{
+  return Bullet->XYZ;
+}
+
+void Projectile::setXYZ(const Vector3& a_pos)
+{
+  Bullet->XYZ = a_pos;
+}
+

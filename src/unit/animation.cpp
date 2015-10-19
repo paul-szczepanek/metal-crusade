@@ -4,7 +4,7 @@
 #include "game.h"
 
 // speed at which you consider to be not moving
-const Real crusader_stopping_speed = 0.001;
+const Real crusader_stopping_speed = 0.1;
 const Real switching_time = 1;
 
 Animation::~Animation()
@@ -20,9 +20,9 @@ Animation::Animation()
   }
 
   // TODO: read this from an animation definition file
-  MovementSpeeds[0] = 2;
-  MovementSpeeds[1] = 0.3;
-  MovementSpeeds[2] = 0.13;
+  MovementSpeeds[0] = 2.5;
+  MovementSpeeds[1] = 0.4;
+  MovementSpeeds[2] = 0.16;
   // at what speed to start each animation
   MovementSpeedLimits[0] = 0;
   MovementSpeedLimits[1] = 0.1;
@@ -109,7 +109,7 @@ void Animation::turn(Radian a_turning_speed)
 {
   if (CurrentAnim == animation::stand) {
     // equivalent rate of animation for turning
-    Real turning_rate = -10 * a_turning_speed.valueRadians();
+    Real turning_rate = -20 * a_turning_speed.valueRadians();
 
     // use turning rate or moving rate for anim - whichever is faster
     if (Rate > 0) {

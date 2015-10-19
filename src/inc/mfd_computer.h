@@ -4,15 +4,13 @@
 #define MFDCOMPUTER_H
 
 #include "main.h"
-#include "hud_design.h"
+#include "game_hud.h"
 
 class MFDComputer
 {
 public:
   MFDComputer();
-  ~MFDComputer()
-  {
-  }
+  ~MFDComputer();
 
   void update(const Real a_dt);
 
@@ -26,30 +24,30 @@ public:
                  usint a_j);
 
   // get the view type
-  mfd_view::view_type getViewType()
-  {
-    return selected_view;
-  }
-
-  // get values for the mfd
+  mfd_view::view_type getViewType();
 
 private:
   // selecting view typeon the mfd aux
   void selectView();
 
   // whether input is active
-  bool selected;
+  bool Selected = false;
 
   // what is being shown
-  mfd_view::view_type selected_view;
-  usint selected_page;
-  bool selecting_view;
-  usint selected_view_index;
-  usint num_of_views;
+  mfd_view::view_type SelectedView = mfd_view::damage_diagram_self;
+  usint SelectedPage = 0;
+  bool SelectingView = false;
+  usint SelectedViewIdx = 0;
+  usint NumOfViews = 0;
 
   // data for hud elements to display
-  char mfd_aux_lines[hud_num_of_colours][hud_num_of_mfd_aux_lines][hud_mfd_aux_line_length + 1];
+  char mfd_aux_lines[HUD_NUM_OF_COLOURS][HUD_NUM_OF_MFD_AUX_LINES][HUD_MFD_AUX_LINE_LENGTH + 1];
 };
+
+inline mfd_view::view_type MFDComputer::getViewType()
+{
+  return SelectedView;
+}
 
 inline string MFDComputer::getLine(usint a_i,
                                    usint a_j)

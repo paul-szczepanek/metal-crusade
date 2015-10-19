@@ -58,6 +58,22 @@ void getIntDigitArray(vector<int>& int_array,
                       string       a_buffer);
 void getSizeTDigitArray(vector<size_t>& int_array,
                         string          a_buffer);
+
+template <typename T>
+void getDigitArrayT(vector<T>& int_array,
+                    string     a_buffer);
+
+template <class T1, class T2>
+void getEnumPairArrayT(vector<pair<T1, T2> >& position_pair_array,
+                       string a_buffer);
+
+template <typename T>
+void getEnumArrayT(vector<T>& enum_array,
+                   string     a_buffer);
+
+template <typename T>
+void getIntArrayT(vector<T>& int_array,
+                  string     a_buffer);
 }
 
 #endif // FILESHANDLER_H

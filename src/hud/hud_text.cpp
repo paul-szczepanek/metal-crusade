@@ -3,7 +3,6 @@
 #include "hud_text.h"
 #include "radar_computer.h"
 #include "game.h"
-#include "hud.h"
 #include "unit.h"
 #include "timer.h"
 
@@ -18,8 +17,8 @@ HudText::HudText(hud_part_design_t& a_hud_part_design)
 
   // create the text element
   string id = a_hud_part_design.name + "_text_area_" + intoString(function);
-  text_element = createTextArea(id, text, font_size, Game::hud->hud_design.display_colours[0],
-                                0, 0, size.first, size.second, container);
+  text_element = createTextArea(id, text, font_size, Game::Hud->hud_design.display_colours[0],
+                                0, 0, size.first, size.second, Container);
 
   // bind the appropriate function for getting the value to the function pointer
   if (function == hud_part_enum::clock) {
@@ -64,12 +63,12 @@ void HudText::update(Real a_dt)
     text_element->setCaption(text);
 
     // change the colour if any colour marker exists (per line colour)
-    if (text.length() > 2 && text[0] == hud_escape_char) { // if the string start with a $
+    if (text.length() > 2 && text[0] == HUD_ESCAPE_CHAR) { // if the string start with a $
       // assume default colour
       usint colour = 0;
 
       // start at 1 as 0 is default
-      for (usint i = 1; i < hud_num_of_colours; ++i) {
+      for (usint i = 1; i < HUD_NUM_OF_COLOURS; ++i) {
         if (text[1] == hud_colour_codes[i]) { // if a valid colour code
           colour = i; // use that colour instead
           break;
@@ -77,7 +76,7 @@ void HudText::update(Real a_dt)
       }
 
       // set the colour of the whole line
-      text_element->setColour(Game::hud->hud_design.display_colours[colour]);
+      text_element->setColour(Game::Hud->hud_design.display_colours[colour]);
     }
 
     // reset accumulator for next frame
@@ -91,7 +90,7 @@ void HudText::update(Real a_dt)
 string HudText::getTextClock()
 {
   // get time
-  long lint miliseconds = Game::hud->timer->getTicks();
+  lint miliseconds = Game::Hud->timer->getTicks();
   usint hours = miliseconds / 3600000;
   usint minutes = (miliseconds % 3600000) / 60000;
   usint seconds = (miliseconds % 60000) / 1000;
@@ -109,7 +108,7 @@ string HudText::getTextClock()
 
 string HudText::getTextRadarRange()
 {
-  return realIntoString(Game::hud->radar->getRadarRange(), 3);
+  return realIntoString(Game::Hud->radar->getRadarRange(), 3);
 }
 
 string HudText::getTextRadarPower()

@@ -4,6 +4,7 @@
 #define LOG_PRINTER_H
 
 #include "hud_part.h"
+#include "game_hud.h"
 
 class HudLogPrinter
   : public HudPart
@@ -24,7 +25,7 @@ private:
   Real timeout;
 
   // overlay elements
-  Ogre::OverlayElement* log_text_elements[hud_num_of_colours][HUD_NUM_OF_LOG_LINES];
+  Ogre::OverlayElement* log_text_elements[HUD_NUM_OF_COLOURS][HUD_NUM_OF_LOG_LINES];
   Ogre::TextureUnitState* paper_texture;
   Ogre::OverlayElement* hud_log_head;
 };

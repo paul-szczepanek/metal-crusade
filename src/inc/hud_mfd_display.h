@@ -4,6 +4,7 @@
 #define MFD_DISPLAY_H
 
 #include "hud_part.h"
+#include "game_hud.h"
 
 class MFDComputer;
 class MFDView;

@@ -11,3 +11,13 @@ NavPoint::~NavPoint()
 {
   // dtor
 }
+
+const Vector3& NavPoint::getXYZ()
+{
+  return XYZ;
+}
+
+void NavPoint::setXYZ(const Vector3& a_pos)
+{
+  XYZ = a_pos;
+}

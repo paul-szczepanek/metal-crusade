@@ -2,22 +2,21 @@
 
 #include "hud_pointer.h"
 #include "game.h"
-#include "hud.h"
 #include "unit.h"
-#include "camera.h"
+#include "game_camera.h"
 
 HudPointer::HudPointer(hud_part_design_t& a_hud_part_design)
   : HudPart(a_hud_part_design)
 {
   // create texture for the pointer
-  Ogre::MaterialPtr material = Hud::createOverlayMaterial(a_hud_part_design.name);
+  Ogre::MaterialPtr material = GameHud::createOverlayMaterial(a_hud_part_design.name);
   pointer_texture = material->getTechnique(0)->getPass(0)->getTextureUnitState(0);
 
   // apply it to the main container
-  container->setMaterialName(a_hud_part_design.name);
+  Container->setMaterialName(a_hud_part_design.name);
 
   // reposition the container to centre around x, y
-  container->setPosition(position.first - (size.first * 0.5),
+  Container->setPosition(position.first - (size.first * 0.5),
                          position.second - (size.second * 0.5));
 
   // bind the appropriate function for getting the value to the function pointer
@@ -42,19 +41,19 @@ void HudPointer::update(Real a_dt)
 // bound to at creation to save on constant checking every frame
 Radian HudPointer::getAngleDirection()
 {
-  return Game::hud->player_unit->getMovingOrientation().getYaw()
+  return Game::Hud->PlayerUnit->getDriveOrientation().getYaw()
          + getAngleCompass();
 }
 
 Radian HudPointer::getAngleTorsoDirection()
 {
-  return Game::hud->player_unit->getLookingOrientation().getYaw()
+  return Game::Hud->PlayerUnit->getOrientation().getYaw()
          + getAngleCompass();
 }
 
 Radian HudPointer::getAngleCompass()
 {
-  return Radian(pi) - Game::camera->getOrientation().getYaw();
+  return Radian(pi) - Game::Camera->getOrientation().getYaw();
 }
 
 Radian HudPointer::getAngleZero()

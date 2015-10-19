@@ -4,6 +4,7 @@
 #define RADAR_DISPLAY_H
 
 #include "hud_part.h"
+#include "game_hud.h"
 
 class HudRadarDisplay
   : public HudPart
@@ -16,17 +17,17 @@ public:
 
 private:
   // radar on/off
-  bool active;
+  bool Enabled = false;
 
   // current radar range
-  usint range_index;
+  usint RangeIndex = 0;
 
   // dot materials
-  Ogre::MaterialPtr dot_red;
-  Ogre::MaterialPtr dot_green;
+  Ogre::MaterialPtr RedMaterial;
+  Ogre::MaterialPtr GreenMaterial;
 
   // view damage
-  vector<Ogre::OverlayElement*> dot_elements;
+  vector<Ogre::OverlayElement*> DotElements;
 };
 
 #endif // RADAR_DISPLAY_H

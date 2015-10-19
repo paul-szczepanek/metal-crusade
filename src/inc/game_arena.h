@@ -40,8 +40,7 @@ public:
   }
 
   // the arena is partitioned into cells - reutrns the cell index
-  size_t_pair getCellIndex(Real a_x,
-                           Real a_y);
+  size_t_pair getCellIndex(const Vector3& a_xyz);
 
   // check if position is valid
   bool isOutOfBounds(Vector3& pos_xyz);
@@ -54,7 +53,7 @@ public:
   list<Corpus*>& getCorpusCell(const size_t_pair a_index);
 
   // fills an array with lists
-  void getCellIndexesWithinRadius(const size_t_pair    a_index,
+  void getCellIndexesWithinRadius(const Vector3&       a_xyz,
                                   vector<size_t_pair>& indexes,
                                   const Real           a_radius = 0);
 
@@ -168,12 +167,11 @@ inline bool GameArena::isOutOfArena(Vector3& pos_xyz)
 
 /** @brief returns the index of the cell in the arena the position is in
  */
-inline size_t_pair GameArena::getCellIndex(Real a_x,
-                                           Real a_y)
+inline size_t_pair GameArena::getCellIndex(const Vector3& a_xyz)
 {
   // get the index of the cell pased on position
-  size_t i = a_x / size_of_arena_cell;
-  size_t j = a_y / size_of_arena_cell;
+  size_t i = a_xyz.x / size_of_arena_cell;
+  size_t j = a_xyz.z / size_of_arena_cell;
 
   return make_pair(i, j);
 }

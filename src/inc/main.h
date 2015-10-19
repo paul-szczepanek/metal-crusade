@@ -3,6 +3,8 @@
 #ifndef MAIN_H_INCLUDED
 #define MAIN_H_INCLUDED
 
+// this it a global include, included by all files
+
 #include <stdlib.h>
 #include <iostream>
 #include <fstream>
@@ -15,7 +17,9 @@
 #include <OGRE/Ogre.h>
 #endif
 
-// this it a global include included by all files
+#define ABS(a)    ((a) < 0 ? -(a) : (a))
+#define MAX(a, b) ((a) < (b) ? (b) : (a))
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
 
 using Ogre::Real;
 using Ogre::Quaternion;
@@ -171,22 +175,23 @@ inline void localiseAngle(Radian&       angle,
 // TODO: TEMP put back in hud design
 
 // this is the minimum number of lines hud must implement to be usable
-const usint HUD_NUM_OF_LOG_LINES = 8;
-const usint hud_num_of_status_lines = 8;
-const usint hud_num_of_mfd_aux_lines = 5;
+#define HUD_NUM_OF_LOG_LINES          (8)
+#define HUD_NUM_OF_STATUS_LINES       (8)
+#define HUD_NUM_OF_MFD_AUX_LINES      (5)
 // mfd
-const usint view_types_per_page = hud_num_of_mfd_aux_lines - 1; // one line is the label
+#define VIEW_TYPES_PER_PAGE    (HUD_NUM_OF_MFD_AUX_LINES - 1) // one line is the label
 // text lines max length
-const usint HUD_LOG_LINE_LENGTH = 60;
-const usint hud_status_line_length = 60;
+#define HUD_LOG_LINE_LENGTH           (60)
+#define HUD_STATUS_LINE_LENGTH        (60)
 // history size for the log TODO: write excess to file?
-const usint hud_max_HUD_NUM_OF_LOG_LINES = 40;
-const usint hud_mfd_aux_line_length = 16;
+#define HUD_MAX_HUD_NUM_OF_LOG_LINES  (40)
+#define HUD_MFD_AUX_LINE_LENGTH       (16)
 // colour codes for text: regular, exclamation, alternative
 // huds can implement them however they want or not at all
-const usint hud_num_of_colours = 3; // this is now pretty much hardcoded in parseColours :(
-const char hud_colour_codes[hud_num_of_colours] = { 'r', 'e', 'a' };
-const char hud_escape_char = '$'; // to get the '$' char in a string type two like so "$$"
-const char hud_revert_colour_char = 'x'; // reverts to the last used colour in the line
+#define HUD_NUM_OF_COLOURS            (3) // this is now pretty much hardcoded in parseColours :(
+#define HUD_ESCAPE_CHAR               '$' // to get the '$' char in a string type two like so "$$"
+#define HUD_REVERT_COLOUR_CHAR        'x' // reverts to the last used colour in the line
+
+const char hud_colour_codes[HUD_NUM_OF_COLOURS] = { 'r', 'e', 'a' };
 
 #endif // MAIN_H_INCLUDED

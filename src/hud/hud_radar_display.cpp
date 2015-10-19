@@ -4,8 +4,7 @@
 #include "radar_computer.h"
 #include "game.h"
 #include "unit.h"
-#include "camera.h"
-#include "hud.h"
+#include "game_camera.h"
 #include "game_controller.h"
 
 const usint num_of_initial_dots = 16;
@@ -15,21 +14,21 @@ const string dot_green_name("hud_radar_dot_green");
 const string dot_red_name("hud_radar_dot_red");
 
 HudRadarDisplay::HudRadarDisplay(hud_part_design_t& a_hud_part_design)
-  : HudPart(a_hud_part_design), active(false), range_index(0)
+  : HudPart(a_hud_part_design)
 {
   // start off with the radar active status read from the radar computer
-  active = Game::hud->radar->getActive();
-  Game::hud->controller->control_block.radar = active;
-  Game::hud->radar->setRadarRange(radar_ranges[range_index]);
+  Enabled = Game::Hud->radar->getActive();
+  Game::Hud->Controller->ControlBlock.radar = Enabled;
+  Game::Hud->radar->setRadarRange(radar_ranges[RangeIndex]);
 
-  dot_green = Hud::createOverlayMaterial(dot_green_name);
-  dot_red = Hud::createOverlayMaterial(dot_red_name);
+  GreenMaterial = GameHud::createOverlayMaterial(dot_green_name);
+  RedMaterial = GameHud::createOverlayMaterial(dot_red_name);
 
   for (usint i = 0; i < num_of_initial_dots; ++i) {
     string id = string("radar_dot_") + intoString(i);
-    dot_elements.push_back(createPanel(id, dot_green_name,
-                                       0, 0, 8, 8, container));
-    dot_elements.back()->hide();
+    DotElements.push_back(createPanel(id, dot_green_name,
+                                       0, 0, 8, 8, Container));
+    DotElements.back()->hide();
   }
 }
 
@@ -40,71 +39,72 @@ HudRadarDisplay::~HudRadarDisplay()
 
 void HudRadarDisplay::update(Real a_dt)
 {
-  // toggling on and off TODO: add a delay to this, at least to turning on
-  if (active != Game::hud->controller->control_block.radar) {
-    active = !active;
-    Game::hud->radar->setActive(active);
-    if (!active) {
-      for (uint i = 0, for_size = dot_elements.size(); i < for_size; ++i) {
-        dot_elements[i]->hide();
+
+  if (Enabled != Game::Hud->radar->getActive()) {
+    Enabled != Enabled;
+    if (!Enabled) {
+      for (size_t i = 0, for_size = DotElements.size(); i < for_size; ++i) {
+        DotElements[i]->hide();
       }
     }
   }
 
-  if(active) {
-    // radar radius change
-    if (take(Game::hud->controller->control_block.radar_zoom_in)) {
-      // see smaller area
-      if (range_index > 0) { --range_index; }
+  if(!Enabled) {
+    return;
+  }
 
-      // adjust radar sphere
-      Game::hud->radar->setRadarRange(radar_ranges[range_index]);
+  // radar radius change
+  if (take(Game::Hud->Controller->ControlBlock.radar_zoom_in)) {
+    // see smaller area
+    if (RangeIndex > 0) { --RangeIndex; }
 
-    } else if (take(Game::hud->controller->control_block.radar_zoom_out)) {
-      // see larger area
-      if (++range_index == num_of_radar_ranges) { --range_index; }
+    // adjust radar sphere
+    Game::Hud->radar->setRadarRange(radar_ranges[RangeIndex]);
 
-      // adjust radar sphere
-      Game::hud->radar->setRadarRange(radar_ranges[range_index]);
+  } else if (take(Game::Hud->Controller->ControlBlock.radar_zoom_out)) {
+    // see larger area
+    if (++RangeIndex == num_of_radar_ranges) { --RangeIndex; }
+
+    // adjust radar sphere
+    Game::Hud->radar->setRadarRange(radar_ranges[RangeIndex]);
+  }
+
+  // how many dots on the screen?
+  vector<radar::CorpusDot>& dots = Game::Hud->radar->getDots();
+  size_t num_of_dots = dots.size();
+
+  // grow number of dots if needed
+  if (DotElements.size() < num_of_dots) {
+    for (size_t i = 0, for_size = num_of_dots - DotElements.size(); i < for_size; ++i) {
+      string id = string("radar_dot_") + intoString(DotElements.size());
+      DotElements.push_back(createPanel(id, dot_green_name,
+                                         0, 0, 8, 8, Container));
+      DotElements.back()->hide();
     }
+  }
 
-    // how many dots on the screen?
-    vector<radar::CorpusDot>& dots = Game::hud->radar->mobilis_dots;
-    uint num_of_dots = dots.size();
+  Real radar_angle = (Game::Camera->getOrientation().getYaw()).valueRadians();
 
-    // grow number of dots if needed
-    if (dot_elements.size() < num_of_dots) {
-      for (uint i = 0, for_size = num_of_dots - dot_elements.size(); i < for_size; ++i) {
-        string id = string("radar_dot_") + intoString(dot_elements.size());
-        dot_elements.push_back(createPanel(id, dot_green_name,
-                                           0, 0, 8, 8, container));
-        dot_elements.back()->hide();
-      }
-    }
+  Real x0 = Game::Hud->PlayerUnit->getX();
+  Real y0 = Game::Hud->PlayerUnit->getZ();
+  Real range_scale = size.first / Game::Hud->radar->getRadarRange();
 
-    Real radar_angle = (Game::camera->getOrientation().getYaw()).valueRadians();
+  for (size_t i = 0, for_size = DotElements.size(); i < for_size; ++i) {
+    if (i < num_of_dots && dots[i].detected) {
+      Real dot_size = max(dots[i].size * range_scale, Real(8));
+      DotElements[i]->setDimensions(dot_size, dot_size);
+      Real x = (dots[i].position.x - x0) * range_scale;
+      Real y = (dots[i].position.z - y0) * range_scale;
 
-    Real x0 = Game::hud->player_unit->getX();
-    Real y0 = Game::hud->player_unit->getZ();
-    Real range_scale = size.first / Game::hud->radar->getRadarRange();
+      x = (cos(radar_angle) * x - sin(radar_angle) * y) * 0.5
+          + (size.first - dot_size) * 0.5;
+      y = (sin(radar_angle) * x + cos(radar_angle) * y) * 0.5
+          + (size.first - dot_size) * 0.5;
 
-    for (uint i = 0, for_size = dot_elements.size(); i < for_size; ++i) {
-      if (i < num_of_dots && dots[i].detected) {
-        Real dot_size = max(dots[i].size * range_scale, Real(8));
-        dot_elements[i]->setDimensions(dot_size, dot_size);
-        Real x = (dots[i].position.x - x0) * range_scale;
-        Real y = (dots[i].position.z - y0) * range_scale;
-
-        x = (cos(radar_angle) * x - sin(radar_angle) * y) * 0.5
-            + (size.first - dot_size) * 0.5;
-        y = (sin(radar_angle) * x + cos(radar_angle) * y) * 0.5
-            + (size.first - dot_size) * 0.5;
-
-        dot_elements[i]->setPosition(x, y);
-        dot_elements[i]->show();
-      } else {
-        dot_elements[i]->hide();
-      }
+      DotElements[i]->setPosition(x, y);
+      DotElements[i]->show();
+    } else {
+      DotElements[i]->hide();
     }
   }
 }

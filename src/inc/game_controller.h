@@ -78,7 +78,7 @@ public:
   // 3d pointer
   void setPointerPos(Vector3 a_pointer_pos);
 
-  Vector3 getPointerPos();
+  const Vector3& getPointerPos();
 
   string getName();
 
@@ -129,7 +129,7 @@ inline void GameController::setPointerPos(Vector3 a_pointer_pos)
   PointerPos = a_pointer_pos;
 }
 
-inline Vector3 GameController::getPointerPos()
+inline const Vector3& GameController::getPointerPos()
 {
   return PointerPos;
 }

@@ -12,8 +12,7 @@
 Corpus::Corpus(ArenaEntity*     a_owner,
                Ogre::SceneNode* a_scene_node)
   : OwnerEntity(a_owner),
-  SceneNode(a_scene_node),
-  CollisionType(collision_type_blocking)
+  SceneNode(a_scene_node)
 {
 }
 
@@ -34,7 +33,7 @@ void Corpus::setOwner(ArenaEntity* a_owner)
 Corpus::~Corpus()
 {
   if (SceneNode) {
-    Game::destroyModel(SceneNode);
+    destroyModel(SceneNode);
   }
 
   Game::Corpus->deregisterObject(this);
@@ -72,6 +71,7 @@ void Corpus::pruneCollisionSpheres(const Sphere&       a_sphere,
  */
 void Corpus::loadCollision(const string& a_collision_name)
 {
+
   // TEMP!!! fake, only works for crusaders for now
   if (a_collision_name == "bullet") {
     RelBSPosition = Vector3::ZERO;
@@ -79,13 +79,17 @@ void Corpus::loadCollision(const string& a_collision_name)
     CollisionSpheres.push_back(Sphere(RelBSPosition, 2));
     RelCSPositions.push_back(Vector3::ZERO);
     CSAreas.push_back(0);
+    // debug
+    displayCollision(true);
     return;
   } else if (a_collision_name == "ground") {
     RelBSPosition = Vector3::ZERO;
-    BoundingSphere = Sphere(RelBSPosition, 10);
-    CollisionSpheres.push_back(Sphere(RelBSPosition, 10));
+    BoundingSphere = Sphere(RelBSPosition, GROUND_COLLISION_RADIUS);
+    CollisionSpheres.push_back(Sphere(RelBSPosition, GROUND_COLLISION_RADIUS));
     RelCSPositions.push_back(Vector3::ZERO);
     CSAreas.push_back(0);
+    // debug
+    displayCollision(true);
     return;
   }
 
@@ -233,6 +237,10 @@ bool Corpus::handleCollision(Collision* a_collision)
     SceneNode->showBoundingBox(true); // temp
   }
 
+  if (OwnerEntity) {
+    OwnerEntity->handleCollision(a_collision);
+  }
+
   return true;
 }
 
@@ -248,8 +256,10 @@ bool Corpus::update(const Real a_dt)
   }
 
   // update the scene node
-  SceneNode->setPosition(XYZ);
-  SceneNode->setOrientation(Orientation);
+  if (SceneNode) {
+    SceneNode->setPosition(XYZ);
+    SceneNode->setOrientation(Orientation);
+  }
 
   // temp debug
   if (DisplayCollisionDebug) {

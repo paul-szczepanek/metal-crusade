@@ -4,6 +4,7 @@
 #define HUD_TEXT_H
 
 #include "hud_part.h"
+#include "game_hud.h"
 
 class HudText
   : public HudPart

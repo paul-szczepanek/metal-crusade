@@ -6,9 +6,6 @@
 class Corpus;
 class Collision;
 
-/** \class ArenaEntity is simple entity meant for non-interactive scenery, it doesn't react
- *  and doesn't control the Corpuses that belong to it
- */
 class ArenaEntity
 {
 public:
@@ -16,7 +13,10 @@ public:
   ArenaEntity(const string& a_name);
   virtual ~ArenaEntity();
 
-  virtual Vector3 getXYZ();
+  virtual const Vector3& getXYZ();
+  virtual Real getX();
+  virtual Real getY();
+  virtual Real getZ();
   virtual void setXYZ(const Vector3& a_pos);
 
   virtual Vector3 getDirection();
@@ -38,7 +38,6 @@ public:
 
 public:
   string Name;
-  Vector3 XYZ = Vector3::ZERO;
 };
 
 inline void ArenaEntity::setName(const string& a_name)
@@ -51,14 +50,28 @@ inline const string& ArenaEntity::getName()
   return Name;
 }
 
-inline Vector3 ArenaEntity::getXYZ()
+inline const Vector3& ArenaEntity::getXYZ()
 {
-  return XYZ;
+  return Vector3::ZERO;
 }
 
-inline void ArenaEntity::setXYZ(const Vector3& a_pos)
+inline Real ArenaEntity::getX()
 {
-  XYZ = a_pos;
+  return getXYZ().x;
+}
+
+inline Real ArenaEntity::getY()
+{
+  return getXYZ().y;
+}
+
+inline Real ArenaEntity::getZ()
+{
+  return getXYZ().z;
+}
+
+inline void ArenaEntity::setXYZ(const Vector3& /*a_pos*/)
+{
 }
 
 inline bool ArenaEntity::handleCollision(Collision* /*a_collision*/)

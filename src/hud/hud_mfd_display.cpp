@@ -3,7 +3,6 @@
 #include "hud_mfd_display.h"
 #include "mfd_computer.h"
 #include "game.h"
-#include "hud.h"
 #include "hud_mfd_display.h"
 #include "mfd_view_damage_diagram.h"
 #include "mfd_view_damage_diagram_target.h"
@@ -19,43 +18,43 @@ HudMFDDisplay::HudMFDDisplay(hud_part_design_t& a_hud_part_design)
   font_size = a_hud_part_design.parameters[0]; // read the size of the mfd aux font
 
   // get the mfd to hook up to
-  mfd = Game::hud->getMFD();
+  mfd = Game::Hud->getMFD();
 
   // a non-working (or not implented yet) view
   MFDView* view_error = new MFDViewError(a_hud_part_design);
 
   // create all the views
-  for (usint i = 0, for_size = Game::hud->hud_design.mfd_views.size(); i < for_size; ++i) {
+  for (usint i = 0, for_size = Game::Hud->hud_design.mfd_views.size(); i < for_size; ++i) {
     // create view according to types in the design
-    if (Game::hud->hud_design.mfd_views[i] == mfd_view::damage_diagram_self) {
+    if (Game::Hud->hud_design.mfd_views[i] == mfd_view::damage_diagram_self) {
       views.push_back(new MFDViewDamageDiagram(a_hud_part_design));
 
-    } else if (Game::hud->hud_design.mfd_views[i] == mfd_view::damage_diagram_target) {
+    } else if (Game::Hud->hud_design.mfd_views[i] == mfd_view::damage_diagram_target) {
       views.push_back(new MFDViewDamageDiagramTarget(a_hud_part_design));
 
-    } else if (Game::hud->hud_design.mfd_views[i] == mfd_view::damage_view_target) {
+    } else if (Game::Hud->hud_design.mfd_views[i] == mfd_view::damage_view_target) {
       views.push_back(view_error); // temp!!
 
-    } else if (Game::hud->hud_design.mfd_views[i] == mfd_view::inspector) {
+    } else if (Game::Hud->hud_design.mfd_views[i] == mfd_view::inspector) {
       views.push_back(view_error); // temp!!
 
-    } else if (Game::hud->hud_design.mfd_views[i] == mfd_view::minimap) {
+    } else if (Game::Hud->hud_design.mfd_views[i] == mfd_view::minimap) {
       views.push_back(view_error); // temp!!
 
-    } else if (Game::hud->hud_design.mfd_views[i] == mfd_view::enemy_list) {
+    } else if (Game::Hud->hud_design.mfd_views[i] == mfd_view::enemy_list) {
       views.push_back(view_error); // temp!!
 
-    } else if (Game::hud->hud_design.mfd_views[i] == mfd_view::systems_control) {
+    } else if (Game::Hud->hud_design.mfd_views[i] == mfd_view::systems_control) {
       views.push_back(view_error); // temp!!
 
-    } else if (Game::hud->hud_design.mfd_views[i] == mfd_view::squad_tactic) {
+    } else if (Game::Hud->hud_design.mfd_views[i] == mfd_view::squad_tactic) {
       views.push_back(view_error); // temp!!
     }
   }
 
   // set initial view
-  current_view = Game::hud->hud_design.mfd_views[1];
-  changeView(Game::hud->hud_design.mfd_views[current_view]);
+  current_view = Game::Hud->hud_design.mfd_views[1];
+  changeView(Game::Hud->hud_design.mfd_views[current_view]);
 }
 
 HudMFDDisplay::~HudMFDDisplay()

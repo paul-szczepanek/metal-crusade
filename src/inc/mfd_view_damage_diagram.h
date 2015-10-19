@@ -4,6 +4,7 @@
 #define MFD_VIEW_DAMAGE_DIAGRAM_H
 
 #include "mfd_view.h"
+#include "game_hud.h"
 
 class Corpus;
 
@@ -20,8 +21,8 @@ public:
 
 protected:
   // inner main loop
-  void updateDiagramElements(Real    a_dt,
-                             Corpus* a_object);
+  void updateDiagramElements(Real  a_dt,
+                             Unit* a_object);
 
   // change diagram type to fit the target
   void switchDiagrams(mfd_view::diagram_type a_new_diagram);

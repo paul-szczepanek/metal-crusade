@@ -4,6 +4,7 @@
 #define MFD_VIEW_ERROR_H
 
 #include "mfd_view.h"
+#include "game_hud.h"
 
 class MFDViewError
   : public MFDView

@@ -8,13 +8,13 @@ class Corpus;
 class Collision;
 
 #include "corpus.h"
-#include "arena_entity.h"
+#include "dynamic_entity.h"
 
 /** \class Projectile doesn't need a GameController and controls the Corpus itself according
  *  according to weapon specs
  */
 class Projectile
-  : public ArenaEntity
+  : public DynamicEntity
 {
 public:
   Projectile();
@@ -23,6 +23,9 @@ public:
              Corpus* a_corpus = NULL);
 
   bool update(const Real a_dt);
+
+  virtual const Vector3& getXYZ();
+  virtual void setXYZ(const Vector3& a_pos);
 
   // handle collision
   virtual bool validateCollision(Corpus* a_collision);

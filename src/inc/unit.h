@@ -4,7 +4,7 @@
 #define UNIT_H_INCLUDED
 
 #include "corpus.h"
-#include "arena_entity.h"
+#include "dynamic_entity.h"
 
 class Weapon;
 class RadarComputer;
@@ -13,19 +13,15 @@ class GameController;
 class Formation;
 
 class Unit
-  : public ArenaEntity
+  : public DynamicEntity
 {
 public:
-  Unit(const string& a_unit_name,
-       Vector3       a_pos_xyz);
+  Unit(const string& a_unit_name);
   virtual ~Unit();
 
   // orientation
   virtual Vector3 getDriveDirection();
   virtual Quaternion getDriveOrientation();
-
-  void updateGround();
-  virtual Corpus* getGround();
 
   // heat
   // yeah, I know heat is not the same as temp, this is a simplification
@@ -69,32 +65,32 @@ public:
 
   // targetting
   virtual bool acquireTarget(Corpus* a_target);
-  virtual bool acquireAsTargetBy(ArenaEntity* a_entity);
+  virtual bool acquireAsTargetBy(Unit* a_entity);
   // called by other objects which hold this as a target to let it know that they no longer do
-  virtual void releaseAsTarget(ArenaEntity* a_targeted_by);
+  virtual void releaseAsTarget(Unit* a_targeted_by);
   // called by targeted object that requires this to relinquish its current target
-  virtual bool loseTarget(ArenaEntity* a_targeted_by,
+  virtual bool loseTarget(Unit* a_targeted_by,
                           bool         a_forced = false);
   // clear targets when this object gets destroyed
   virtual void clearFromTargets();
   // return the target of this
-  virtual ArenaEntity* getTarget();
+  virtual Unit* getTarget();
 
   // damage reporting
   Real getDamage(usint a_diagram_element);
   void setFormation(Formation* a_formation);
   Formation* getFormation();
 
+  GameController* getController();
+
 protected:
   // targeted objects
-  ArenaEntity* CurrentTarget = NULL;
+  Unit* CurrentTarget = NULL;
   // targeted by objects
-  vector<ArenaEntity*> TargetHolders;
+  vector<Unit*> TargetHolders;
 
   Real CoreTemperature = 0;
   Real TotalWeight = 0;
-
-  Corpus* Ground;
 
   vector<Weapon*> Weapons;
 
@@ -116,6 +112,11 @@ inline void Unit::setFormation(Formation* a_formation)
 inline Formation* Unit::getFormation()
 {
   return UnitFormation;
+}
+
+inline GameController* Unit::getController()
+{
+  return Controller;
 }
 
 inline void Unit::assignController(GameController* a_controller)
@@ -155,7 +156,7 @@ inline void Unit::attachHud(bool a_toggle)
 
 inline RadarComputer* Unit::getRadar()
 {
-  //return radar;
+  return NULL;
 }
 
 // hud operation

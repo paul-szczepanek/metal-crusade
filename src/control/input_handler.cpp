@@ -8,6 +8,7 @@
 #include "timer.h"
 #include "game_controller.h"
 #include "game_arena.h"
+#include "game_hud.h"
 
 InputHandler::InputHandler()
   : StickyLeftShift(false), StickyLControl(false)
@@ -50,7 +51,7 @@ InputHandler::InputHandler()
   PointerY = 0.5;
 
   // ray query for finding where the pointer is in real world cords when using the mouse
-  OgreCamera = Game::Camera->getOgreCamera();
+  OgreCamera = Game::Camera->OgreCamera;
   MouseRay = new Ogre::Ray();
   MouseRayQuery = new Ogre::DefaultRaySceneQuery(Game::Scene);
   MouseRayQuery->setSortByDistance(true);
@@ -257,7 +258,7 @@ void InputHandler::windowResized(Ogre::RenderWindow* render_window)
   Game::Camera->resize(ScreenW, ScreenH);
 
   // rearragne the hud
-  // Game::hud->resize(screen_width, screen_height);
+  Game::Hud->resize(ScreenW, ScreenH);
 }
 
 /** @brief set mouse area
@@ -293,7 +294,7 @@ bool InputHandler::mousePressed(const OIS::MouseEvent& /*evt*/,
   if (Keys->Buttons[input_event_fire] == btn) {
     Controller->ControlBlock.fire = true;
     if (Game::instance()->getTimer()->getRate() == 0) {
-      Game::instance()->getTimer()->unpause();
+      Game::GameTimer->unpause();
     }
   } else if (Keys->Buttons[input_event_turn_to_pointer] == btn) {
     Controller->ControlBlock.turn_to_pointer = true;
@@ -685,9 +686,9 @@ bool InputHandler::keyReleased(const OIS::KeyEvent& evt)
   // pausing
   if (Keys->Keys[input_event_pause] == evt.key) {
     if (Game::instance()->getTimer()->getRate() == 0) {
-      Game::instance()->getTimer()->unpause();
+      Game::GameTimer->unpause();
     } else {
-      Game::instance()->getTimer()->pause();
+      Game::GameTimer->pause();
     }
   }
 

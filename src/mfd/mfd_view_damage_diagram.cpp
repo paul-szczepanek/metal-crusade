@@ -2,7 +2,6 @@
 
 #include "mfd_view_damage_diagram.h"
 #include "game.h"
-#include "hud.h"
 #include "unit.h"
 
 // TODO:move this to a config file
@@ -95,14 +94,14 @@ MFDViewDamageDiagram::MFDViewDamageDiagram(hud_part_design_t& a_hud_part_design)
           (overlay_mngr->createOverlayElement("Panel", a_hud_part_design.name
                                               + "_icons_cont_" + Game::getUniqueID()));
   icons->setMetricsMode(Ogre::GMM_PIXELS);
-  container->addChild(icons);
+  Container->addChild(icons);
 
   // creates a container the heat gauge
   heat_gauge = static_cast<Ogre::OverlayContainer*>
                (overlay_mngr->createOverlayElement("Panel", a_hud_part_design.name
                                                    + "_heat_cont_" + Game::getUniqueID()));
   heat_gauge->setMetricsMode(Ogre::GMM_PIXELS);
-  container->addChild(heat_gauge);
+  Container->addChild(heat_gauge);
 
   // icons overlay elements
   string id = "mfd_dmg_grn_electronics";
@@ -144,7 +143,7 @@ MFDViewDamageDiagram::MFDViewDamageDiagram(hud_part_design_t& a_hud_part_design)
   string tex_name = "mfd_dmg_heat_bar";
 
   // get the material to scale the bar later
-  heat_bar_material = Game::hud->createOverlayMaterial(id, Ogre::TextureUnitState::TAM_CLAMP,
+  heat_bar_material = Game::Hud->createOverlayMaterial(id, Ogre::TextureUnitState::TAM_CLAMP,
                                                        tex_name)->getTechnique(0)->getPass(0)
                       ->getTextureUnitState(0);
 
@@ -158,7 +157,7 @@ MFDViewDamageDiagram::MFDViewDamageDiagram(hud_part_design_t& a_hud_part_design)
                                                            "_cont_"
                                                            + intoString(i) + Game::getUniqueID())));
     diagrams.back()->setMetricsMode(Ogre::GMM_PIXELS);
-    container->addChild(diagrams.back());
+    Container->addChild(diagrams.back());
   }
 
   // create the damage diagrams
@@ -197,7 +196,7 @@ void MFDViewDamageDiagram::createDiagram(mfd_view::diagram_type           a_diag
     string id = grn_names[i] + Game::getUniqueID();
 
     // create a material witha a unique names but the texture name from the mfd_view diagram
-    material = Game::hud->createOverlayMaterial(id, Ogre::TextureUnitState::TAM_CLAMP,
+    material = Game::Hud->createOverlayMaterial(id, Ogre::TextureUnitState::TAM_CLAMP,
                                                 tex_name);
 
     // put the texture unit state in the vector for later use with alpha blending
@@ -212,7 +211,7 @@ void MFDViewDamageDiagram::createDiagram(mfd_view::diagram_type           a_diag
     id = red_names[i] + Game::getUniqueID();
 
     // create a material witha a unique names but the texture name from the mfd_view diagram
-    material = Game::hud->createOverlayMaterial(id, Ogre::TextureUnitState::TAM_CLAMP,
+    material = Game::Hud->createOverlayMaterial(id, Ogre::TextureUnitState::TAM_CLAMP,
                                                 tex_name);
 
     // put the texture unit state in the vector for later use with alpha blending
@@ -258,13 +257,13 @@ void MFDViewDamageDiagram::switchDiagrams(mfd_view::diagram_type a_new_diagram)
 
 void MFDViewDamageDiagram::update(Real a_dt)
 {
-  if (active) {
-    updateDiagramElements(a_dt, Game::hud->player_unit);
+  if (Active) {
+    updateDiagramElements(a_dt, Game::Hud->PlayerUnit);
   }
 }
 
-void MFDViewDamageDiagram::updateDiagramElements(Real    a_dt,
-                                                 Corpus* a_target)
+void MFDViewDamageDiagram::updateDiagramElements(Real  a_dt,
+                                                 Unit* a_target)
 {
   mfd_view::diagram_type new_diagram = a_target->getDiagramType();
 

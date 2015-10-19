@@ -2,26 +2,10 @@
 
 #include "files_handler.h"
 #include "game.h"
+#include "hud_design.h"
 
 namespace FilesHandler
 {
-
-template <typename T>
-void getDigitArrayT(vector<T>& int_array,
-                    string     a_buffer);
-
-template <class T1, class T2>
-void getEnumPairArrayT(vector<pair<T1, T2> >& position_pair_array,
-                       string a_buffer);
-
-template <typename T>
-void getEnumArrayT(vector<T>& enum_array,
-                   string     a_buffer);
-
-template <typename T>
-void getIntArrayT(vector<T>& int_array,
-                  string     a_buffer);
-
 void getSizeTArray(vector<size_t>& int_array,
                    string          a_buffer)
 {
@@ -684,5 +668,13 @@ template <typename T> void getDigitArrayT(vector<T>& int_array,
     }
   }
 }
+
+template
+void getEnumPairArrayT<horizontal::position, vertical::position>
+(vector<pair<horizontal::position, vertical::position> >&, string);
+
+template
+void getEnumArrayT<mfd_view::view_type>
+(vector<mfd_view::view_type>&, string);
 
 }

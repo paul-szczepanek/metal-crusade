@@ -4,7 +4,8 @@
 #define LOGCOMPUTER_H
 
 #include "main.h"
-//#include "hud_design.h"
+#include "game_hud.h"
+#include "hud_design.h"
 
 class LogComputer
 {
@@ -29,7 +30,7 @@ public:
   }
 
 private:
-  char log_lines[hud_num_of_colours][hud_max_HUD_NUM_OF_LOG_LINES][HUD_LOG_LINE_LENGTH + 1];
+  char log_lines[HUD_NUM_OF_COLOURS][HUD_MAX_HUD_NUM_OF_LOG_LINES][HUD_LOG_LINE_LENGTH + 1];
 
   // tracks the position of what is considered the last log line and wraps around the array
   size_t current_log_line;

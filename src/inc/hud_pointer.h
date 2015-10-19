@@ -4,6 +4,7 @@
 #define HUD_POINTER_H
 
 #include "hud_part.h"
+#include "game_hud.h"
 
 class HudPointer
   : public HudPart

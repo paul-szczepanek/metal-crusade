@@ -13,8 +13,8 @@
 
 #include "game_state.h"
 
-#define CAMERA_CLIP_NEAR (200)
-#define CAMERA_CLIP_FAR (1000)
+#define CAMERA_CLIP_NEAR ((Real)200)
+#define CAMERA_CLIP_FAR ((Real)1000)
 
 class Timer;
 class GameController;
@@ -31,6 +31,7 @@ class UnitFactory;
 class BuildingFactory;
 class ProjectileFactory;
 class CollisionHandler;
+class GameHud;
 
 class Game
   : public Ogre::FrameListener
@@ -38,22 +39,22 @@ class Game
 public:
   ~Game();
 
-  static int init(bool aDebugOn);
+  // the main loop hook
+  bool frameRenderingQueued(const Ogre::FrameEvent &a_evt);
+
+  static int init(bool a_debug_on);
   static Game* instance();
   void run();
 
   static const string& getVersion();
   static string getUniqueID();
 
-  // the main loop hook
-  bool frameRenderingQueued(const Ogre::FrameEvent &aEvt);
-
   // game time
   static Timer* getTimer();
 
   // game state
   static game_state getGameState();
-  static void setGameState(game_state aState);
+  static void setGameState(game_state a_state);
 
   // game controllers
   static GameController* getGameController(size_t i);
@@ -62,11 +63,9 @@ public:
 
   static void log(const string& a_text);
 
-  static void destroyModel(Ogre::SceneNode* a_scene_node);
-
   // terminate game
-  static void end(string aGoodbye = "Terminated");
-  static void kill(string aGoodbye = "Terminal Error");
+  static void end(string a_goodbye = "Terminated");
+  static void kill(string a_goodbye = "Terminal Error");
 
 private:
   Game();
@@ -98,6 +97,8 @@ public:
   static BuildingFactory* Building;
   static ProjectileFactory* Projectile;
   static CollisionHandler* Collision;
+  static Timer* GameTimer;
+  static GameHud* Hud;
 
   static Real Delta;
 
@@ -108,7 +109,6 @@ private:
   static game_state State;
 
   // time
-  static Timer* GameTimer;
   static ulint NewTime;
   static ulint LastTime;
   static ulint RealTime;
@@ -122,10 +122,10 @@ public:
 
 /** @brief quit the game gracefully
  */
-inline void Game::end(string aGoodbye)
+inline void Game::end(string a_goodbye)
 {
   State = game_state_closing;
-  cout << aGoodbye << endl;
+  cout << a_goodbye << endl;
 }
 
 inline Timer* Game::getTimer()
@@ -136,11 +136,6 @@ inline Timer* Game::getTimer()
 inline game_state Game::getGameState()
 {
   return State;
-}
-
-inline void Game::setGameState(game_state aState)
-{
-  State = aState;
 }
 
 inline GameController* Game::getGameController(size_t i)
@@ -160,6 +155,28 @@ inline string Game::getUniqueID()
   stream << setfill('0') << setw(10) << ++UniqueId; // format id string to 0000000001
   stream >> id_string;
   return id_string;
+}
+
+/** @brief clears the Ogre objects
+ */
+inline void destroyModel(Ogre::SceneNode* a_scene_node)
+{
+  // destroy attached entities
+  Ogre::SceneNode::ObjectIterator it = a_scene_node->getAttachedObjectIterator();
+  while (it.hasMoreElements()) {
+    Ogre::MovableObject* movable_object = static_cast<Ogre::MovableObject*>(it.getNext());
+    a_scene_node->getCreator()->destroyMovableObject(movable_object);
+  }
+
+  // destroy children if any
+  Ogre::SceneNode::ChildNodeIterator it2 = a_scene_node->getChildIterator();
+  while (it2.hasMoreElements()) {
+    Ogre::SceneNode* child_node = static_cast<Ogre::SceneNode*>(it2.getNext());
+    destroyModel(child_node);
+  }
+
+  // at last remove the scene node
+  Game::Scene->destroySceneNode(a_scene_node);
 }
 
 #endif // GAME_H_INCLUDED

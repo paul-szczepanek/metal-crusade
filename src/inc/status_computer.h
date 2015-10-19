@@ -4,7 +4,8 @@
 #define STATUSCOMPUTER_H
 
 #include "main.h"
-//#include "hud_design.h"
+#include "game_hud.h"
+#include "hud_design.h"
 
 class StatusComputer
 {
@@ -26,7 +27,7 @@ public:
   }
 
 private:
-  char status_lines[hud_num_of_colours][hud_num_of_status_lines][hud_status_line_length + 1];
+  char status_lines[HUD_NUM_OF_COLOURS][HUD_NUM_OF_STATUS_LINES][HUD_STATUS_LINE_LENGTH + 1];
 };
 
 #endif // STATUSCOMPUTER_H

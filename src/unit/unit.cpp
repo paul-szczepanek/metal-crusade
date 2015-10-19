@@ -5,43 +5,14 @@
 #include "game_arena.h"
 #include "game_controller.h"
 
-Unit::Unit(const string& a_unit_name,
-           Vector3       a_pos_xyz)
-  : ArenaEntity(a_unit_name)
+Unit::Unit(const string& a_unit_name)
 {
-  XYZ = a_pos_xyz;
-  Ground = new Corpus(this);
-  Ground->loadCollision("ground");
-  Ground->CollisionType = collision_type_blocking;
-  Ground->Weight = BLOCKING_WEIGHT;
-  updateGround();
+  Name = a_unit_name;
 }
 
 Unit::~Unit()
 {
   clearFromTargets();
-  delete Ground;
-}
-
-Corpus* Unit::getGround()
-{
-  updateGround();
-  return Ground;
-}
-
-void Unit::updateGround()
-{
-  Ground->XYZ.x = XYZ.x;
-  Ground->XYZ.y = Game::Arena->getHeight(XYZ.x, XYZ.z) - 10;
-  Ground->XYZ.z = XYZ.z;
-  Ground->Penetration = 0;
-  Ground->SurfaceTemperature = 0;
-  Ground->Friction = 0.9;
-  Ground->Hardness = 0.1;
-  Ground->Conductivity = 0;
-  Ground->BallisticDmg = 0;
-  Ground->HeatDmg = 0;
-  Ground->EnergyDmg = 0;
 }
 
 /** @brief calculate the real target of the weapon and the angle it should fire at
@@ -63,7 +34,7 @@ Quaternion Unit::getBallisticAngle(const Vector3& a_position)
   pointer_position = pointer_direction + a_position;
 
   // we need to apply the offset so that the angles converge from the weapons mounted on the sides
-  Vector3 weapon_offset = XYZ - a_position;
+  Vector3 weapon_offset = getXYZ() - a_position;
   // the angle must be limited otherwise you could fire sideways - this limits it to 5 degrees
   Real limit = distance / 11.4300523;
   if (limit < weapon_offset.length()) {
@@ -104,11 +75,9 @@ void Unit::updateTargets()
  */
 bool Unit::getUnitAtPointer()
 {
-  Vector3 pointer_position = Controller->getPointerPos();
-  size_t_pair pointer_cell_index = Game::Arena->getCellIndex(pointer_position.x,
-                                                             pointer_position.z);
+  const Vector3& pointer_position = Controller->getPointerPos();
   vector<size_t_pair> cell_indexes;
-  Game::Arena->getCellIndexesWithinRadius(pointer_cell_index, cell_indexes);
+  Game::Arena->getCellIndexesWithinRadius(pointer_position, cell_indexes);
 
   for (size_t i = 0, for_size = cell_indexes.size(); i < for_size; ++i) {
     list<Corpus*>& CorpusList = Game::Arena->getCorpusCell(cell_indexes[i]);
@@ -124,8 +93,6 @@ bool Unit::getUnitAtPointer()
   return false;
 }
 
-/** @brief get the passed in mobilis as target
- */
 bool Unit::acquireTarget(Corpus* a_target)
 {
   // check if target is acquirable

@@ -11,12 +11,7 @@
 #define HIT_OVERLAP (0.01)
 
 struct Sphere {
-  Sphere()
-    : Radius(1), Centre(Vector3::ZERO)
-  {
-  }
-
-  Sphere(Real aRadius)
+  Sphere(Real aRadius = 0)
     : Radius(aRadius), Centre(Vector3::ZERO)
   {
   }

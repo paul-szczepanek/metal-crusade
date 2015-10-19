@@ -5,7 +5,7 @@
 #include "sphere.h"
 
 #define REPULSION_FACTOR (2)
-#define HIT_DAMPENING    (0.9)
+#define HIT_DAMPENING    ((Real)0.9)
 #define RESOLVE_LIMIT (10)
 
 Collision::Collision(Corpus*                  a_object1,
@@ -67,12 +67,6 @@ void Collision::resolve(const Real a_dt)
     return;
   }
 
-  // vector perpendicular to collision plane pointing away from the surface
-  Vector3 collision_vector = (Centre[0] - Centre[1]);
-  collision_vector.normalise(); // get a unit vector
-
-  const Real hardness = min(Object[0]->Hardness, Object[1]->Hardness);
-
   // determine collision type
   collision_type collision_type[2];
   Real weight[2];
@@ -82,51 +76,31 @@ void Collision::resolve(const Real a_dt)
                   BLOCKING_WEIGHT : Object[i.a]->Weight;
   }
 
-  Vector3 velocity_impact[2];
-  // remove the velocity perpendicular to surface of a blocking collision
-  for (const reverse_pairs_t& i : PAIRS) {
-    if (collision_type[i.a] != collision_type_blocking) {
-      Real dot = velocity[i.a].dotProduct(collision_vector);
-      velocity_impact[i.a] -= i.sign * dot * collision_vector;
-    }
+  Real weight_denominator = 1.0 / (weight[0] + weight[1]);
+
+  if (collision_type[0] == collision_type_blocking
+      || collision_type[1] == collision_type_blocking) {
+    ResultType = collision_type_blocking;
+  } else if (collision_type[0] == collision_type_impact || collision_type[1] == collision_type_impact) {
+    ResultType = collision_type_impact;
+  } else if (collision_type[0] == collision_type[1]) {
+    ResultType = collision_type[0];
+  } else {
+    ResultType = collision_type_soft;
   }
 
-  Real weight_denominator = 1.0 / (weight[0] + weight[1]);
+  // vector perpendicular to collision plane pointing towards from the surface
+  Vector3 collision_vector = (Centre[1] - Centre[0]);
+  collision_vector.normalise();
 
   // perfect inelastic collision with energy preserved
   Vector3 combined_velocity = Vector3::ZERO;
-  Vector3 combined_velocity_impact = Vector3::ZERO;
+  Real combined_velocity_perp = 0;
 
-  if (collision_type[0] == collision_type_blocking || collision_type[1] ==
-      collision_type_blocking) {
-    ResultType = collision_type_blocking;
-
-  } else {
-    if (collision_type[0] == collision_type_impact || collision_type[1] == collision_type_impact) {
-      ResultType = collision_type_impact;
-    } else if (collision_type[0] == collision_type[1]) {
-      ResultType = collision_type[0];
-    } else {
-      // if none of these it remains the default soft because one of them is soft
-      // ResultType = collision_type_soft;
-    }
-
-    if (ResultType != collision_type_hard) {
-      combined_velocity = ((weight[0] * velocity[0]) + (weight[1] * velocity[1]))
-                          * weight_denominator;
-      combined_velocity_impact = combined_velocity.dotProduct(collision_vector) * collision_vector;
-    }
-  }
-
-  // remove the velocity perpendicular to surface of a blocking collision
-  for (const reverse_pairs_t& i : PAIRS) {
-    if (collision_type[i.a] == collision_type_blocking) {
-      Vector3 velocity_impact = (Centre[i.a] - Centre[i.b]);
-      Real dot = velocity[i.b].dotProduct(collision_vector);
-      if (dot > 0) {
-        velocity[i.b] -= i.sign * dot * collision_vector;
-      }
-    }
+  if (ResultType != collision_type_hard) {
+    combined_velocity = ((weight[0] * velocity[0]) + (weight[1] * velocity[1]))
+                        * weight_denominator;
+    combined_velocity_perp = combined_velocity.dotProduct(collision_vector);
   }
 
   if (ResultType == collision_type_impact) {
@@ -135,47 +109,61 @@ void Collision::resolve(const Real a_dt)
     velocity[1] = combined_velocity;
 
   } else {
-
     // get the scalar velocities perpendicular to the collision plane
     Real velocity_perp[2];
+    Vector3 velocity_par[2];
     velocity_perp[0] = velocity[0].dotProduct(collision_vector);
     velocity_perp[1] = velocity[1].dotProduct(collision_vector);
+    velocity_par[0] = velocity[0] - velocity_perp[0] * collision_vector;
+    velocity_par[1] = velocity[1] - velocity_perp[1] * collision_vector;
+    Real friction_acc = (velocity_par[0] - velocity_par[1]).length()
+                        * Object[0]->Friction * Object[1]->Friction;;
+    const Real hardness = min(Object[0]->Hardness, Object[1]->Hardness);
 
     // scalar velocities after collision
-    Real new_velocity_perp[2];
     for (const reverse_pairs_t& i : PAIRS) {
-      new_velocity_perp[i.a] = ((velocity_perp[i.a] * (weight[i.a] - weight[i.b])
-                                 + 2 * weight[i.b] * velocity_perp[i.b]) * weight_denominator);
-      // new reflected velocities
-      velocity[i.a] = velocity[i.a] - 2 * new_velocity_perp[i.a] * collision_vector;
+      Real new_velocity_perp = (velocity_perp[i.a] * (weight[i.a] - weight[i.b])
+                                + 2 * weight[i.b] * velocity_perp[i.b]) * weight_denominator;
 
-      // mix elastic and inelastic collisions
+      // mix elastic and inelastic collisions if not hard collision
       if (ResultType != collision_type_hard) {
-        velocity[i.a] = velocity[i.a] * hardness + combined_velocity_impact * (1 - hardness);
+        // remove old perp velocity, add a mix of new perp velocity and combined perp velocity
+        new_velocity_perp = (HIT_DAMPENING * new_velocity_perp) * hardness
+                            + combined_velocity_perp * (1 - hardness);
+      } else {
+        new_velocity_perp = (HIT_DAMPENING) * new_velocity_perp;
       }
 
-      // push object gently away regardless of angles
-      velocity[i.a] += i.sign * collision_vector * Depth * REPULSION_FACTOR
-                       * (1 - weight[i.a] * weight_denominator);
+      // use collision depth to move the objects away if collision velocity is not enough
+      Real repulsion = (-i.sign) * Depth * REPULSION_FACTOR * (weight[i.b] * weight_denominator);
+      if (new_velocity_perp > repulsion) {
+        new_velocity_perp = repulsion;
+      }
 
-      // damping - take energy out of the system
-      velocity[i.a] *= HIT_DAMPENING;
-
+      if (friction_acc > 0.1) {
+        velocity_par[i.a] *= 1 - friction_acc * (weight[i.b] * weight_denominator) * a_dt;
+      }
+      velocity[i.a] = velocity_par[i.a] + new_velocity_perp * collision_vector;
     }
-
-    // this is a temporary cheap cheat to help rotating near obstacles
-    /*velocity[0] += collision_vector * REPULSION_FACTOR;
-       velocity[1] += -collision_vector * REPULSION_FACTOR;*/
   }
 
-  Object[0]->Velocity = velocity[0];
-  Object[1]->Velocity = velocity[1];
+  // remove the velocity perpendicular to surface of a blocking collision
+  for (const reverse_pairs_t& i : PAIRS) {
+    if (collision_type[i.a] == collision_type_blocking) {
+      Real dot = velocity[i.b].dotProduct(collision_vector);
+      if (dot > 0) {
+        velocity[i.b] -= i.sign * dot * collision_vector;
+      }
+    }
+  }
+
+  for (const reverse_pairs_t& i : PAIRS) {
+    if (collision_type[i.a] != collision_type_blocking) {
+      Object[i.a]->Velocity = velocity[i.a];
+    }
+  }
 
   if (!Resolved) {
-    // call objects to resolve internal actions
-    Object[0]->handleCollision(this);
-    Object[1]->handleCollision(this);
-
     // heat exchange (yes, again, I know this is not how the real world works
     // but I don't have a beowolf cluster handy to do real heat physics simulation
     // and I need to bend reality a lot for gameplay reasons, I feel slightly guilty though)
@@ -194,6 +182,10 @@ void Collision::resolve(const Real a_dt)
       Object[1]->SurfaceTemperature = surface_temperature2 + conductivity * a_dt * difference;
     }
   }
+
+  // call objects to resolve internal actions
+  Object[0]->handleCollision(this);
+  Object[1]->handleCollision(this);
 
   ++Resolved;
 

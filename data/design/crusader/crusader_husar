@@ -9,9 +9,9 @@ drive_type_limbs
 [drive.subtype]
 drive_subtype_biped
 [engine.rating]
-360
+36000
 [engine.rating_reverse]
-240
+24000
 [engine.heat]
 0.2
 [engine.weight]
@@ -29,11 +29,11 @@ husar
 [drive.turn_speed]
 0.1 #pi
 [drive.kinematic_resistance]
-0.2
+0.02
 [drive.kinematic_resistance_reverse]
-0.4
+0.2
 [drive.traction]
-0.8
+0.9
 [chassis.mesh]
 husar
 [chassis.weight]

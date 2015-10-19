@@ -2,6 +2,7 @@
 
 #include "game_arena.h"
 #include "game.h"
+#include "game_hud.h"
 #include "query_mask.h"
 #include "formation_manager.h"
 #include "faction_manager.h"
@@ -23,7 +24,7 @@
 #include "nav_point.h"
 
 /*
- #include "hud.h"*/
+ #include "game_hud.h"*/
 
 // cell size
 const int real_page_size = 256; // in metres
@@ -75,7 +76,7 @@ GameArena::~GameArena()
   Game::Scene->destroyAllLights();
 
   // destroy terrain mesh
-  Game::destroyModel(TerrainNode);
+  destroyModel(TerrainNode);
 
   // cleanup terrain
   Ogre::MaterialManager::getSingleton().remove(terrain_material_name);
@@ -147,10 +148,10 @@ int GameArena::loadArena(const string& arena_name)
                                                                  faction_mercenary);
   Formation* allied_formation = Game::Formation->createFormation("allies",
                                                                  faction_mercenary);
-
+/*
   // temp buildings
   Game::Building->spawnSceneryBuidling(Vector3(240, 0, 220), "building_test_02");
-  /*
+
   Game::Building->spawnSceneryBuidling(280, 300, "building_test_02");
   Game::Building->spawnSceneryBuidling(350, 270, "building_test_02");
   Game::Building->spawnSceneryBuidling(310, 380, "building_test_01");
@@ -174,7 +175,7 @@ int GameArena::loadArena(const string& arena_name)
   player_formation->joinFormation(player_unit);
 
   // create the hud according to the unit you're in - HUD NEEDS THE CONTROLLER to be assigned!
-  //Game::hud->loadHud(static_cast<Unit*>(player_unit));
+  Game::Hud->loadHud(static_cast<Unit*>(player_unit));
 /*
   // create ally
   Crusader* ally_unit = Game::Unit->spawnCrusader(Vector3(340, 0, 300),
@@ -270,8 +271,8 @@ void GameArena::createTerrainModel()
                                                      Ogre::LBS_CURRENT);
 
   // colour texture
-  // pass->createTextureUnitState()->setTextureName(terrain_name+"_colour.tga");
-  // pass->getTextureUnitState(1)->setTextureCoordSet(0);
+  //pass->createTextureUnitState()->setTextureName(terrain_name+"_colour.tga");
+  //pass->getTextureUnitState(1)->setTextureCoordSet(0);
   // modulate colour and detail
   // pass->getTextureUnitState(1)->setColourOperation(Ogre::LBO_MODULATE);
 
@@ -288,7 +289,7 @@ void GameArena::createTerrainModel()
         + "_" + intoString(k));
 
       // create the mesh manually by defining triangle pairs - apply the terrain_name material
-      terrain_mesh->begin(terrain_material_name);
+      terrain_mesh->begin(terrain_material_name); // arg is material name
 
       for (size_t i = 0; i + step <= page_size; i += step) {
         size_t is = i + step;
@@ -396,19 +397,20 @@ void GameArena::createTerrainModel()
  * you could cut off the corner indexes for a big radius but it's hardly worth the bother
  * at radius 4 you could save one cell, OK, TODO: cut them off
  */
-void GameArena::getCellIndexesWithinRadius(const size_t_pair    a_index,
+void GameArena::getCellIndexesWithinRadius(const Vector3&       a_xyz,
                                            vector<size_t_pair>& indexes,
                                            const Real           a_radius)
 {
+  size_t_pair index = getCellIndex(a_xyz);
   // round up and add half the cell size to get possible hits from without the radius
   int cell_radius = (a_radius + size_of_arena_cell * 0.5) / size_of_arena_cell + 1;
 
   // push the centre cell
-  indexes.push_back(a_index);
+  indexes.push_back(index);
 
   // centre for the spiral (measure from the edge, so even radius 0 gets a cell)
-  const size_t& c_i = a_index.first;
-  const size_t& c_j = a_index.second;
+  const size_t& c_i = index.first;
+  const size_t& c_j = index.second;
 
   // this goes in a spiral way putting in indexes closer to first and further away last
   // every time it checks if the index is valid
@@ -457,7 +459,7 @@ void GameArena::registerObject(Corpus* a_thing)
 {
   if (!a_thing->OnArena) {
     a_thing->OnArena = true;
-    a_thing->CellIndex = getCellIndex(a_thing->XYZ.x, a_thing->XYZ.z);
+    a_thing->CellIndex = getCellIndex(a_thing->XYZ);
     insertCorpusIntoCell(a_thing);
   }
 }
@@ -500,7 +502,7 @@ bool GameArena::updateCellIndex(Corpus* a_thing)
   }
 
   // get the cell index based on position
-  const size_t_pair new_cell_index = getCellIndex(a_thing->XYZ.x, a_thing->XYZ.z);
+  const size_t_pair new_cell_index = getCellIndex(a_thing->XYZ);
 
   if (a_thing->CellIndex != new_cell_index) {
     cell_changed = true;

@@ -4,6 +4,7 @@
 #define MFD_VIEW_DAMAGE_DIAGRAM_TARGET_H
 
 #include "mfd_view_damage_diagram.h"
+#include "game_hud.h"
 
 class MFDViewDamageDiagramTarget
   : public MFDViewDamageDiagram

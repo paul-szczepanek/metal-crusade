@@ -2,7 +2,6 @@
 
 #include "hud_set.h"
 #include "game.h"
-#include "hud.h"
 #include "game_controller.h"
 #include "timer.h"
 #include "radar_computer.h"
@@ -20,7 +19,7 @@ HudSet::HudSet(hud_part_design_t& a_hud_part_design)
   for (usint i = 0; i < items_in_set; ++i) {
     string id = string("set_") + intoString(function) + "_" + intoString(i);
     items.push_back(createPanel(id, a_hud_part_design.name + "_" + intoString(i),
-                                0, 0, size.first, size.second, container));
+                                0, 0, size.first, size.second, Container));
   }
 
   // bind the appropriate function for getting the value to the funciton pointer
@@ -71,8 +70,8 @@ void HudSet::switchItems(usint a_item_to_show)
 // bound to at creation to save on constant checking every frame
 usint HudSet::getRadarPower()
 {
-  if (Game::hud->radar->getActive()) {
-    if (Game::hud->radar->getActiveRadar()) {
+  if (Game::Hud->radar->getActive()) {
+    if (Game::Hud->radar->getActiveRadar()) {
       return 1;
     } else {
       return 0;
@@ -84,7 +83,7 @@ usint HudSet::getRadarPower()
 
 usint HudSet::getClockTick()
 {
-  if (Game::hud->timer->getTicks() % 1000 < 500) {
+  if (Game::Hud->timer->getTicks() % 1000 < 500) {
     return 1;
   } else {
     return 2;
@@ -93,7 +92,7 @@ usint HudSet::getClockTick()
 
 usint HudSet::getWeaponGroup()
 {
-  if (Game::hud->controller->control_block.fire_mode_group) {
+  if (Game::Hud->Controller->ControlBlock.fire_mode_group) {
     return 0;
   } else {
     return 1;
@@ -102,11 +101,11 @@ usint HudSet::getWeaponGroup()
 
 usint HudSet::getWeaponTarget()
 {
-  if (Game::hud->controller->control_block.target_high) {
+  if (Game::Hud->Controller->ControlBlock.target_high) {
     return 1;
-  } else if (Game::hud->controller->control_block.target_low) {
+  } else if (Game::Hud->Controller->ControlBlock.target_low) {
     return 0;
-  } else if (Game::hud->controller->control_block.target_air) {
+  } else if (Game::Hud->Controller->ControlBlock.target_air) {
     return 2;
   } else {
     return 3;
@@ -115,7 +114,7 @@ usint HudSet::getWeaponTarget()
 
 usint HudSet::getWeaponAuto()
 {
-  if (Game::hud->controller->control_block.auto_cycle) {
+  if (Game::Hud->Controller->ControlBlock.auto_cycle) {
     return 0;
   } else {
     return 1;
