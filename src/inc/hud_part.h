@@ -6,7 +6,6 @@
 #include "main.h"
 #include "game_hud.h"
 #include "hud_design.h"
-#include "game_hud.h"
 
 #define HUD_3D_DISTANCE (-200)
 

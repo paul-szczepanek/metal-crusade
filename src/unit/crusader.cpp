@@ -203,10 +203,8 @@ Crusader::Crusader(const string&      a_unit_name,
   // set temperature to ambient temp
   EngineTemperature = CoreTemperature = Game::Arena->getAmbientTemperature(a_pos_xyz);
 
-  /*
   // create the radar
-  radar = new RadarComputer(CrusaderDesign.radar, this);
-  */
+  Radar = new RadarComputer(CrusaderDesign.radar, this);
 }
 
 /** @brief resolves collision including damage and physics

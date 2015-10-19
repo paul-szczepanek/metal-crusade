@@ -3,7 +3,7 @@
 #include "hud_set.h"
 #include "game.h"
 #include "game_controller.h"
-#include "timer.h"
+#include "game_timer.h"
 #include "radar_computer.h"
 
 HudSet::HudSet(hud_part_design_t& a_hud_part_design)
@@ -83,7 +83,7 @@ usint HudSet::getRadarPower()
 
 usint HudSet::getClockTick()
 {
-  if (Game::Hud->timer->getTicks() % 1000 < 500) {
+  if (Game::Timer->getTicks() % 1000 < 500) {
     return 1;
   } else {
     return 2;

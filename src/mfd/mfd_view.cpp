@@ -7,7 +7,7 @@ MFDView::MFDView(hud_part_design_t& a_hud_part_design)
   : HudPart(a_hud_part_design)
 {
   // get the mfd to hook up to
-  mfd = Game::Hud->getMFD();
+  Mfd = Game::Hud->getMFD();
 }
 
 MFDView::~MFDView()

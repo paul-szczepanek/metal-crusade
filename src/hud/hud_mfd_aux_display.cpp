@@ -21,13 +21,13 @@ HudMFDAuxDisplay::HudMFDAuxDisplay(hud_part_design_t& a_hud_part_design)
     for (usint j = 0; j < HUD_NUM_OF_MFD_AUX_LINES; ++j) { // and each line
       string id = a_hud_part_design.name + "_" + intoString(i) + intoString(j);
       mfd_aux_text_elements[i][j]
-        = createTextArea(id, "", font_size, Game::Hud->hud_design.mfd_colours[i],
+        = createTextArea(id, "", font_size, Game::Hud->HudDesign.mfd_colours[i],
                          0, (j * line_height), size.first, size.second, Container);
     }
   }
 
   // get the mfd to hook up to
-  mfd = Game::Hud->getMFD();
+  Mfd = Game::Hud->getMFD();
 }
 
 void HudMFDAuxDisplay::update(Real a_dt)
@@ -37,7 +37,7 @@ void HudMFDAuxDisplay::update(Real a_dt)
     // update all lines every time
     for (usint i = 0; i < HUD_NUM_OF_COLOURS; ++i) {
       for (usint j = 0; j < HUD_NUM_OF_MFD_AUX_LINES; ++j) {
-        mfd_aux_text_elements[i][j]->setCaption(mfd->getLine(i, j));
+        mfd_aux_text_elements[i][j]->setCaption(Mfd->getLine(i, j));
       }
     }
 

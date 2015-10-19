@@ -23,14 +23,9 @@
 
 const string hud_textures_dir = "data/texture/hud/";
 
-// hud designs in pixel coords baselined at 1024x768
-const Real base_width(1024);
-const Real base_height(768);
-
 GameHud::GameHud()
-  : hud_width(base_width)
-  , hud_height(base_height)
 {
+  OgreManager = Ogre::OverlayManager::getSingletonPtr();
   log = new LogComputer();
   status = new StatusComputer();
 }
@@ -45,13 +40,13 @@ GameHud::~GameHud()
   }
 
   // destroy all overlays an elements, this also takes care of ogre elements created by hud_parts
-  Ogre::OverlayManager* overlay_mngr = Ogre::OverlayManager::getSingletonPtr();
-  overlay_mngr->destroyAllOverlayElements();
-  overlay_mngr->destroyAll();
+  OgreManager->destroyAllOverlayElements();
+  OgreManager->destroyAll();
 
   // release materials for the hud as no longer needed
   Ogre::ResourceGroupManager::getSingleton().destroyResourceGroup("hud");
 
+  delete OgreManager;
   delete status;
   delete log;
 }
@@ -91,7 +86,7 @@ void GameHud::pause()
 /** @brief load definition of the ingame hud
   * fills structs with specs read from a file
   */
-bool GameHud::getHudDesign(const string& filename, hud_design_t& hud_design)
+bool GameHud::getHudDesign(const string& filename, hud_design_t& HudDesign)
 {
   using namespace FilesHandler;
   //prepare map to read data into
@@ -100,19 +95,19 @@ bool GameHud::getHudDesign(const string& filename, hud_design_t& hud_design)
   assert(getPairs(filename, HUD_DIR, pairs)); //insert data from file into pairs
 
   //fill structs with info from pairs
-  hud_design.name = filename;
-  hud_design.font_name = pairs["hud_design.font_name"];
-  getStringArray(hud_design.area_textures, pairs["hud_design.area_textures"]);
-  getStringArray(hud_design.area_cover_textures, pairs["hud_design.area_cover_textures"]);
-  FilesHandler::getEnumPairArrayT(hud_design.positions, pairs["hud_design.positions"]);
-  getIntPairArray(hud_design.sizes, pairs["hud_design.sizes"]);
-  getIntPairArray(hud_design.offsets, pairs["hud_design.offsets"]);
-  getIntPairArray(hud_design.offsets_alternative, pairs["hud_design.offsets_alternative"]);
-  getColourArray(hud_design.status_colours, pairs["hud_design.status_colours"]);
-  getColourArray(hud_design.log_colours, pairs["hud_design.log_colours"]);
-  getColourArray(hud_design.mfd_colours, pairs["hud_design.mfd_colours"]);
-  getColourArray(hud_design.display_colours, pairs["hud_design.display_colours"]);
-  getEnumArrayT(hud_design.mfd_views, pairs["hud_design.mfd_views"]);
+  HudDesign.name = filename;
+  HudDesign.font_name = pairs["hud_design.font_name"];
+  getStringArray(HudDesign.area_textures, pairs["hud_design.area_textures"]);
+  getStringArray(HudDesign.area_cover_textures, pairs["hud_design.area_cover_textures"]);
+  FilesHandler::getEnumPairArrayT(HudDesign.positions, pairs["hud_design.positions"]);
+  getIntPairArray(HudDesign.sizes, pairs["hud_design.sizes"]);
+  getIntPairArray(HudDesign.offsets, pairs["hud_design.offsets"]);
+  getIntPairArray(HudDesign.offsets_alternative, pairs["hud_design.offsets_alternative"]);
+  getColourArray(HudDesign.status_colours, pairs["hud_design.status_colours"]);
+  getColourArray(HudDesign.log_colours, pairs["hud_design.log_colours"]);
+  getColourArray(HudDesign.mfd_colours, pairs["hud_design.mfd_colours"]);
+  getColourArray(HudDesign.display_colours, pairs["hud_design.display_colours"]);
+  getEnumArrayT(HudDesign.mfd_views, pairs["hud_design.mfd_views"]);
 
   usint i = 0;
 
@@ -139,27 +134,27 @@ bool GameHud::getHudDesign(const string& filename, hud_design_t& hud_design)
     hud_part_design.position.second = intoInt(hud_part_design_string[6]);
     hud_part_design.size.first = intoInt(hud_part_design_string[7]);
     hud_part_design.size.second = intoInt(hud_part_design_string[8]);
-    hud_design.parts.push_back(hud_part_design);
+    HudDesign.parts.push_back(hud_part_design);
 
     ++i;
   }
 
   //sanity check on values
-  if (hud_design.area_textures.size() > 7
-      && hud_design.area_cover_textures.size() > 7
-      && hud_design.positions.size() > 7
-      && hud_design.sizes.size() > 7
-      && hud_design.offsets.size() > 7
-      && hud_design.offsets_alternative.size() > 7
-      && hud_design.status_colours.size() > 0
-      && hud_design.log_colours.size() > 0
-      && hud_design.mfd_colours.size() > 0
-      && hud_design.display_colours.size() > 0) {
+  if (HudDesign.area_textures.size() > 7
+      && HudDesign.area_cover_textures.size() > 7
+      && HudDesign.positions.size() > 7
+      && HudDesign.sizes.size() > 7
+      && HudDesign.offsets.size() > 7
+      && HudDesign.offsets_alternative.size() > 7
+      && HudDesign.status_colours.size() > 0
+      && HudDesign.log_colours.size() > 0
+      && HudDesign.mfd_colours.size() > 0
+      && HudDesign.display_colours.size() > 0) {
     //pad colours if too few
-    padHudColours(hud_design.status_colours);
-    padHudColours(hud_design.log_colours);
-    padHudColours(hud_design.mfd_colours);
-    padHudColours(hud_design.display_colours);
+    padHudColours(HudDesign.status_colours);
+    padHudColours(HudDesign.log_colours);
+    padHudColours(HudDesign.mfd_colours);
+    padHudColours(HudDesign.display_colours);
 
   } else {
     cout << "hud definition incomplete" << endl;
@@ -194,11 +189,8 @@ void GameHud::loadHud(Unit* a_player_unit)
 
   radar = PlayerUnit->getRadar();
 
-  // hook up the timer
-  timer = Game::instance()->getTimer();
-
   // try and load the definition
-  if (getHudDesign(PlayerUnit->getHudName(), hud_design) == false) {
+  if (getHudDesign(PlayerUnit->getHudName(), HudDesign) == false) {
     Game::kill("hud definition failed to load!");
   }
 
@@ -208,32 +200,29 @@ void GameHud::loadHud(Unit* a_player_unit)
                                     "FileSystem", "hud");
   resource_mngr.initialiseResourceGroup("hud");
 
-  // get the overlay manager
-  Ogre::OverlayManager* overlay_mngr = &Ogre::OverlayManager::getSingleton();
-
   // create overlay and containers for all areas and add them to the overlay
   for (usint i = 0; i < hud_num_of_areas; ++i) {
     // read in initial offsets from definition
-    area_offsets[i] = hud_design.offsets[i];
+    area_offsets[i] = HudDesign.offsets[i];
 
     // create one overlay per area
-    hud_overlays[i] = overlay_mngr->create(hud_area_names[i]);
+    hud_overlays[i] = OgreManager->create(hud_area_names[i]);
 
     // create materials for the hud areas
     createOverlayMaterial(hud_area_names[i]);
 
     // create the top container
-    hud_areas[i] = (static_cast<Ogre::OverlayContainer*>
-                    (overlay_mngr->createOverlayElement("Panel",
-                        hud_area_names[i] + "_hud_area")));
+    hud_areas[i] = static_cast<Ogre::OverlayContainer*>
+                    (OgreManager->createOverlayElement("Panel",
+                        hud_area_names[i] + "_hud_area"));
 
     // apply meterial with texture from design
-    hud_areas[i]->setMaterialName(hud_design.area_textures[i]);
+    hud_areas[i]->setMaterialName(HudDesign.area_textures[i]);
 
     // set size and position
     hud_areas[i]->setMetricsMode(Ogre::GMM_PIXELS);
-    hud_areas[i]->setDimensions(hud_design.sizes[i].first,
-                                hud_design.sizes[i].second);
+    hud_areas[i]->setDimensions(HudDesign.sizes[i].first,
+                                HudDesign.sizes[i].second);
     hud_areas[i]->setPosition(0, 0);
 
     // add to the overlay
@@ -242,14 +231,14 @@ void GameHud::loadHud(Unit* a_player_unit)
   }
 
   // create the special centre container for pause
-  centre_overlay = overlay_mngr->create("centre_overlay");
+  centre_overlay = OgreManager->create("centre_overlay");
 
   // create materials for the hud areas
   createOverlayMaterial("controls");
 
   // create the top container
   centre_container = (static_cast<Ogre::OverlayContainer*>
-                      (overlay_mngr->createOverlayElement("Panel", "centre_container")));
+                      (OgreManager->createOverlayElement("Panel", "centre_container")));
 
   // apply meterial with texture from design
   centre_container->setMaterialName("controls");
@@ -265,50 +254,50 @@ void GameHud::loadHud(Unit* a_player_unit)
   centre_overlay->hide();
 
   // overlay for 3d objects
-  hud_overlay_3d = overlay_mngr->create("3doverlay");
+  hud_overlay_3d = OgreManager->create("3doverlay");
   hud_overlay_3d->setZOrder(300);
 
   // create individual hud parts which hook up to areas
-  for (usint i = 0, for_size = hud_design.parts.size(); i < for_size; ++i) {
-    if (hud_design.parts[i].type == hud_part_enum::mfd_military) {
+  for (usint i = 0, for_size = HudDesign.parts.size(); i < for_size; ++i) {
+    if (HudDesign.parts[i].type == hud_part_enum::mfd_military) {
       // create the mfd first
       mfds.push_back(new MFDComputer());
 
       // then create the hud part that will us it
-      hud_parts.push_back(new HudMFDDisplay(hud_design.parts[i]));
+      hud_parts.push_back(new HudMFDDisplay(HudDesign.parts[i]));
 
-    } else if (hud_design.parts[i].type == hud_part_enum::mfd_aux_military) {
+    } else if (HudDesign.parts[i].type == hud_part_enum::mfd_aux_military) {
       if (mfds.size() > 0) {
         // this will used the most recently created MFD computer
-        hud_parts.push_back(new HudMFDAuxDisplay(hud_design.parts[i]));
+        hud_parts.push_back(new HudMFDAuxDisplay(HudDesign.parts[i]));
 
       } else {
         // oh, dear, the hud design is borked
-        Game::kill(string("this mfdaux needs an mfd def first: ") + hud_design.parts[i].name);
+        Game::kill(string("this mfdaux needs an mfd def first: ") + HudDesign.parts[i].name);
       }
-    } else if (hud_design.parts[i].type == hud_part_enum::radar_military) {
-      hud_parts.push_back(new HudRadarDisplay(hud_design.parts[i]));
+    } else if (HudDesign.parts[i].type == hud_part_enum::radar_military) {
+      hud_parts.push_back(new HudRadarDisplay(HudDesign.parts[i]));
 
-    } else if (hud_design.parts[i].type == hud_part_enum::set) {
-      hud_parts.push_back(new HudSet(hud_design.parts[i]));
+    } else if (HudDesign.parts[i].type == hud_part_enum::set) {
+      hud_parts.push_back(new HudSet(HudDesign.parts[i]));
 
-    } else if (hud_design.parts[i].type == hud_part_enum::pointer) {
-      hud_parts.push_back(new HudPointer(hud_design.parts[i]));
+    } else if (HudDesign.parts[i].type == hud_part_enum::pointer) {
+      hud_parts.push_back(new HudPointer(HudDesign.parts[i]));
 
-    } else if (hud_design.parts[i].type == hud_part_enum::weapon_tab) {
-      hud_parts.push_back(new HudWeaponTab(hud_design.parts[i]));
+    } else if (HudDesign.parts[i].type == hud_part_enum::weapon_tab) {
+      hud_parts.push_back(new HudWeaponTab(HudDesign.parts[i]));
 
-    } else if (hud_design.parts[i].type == hud_part_enum::text) {
-      hud_parts.push_back(new HudText(hud_design.parts[i]));
+    } else if (HudDesign.parts[i].type == hud_part_enum::text) {
+      hud_parts.push_back(new HudText(HudDesign.parts[i]));
 
-    } else if (hud_design.parts[i].type == hud_part_enum::log_printer) {
-      hud_parts.push_back(new HudLogPrinter(hud_design.parts[i]));
+    } else if (HudDesign.parts[i].type == hud_part_enum::log_printer) {
+      hud_parts.push_back(new HudLogPrinter(HudDesign.parts[i]));
 
-    } else if (hud_design.parts[i].type == hud_part_enum::dial) {
-      hud_parts.push_back(new HudDial(hud_design.parts[i]));
+    } else if (HudDesign.parts[i].type == hud_part_enum::dial) {
+      hud_parts.push_back(new HudDial(HudDesign.parts[i]));
 
-    } else if (hud_design.parts[i].type == hud_part_enum::status_display) {
-      hud_parts.push_back(new HudStatusDisplay(hud_design.parts[i]));
+    } else if (HudDesign.parts[i].type == hud_part_enum::status_display) {
+      hud_parts.push_back(new HudStatusDisplay(HudDesign.parts[i]));
     }
   }
 
@@ -325,23 +314,23 @@ void GameHud::offsetUpdate(Real     a_dt,
   // smoth transition bewteen offsets
   if (a_alternative) {
     area_offsets[a_hud_area].first = (area_offsets[a_hud_area].first
-                                      + hud_design.offsets_alternative[a_hud_area].first) * 0.5;
+                                      + HudDesign.offsets_alternative[a_hud_area].first) * 0.5;
     area_offsets[a_hud_area].second = (area_offsets[a_hud_area].second
-                                       + hud_design.offsets_alternative[a_hud_area].second)
+                                       + HudDesign.offsets_alternative[a_hud_area].second)
                                       * 0.5;
   } else {
     area_offsets[a_hud_area].first = (area_offsets[a_hud_area].first
-                                      + hud_design.offsets[a_hud_area].first) * 0.5;
+                                      + HudDesign.offsets[a_hud_area].first) * 0.5;
     area_offsets[a_hud_area].second = (area_offsets[a_hud_area].second
-                                       + hud_design.offsets[a_hud_area].second) * 0.5;
+                                       + HudDesign.offsets[a_hud_area].second) * 0.5;
   }
 
   // reposition
-  Real x = positionHorizontal(hud_design.sizes[a_hud_area].first,
-                              hud_design.positions[a_hud_area].first,
+  Real x = positionHorizontal(HudDesign.sizes[a_hud_area].first,
+                              HudDesign.positions[a_hud_area].first,
                               area_offsets[a_hud_area].first);
-  Real y = positionVertical(hud_design.sizes[a_hud_area].second,
-                            hud_design.positions[a_hud_area].second,
+  Real y = positionVertical(HudDesign.sizes[a_hud_area].second,
+                            HudDesign.positions[a_hud_area].second,
                             area_offsets[a_hud_area].second);
 
   hud_overlays[a_hud_area]->setScroll(x, -y);
@@ -427,8 +416,8 @@ void GameHud::resize(size_t a_screen_width,
   hud_height = a_screen_height;
 
   // hud baselined for 1024x768 (I know, I'm rocking like it's 1996)
-  scale_w = hud_width / base_width;
-  scale_h = hud_height / base_height;
+  scale_w = hud_width / BASE_HUD_WIDTH;
+  scale_h = hud_height / BASE_HUD_HEIGHT;
 
   // use the smaller scale so there's no overlap neither vertically nor horizontaly
   scale = min(scale_w, scale_h);
@@ -436,11 +425,11 @@ void GameHud::resize(size_t a_screen_width,
   // reposition and rescale containers
   for (usint i = 0; i < hud_num_of_areas; ++i) {
     hud_overlays[i]->setScale(scale, scale);
-    Real x = positionHorizontal(hud_design.sizes[i].first,
-                                hud_design.positions[i].first,
+    Real x = positionHorizontal(HudDesign.sizes[i].first,
+                                HudDesign.positions[i].first,
                                 area_offsets[i].first);
-    Real y = positionVertical(hud_design.sizes[i].second,
-                              hud_design.positions[i].second,
+    Real y = positionVertical(HudDesign.sizes[i].second,
+                              HudDesign.positions[i].second,
                               area_offsets[i].second);
 
     hud_overlays[i]->setScroll(x, -y);
@@ -620,17 +609,17 @@ Real GameHud::positionVertical(int                a_height,
 Real GameHud::getHudAreaOriginX(hud_area a_hud_area)
 {
 
-  switch (hud_design.positions[a_hud_area].first) {
+  switch (HudDesign.positions[a_hud_area].first) {
 
   case horizontal::left:
     return area_offsets[a_hud_area].first * scale;
 
   case horizontal::centre:
-    return hud_width - (hud_design.sizes[a_hud_area].first + area_offsets[a_hud_area].first)
+    return hud_width - (HudDesign.sizes[a_hud_area].first + area_offsets[a_hud_area].first)
            * 0.5 * scale;
 
   case horizontal::right:
-    return hud_width - (hud_design.sizes[a_hud_area].first + area_offsets[a_hud_area].first)
+    return hud_width - (HudDesign.sizes[a_hud_area].first + area_offsets[a_hud_area].first)
            * scale;
 
   default:
@@ -642,17 +631,17 @@ Real GameHud::getHudAreaOriginX(hud_area a_hud_area)
  */
 Real GameHud::getHudAreaOriginY(hud_area a_hud_area)
 {
-  switch (hud_design.positions[a_hud_area].second) {
+  switch (HudDesign.positions[a_hud_area].second) {
 
   case vertical::top:
     return area_offsets[a_hud_area].second * scale;
 
   case vertical::centre:
-    return hud_height - (hud_design.sizes[a_hud_area].second + area_offsets[a_hud_area].second)
+    return hud_height - (HudDesign.sizes[a_hud_area].second + area_offsets[a_hud_area].second)
            * 0.5 * scale;
 
   case vertical::bottom:
-    return hud_height - (hud_design.sizes[a_hud_area].second + area_offsets[a_hud_area].second)
+    return hud_height - (HudDesign.sizes[a_hud_area].second + area_offsets[a_hud_area].second)
            * scale;
 
   default:

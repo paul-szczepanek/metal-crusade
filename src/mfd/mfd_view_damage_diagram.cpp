@@ -83,7 +83,7 @@ MFDViewDamageDiagram::MFDViewDamageDiagram(hud_part_design_t& a_hud_part_design)
   // end of workaround
 
   // visual parts creation starts here
-  Ogre::OverlayManager* overlay_mngr = Ogre::OverlayManager::getSingletonPtr();
+  Ogre::OverlayManager* overlay_mngr = Game::Hud->OgreManager;
 
   // for positioning pics
   offset_x = (size.first - dmg_pic_w) * 0.5;

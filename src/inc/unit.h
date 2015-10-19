@@ -5,6 +5,7 @@
 
 #include "corpus.h"
 #include "dynamic_entity.h"
+#include "mfd_view_design.h"
 
 class Weapon;
 class RadarComputer;
@@ -33,7 +34,7 @@ public:
   // hud creation
   virtual string getHudName();
   void attachHud(bool a_toggle);
-  RadarComputer* getRadar();
+  virtual RadarComputer* getRadar();
 
   // hud operation
   vector<Weapon*>& getWeapons();
@@ -83,6 +84,9 @@ public:
 
   GameController* getController();
 
+  mfd_view::diagram_type getDiagramType();
+  Real getSurfaceTemperature();
+
 protected:
   // targeted objects
   Unit* CurrentTarget = NULL;
@@ -103,6 +107,21 @@ protected:
   GameController* Controller = NULL;
   Formation* UnitFormation = NULL;
 };
+
+inline Real Unit::getDamage(usint a_diagram_element)
+{
+  return CoreIntegrity;
+}
+
+inline  Real Unit::getSurfaceTemperature()
+{
+  return CoreTemperature;
+}
+
+inline mfd_view::diagram_type Unit::getDiagramType()
+{
+  return mfd_view::object;
+}
 
 inline void Unit::setFormation(Formation* a_formation)
 {
@@ -131,7 +150,7 @@ inline Real Unit::getSpeed()
 }
 
 // return the target of this
-inline ArenaEntity* Unit::getTarget()
+inline Unit* Unit::getTarget()
 {
   return CurrentTarget;
 }

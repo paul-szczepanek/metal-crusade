@@ -1,18 +1,18 @@
 // (c) Paul Szczepanek (teatimecoder.com). Code released under GPL Version 3.
 
-#include "timer.h"
+#include "game_timer.h"
 #include "game.h"
 #include "game_state.h"
 
-Timer::Timer(Ogre::Timer* aOgreTimer)
-  : TimeWarp(false), OgreTimer(aOgreTimer)
+GameTimer::GameTimer(Ogre::Timer* aOgreTimer)
+  : OgreTimer(aOgreTimer)
 {
-  Timer::reset();
+  GameTimer::reset();
 }
 
 /** @brief slow game to stand still
  */
-void Timer::pause()
+void GameTimer::pause()
 {
   Game::setGameState(game_state_pause);
   TimeWarp = true;
@@ -21,7 +21,7 @@ void Timer::pause()
 
 /** @brief resume normal time flow
  */
-void Timer::unpause()
+void GameTimer::unpause()
 {
   Game::setGameState(game_state_playing);
   TimeWarp = false;
@@ -30,7 +30,7 @@ void Timer::unpause()
 
 /** @brief rests both ogre timer and internal timer
  */
-void Timer::reset()
+void GameTimer::reset()
 {
   OgreTimer->reset();
 
@@ -40,7 +40,7 @@ void Timer::reset()
 
 /** @brief slow down or speed up internal clock
  */
-void Timer::setRate(Real a_rate)
+void GameTimer::setRate(Real a_rate)
 {
   if (a_rate > 1.0) {
     a_rate = 1.0;
@@ -60,7 +60,7 @@ void Timer::setRate(Real a_rate)
 
 /** @brief get internal clock detached from real clock
  */
-ulint Timer::getTicks()
+ulint GameTimer::getTicks()
 {
   ulint ogre_ticks = (ulint)OgreTimer->getMilliseconds();
   ulint new_ticks = ogre_ticks - Start;

@@ -21,21 +21,22 @@ public:
 private:
   void changeView(mfd_view::view_type a_view);
 
-  usint font_size;
+private:
+  usint FontSize;
 
   // the controlling mfd
-  MFDComputer* mfd;
+  MFDComputer* Mfd;
 
   // for lower fps
-  Real hud_part_interval;
-  Real hud_part_accumulator;
+  Real HudPartInterval;
+  Real HudPartAccumulator;
 
   // views
-  vector<MFDView*> views;
-  mfd_view::view_type current_view;
+  vector<MFDView*> Views;
+  mfd_view::view_type CurrentView;
 
   // view damage
-  vector<Ogre::OverlayElement*> view_dmg_elements;
+  vector<Ogre::OverlayElement*> ViewDmgElements;
 };
 
 #endif // MFD_DISPLAY_H

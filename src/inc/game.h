@@ -16,7 +16,7 @@
 #define CAMERA_CLIP_NEAR ((Real)200)
 #define CAMERA_CLIP_FAR ((Real)1000)
 
-class Timer;
+class GameTimer;
 class GameController;
 class InputHandler;
 class TextStore;
@@ -48,9 +48,6 @@ public:
 
   static const string& getVersion();
   static string getUniqueID();
-
-  // game time
-  static Timer* getTimer();
 
   // game state
   static game_state getGameState();
@@ -97,7 +94,7 @@ public:
   static BuildingFactory* Building;
   static ProjectileFactory* Projectile;
   static CollisionHandler* Collision;
-  static Timer* GameTimer;
+  static GameTimer* Timer;
   static GameHud* Hud;
 
   static Real Delta;
@@ -126,11 +123,6 @@ inline void Game::end(string a_goodbye)
 {
   State = game_state_closing;
   cout << a_goodbye << endl;
-}
-
-inline Timer* Game::getTimer()
-{
-  return GameTimer;
 }
 
 inline game_state Game::getGameState()

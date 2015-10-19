@@ -62,10 +62,6 @@ public:
   bool handleCollision(Collision* a_collision);
   void invalidateSpheres();
 
-  /*mfd_view::diagram_type getDiagramType() {
-     return mfd_view::object;
-     }*/
-
 public:
   ArenaEntity* OwnerEntity = NULL;
   Ogre::SceneNode* SceneNode = NULL;

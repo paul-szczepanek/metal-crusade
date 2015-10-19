@@ -6,7 +6,7 @@
 #include "text_store.h"
 
 MFDComputer::MFDComputer()
-  : NumOfViews(Game::Hud->hud_design.mfd_views.size())
+  : NumOfViews(Game::Hud->HudDesign.mfd_views.size())
 {
   // init the mfd aux lines
   for (usint i = 0; i < HUD_NUM_OF_COLOURS; ++i) {
@@ -25,10 +25,10 @@ MFDComputer::MFDComputer()
   }
 
   // each mfd gets different starting view
-  if (Game::Hud->getMFDNumber() < Game::Hud->hud_design.mfd_views.size()) {
-    SelectedView = Game::Hud->hud_design.mfd_views[Game::Hud->getMFDNumber()];
+  if (Game::Hud->getMFDNumber() < Game::Hud->HudDesign.mfd_views.size()) {
+    SelectedView = Game::Hud->HudDesign.mfd_views[Game::Hud->getMFDNumber()];
   } else {
-    SelectedView = Game::Hud->hud_design.mfd_views[0];
+    SelectedView = Game::Hud->HudDesign.mfd_views[0];
   }
 }
 
@@ -58,13 +58,13 @@ void MFDComputer::selectView()
     if (SelectedViewIdx > VIEW_TYPES_PER_PAGE - 1) {
       // previous page
       SelectedViewIdx -= VIEW_TYPES_PER_PAGE;
-      SelectedView = Game::Hud->hud_design.mfd_views[SelectedViewIdx];
+      SelectedView = Game::Hud->HudDesign.mfd_views[SelectedViewIdx];
     }
   } else if (take(Game::Hud->Controller->ControlBlock.mfd_right)) {
     if (SelectedView < NumOfViews - VIEW_TYPES_PER_PAGE) {
       // next page page
       SelectedViewIdx += VIEW_TYPES_PER_PAGE;
-      SelectedView = Game::Hud->hud_design.mfd_views[SelectedViewIdx];
+      SelectedView = Game::Hud->HudDesign.mfd_views[SelectedViewIdx];
     }
   }
 
@@ -72,12 +72,12 @@ void MFDComputer::selectView()
   if (take(Game::Hud->Controller->ControlBlock.mfd_up)) {
     if (SelectedViewIdx > 0) {
       // previous view
-      SelectedView = Game::Hud->hud_design.mfd_views[--SelectedViewIdx];
+      SelectedView = Game::Hud->HudDesign.mfd_views[--SelectedViewIdx];
     }
   } else if (take(Game::Hud->Controller->ControlBlock.mfd_down)) {
     if (SelectedViewIdx < NumOfViews - 1) {
       // next view
-      SelectedView = Game::Hud->hud_design.mfd_views[++SelectedViewIdx];
+      SelectedView = Game::Hud->HudDesign.mfd_views[++SelectedViewIdx];
     }
   }
 

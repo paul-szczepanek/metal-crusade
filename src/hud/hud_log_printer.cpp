@@ -7,8 +7,6 @@
 HudLogPrinter::HudLogPrinter(hud_part_design_t& a_hud_part_design)
   : HudPart(a_hud_part_design), printed_log_line(0), timeout(0)
 {
-  Ogre::OverlayManager* overlay_mngr = Ogre::OverlayManager::getSingletonPtr();
-
   // parameters
   if (a_hud_part_design.parameters.size() < 1) { // kill the game if too few params
     Game::kill(string("hud_part missing param: ") + a_hud_part_design.name);
@@ -31,18 +29,16 @@ HudLogPrinter::HudLogPrinter(hud_part_design_t& a_hud_part_design)
   Real line_height = Real(size.second) / HUD_NUM_OF_STATUS_LINES;
 
   // create a container for the text elements to guarantee proper z-sorting
-  Ogre::OverlayContainer* text_container = static_cast<Ogre::OverlayContainer*>
-                                           (overlay_mngr->createOverlayElement("Panel",
-                                                                               a_hud_part_design.
-                                                                               name + "text_cont"));
+  Ogre::OverlayContainer* text_container;
+  text_container = static_cast<Ogre::OverlayContainer*>
+    (Game::Hud->OgreManager->createOverlayElement("Panel", a_hud_part_design.name + "text_cont"));
   text_container->setMetricsMode(Ogre::GMM_PIXELS);
   Container->addChild(text_container); // add it to the main container so that text is on top
 
   // create a container for the head and bars to guarantee proper z-sorting
-  Ogre::OverlayContainer* head_container = static_cast<Ogre::OverlayContainer*>
-                                           (overlay_mngr->createOverlayElement("Panel",
-                                                                               a_hud_part_design.
-                                                                               name + "head_cont"));
+  Ogre::OverlayContainer* head_container;
+  head_container = static_cast<Ogre::OverlayContainer*>
+    (Game::Hud->OgreManager->createOverlayElement("Panel", a_hud_part_design.name + "head_cont"));
   head_container->setMetricsMode(Ogre::GMM_PIXELS);
   text_container->addChild(head_container); // add it to the text container so it's above the text
 
@@ -52,7 +48,7 @@ HudLogPrinter::HudLogPrinter(hud_part_design_t& a_hud_part_design)
       // create text elements to display the lines - one for each colour
       id = a_hud_part_design.name + "_text_" + intoString(i) + "_" + intoString(j);
       log_text_elements[i][j] = createTextArea(id, "", font_size,
-                                               Game::Hud->hud_design.log_colours[i],
+                                               Game::Hud->HudDesign.log_colours[i],
                                                0, (size.second - (j + 1) * line_height),
                                                size.first, line_height, text_container);
     }

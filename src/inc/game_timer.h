@@ -5,35 +5,37 @@
 
 #include "main.h"
 
-class Timer
+class GameTimer
 {
 public:
-  Timer(Ogre::Timer* aOgreTimer);
-  ~Timer();
+  GameTimer(Ogre::Timer* aOgreTimer);
+  ~GameTimer();
 
   // game time
   ulint getTicks();
 
   // how fast time flows
   void setRate(Real aRate);
-  Real getRate()
-  {
-    return Rate;
-  }
+  Real getRate();
 
   void reset();
   void pause();
   void unpause();
 
 private:
-  ulint Start;
-  ulint Ticks;
+  ulint Start = 0;
+  ulint Ticks = 0;
 
-  bool TimeWarp;
+  bool TimeWarp = false;
 
   // time flow rate
-  Real Rate;
-  Ogre::Timer* OgreTimer;
+  Real Rate = 0;
+  Ogre::Timer* OgreTimer = NULL;
 };
+
+inline Real GameTimer::getRate()
+{
+  return Rate;
+}
 
 #endif // TIMER_H

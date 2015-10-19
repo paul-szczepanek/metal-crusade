@@ -22,7 +22,7 @@ public:
 
 protected:
   // the controlling mfd
-  MFDComputer* mfd = NULL;
+  MFDComputer* Mfd = NULL;
   bool Active = false;
 };
 

@@ -23,7 +23,7 @@ private:
   usint font_size;
 
   // the controlling mfd
-  MFDComputer* mfd;
+  MFDComputer* Mfd;
 
   // for lower fps
   Real hud_part_interval;

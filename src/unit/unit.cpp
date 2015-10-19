@@ -108,10 +108,10 @@ bool Unit::acquireTarget(Corpus* a_target)
 
 /** @brief called by an object which holds this as a target to tell it that it no longer targets it
  */
-void Unit::releaseAsTarget(ArenaEntity* a_targeted_by)
+void Unit::releaseAsTarget(Unit* a_targeted_by)
 {
   if (TargetHolders.size() > 0) {
-    vector<ArenaEntity*>::iterator it = find(TargetHolders.begin(),
+    vector<Unit*>::iterator it = find(TargetHolders.begin(),
                                              TargetHolders.end(), a_targeted_by);
     if (it < TargetHolders.end()) {
       TargetHolders.erase(it);
@@ -122,7 +122,7 @@ void Unit::releaseAsTarget(ArenaEntity* a_targeted_by)
 /** @brief called by other object to try and acquire this as a target
  * return false if target can't be acquired
  */
-bool Unit::acquireAsTargetBy(ArenaEntity* a_targeted_by)
+bool Unit::acquireAsTargetBy(Unit* a_targeted_by)
 {
   TargetHolders.push_back(a_targeted_by);
 
@@ -138,7 +138,7 @@ bool Unit::isDetectable()
 /** @brief called by targeted object that requires this to relinquish its current target
  * TODO: relinquish criteria
  */
-bool Unit::loseTarget(ArenaEntity* a_targeted_by,
+bool Unit::loseTarget(Unit* a_targeted_by,
                       bool         a_forced)
 {
   if (a_forced) {

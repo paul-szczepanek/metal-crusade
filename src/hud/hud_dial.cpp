@@ -93,7 +93,7 @@ Real HudDial::getValueCoreTemperature()
 
 Real HudDial::getValueExternalTemperature()
 {
-  //return Game::Hud->player_unit->getSurfaceTemperature();
+  return Game::Hud->PlayerUnit->getSurfaceTemperature();
 }
 
 Real HudDial::getValueThrottle()

@@ -5,7 +5,7 @@
 #include "query_mask.h"
 #include "game_camera.h"
 #include "key_map.h"
-#include "timer.h"
+#include "game_timer.h"
 #include "game_controller.h"
 #include "game_arena.h"
 #include "game_hud.h"
@@ -293,8 +293,8 @@ bool InputHandler::mousePressed(const OIS::MouseEvent& /*evt*/,
 {
   if (Keys->Buttons[input_event_fire] == btn) {
     Controller->ControlBlock.fire = true;
-    if (Game::instance()->getTimer()->getRate() == 0) {
-      Game::GameTimer->unpause();
+    if (Game::Timer->getRate() == 0) {
+      Game::Timer->unpause();
     }
   } else if (Keys->Buttons[input_event_turn_to_pointer] == btn) {
     Controller->ControlBlock.turn_to_pointer = true;
@@ -685,10 +685,10 @@ bool InputHandler::keyReleased(const OIS::KeyEvent& evt)
 
   // pausing
   if (Keys->Keys[input_event_pause] == evt.key) {
-    if (Game::instance()->getTimer()->getRate() == 0) {
-      Game::GameTimer->unpause();
+    if (Game::Timer->getRate() == 0) {
+      Game::Timer->unpause();
     } else {
-      Game::GameTimer->pause();
+      Game::Timer->pause();
     }
   }
 

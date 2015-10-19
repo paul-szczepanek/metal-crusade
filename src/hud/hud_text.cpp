@@ -4,7 +4,7 @@
 #include "radar_computer.h"
 #include "game.h"
 #include "unit.h"
-#include "timer.h"
+#include "game_timer.h"
 
 HudText::HudText(hud_part_design_t& a_hud_part_design)
   : HudPart(a_hud_part_design), text("-"), hud_part_interval(0.1), hud_part_accumulator(0)
@@ -17,7 +17,7 @@ HudText::HudText(hud_part_design_t& a_hud_part_design)
 
   // create the text element
   string id = a_hud_part_design.name + "_text_area_" + intoString(function);
-  text_element = createTextArea(id, text, font_size, Game::Hud->hud_design.display_colours[0],
+  text_element = createTextArea(id, text, font_size, Game::Hud->HudDesign.display_colours[0],
                                 0, 0, size.first, size.second, Container);
 
   // bind the appropriate function for getting the value to the function pointer
@@ -76,7 +76,7 @@ void HudText::update(Real a_dt)
       }
 
       // set the colour of the whole line
-      text_element->setColour(Game::Hud->hud_design.display_colours[colour]);
+      text_element->setColour(Game::Hud->HudDesign.display_colours[colour]);
     }
 
     // reset accumulator for next frame
@@ -90,7 +90,7 @@ void HudText::update(Real a_dt)
 string HudText::getTextClock()
 {
   // get time
-  lint miliseconds = Game::Hud->timer->getTicks();
+  lint miliseconds = Game::Timer->getTicks();
   usint hours = miliseconds / 3600000;
   usint minutes = (miliseconds % 3600000) / 60000;
   usint seconds = (miliseconds % 60000) / 1000;

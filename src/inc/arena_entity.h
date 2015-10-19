@@ -5,6 +5,7 @@
 
 class Corpus;
 class Collision;
+class Unit;
 
 class ArenaEntity
 {
@@ -28,11 +29,11 @@ public:
   const string& getName();
   virtual bool handleCollision(Collision* a_collision);
 
-  virtual bool acquireAsTargetBy(ArenaEntity* a_entity);
-  virtual void releaseAsTarget(ArenaEntity* a_targeted_by);
-  virtual bool loseTarget(ArenaEntity* a_targeted_by,
+  virtual bool acquireAsTargetBy(Unit* a_entity);
+  virtual void releaseAsTarget(Unit* a_targeted_by);
+  virtual bool loseTarget(Unit* a_targeted_by,
                           bool         a_forced = false);
-  virtual ArenaEntity* getTarget();
+  virtual Unit* getTarget();
   virtual void clearFromTargets();
   virtual Corpus* getGround();
 

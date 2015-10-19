@@ -11,6 +11,10 @@
 #include <OGRE/Overlay/OgreOverlaySystem.h>
 #endif
 
+// hud designs in pixel coords baselined at 1024x768
+#define BASE_HUD_WIDTH (1024)
+#define BASE_HUD_HEIGHT (768)
+
 class HudPart;
 class Unit;
 class GameController;
@@ -83,7 +87,7 @@ public:
   Real getHudAreaOriginY(hud_area a_hud_area);
 
 private:
-  bool getHudDesign(const string& filename, hud_design_t& hud_design);
+  bool getHudDesign(const string& filename, hud_design_t& HudDesign);
   void padHudColours(vector<Ogre::ColourValue>& colour_array);
 
   // positioning
@@ -97,6 +101,7 @@ private:
                         vertical::position a_position,
                         Real               a_offset);
 public:
+  Ogre::OverlayManager* OgreManager = NULL;
   // log and status display
   LogComputer* log = NULL;
   StatusComputer* status = NULL;
@@ -106,11 +111,8 @@ public:
   GameController* Controller = NULL;
   RadarComputer* radar = NULL;
 
-  // local time
-  Timer* timer = NULL;
-
   // hud design
-  hud_design_t hud_design;
+  hud_design_t HudDesign;
 private:
   // hud areas
   Ogre::OverlayContainer* hud_areas[hud_num_of_areas];
@@ -123,8 +125,8 @@ private:
 
   // hud size and position
   bool active = false;
-  Real hud_width;
-  Real hud_height;
+  Real hud_width = BASE_HUD_WIDTH;
+  Real hud_height = BASE_HUD_HEIGHT;
   Real scale = 1;
   Real scale_w = 1;
   Real scale_h = 1;
@@ -156,6 +158,9 @@ inline void GameHud::addElement(Ogre::SceneNode* a_scene_node)
  */
 inline void destroyOverlayContainer(Ogre::OverlayContainer* a_overlay)
 {
+  Ogre::OverlayManager* manager = Ogre::OverlayManager::getSingletonPtr();
+  assert(manager);
+
   // destroy child containers
   Ogre::OverlayContainer::ChildContainerIterator it2 = a_overlay->getChildContainerIterator();
   while (it2.hasMoreElements()) {
@@ -167,10 +172,10 @@ inline void destroyOverlayContainer(Ogre::OverlayContainer* a_overlay)
   Ogre::OverlayContainer::ChildIterator it = a_overlay->getChildIterator();
   while (it.hasMoreElements()) {
     Ogre::OverlayElement* overlay = static_cast<Ogre::OverlayElement*>(it.getNext());
-    Ogre::OverlayManager::getSingleton().destroyOverlayElement(overlay);
+    manager->destroyOverlayElement(overlay);
   }
 
-  Ogre::OverlayManager::getSingleton().destroyOverlayElement(a_overlay);
+  manager->destroyOverlayElement(a_overlay);
 }
 
 #endif // HUD_H

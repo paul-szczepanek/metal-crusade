@@ -17,7 +17,7 @@ HudPart::HudPart(hud_part_design_t& a_hud_part_design)
 
   // create the main container for the element
   Container = static_cast<Ogre::OverlayContainer*>
-              (Ogre::OverlayManager::getSingletonPtr()->createOverlayElement("Panel",
+              (Game::Hud->OgreManager->createOverlayElement("Panel",
                                                                              a_hud_part_design.name
                                                                              + Game::getUniqueID()));
 
@@ -41,7 +41,7 @@ Ogre::OverlayElement* HudPart::createPanel(const string&           a_id,
                                            Ogre::OverlayContainer* a_container)
 {
   Ogre::OverlayElement* element
-    = Ogre::OverlayManager::getSingletonPtr()->createOverlayElement("Panel", a_id);
+    = Game::Hud->OgreManager->createOverlayElement("Panel", a_id);
 
   // create and apply meterial
   GameHud::createOverlayMaterial(a_material_name);
@@ -71,7 +71,7 @@ Ogre::OverlayElement* HudPart::createTextArea(const string&           a_id,
                                               Ogre::OverlayContainer* a_container)
 {
   Ogre::OverlayElement* element
-    = Ogre::OverlayManager::getSingletonPtr()->createOverlayElement("TextArea", a_id);
+    = Game::Hud->OgreManager->createOverlayElement("TextArea", a_id);
 
   // set dimensions
   element->setMetricsMode(Ogre::GMM_PIXELS);
@@ -79,7 +79,7 @@ Ogre::OverlayElement* HudPart::createTextArea(const string&           a_id,
   element->setDimensions(a_w, a_h);
 
   // text elements
-  element->setParameter("font_name", Game::Hud->hud_design.font_name);
+  element->setParameter("font_name", Game::Hud->HudDesign.font_name);
   element->setParameter("char_height", intoString(a_font_size));
   element->setColour(a_colour);
   element->setCaption(a_text);

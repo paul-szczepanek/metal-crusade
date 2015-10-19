@@ -73,6 +73,8 @@ public:
   inline usint getSelectedWeapon();
 
   string getHudName();
+  virtual Real getSurfaceTemperature();
+  virtual RadarComputer* getRadar();
 
 private:
   // inner main loop
@@ -115,6 +117,8 @@ private:
   crusader_drive_t DriveDesign;
   crusader_chassis_t ChassisDesign;
 
+  RadarComputer* Radar;
+
   Corpus* Parts[crusader_corpus::parts_max];
 
   // integrity and armour
@@ -143,6 +147,16 @@ private:
 };
 
 const Real CRITICAL_TEMPERATURE(500);
+
+inline Real Crusader::getSurfaceTemperature()
+{
+  return Parts[crusader_corpus::torso]->SurfaceTemperature;
+}
+
+inline RadarComputer* Crusader::getRadar()
+{
+  return Radar;
+}
 
 inline usint Crusader::getSelectedWeapon()
 {

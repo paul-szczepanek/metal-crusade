@@ -3,7 +3,7 @@
 #include "game.h"
 #include "game_hud.h"
 #include "files_handler.h"
-#include "timer.h"
+#include "game_timer.h"
 #include "text_store.h"
 #include "game_camera.h"
 #include "input_handler.h"
@@ -44,7 +44,7 @@ UnitFactory*            Game::Unit = NULL;
 BuildingFactory*        Game::Building = NULL;
 ProjectileFactory*      Game::Projectile = NULL;
 CollisionHandler*       Game::Collision = NULL;
-Timer*                  Game::GameTimer = NULL;
+GameTimer*              Game::Timer = NULL;
 GameHud*                Game::Hud = NULL;
 vector<GameController*> Game::Controllers;
 
@@ -114,12 +114,15 @@ void Game::run()
   OgreRoot->loadPlugin("./OGRE/Plugin_ParticleFX");
 #endif
 
+  Ogre::OverlaySystem* overlay_system = new Ogre::OverlaySystem();
+
   if (OgreRoot->restoreConfig() || OgreRoot->showConfigDialog()) {
     OgreWindow = OgreRoot->initialise(true, string("Metal Crusade ") + VERSION_NUMBER, "");
 
     Game::Scene = OgreRoot->createSceneManager(Ogre::ST_GENERIC);
     // setup shadow type - needs to be done first
     Game::Scene->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_MODULATIVE);
+    Game::Scene->addRenderQueueListener(overlay_system);
 
     // set resources
     Ogre::ResourceGroupManager& res_mngr = Ogre::ResourceGroupManager::getSingleton();
@@ -154,8 +157,8 @@ void Game::run()
     Game::Input->bindController(Controllers[0]);
 
     // game time init
-    GameTimer = new Timer(OgreRoot->getTimer());
-    LastTime = GameTimer->getTicks();
+    Game::Timer = new GameTimer(OgreRoot->getTimer());
+    LastTime = Game::Timer->getTicks();
     RealTime = 0;
 
     // create the world and objects
@@ -223,7 +226,7 @@ bool Game::frameRenderingQueued(const Ogre::FrameEvent& /*aEvt*/)
 
   if (State == game_state_playing) {
     // use internal clock
-    NewTime = GameTimer->getTicks();
+    NewTime = Timer->getTicks();
     ulint d_ticks = NewTime - LastTime;
     LastTime = NewTime;
 

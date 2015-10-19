@@ -10,7 +10,7 @@
 HudWeaponTab::HudWeaponTab(hud_part_design_t& a_hud_part_design)
   : HudPart(a_hud_part_design), interval(0.1), accumulator(0)
 {
-  Ogre::OverlayManager* overlay_mngr = Ogre::OverlayManager::getSingletonPtr();
+  Ogre::OverlayManager* overlay_mngr = Game::Hud->OgreManager;
 
   // alias the vector of weapons for easy access here
   weapons = Game::Hud->PlayerUnit->getWeapons();
@@ -82,7 +82,7 @@ HudWeaponTab::HudWeaponTab(hud_part_design_t& a_hud_part_design)
     string weapon_name = Game::Text->getText(weapons[i]->weapon_design.text_list_name);
     id = a_hud_part_design.name + "_name_text_" + intoString(i); // unique id
     tab_name_elements.push_back(createTextArea(id, weapon_name, font_size,
-                                               Game::Hud->hud_design.display_colours[0],
+                                               Game::Hud->HudDesign.display_colours[0],
                                                offset + 1, size.second * i + 3,
                                                size.first - offset, size.second,
                                                text_container));
@@ -90,7 +90,7 @@ HudWeaponTab::HudWeaponTab(hud_part_design_t& a_hud_part_design)
     // text for diasplaying ammo number
     id = a_hud_part_design.name + "_ammo_text_" + intoString(i); // unique id
     tab_ammo_elements.push_back(createTextArea(id, "000", font_size,
-                                               Game::Hud->hud_design.display_colours[0],
+                                               Game::Hud->HudDesign.display_colours[0],
                                                11, size.second * i + 3, offset,
                                                size.second, text_container));
   }
@@ -130,7 +130,7 @@ void HudWeaponTab::update(Real a_dt)
       } else {
         // out of ammo
         tab_ammo_elements[i]->setCaption("---");
-        tab_ammo_elements[i]->setColour(Game::Hud->hud_design.display_colours[1]);
+        tab_ammo_elements[i]->setColour(Game::Hud->HudDesign.display_colours[1]);
       }
 
       // determine if the weapon is in the selected group

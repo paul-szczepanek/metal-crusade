@@ -21,7 +21,7 @@ HudStatusDisplay::HudStatusDisplay(hud_part_design_t& a_hud_part_design)
     for (usint j = 0; j < HUD_NUM_OF_STATUS_LINES; ++j) { // and each line
       string id = a_hud_part_design.name + "_" + intoString(i) + intoString(j);
       status_text_elements[i][j]
-        = createTextArea(id, "", font_size, Game::Hud->hud_design.status_colours[i],
+        = createTextArea(id, "", font_size, Game::Hud->HudDesign.status_colours[i],
                          0, (j * line_height), size.first, size.second, Container);
     }
   }

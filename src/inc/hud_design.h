@@ -41,7 +41,7 @@ namespace vertical { enum position { top, centre, bottom }; };
 namespace hud_part_enum
 {
 enum function {
-  mfd,
+  Mfd,
   mfd_aux,
   radar,
   radar_power,

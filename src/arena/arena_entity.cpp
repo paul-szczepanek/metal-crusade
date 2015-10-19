@@ -21,24 +21,24 @@ bool ArenaEntity::update(const Real a_dt)
 
 // targeting
 
-bool ArenaEntity::acquireAsTargetBy(ArenaEntity* a_entity)
+bool ArenaEntity::acquireAsTargetBy(Unit* a_entity)
 {
   return false;
 }
 
-void ArenaEntity::releaseAsTarget(ArenaEntity* a_targeted_by)
+void ArenaEntity::releaseAsTarget(Unit* a_targeted_by)
 {
 }
 
-bool ArenaEntity::loseTarget(ArenaEntity* a_targeted_by,
+bool ArenaEntity::loseTarget(Unit* a_targeted_by,
                              bool         a_forced)
 {
   return true;
 }
 
-ArenaEntity* ArenaEntity::getTarget()
+Unit* ArenaEntity::getTarget()
 {
-  return this;
+  return NULL;
 }
 
 void ArenaEntity::clearFromTargets()

@@ -9,89 +9,89 @@
 #include "mfd_view_error.h"
 
 HudMFDDisplay::HudMFDDisplay(hud_part_design_t& a_hud_part_design)
-  : HudPart(a_hud_part_design), hud_part_interval(0.1), hud_part_accumulator(0)
+  : HudPart(a_hud_part_design), HudPartInterval(0.1), HudPartAccumulator(0)
 {
   // read parameters
   if (a_hud_part_design.parameters.size() < 1) { // kill the game if too few params
     Game::kill(string("hud_part missing param: ") + a_hud_part_design.name);
   }
-  font_size = a_hud_part_design.parameters[0]; // read the size of the mfd aux font
+  FontSize = a_hud_part_design.parameters[0]; // read the size of the mfd aux font
 
   // get the mfd to hook up to
-  mfd = Game::Hud->getMFD();
+  Mfd = Game::Hud->getMFD();
 
   // a non-working (or not implented yet) view
   MFDView* view_error = new MFDViewError(a_hud_part_design);
 
   // create all the views
-  for (usint i = 0, for_size = Game::Hud->hud_design.mfd_views.size(); i < for_size; ++i) {
+  for (usint i = 0, for_size = Game::Hud->HudDesign.mfd_views.size(); i < for_size; ++i) {
     // create view according to types in the design
-    if (Game::Hud->hud_design.mfd_views[i] == mfd_view::damage_diagram_self) {
-      views.push_back(new MFDViewDamageDiagram(a_hud_part_design));
+    if (Game::Hud->HudDesign.mfd_views[i] == mfd_view::damage_diagram_self) {
+      Views.push_back(new MFDViewDamageDiagram(a_hud_part_design));
 
-    } else if (Game::Hud->hud_design.mfd_views[i] == mfd_view::damage_diagram_target) {
-      views.push_back(new MFDViewDamageDiagramTarget(a_hud_part_design));
+    } else if (Game::Hud->HudDesign.mfd_views[i] == mfd_view::damage_diagram_target) {
+      Views.push_back(new MFDViewDamageDiagramTarget(a_hud_part_design));
 
-    } else if (Game::Hud->hud_design.mfd_views[i] == mfd_view::damage_view_target) {
-      views.push_back(view_error); // temp!!
+    } else if (Game::Hud->HudDesign.mfd_views[i] == mfd_view::damage_view_target) {
+      Views.push_back(view_error); // temp!!
 
-    } else if (Game::Hud->hud_design.mfd_views[i] == mfd_view::inspector) {
-      views.push_back(view_error); // temp!!
+    } else if (Game::Hud->HudDesign.mfd_views[i] == mfd_view::inspector) {
+      Views.push_back(view_error); // temp!!
 
-    } else if (Game::Hud->hud_design.mfd_views[i] == mfd_view::minimap) {
-      views.push_back(view_error); // temp!!
+    } else if (Game::Hud->HudDesign.mfd_views[i] == mfd_view::minimap) {
+      Views.push_back(view_error); // temp!!
 
-    } else if (Game::Hud->hud_design.mfd_views[i] == mfd_view::enemy_list) {
-      views.push_back(view_error); // temp!!
+    } else if (Game::Hud->HudDesign.mfd_views[i] == mfd_view::enemy_list) {
+      Views.push_back(view_error); // temp!!
 
-    } else if (Game::Hud->hud_design.mfd_views[i] == mfd_view::systems_control) {
-      views.push_back(view_error); // temp!!
+    } else if (Game::Hud->HudDesign.mfd_views[i] == mfd_view::systems_control) {
+      Views.push_back(view_error); // temp!!
 
-    } else if (Game::Hud->hud_design.mfd_views[i] == mfd_view::squad_tactic) {
-      views.push_back(view_error); // temp!!
+    } else if (Game::Hud->HudDesign.mfd_views[i] == mfd_view::squad_tactic) {
+      Views.push_back(view_error); // temp!!
     }
   }
 
   // set initial view
-  current_view = Game::Hud->hud_design.mfd_views[1];
-  changeView(Game::Hud->hud_design.mfd_views[current_view]);
+  CurrentView = Game::Hud->HudDesign.mfd_views[1];
+  changeView(Game::Hud->HudDesign.mfd_views[CurrentView]);
 }
 
 HudMFDDisplay::~HudMFDDisplay()
 {
-  for (usint i = 0, for_size = views.size(); i < for_size; ++i) {
-    delete views[i];
+  for (usint i = 0, for_size = Views.size(); i < for_size; ++i) {
+    delete Views[i];
   }
 }
 
 void HudMFDDisplay::update(Real a_dt)
 {
   // use accumulator as dt
-  hud_part_accumulator += a_dt;
+  HudPartAccumulator += a_dt;
 
   // lower fps for digital parts
-  if (hud_part_accumulator > hud_part_interval) {
+  if (HudPartAccumulator > HudPartInterval) {
     // first update the mfd computer just before you poll it
-    mfd->update(hud_part_accumulator);
+    Mfd->update(HudPartAccumulator);
 
     // switch mfd views
-    mfd_view::view_type new_view = mfd->getViewType();
-    if (new_view != current_view) {
+    mfd_view::view_type new_view = Mfd->getViewType();
+    if (new_view != CurrentView) {
       changeView(new_view);
     }
 
     // update the current view
-    views[current_view]->update(hud_part_accumulator);
+    Views[CurrentView]->update(HudPartAccumulator);
 
-    hud_part_accumulator = 0;
+    HudPartAccumulator = 0;
   }
 }
 
 void HudMFDDisplay::changeView(mfd_view::view_type a_view)
 {
-  views[current_view]->activate(false);
-  current_view = a_view;
-  views[current_view]->activate(true);
+  Views[CurrentView]->activate(false);
+  CurrentView = a_view;
+  Views[CurrentView]->activate(true);
 
   // for (usint i = 0, for_size = views.size(); i < for_size; ++i) {
   // activate selected view, deactivate all the rest
