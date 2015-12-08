@@ -16,7 +16,7 @@ HudLogPrinter::HudLogPrinter(hud_part_design_t& a_hud_part_design)
   // create the paper background material that will scroll with the text
   // first create the material manually because it nneds to wrap
   Ogre::MaterialPtr material = GameHud::createOverlayMaterial(a_hud_part_design.name + "_paper",
-                                                          Ogre::TextureUnitState::TAM_WRAP);
+                                                              Ogre::TextureUnitState::TAM_WRAP);
   // this material will wrap around whilst scrolling up and down
   paper_texture = material->getTechnique(0)->getPass(0)->getTextureUnitState(0);
   paper_texture->setTextureVScale(0.5); // tile it twice
@@ -31,20 +31,22 @@ HudLogPrinter::HudLogPrinter(hud_part_design_t& a_hud_part_design)
   // create a container for the text elements to guarantee proper z-sorting
   Ogre::OverlayContainer* text_container;
   text_container = static_cast<Ogre::OverlayContainer*>
-    (Game::Hud->OgreManager->createOverlayElement("Panel", a_hud_part_design.name + "text_cont"));
+                   (Game::Hud->OgreManager->createOverlayElement("Panel", a_hud_part_design.name +
+                                                                 "text_cont"));
   text_container->setMetricsMode(Ogre::GMM_PIXELS);
   Container->addChild(text_container); // add it to the main container so that text is on top
 
   // create a container for the head and bars to guarantee proper z-sorting
   Ogre::OverlayContainer* head_container;
   head_container = static_cast<Ogre::OverlayContainer*>
-    (Game::Hud->OgreManager->createOverlayElement("Panel", a_hud_part_design.name + "head_cont"));
+                   (Game::Hud->OgreManager->createOverlayElement("Panel", a_hud_part_design.name +
+                                                                 "head_cont"));
   head_container->setMetricsMode(Ogre::GMM_PIXELS);
   text_container->addChild(head_container); // add it to the text container so it's above the text
 
   // text for diasplaying log messages
-  for (usint i = 0; i < HUD_NUM_OF_COLOURS; ++i) {
-    for (usint j = 0; j < HUD_NUM_OF_LOG_LINES; ++j) {
+  for (size_t i = 0; i < HUD_NUM_OF_COLOURS; ++i) {
+    for (size_t j = 0; j < HUD_NUM_OF_LOG_LINES; ++j) {
       // create text elements to display the lines - one for each colour
       id = a_hud_part_design.name + "_text_" + intoString(i) + "_" + intoString(j);
       log_text_elements[i][j] = createTextArea(id, "", font_size,
@@ -74,8 +76,8 @@ void HudLogPrinter::update(Real a_dt)
 
   // text for displaying log lines
   if (timeout < line_print_timeout) { // stop checking after the timeout
-    for (usint i = 0; i < HUD_NUM_OF_COLOURS; ++i) {
-      for (usint j = 0; j < HUD_NUM_OF_LOG_LINES; ++j) {
+    for (size_t i = 0; i < HUD_NUM_OF_COLOURS; ++i) {
+      for (size_t j = 0; j < HUD_NUM_OF_LOG_LINES; ++j) {
         // calculate line number
         usint log_line_number = (printed_log_line - j
                                  + HUD_MAX_HUD_NUM_OF_LOG_LINES)

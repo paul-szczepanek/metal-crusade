@@ -9,9 +9,9 @@ MFDComputer::MFDComputer()
   : NumOfViews(Game::Hud->HudDesign.mfd_views.size())
 {
   // init the mfd aux lines
-  for (usint i = 0; i < HUD_NUM_OF_COLOURS; ++i) {
-    for (usint j = 0; j < HUD_NUM_OF_MFD_AUX_LINES; ++j) {
-      for (usint k = 0; k < HUD_MFD_AUX_LINE_LENGTH; ++k) {
+  for (size_t i = 0; i < HUD_NUM_OF_COLOURS; ++i) {
+    for (size_t j = 0; j < HUD_NUM_OF_MFD_AUX_LINES; ++j) {
+      for (size_t k = 0; k < HUD_MFD_AUX_LINE_LENGTH; ++k) {
         mfd_aux_lines[i][j][k] = ' ';
       }
       // stick the string terminator in the last char
@@ -91,7 +91,7 @@ void MFDComputer::selectView()
   setLine(string("$a") + Game::Text->getText(internal_string::select_view_type) + " " + page, 0);
 
   // set the lines with the names of view types - watch out, starts at 1
-  for (usint i = 1; i < HUD_NUM_OF_MFD_AUX_LINES; ++i) {
+  for (size_t i = 1; i < HUD_NUM_OF_MFD_AUX_LINES; ++i) {
     // get line numbers on this page
     usint listed = SelectedPage * VIEW_TYPES_PER_PAGE + (i - 1);
 
@@ -146,7 +146,7 @@ void MFDComputer::update(Real a_dt)
     }
 
     // temp
-    for (usint i = 1; i < HUD_NUM_OF_MFD_AUX_LINES; ++i) {
+    for (size_t i = 1; i < HUD_NUM_OF_MFD_AUX_LINES; ++i) {
       setLine("", i);
     }
   }

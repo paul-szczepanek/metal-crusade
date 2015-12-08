@@ -151,7 +151,7 @@ MFDViewDamageDiagram::MFDViewDamageDiagram(hud_part_design_t& a_hud_part_design)
                          dmg_ico_w * 0.5, dmg_ico_w, heat_gauge);
 
   // creates containers for diagram types
-  for (usint i = 0; i < mfd_view::num_of_diagram_types; ++i) {
+  for (size_t i = 0; i < mfd_view::num_of_diagram_types; ++i) {
     diagrams.push_back(static_cast<Ogre::OverlayContainer*>
                        (overlay_mngr->createOverlayElement("Panel", a_hud_part_design.name +
                                                            "_cont_"
@@ -190,7 +190,7 @@ void MFDViewDamageDiagram::createDiagram(mfd_view::diagram_type           a_diag
   Ogre::MaterialPtr material;
 
   // create elements and extracts texture units to use later for changing alpha blending
-  for (usint i = 0, for_size = grn_names.size(); i < for_size; ++i) {
+  for (size_t i = 0, for_size = grn_names.size(); i < for_size; ++i) {
     // get uniqe id and the texture from the design vector
     string tex_name = grn_names[i];
     string id = grn_names[i] + Game::getUniqueID();
@@ -233,7 +233,7 @@ void MFDViewDamageDiagram::switchDiagrams(mfd_view::diagram_type a_new_diagram)
 {
   diagram = a_new_diagram;
 
-  for (usint i = 0; i < mfd_view::num_of_diagram_types; ++i) {
+  for (size_t i = 0; i < mfd_view::num_of_diagram_types; ++i) {
     if (i == static_cast<usint>(diagram)) {
       // show the container with the selected view
       diagrams[i]->show();
@@ -283,7 +283,7 @@ void MFDViewDamageDiagram::updateDiagramElements(Real  a_dt,
   heat_bar_material->setTextureVScale(1 / temperature);
   heat_bar_material->setTextureVScroll(0.5 * (1 - temperature));
 
-  for (usint i = 0, for_size = mfd_view::num_of_diagram_elements[diagram]; i < for_size; ++i) {
+  for (size_t i = 0, for_size = mfd_view::num_of_diagram_elements[diagram]; i < for_size; ++i) {
     // get the damage for each area corresponding to the diagam elemnt
     Real damage = a_target->getDamage(i);
 

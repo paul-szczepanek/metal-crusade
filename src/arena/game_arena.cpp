@@ -149,22 +149,22 @@ int GameArena::loadArena(const string& arena_name)
   Formation* allied_formation = Game::Formation->createFormation("allies",
                                                                  faction_mercenary);
 /*
-  // temp buildings
-  Game::Building->spawnSceneryBuidling(Vector3(240, 0, 220), "building_test_02");
+   // temp buildings
+   Game::Building->spawnSceneryBuidling(Vector3(240, 0, 220), "building_test_02");
 
-  Game::Building->spawnSceneryBuidling(280, 300, "building_test_02");
-  Game::Building->spawnSceneryBuidling(350, 270, "building_test_02");
-  Game::Building->spawnSceneryBuidling(310, 380, "building_test_01");
-  Game::Building->spawnSceneryBuidling(210, 240, "building_test_02");
-  Game::Building->spawnSceneryBuidling(300, 260, "building_test_02");
+   Game::Building->spawnSceneryBuidling(280, 300, "building_test_02");
+   Game::Building->spawnSceneryBuidling(350, 270, "building_test_02");
+   Game::Building->spawnSceneryBuidling(310, 380, "building_test_01");
+   Game::Building->spawnSceneryBuidling(210, 240, "building_test_02");
+   Game::Building->spawnSceneryBuidling(300, 260, "building_test_02");
 
-  Game::Building->spawnSceneryBuidling(320, 480, "building_test_01");
-  Game::Building->spawnSceneryBuidling(880, 300, "building_test_02");
-  Game::Building->spawnSceneryBuidling(950, 270, "building_test_02");
-  Game::Building->spawnSceneryBuidling(310, 380, "building_test_01");
-  Game::Building->spawnSceneryBuidling(110, 340, "building_test_02");
-  Game::Building->spawnSceneryBuidling(300, 160, "building_test_02");
-  */
+   Game::Building->spawnSceneryBuidling(320, 480, "building_test_01");
+   Game::Building->spawnSceneryBuidling(880, 300, "building_test_02");
+   Game::Building->spawnSceneryBuidling(950, 270, "building_test_02");
+   Game::Building->spawnSceneryBuidling(310, 380, "building_test_01");
+   Game::Building->spawnSceneryBuidling(110, 340, "building_test_02");
+   Game::Building->spawnSceneryBuidling(300, 160, "building_test_02");
+ */
 
   // fake game startup from code - ought to be read from file
   Crusader* player_unit = Game::Unit->spawnCrusader(Vector3(220, 0, 280), "base_husar_cavalry");
@@ -177,39 +177,39 @@ int GameArena::loadArena(const string& arena_name)
   // create the hud according to the unit you're in - HUD NEEDS THE CONTROLLER to be assigned!
   Game::Hud->loadHud(static_cast<Unit*>(player_unit));
 /*
-  // create ally
-  Crusader* ally_unit = Game::Unit->spawnCrusader(Vector3(340, 0, 300),
+   // create ally
+   Crusader* ally_unit = Game::Unit->spawnCrusader(Vector3(340, 0, 300),
                                                   "base_husar_cavalry");
 
-  NavPoint* nav_point_a = new NavPoint(Vector3(3600, 0, 3600));
+   NavPoint* nav_point_a = new NavPoint(Vector3(3600, 0, 3600));
 
-  // give it an ai and have to go to navpoint a
-  CrusaderAI* ai = Game::AI->activateUnit(ally_unit, allied_formation);
-  ai->setGoal(nav_point_a);
+   // give it an ai and have to go to navpoint a
+   CrusaderAI* ai = Game::AI->activateUnit(ally_unit, allied_formation);
+   ai->setGoal(nav_point_a);
 
-  // create crusaders for enemies
-  Crusader* enemy_unit1 = Game::Unit->spawnCrusader(Vector3(200, 0, 100),
+   // create crusaders for enemies
+   Crusader* enemy_unit1 = Game::Unit->spawnCrusader(Vector3(200, 0, 100),
                                                     "base_husar_cavalry_red");
-  Crusader* enemy_unit2 = Game::Unit->spawnCrusader(Vector3(500, 0, 250),
+   Crusader* enemy_unit2 = Game::Unit->spawnCrusader(Vector3(500, 0, 250),
                                                     "base_husar_cavalry_red");
-  Crusader* enemy_unit3 = Game::Unit->spawnCrusader(Vector3(100, 0, 650),
+   Crusader* enemy_unit3 = Game::Unit->spawnCrusader(Vector3(100, 0, 650),
                                                     "base_husar_cavalry_red");
-  Crusader* enemy_unit4 = Game::Unit->spawnCrusader(Vector3(300, 0, 250),
+   Crusader* enemy_unit4 = Game::Unit->spawnCrusader(Vector3(300, 0, 250),
                                                     "base_husar_cavalry_red");
-  Crusader* enemy_unit5 = Game::Unit->spawnCrusader(Vector3(400, 0, 230),
+   Crusader* enemy_unit5 = Game::Unit->spawnCrusader(Vector3(400, 0, 230),
                                                     "base_husar_cavalry_red");
-  Crusader* enemy_unit6 = Game::Unit->spawnCrusader(Vector3(100, 0, 100),
+   Crusader* enemy_unit6 = Game::Unit->spawnCrusader(Vector3(100, 0, 100),
                                                     "base_husar_cavalry_red");
 
-  // create enemies
-  Game::AI->activateUnit(enemy_unit1, enemy_formation)->setEnemy(player_unit);
-  Game::AI->activateUnit(enemy_unit2, enemy_formation)->setEnemy(ally_unit);
-  Game::AI->activateUnit(enemy_unit3, enemy_formation)->setEnemy(player_unit);
-  Game::AI->activateUnit(enemy_unit4, enemy_formation)->setEnemy(ally_unit);
-  Game::AI->activateUnit(enemy_unit5, enemy_formation)->setEnemy(player_unit);
-  Game::AI->activateUnit(enemy_unit6, enemy_formation)->setEnemy(ally_unit);
-*/
-  // and tell the camera to follow the players unit
+   // create enemies
+   Game::AI->activateUnit(enemy_unit1, enemy_formation)->setEnemy(player_unit);
+   Game::AI->activateUnit(enemy_unit2, enemy_formation)->setEnemy(ally_unit);
+   Game::AI->activateUnit(enemy_unit3, enemy_formation)->setEnemy(player_unit);
+   Game::AI->activateUnit(enemy_unit4, enemy_formation)->setEnemy(ally_unit);
+   Game::AI->activateUnit(enemy_unit5, enemy_formation)->setEnemy(player_unit);
+   Game::AI->activateUnit(enemy_unit6, enemy_formation)->setEnemy(ally_unit);
+ */
+// and tell the camera to follow the players unit
   Game::Camera->follow(player_unit);
 
   createTerrainModel();
@@ -230,7 +230,7 @@ void GameArena::partitionArena()
 
   // set size for the cells holding the object on the map
   CorpusCells = vector<vector<list<Corpus*> > >(NumArenaCellsW,
-                                                 vector<list<Corpus*> >(NumArenaCellsH));
+                                                vector<list<Corpus*> >(NumArenaCellsH));
 }
 
 /** @brief creates the mesh for the terrain
@@ -277,8 +277,8 @@ void GameArena::createTerrainModel()
   // pass->getTextureUnitState(1)->setColourOperation(Ogre::LBO_MODULATE);
 
   // create cells containing portions of the terrain so it can be culled when not on screen
-  for (usint k = 0; k < num_of_pages_w; ++k) {
-    for (usint l = 0; l < num_of_pages_h; ++l) {
+  for (size_t k = 0; k < num_of_pages_w; ++k) {
+    for (size_t l = 0; l < num_of_pages_h; ++l) {
       // offsets for this cell
       size_t origin_x = k * page_size;
       size_t origin_y = l * page_size;
@@ -314,9 +314,9 @@ void GameArena::createTerrainModel()
 
           for (i_coords = 0; i_coords < 4; ++i_coords) {
             angle[i_coords] = TerrainData->getAngle(x[i_coords] % TextureSizeW,
-                                                y[i_coords] % TextureSizeH);
+                                                    y[i_coords] % TextureSizeH);
             height[i_coords] = TerrainData->getHeight(x[i_coords] % TextureSizeW,
-                                                  y[i_coords] % TextureSizeH);
+                                                      y[i_coords] % TextureSizeH);
           }
 
           // first bottom-left vertex

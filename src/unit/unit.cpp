@@ -112,7 +112,7 @@ void Unit::releaseAsTarget(Unit* a_targeted_by)
 {
   if (TargetHolders.size() > 0) {
     vector<Unit*>::iterator it = find(TargetHolders.begin(),
-                                             TargetHolders.end(), a_targeted_by);
+                                      TargetHolders.end(), a_targeted_by);
     if (it < TargetHolders.end()) {
       TargetHolders.erase(it);
     }
@@ -139,7 +139,7 @@ bool Unit::isDetectable()
  * TODO: relinquish criteria
  */
 bool Unit::loseTarget(Unit* a_targeted_by,
-                      bool         a_forced)
+                      bool  a_forced)
 {
   if (a_forced) {
     CurrentTarget = NULL;

@@ -23,8 +23,9 @@ RadarComputer::RadarComputer(const string& filename,
 }
 
 /** @brief load weapon spec from file
-  */
-bool RadarComputer::getRadarDesign(const string& filename, radar_design_t& radar_design)
+ */
+bool RadarComputer::getRadarDesign(const string&   filename,
+                                   radar_design_t& radar_design)
 {
   using namespace FilesHandler;
   // prepare map to read data into
@@ -50,7 +51,7 @@ bool RadarComputer::getRadarDesign(const string& filename, radar_design_t& radar
   radar_design.power = getReal(pairs["radar_design.power"]);
   radar_design.heat_sensivity = getReal(pairs["radar_design.power"]);
   radar_design.electromagnetic_sensivity =
-      getReal(pairs["radar_design.electromagnetic_sensivity"]);
+    getReal(pairs["radar_design.electromagnetic_sensivity"]);
 
   return true;
 }

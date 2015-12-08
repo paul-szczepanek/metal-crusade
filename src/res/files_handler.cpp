@@ -671,10 +671,10 @@ template <typename T> void getDigitArrayT(vector<T>& int_array,
 
 template
 void getEnumPairArrayT<horizontal::position, vertical::position>
-(vector<pair<horizontal::position, vertical::position> >&, string);
+  (vector<pair<horizontal::position, vertical::position> >&, string);
 
 template
 void getEnumArrayT<mfd_view::view_type>
-(vector<mfd_view::view_type>&, string);
+  (vector<mfd_view::view_type>&, string);
 
 }

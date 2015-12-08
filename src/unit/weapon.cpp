@@ -111,8 +111,8 @@ void Weapon::update(const Real a_dt)
 
       // create projectile
       Projectile* new_projectile = Game::Projectile->spawnProjectile(weapon_position,
-                                                                    weapon_orientation,
-                                                                    this);
+                                                                     weapon_orientation,
+                                                                     this);
       ActiveList.push_back(new_projectile);
     }
   }

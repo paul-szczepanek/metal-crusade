@@ -32,7 +32,7 @@ public:
   virtual bool acquireAsTargetBy(Unit* a_entity);
   virtual void releaseAsTarget(Unit* a_targeted_by);
   virtual bool loseTarget(Unit* a_targeted_by,
-                          bool         a_forced = false);
+                          bool  a_forced = false);
   virtual Unit* getTarget();
   virtual void clearFromTargets();
   virtual Corpus* getGround();

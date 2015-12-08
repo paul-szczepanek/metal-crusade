@@ -68,7 +68,7 @@ void HudText::update(Real a_dt)
       usint colour = 0;
 
       // start at 1 as 0 is default
-      for (usint i = 1; i < HUD_NUM_OF_COLOURS; ++i) {
+      for (size_t i = 1; i < HUD_NUM_OF_COLOURS; ++i) {
         if (text[1] == hud_colour_codes[i]) { // if a valid colour code
           colour = i; // use that colour instead
           break;

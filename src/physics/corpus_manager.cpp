@@ -53,7 +53,7 @@ void CorpusManager::deregisterObject(Corpus* a_corpus)
 }
 
 #define TERM_VELOCITY ((Real)100)
-#define TERM_VELOCITY_CONSTANT (Real)(1 / ((TERM_VELOCITY) * (TERM_VELOCITY)))
+#define TERM_VELOCITY_CONSTANT (Real)(1 / ((TERM_VELOCITY) *(TERM_VELOCITY)))
 
 void CorpusManager::applyForces(const Real a_dt)
 {

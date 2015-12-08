@@ -288,8 +288,8 @@ bool InputHandler::mouseMoved(const OIS::MouseEvent& /*evt*/)
   return true;
 }
 
-bool InputHandler::mousePressed(const OIS::MouseEvent& /*evt*/,
-                                OIS::MouseButtonID     btn)
+bool InputHandler::mousePressed(const OIS::        MouseEvent& /*evt*/,
+                                OIS::MouseButtonID btn)
 {
   if (Keys->Buttons[input_event_fire] == btn) {
     Controller->ControlBlock.fire = true;
@@ -344,8 +344,8 @@ bool InputHandler::mousePressed(const OIS::MouseEvent& /*evt*/,
   return true;
 }
 
-bool InputHandler::mouseReleased(const OIS::MouseEvent& /*evt*/,
-                                 OIS::MouseButtonID     btn)
+bool InputHandler::mouseReleased(const OIS::        MouseEvent& /*evt*/,
+                                 OIS::MouseButtonID btn)
 {
   if (Keys->Buttons[input_event_fire] == btn) {
     Controller->ControlBlock.fire = false;

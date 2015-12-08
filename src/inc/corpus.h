@@ -138,7 +138,6 @@ inline void Corpus::move(Vector3 a_move)
   invalidateSpheres();
 }
 
-
 inline void Corpus::setOrientation(Quaternion a_orientation)
 {
   Orientation = a_orientation;

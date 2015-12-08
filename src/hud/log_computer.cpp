@@ -6,10 +6,10 @@
 LogComputer::LogComputer()
   : current_log_line(0)
 {
-  for (usint i = 0; i < HUD_NUM_OF_COLOURS; ++i) {
+  for (size_t i = 0; i < HUD_NUM_OF_COLOURS; ++i) {
     // init char tables for log lines
-    for (usint j = 0; j < HUD_MAX_HUD_NUM_OF_LOG_LINES; ++j) {
-      for (usint k = 0; k < HUD_LOG_LINE_LENGTH; ++k) {
+    for (size_t j = 0; j < HUD_MAX_HUD_NUM_OF_LOG_LINES; ++j) {
+      for (size_t k = 0; k < HUD_LOG_LINE_LENGTH; ++k) {
         log_lines[i][j][k] = ' ';
       }
       // stick the string terminator in the last char

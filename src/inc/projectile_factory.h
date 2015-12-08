@@ -24,8 +24,8 @@ public:
 
   // object creation
   Projectile* spawnProjectile(Vector3    a_pos_xyz,
-                             Quaternion a_orientation,
-                             Weapon*    a_weapon);
+                              Quaternion a_orientation,
+                              Weapon*    a_weapon);
 
 private:
   vector<Projectile> Projectiles;

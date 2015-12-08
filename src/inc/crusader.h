@@ -65,7 +65,7 @@ public:
   Real getDamage(usint a_diagram_element);
 
   mfd_view::diagram_type getDiagramType() {
-     return mfd_view::biped_crusader;
+    return mfd_view::biped_crusader;
   }
 
   // weapons
@@ -172,7 +172,7 @@ inline Real Crusader::getThrottle()
 {
   // throttle scaling depends on direction
   return (Throttle > 0) ? Throttle * DriveDesign.max_speed
-                        : Throttle * DriveDesign.max_speed_reverse;
+         : Throttle * DriveDesign.max_speed_reverse;
 }
 
 inline Real Crusader::getDamage(usint a_diagram_element)
@@ -184,7 +184,7 @@ inline Real Crusader::getDamage(usint a_diagram_element)
 
 inline string Crusader::getHudName()
 {
-return CrusaderDesign.hud;
+  return CrusaderDesign.hud;
 }
 
 inline Real Crusader::getSpeed()

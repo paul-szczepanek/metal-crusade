@@ -5,9 +5,6 @@
 
 #include "mfd_view_design.h"
 
-// each hud must provide 8 parts so that they can surround the screen fully and adopt to scaling
-const usint hud_num_of_areas = 8;
-
 // they can be used in a custom way though and the names are just to satisfy Ogre resource names req
 enum hud_area {
   hud_mfd1,
@@ -17,10 +14,11 @@ enum hud_area {
   hud_heat,
   hud_speed,
   hud_status,
-  hud_log
+  hud_log,
+  hud_area_MAX
 };
 
-const string hud_area_names[hud_num_of_areas] = {
+const string hud_area_names[hud_area_MAX] = {
   "hud_mfd1",
   "hud_mfd2",
   "hud_radar",

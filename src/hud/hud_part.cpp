@@ -18,8 +18,8 @@ HudPart::HudPart(hud_part_design_t& a_hud_part_design)
   // create the main container for the element
   Container = static_cast<Ogre::OverlayContainer*>
               (Game::Hud->OgreManager->createOverlayElement("Panel",
-                                                                             a_hud_part_design.name
-                                                                             + Game::getUniqueID()));
+                                                            a_hud_part_design.name
+                                                            + Game::getUniqueID()));
 
   // position and resize container
   Container->setMetricsMode(Ogre::GMM_PIXELS);

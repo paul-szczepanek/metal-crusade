@@ -1,9 +1,12 @@
+// (c) Paul Szczepanek (teatimecoder.com). Code released under GPL Version 3.
+
 #include "dynamic_entity.h"
 #include "corpus.h"
 #include "game.h"
 #include "game_arena.h"
 
-DynamicEntity::DynamicEntity() : Ground(this)
+DynamicEntity::DynamicEntity()
+  : Ground(this)
 {
   Ground.loadCollision("ground");
   Ground.CollisionType = collision_type_blocking;

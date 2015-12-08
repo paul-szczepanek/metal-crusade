@@ -144,4 +144,3 @@ void Projectile::setXYZ(const Vector3& a_pos)
 {
   Bullet->XYZ = a_pos;
 }
-

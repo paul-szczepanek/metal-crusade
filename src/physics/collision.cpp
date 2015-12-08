@@ -81,7 +81,8 @@ void Collision::resolve(const Real a_dt)
   if (collision_type[0] == collision_type_blocking
       || collision_type[1] == collision_type_blocking) {
     ResultType = collision_type_blocking;
-  } else if (collision_type[0] == collision_type_impact || collision_type[1] == collision_type_impact) {
+  } else if (collision_type[0] == collision_type_impact || collision_type[1] ==
+             collision_type_impact) {
     ResultType = collision_type_impact;
   } else if (collision_type[0] == collision_type[1]) {
     ResultType = collision_type[0];
@@ -117,7 +118,7 @@ void Collision::resolve(const Real a_dt)
     velocity_par[0] = velocity[0] - velocity_perp[0] * collision_vector;
     velocity_par[1] = velocity[1] - velocity_perp[1] * collision_vector;
     Real friction_acc = (velocity_par[0] - velocity_par[1]).length()
-                        * Object[0]->Friction * Object[1]->Friction;;
+                        * Object[0]->Friction * Object[1]->Friction;
     const Real hardness = min(Object[0]->Hardness, Object[1]->Hardness);
 
     // scalar velocities after collision
@@ -131,7 +132,7 @@ void Collision::resolve(const Real a_dt)
         new_velocity_perp = (HIT_DAMPENING * new_velocity_perp) * hardness
                             + combined_velocity_perp * (1 - hardness);
       } else {
-        new_velocity_perp = (HIT_DAMPENING) * new_velocity_perp;
+        new_velocity_perp = (HIT_DAMPENING) *new_velocity_perp;
       }
 
       // use collision depth to move the objects away if collision velocity is not enough

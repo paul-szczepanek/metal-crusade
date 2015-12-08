@@ -48,7 +48,7 @@ HudWeaponTab::HudWeaponTab(hud_part_design_t& a_hud_part_design)
   lights_container->addChild(text_container); // add it to the lights container so text is on top
 
   // for each weapon create a tab with lights and text and ammo
-  for (usint i = 0, for_size = weapons.size(); i < for_size; ++i) {
+  for (size_t i = 0, for_size = weapons.size(); i < for_size; ++i) {
     // create the baground tab
     string id = a_hud_part_design.name + "_tab_bg_" + intoString(i);
     createPanel(id, a_hud_part_design.name,
@@ -56,7 +56,7 @@ HudWeaponTab::HudWeaponTab(hud_part_design_t& a_hud_part_design)
 
     // create lights showig timout progress
     weapon_tab_lights_t lights;
-    for (usint j = 0; j < number_of_lights; ++j) {
+    for (size_t j = 0; j < number_of_lights; ++j) {
       // create element for each light colour
       // green
       id = a_hud_part_design.name + "_grn_" + intoString(i) + "_" + intoString(j);
@@ -115,7 +115,7 @@ void HudWeaponTab::update(Real a_dt)
     }
 
     // go trhough all weapons to show the ammo and apprpriate lights under the name
-    for (usint i = 0, for_size = weapons.size(); i < for_size; ++i) {
+    for (size_t i = 0, for_size = weapons.size(); i < for_size; ++i) {
       // get the number of shots left in weapon
       ulint ammo = weapons[i]->getAmmo();
 
@@ -151,7 +151,7 @@ void HudWeaponTab::update(Real a_dt)
           if (Game::Hud->Controller->ControlBlock.fire_mode_group
               || i != current_weapon) {
             // groups in green
-            for (usint j = 0; j < number_of_lights; ++j) {
+            for (size_t j = 0; j < number_of_lights; ++j) {
               if (j < charged) {
                 tab_lights_elements[i].green[j]->show();
 
@@ -163,7 +163,7 @@ void HudWeaponTab::update(Real a_dt)
             }
           } else {
             // single selected weapon in yellow
-            for (usint j = 0; j < number_of_lights; ++j) {
+            for (size_t j = 0; j < number_of_lights; ++j) {
               tab_lights_elements[i].green[j]->hide();
               if (j < charged) {
                 tab_lights_elements[i].yellow[j]->show();
@@ -176,7 +176,7 @@ void HudWeaponTab::update(Real a_dt)
           }
         } else {
           // if the weaopn is not in the current group show in red
-          for (usint j = 0; j < number_of_lights; ++j) {
+          for (size_t j = 0; j < number_of_lights; ++j) {
             tab_lights_elements[i].green[j]->hide();
             tab_lights_elements[i].yellow[j]->hide();
             if (j < charged) {
@@ -189,7 +189,7 @@ void HudWeaponTab::update(Real a_dt)
         }
       } else {
         // black out the lights for non-operational weapons
-        for (usint j = 0; j < number_of_lights; ++j) {
+        for (size_t j = 0; j < number_of_lights; ++j) {
           tab_lights_elements[i].green[j]->hide();
           tab_lights_elements[i].yellow[j]->hide();
           tab_lights_elements[i].red[j]->hide();

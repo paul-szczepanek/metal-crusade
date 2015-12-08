@@ -48,14 +48,14 @@ GameTimer*              Game::Timer = NULL;
 GameHud*                Game::Hud = NULL;
 vector<GameController*> Game::Controllers;
 
-game_state  Game::State = game_state::game_state_init;
-ulint       Game::NewTime = 0;
-ulint       Game::LastTime = 0;
-ulint       Game::RealTime = 0;
-Real        Game::Delta = 0;
-Real        Game::Fps = 0;
-size_t      Game::UniqueId = 0;
-bool        Game::DebugMode = false;
+game_state Game::State = game_state::game_state_init;
+ulint Game::NewTime = 0;
+ulint Game::LastTime = 0;
+ulint Game::RealTime = 0;
+Real Game::Delta = 0;
+Real Game::Fps = 0;
+size_t Game::UniqueId = 0;
+bool Game::DebugMode = false;
 
 Game::~Game()
 {

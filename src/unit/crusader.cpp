@@ -154,7 +154,7 @@ Crusader::Crusader(const string&      a_unit_name,
     StructureIntegrity[i] = ChassisDesign.structure_base;
 
     // go through all internals
-    for (usint j = 0, for_size = CrusaderDesign.internals.size(); j < for_size; ++j) {
+    for (size_t j = 0, for_size = CrusaderDesign.internals.size(); j < for_size; ++j) {
       // check if it's a structure and in the right body part
       if (CrusaderDesign.internals[j] == internal_type_structure
           && CrusaderDesign.internals_placement[j] == i) {
@@ -527,8 +527,8 @@ void Crusader::shockDamage(const Real a_dt)
 
     // notify the log of the damage
     if (HudAttached) {
-       Game::Hud->log->addLine(Game::Text->getText(internal_string::shock_damage_sustained)
-       + " $e" + realIntoString(kinetic_damage * 100, 2) + "$r%");
+      Game::Hud->log->addLine(Game::Text->getText(internal_string::shock_damage_sustained)
+                              + " $e" + realIntoString(kinetic_damage * 100, 2) + "$r%");
     }
   }
 }
@@ -613,7 +613,7 @@ void Crusader::positionWeapons()
 
   // translate panel positions to weapon positions
   usint k = 0;
-  for (usint j = 0; j < ChassisDesign.num_of_parts; ++j) {
+  for (size_t j = 0; j < ChassisDesign.num_of_parts; ++j) {
     slots_used[j] = k;
     for (size_t i = 0; i < ChassisDesign.panels[j]; ++i) {
       panel_positions[k] = positions[j];
@@ -833,31 +833,31 @@ bool Crusader::update(const Real a_dt)
 
     // temp
     if (HudAttached) {
-       Game::Hud->status->setLine(string("current group$e ")
-     + intoString(CurrentGroup), 1, 20);
-       Game::Hud->status->setLine(string("current weapon$e ")
-     + intoString(CurrentWeapon), 1, 20, 21);
-       if (Controller->ControlBlock.fire_mode_group) {
+      Game::Hud->status->setLine(string("current group$e ")
+                                 + intoString(CurrentGroup), 1, 20);
+      Game::Hud->status->setLine(string("current weapon$e ")
+                                 + intoString(CurrentWeapon), 1, 20, 21);
+      if (Controller->ControlBlock.fire_mode_group) {
         Game::Hud->status->setLine(string("$egroup$x mode"), 1, 11, 41);
-       } else {
+      } else {
         Game::Hud->status->setLine(string("$esingle$x mode"), 1, 11, 41);
-       }
-       if (Controller->ControlBlock.auto_cycle) {
+      }
+      if (Controller->ControlBlock.auto_cycle) {
         Game::Hud->status->setLine(string("$aauto"), 1, 6, 54);
-       } else {
+      } else {
         Game::Hud->status->setLine(string("$a"), 1, 6, 54);
-       }
-       Game::Hud->status->setLine(string("$rpos x: ") + intoString(getXYZ().x) + " y: "
-     + intoString(getXYZ().z), 0, 20, 0);
+      }
+      Game::Hud->status->setLine(string("$rpos x: ") + intoString(getXYZ().x) + " y: "
+                                 + intoString(getXYZ().z), 0, 20, 0);
 
-       Game::Hud->status->setLine(string("integrity: ") + intoString(CoreIntegrity),
+      Game::Hud->status->setLine(string("integrity: ") + intoString(CoreIntegrity),
                                  0, 20, 21);
-     }
+    }
   } else if (CoreIntegrity < -1) { // temp!!!
     CoreIntegrity = 0;
     Game::Particle->createExplosion(getXYZ(), 10, 2, 3);
     if (HudAttached) {
-       Game::Hud->log->addLine("your crusader has been destroyed - $eGAME OVER");
+      Game::Hud->log->addLine("your crusader has been destroyed - $eGAME OVER");
     }
   } else {
     CoreIntegrity -= a_dt;

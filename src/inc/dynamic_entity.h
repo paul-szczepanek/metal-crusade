@@ -1,3 +1,5 @@
+// (c) Paul Szczepanek (teatimecoder.com). Code released under GPL Version 3.
+
 #ifndef DYNAMICENTITY_H
 #define DYNAMICENTITY_H
 
@@ -22,4 +24,3 @@ public:
 };
 
 #endif // DYNAMICENTITY_H
-

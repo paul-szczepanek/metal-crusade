@@ -31,7 +31,7 @@ void ArenaEntity::releaseAsTarget(Unit* a_targeted_by)
 }
 
 bool ArenaEntity::loseTarget(Unit* a_targeted_by,
-                             bool         a_forced)
+                             bool  a_forced)
 {
   return true;
 }

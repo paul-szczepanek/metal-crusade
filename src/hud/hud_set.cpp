@@ -16,13 +16,13 @@ HudSet::HudSet(hud_part_design_t& a_hud_part_design)
   usint items_in_set = a_hud_part_design.parameters[0]; // get number of items in set
 
   // create an overlay element for each item
-  for (usint i = 0; i < items_in_set; ++i) {
+  for (size_t i = 0; i < items_in_set; ++i) {
     string id = string("set_") + intoString(function) + "_" + intoString(i);
     items.push_back(createPanel(id, a_hud_part_design.name + "_" + intoString(i),
                                 0, 0, size.first, size.second, Container));
   }
 
-  // bind the appropriate function for getting the value to the funciton pointer
+  // bind the appropriate function for getting the value to the function pointer
   if (function == hud_part_enum::radar_power) {
     getItemToShow = getRadarPower;
   } else if (function == hud_part_enum::clock_tick) {
@@ -57,7 +57,7 @@ void HudSet::switchItems(usint a_item_to_show)
   item_to_show = a_item_to_show;
 
   // show only that item or no item if the item_to_show doesn't exist
-  for (usint i = 0, for_size = items.size(); i < for_size; ++i) {
+  for (size_t i = 0, for_size = items.size(); i < for_size; ++i) {
     if (item_to_show == i) {
       items[i]->show();
     } else {

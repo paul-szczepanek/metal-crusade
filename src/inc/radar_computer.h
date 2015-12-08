@@ -89,7 +89,8 @@ private:
   // find potential objects to detect
   void updateObjectsWithinRadius();
 
-  bool getRadarDesign(const string& filename, radar_design_t& radar_design);
+  bool getRadarDesign(const string&   filename,
+                      radar_design_t& radar_design);
 
 private:
   // owner

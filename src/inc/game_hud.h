@@ -87,7 +87,8 @@ public:
   Real getHudAreaOriginY(hud_area a_hud_area);
 
 private:
-  bool getHudDesign(const string& filename, hud_design_t& HudDesign);
+  bool getHudDesign(const string& filename,
+                    hud_design_t& HudDesign);
   void padHudColours(vector<Ogre::ColourValue>& colour_array);
 
   // positioning
@@ -115,8 +116,8 @@ public:
   hud_design_t HudDesign;
 private:
   // hud areas
-  Ogre::OverlayContainer* hud_areas[hud_num_of_areas];
-  Ogre::Overlay* hud_overlays[hud_num_of_areas];
+  Ogre::OverlayContainer* hud_areas[hud_area_MAX];
+  Ogre::Overlay* hud_overlays[hud_area_MAX];
   Ogre::Overlay* hud_overlay_3d = NULL;
 
   // special temp containers for pause
@@ -124,13 +125,13 @@ private:
   Ogre::Overlay* centre_overlay = NULL;
 
   // hud size and position
-  bool active = false;
+  bool Active = false;
   Real hud_width = BASE_HUD_WIDTH;
   Real hud_height = BASE_HUD_HEIGHT;
-  Real scale = 1;
-  Real scale_w = 1;
-  Real scale_h = 1;
-  int_pair area_offsets[hud_num_of_areas];
+  Real Scale = 1;
+  Real ScaleW = 1;
+  Real ScaleH = 1;
+  int_pair area_offsets[hud_area_MAX];
 
   // all the individual hud parts
   vector<HudPart*> hud_parts;
@@ -144,7 +145,7 @@ private:
 };
 
 inline void GameHud::addContainer(hud_area                a_hud_area,
-                              Ogre::OverlayContainer* a_container)
+                                  Ogre::OverlayContainer* a_container)
 {
   hud_overlays[a_hud_area]->add2D(a_container);
 }

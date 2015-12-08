@@ -24,10 +24,10 @@ HudRadarDisplay::HudRadarDisplay(hud_part_design_t& a_hud_part_design)
   GreenMaterial = GameHud::createOverlayMaterial(dot_green_name);
   RedMaterial = GameHud::createOverlayMaterial(dot_red_name);
 
-  for (usint i = 0; i < num_of_initial_dots; ++i) {
+  for (size_t i = 0; i < num_of_initial_dots; ++i) {
     string id = string("radar_dot_") + intoString(i);
     DotElements.push_back(createPanel(id, dot_green_name,
-                                       0, 0, 8, 8, Container));
+                                      0, 0, 8, 8, Container));
     DotElements.back()->hide();
   }
 }
@@ -78,7 +78,7 @@ void HudRadarDisplay::update(Real a_dt)
     for (size_t i = 0, for_size = num_of_dots - DotElements.size(); i < for_size; ++i) {
       string id = string("radar_dot_") + intoString(DotElements.size());
       DotElements.push_back(createPanel(id, dot_green_name,
-                                         0, 0, 8, 8, Container));
+                                        0, 0, 8, 8, Container));
       DotElements.back()->hide();
     }
   }

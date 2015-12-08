@@ -69,11 +69,11 @@ ulint GameTimer::getTicks()
   ulint step = new_ticks - Ticks;
 
   /*if (TimeWarp && Rate < 0.1) {
-    // if the game slows down to a crawl, pause the game
-    Game::setGameState(game_state_pause);
-    Start += step;
-    return 0;
-  } else */if (step > 40) {
+     // if the game slows down to a crawl, pause the game
+     Game::setGameState(game_state_pause);
+     Start += step;
+     return 0;
+     } else */if (step > 40) {
     // if a frame takes longer than 40ms slow down gameplay to keep a reasonable times slice for sim
     TimeWarp = true;
     Rate = 40.0 / step;

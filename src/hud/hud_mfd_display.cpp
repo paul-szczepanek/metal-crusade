@@ -24,7 +24,7 @@ HudMFDDisplay::HudMFDDisplay(hud_part_design_t& a_hud_part_design)
   MFDView* view_error = new MFDViewError(a_hud_part_design);
 
   // create all the views
-  for (usint i = 0, for_size = Game::Hud->HudDesign.mfd_views.size(); i < for_size; ++i) {
+  for (size_t i = 0, for_size = Game::Hud->HudDesign.mfd_views.size(); i < for_size; ++i) {
     // create view according to types in the design
     if (Game::Hud->HudDesign.mfd_views[i] == mfd_view::damage_diagram_self) {
       Views.push_back(new MFDViewDamageDiagram(a_hud_part_design));
@@ -59,7 +59,7 @@ HudMFDDisplay::HudMFDDisplay(hud_part_design_t& a_hud_part_design)
 
 HudMFDDisplay::~HudMFDDisplay()
 {
-  for (usint i = 0, for_size = Views.size(); i < for_size; ++i) {
+  for (size_t i = 0, for_size = Views.size(); i < for_size; ++i) {
     delete Views[i];
   }
 }
@@ -93,7 +93,7 @@ void HudMFDDisplay::changeView(mfd_view::view_type a_view)
   CurrentView = a_view;
   Views[CurrentView]->activate(true);
 
-  // for (usint i = 0, for_size = views.size(); i < for_size; ++i) {
+  // for (size_t i = 0, for_size = views.size(); i < for_size; ++i) {
   // activate selected view, deactivate all the rest
   //  views[i]->activate(current_view == i);
   // }

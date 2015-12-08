@@ -71,7 +71,7 @@ public:
   virtual void releaseAsTarget(Unit* a_targeted_by);
   // called by targeted object that requires this to relinquish its current target
   virtual bool loseTarget(Unit* a_targeted_by,
-                          bool         a_forced = false);
+                          bool  a_forced = false);
   // clear targets when this object gets destroyed
   virtual void clearFromTargets();
   // return the target of this
@@ -113,7 +113,7 @@ inline Real Unit::getDamage(usint a_diagram_element)
   return CoreIntegrity;
 }
 
-inline  Real Unit::getSurfaceTemperature()
+inline Real Unit::getSurfaceTemperature()
 {
   return CoreTemperature;
 }
