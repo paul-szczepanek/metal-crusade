@@ -1,10 +1,6 @@
-h1. Defunct
+h1. Defunct (update!)
 
-This is a corpse but feel free to poke it with a stick.
-
-This is well beyond my capability for a hobby project. I moved to a project that has a more realistic scope so I can actually release 1.0 without having to quit my day job.
-
-I wish it weren't so but this one's suspended indefinitely.
+5 years later I'm rewriting bits, updated to the newer OGRE engine and I'm going to be chipping away at it slowly.
 
 h1. Metal Crusade
 
